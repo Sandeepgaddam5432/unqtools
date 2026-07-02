@@ -1,8 +1,7 @@
 ---
 import { TOOLS, byId } from "../../lib/registry";
-import { CATEGORY_LABELS } from "../../lib/tool";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import ToolShell from "../../components/ToolShell.astro";
+import ToolLayout from "../../components/ToolLayout.astro";
 
 export function getStaticPaths() {
   return TOOLS.map((t) => ({ params: { id: t.id }, props: { tool: t } }));
@@ -17,17 +16,9 @@ const title = t.seo?.title ?? `${t.name} — UnQTools`;
 ---
 
 <BaseLayout title={title} description={t.description}>
-  <nav aria-label="Breadcrumb" class="mb-4 text-sm text-unq-muted">
-    <a href="/" class="hover:underline">All tools</a>
-    <span class="mx-2">/</span>
-    <a href={`/category/${t.category}`} class="hover:underline">{CATEGORY_LABELS[t.category]}</a>
-    <span class="mx-2">/</span>
-    <span class="text-unq-text">{t.name}</span>
-  </nav>
-
-  <ToolShell tool={t}>
+  <ToolLayout tool={t}>
     <div id="tool-root" data-tool-id={t.id} data-tool-component></div>
-  </ToolShell>
+  </ToolLayout>
 </BaseLayout>
 
 <script>
@@ -49,7 +40,7 @@ const title = t.seo?.title ?? `${t.name} — UnQTools`;
           render(h(Comp, {}), root);
         })
         .catch((err) => {
-          root.innerHTML = `<div class="unq-card p-4 text-unq-danger">Failed to load tool: ${err.message}</div>`;
+          root.innerHTML = `<div class="p-4 bg-unq-danger-subtle border border-unq-danger/40 rounded-lg text-sm text-unq-danger">Failed to load tool: ${err.message}</div>`;
         });
     }
   }

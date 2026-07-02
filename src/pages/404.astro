@@ -1,12 +1,36 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { Home, Search } from "lucide-preact";
 ---
 
 <BaseLayout title="Not found — UnQTools">
-  <div class="py-16 text-center">
-    <p class="text-6xl font-bold text-unq-muted">404</p>
-    <h1 class="mt-4 text-2xl">Page not found</h1>
-    <p class="mt-2 text-unq-muted">The tool or page you requested does not exist.</p>
-    <a href="/" class="unq-btn unq-btn-primary mt-6 inline-flex">Back to all tools</a>
+  <div class="flex min-h-[60vh] items-center justify-center py-16 text-center">
+    <div class="space-y-6">
+      <p class="text-7xl font-bold tracking-tighter text-unq-text-subtle sm:text-8xl">404</p>
+      <div class="space-y-2">
+        <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Page not found</h1>
+        <p class="mx-auto max-w-md text-pretty text-unq-text-muted">
+          The tool or page you're looking for doesn't exist, or may have moved. Try searching for
+          what you need.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <a
+          href="/"
+          class="unq-btn-base h-11 bg-unq-accent px-5 text-sm text-unq-accent-contrast shadow-sm hover:bg-unq-accent-hover hover:shadow-md"
+        >
+          <Home size={16} />
+          Back to home
+        </a>
+        <button
+          type="button"
+          onclick="window.dispatchEvent(new CustomEvent('unq:open-command-bar'))"
+          class="unq-btn-base h-11 border border-unq-border bg-unq-surface-elevated px-5 text-sm text-unq-text hover:bg-unq-surface-hover"
+        >
+          <Search size={16} />
+          Search tools (⌘K)
+        </button>
+      </div>
+    </div>
   </div>
 </BaseLayout>

@@ -1,6 +1,8 @@
 /**
  * Theme controller — light / dark / system.
  * Persists choice to localStorage and reflects it on <html data-theme>.
+ * The no-FOUC inline script (themeNoFoUcScript) runs in <head> BEFORE
+ * first paint, so there is never a theme flash on static pages.
  */
 export type ThemeChoice = "light" | "dark" | "system";
 const STORAGE_KEY = "unq-theme";
@@ -34,7 +36,8 @@ export function applyTheme(theme: ThemeChoice): void {
 }
 
 /**
- * Inline-safe init script — call as a string in <head> to avoid FOUC.
+ * Inline-safe init script — runs in <head> before paint to prevent FOUC.
+ * Reads localStorage and sets <html data-theme> synchronously.
  */
 export const themeNoFoUcScript = `
 (function() {
@@ -43,6 +46,33 @@ export const themeNoFoUcScript = `
     var resolved = (t === 'light' || t === 'dark') ? t
       : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', resolved);
-  } catch (e) {}
+
+    // If user chose 'system', also react to OS theme changes live.
+    if (t === null || t === 'system') {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        // Only auto-update if the user hasn't explicitly chosen light/dark.
+        var current = localStorage.getItem('${STORAGE_KEY}');
+        if (current === null || current === 'system') {
+          document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        }
+      });
+    }
+  } catch (e) {
+    // localStorage might be blocked (private mode) — fall back to system preference.
+    var resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', resolved);
+  }
 })();
 `;
+
+/**
+ * Reactively subscribe to system theme changes (used by the theme toggle
+ * when the user has selected 'system').
+ */
+export function watchSystemTheme(callback: (isDark: boolean) => void): () => void {
+  if (typeof matchMedia === "undefined") return () => {};
+  const mq = matchMedia("(prefers-color-scheme: dark)");
+  const handler = (e: MediaQueryListEvent) => callback(e.matches);
+  mq.addEventListener("change", handler);
+  return () => mq.removeEventListener("change", handler);
+}

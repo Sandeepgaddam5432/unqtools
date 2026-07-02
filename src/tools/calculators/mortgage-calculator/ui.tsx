@@ -253,24 +253,24 @@ export default function MortgageCalculator() {
         <>
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Loan Amount</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Loan Amount</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.loanAmount)}</p>
             </Card>
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Monthly P&I</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Monthly P&I</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">
                 {fmt(result.monthlyBreakdown.principalAndInterest)}
               </p>
             </Card>
             <Card class="border-unq-accent/40 !p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Total Monthly</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Total Monthly</p>
               <p class="mt-1 text-2xl font-bold tabular-nums text-unq-accent">
                 {fmt(result.monthlyBreakdown.total)}
               </p>
-              <p class="text-[10px] text-unq-muted">P&I + tax + ins + PMI + HOA</p>
+              <p class="text-unq-muted text-[10px]">P&I + tax + ins + PMI + HOA</p>
             </Card>
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Total Interest</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Total Interest</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.totalInterest)}</p>
             </Card>
           </div>
@@ -316,7 +316,7 @@ export default function MortgageCalculator() {
                   <strong>Total PMI paid:</strong>{" "}
                   <span class="font-mono">{fmt(result.totalPmiPaid)}</span>
                   {result.pmiDropMonth !== null && (
-                    <span class="ml-2 text-unq-muted">
+                    <span class="text-unq-muted ml-2">
                       (drops off at month {result.pmiDropMonth} — 78% LTV)
                     </span>
                   )}
@@ -367,7 +367,7 @@ export default function MortgageCalculator() {
             <div class="max-h-[480px] overflow-auto">
               <table class="w-full text-xs">
                 <thead class="sticky top-0 bg-unq-surface">
-                  <tr class="border-b border-unq-border text-left text-unq-muted">
+                  <tr class="text-unq-muted border-b border-unq-border text-left">
                     <th class="px-2 py-2">{scheduleGrouping === "monthly" ? "Mo" : "Yr"}</th>
                     <th class="px-2 py-2 text-right">Interest</th>
                     <th class="px-2 py-2 text-right">Principal</th>
@@ -382,7 +382,7 @@ export default function MortgageCalculator() {
                     ? result.schedule.map((r) => (
                         <tr key={r.month} class="border-unq-border/40 border-b">
                           <td class="px-2 py-1.5 font-mono">{r.month}</td>
-                          <td class="px-2 py-1.5 text-right font-mono text-unq-muted">
+                          <td class="text-unq-muted px-2 py-1.5 text-right font-mono">
                             {fmt(r.interest)}
                           </td>
                           <td class="px-2 py-1.5 text-right font-mono">{fmt(r.principal)}</td>
@@ -395,7 +395,7 @@ export default function MortgageCalculator() {
                             {r.pmi > 0 ? fmt(r.pmi) : "—"}
                           </td>
                           <td class="px-2 py-1.5 text-right font-mono">{fmt(r.balance)}</td>
-                          <td class="px-2 py-1.5 text-right font-mono text-unq-muted">{r.ltv}%</td>
+                          <td class="text-unq-muted px-2 py-1.5 text-right font-mono">{r.ltv}%</td>
                         </tr>
                       ))
                     : (() => {
@@ -424,7 +424,7 @@ export default function MortgageCalculator() {
                         return rows.map((r) => (
                           <tr key={r.year} class="border-unq-border/40 border-b">
                             <td class="px-2 py-1.5 font-mono">{r.year}</td>
-                            <td class="px-2 py-1.5 text-right font-mono text-unq-muted">
+                            <td class="text-unq-muted px-2 py-1.5 text-right font-mono">
                               {fmt(r.interest)}
                             </td>
                             <td class="px-2 py-1.5 text-right font-mono">{fmt(r.principal)}</td>
@@ -437,7 +437,7 @@ export default function MortgageCalculator() {
                               {r.pmi > 0 ? fmt(r.pmi) : "—"}
                             </td>
                             <td class="px-2 py-1.5 text-right font-mono">{fmt(r.balance)}</td>
-                            <td class="px-2 py-1.5 text-right font-mono text-unq-muted">
+                            <td class="text-unq-muted px-2 py-1.5 text-right font-mono">
                               {r.ltv}%
                             </td>
                           </tr>
@@ -450,7 +450,7 @@ export default function MortgageCalculator() {
         </>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all calculations happen locally in your browser. PMI
           auto-cancels at 78% LTV per the Homeowners Protection Act. This tool does not capture

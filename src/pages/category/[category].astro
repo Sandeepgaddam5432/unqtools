@@ -3,6 +3,7 @@ import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "../../lib/to
 import { byCategory } from "../../lib/registry";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ToolCard from "../../components/ToolCard.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 
 export function getStaticPaths() {
   return ALL_CATEGORIES.map((c) => ({ params: { category: c } }));
@@ -11,36 +12,56 @@ export function getStaticPaths() {
 const { category } = Astro.params as { category: ToolCategory };
 const tools = byCategory(category);
 const label = CATEGORY_LABELS[category];
+
+// Pick the first tool's description as the category subtitle (or a default)
+const subtitle = tools[0]?.description
+  ? `Free, private, browser-based ${label.toLowerCase()} tools.`
+  : `${label} tools — all private, all offline-capable.`;
 ---
 
-<BaseLayout
-  title={`${label} — UnQTools`}
-  description={`${label} tools — all client-side, private, offline.`}
->
-  <nav aria-label="Breadcrumb" class="mb-4 text-sm text-unq-muted">
-    <a href="/" class="hover:underline">All tools</a>
-    <span class="mx-2">/</span>
-    <span class="text-unq-text">{label}</span>
-  </nav>
+<BaseLayout title={`${label} — UnQTools`} description={subtitle}>
+  <div class="space-y-8">
+    <Breadcrumb items={[{ label: "All tools", href: "/" }, { label }]} />
 
-  <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{label}</h1>
-  <p class="mt-2 text-unq-muted">
-    {tools.length} tool{tools.length === 1 ? "" : "s"} in this category.
-  </p>
+    <header class="space-y-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs font-semibold uppercase tracking-wider text-unq-accent">
+          Category
+        </span>
+        <span
+          class="inline-flex items-center gap-1 rounded-full bg-unq-surface-hover px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-unq-text-muted"
+        >
+          {tools.length} tool{tools.length === 1 ? "" : "s"}
+        </span>
+      </div>
+      <h1 class="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+        {label}
+      </h1>
+      <p class="max-w-2xl text-pretty text-base text-unq-text-muted sm:text-lg">
+        {subtitle}
+      </p>
+    </header>
 
-  {
-    tools.length === 0 ? (
-      <div class="unq-card mt-6 p-8 text-center">
-        <p class="text-unq-muted">
-          No tools in this category yet. The catalog ships in later phases.
-        </p>
-      </div>
-    ) : (
-      <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tools.map((t) => (
-          <ToolCard tool={t} />
-        ))}
-      </div>
-    )
-  }
+    {
+      tools.length === 0 ? (
+        <div class="unq-card p-8 text-center">
+          <p class="text-unq-text-muted">
+            No tools in this category yet. The catalog expands every week.
+          </p>
+          <a
+            href="/"
+            class="unq-btn-base mt-4 inline-flex h-11 bg-unq-accent px-4 text-sm text-unq-accent-contrast"
+          >
+            Browse all tools
+          </a>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {tools.map((t) => (
+            <ToolCard tool={t} />
+          ))}
+        </div>
+      )
+    }
+  </div>
 </BaseLayout>

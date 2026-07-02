@@ -136,7 +136,7 @@ export default function UuidGenerator() {
         </Card>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all UUID generation happens locally using the browser's
           crypto.randomUUID() API. No network calls, no telemetry.

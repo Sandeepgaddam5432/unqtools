@@ -208,7 +208,7 @@ export default function JsonFormatter() {
           </div>
         </div>
         {willUseWorker && (
-          <p class="mt-3 text-xs text-unq-muted">
+          <p class="text-unq-muted mt-3 text-xs">
             Input ≥ 100 KB — running in a background worker to keep the UI smooth.
           </p>
         )}
@@ -239,7 +239,7 @@ export default function JsonFormatter() {
           </pre>
           {output && (
             <div class="flex items-center justify-between gap-2">
-              <p class="text-xs text-unq-muted">
+              <p class="text-unq-muted text-xs">
                 {outputBytes.toLocaleString()} bytes · op: {lastOp ?? "—"}
               </p>
               <div class="flex gap-2">
@@ -263,7 +263,7 @@ export default function JsonFormatter() {
         />
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> your input never leaves your browser. Everything runs locally —
           including large files, which are processed in a background Web Worker.

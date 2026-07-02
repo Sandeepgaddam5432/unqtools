@@ -57,10 +57,10 @@ export default function CaseConverter() {
           <Card key={opt.value} class="!p-3">
             <div class="mb-2 flex items-center justify-between gap-2">
               <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-unq-muted">
+                <p class="text-unq-muted text-xs font-semibold uppercase tracking-wide">
                   {opt.label}
                 </p>
-                <p class="text-[10px] text-unq-muted">e.g. {opt.example}</p>
+                <p class="text-unq-muted text-[10px]">e.g. {opt.example}</p>
               </div>
               <div class="flex gap-1">
                 <CopyButton getText={() => results[opt.value] ?? ""} />
@@ -80,7 +80,7 @@ export default function CaseConverter() {
         ))}
       </div>
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all conversions happen locally in your browser. No text is
           uploaded.

@@ -184,7 +184,7 @@ export default function UrlEncoderTool() {
               </p>
               <table class="w-full text-xs">
                 <thead>
-                  <tr class="border-b border-unq-border text-left text-unq-muted">
+                  <tr class="text-unq-muted border-b border-unq-border text-left">
                     <th class="py-1 pr-2">Key</th>
                     <th class="py-1">Value</th>
                   </tr>
@@ -203,7 +203,7 @@ export default function UrlEncoderTool() {
         </Card>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all encoding/decoding is local. Use{" "}
           <code>encodeURIComponent</code> for individual query parameter values,{" "}

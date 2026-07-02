@@ -211,19 +211,19 @@ Interest Saved: ${fmt(result.interestSaved)}`;
         <>
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Monthly EMI</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Monthly EMI</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.emi)}</p>
             </Card>
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Total Interest</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Total Interest</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.totalInterest)}</p>
             </Card>
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Total Payment</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Total Payment</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.totalPayment)}</p>
             </Card>
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Months</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Months</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">
                 {result.actualMonths}
                 {result.monthsSaved > 0 && (
@@ -275,7 +275,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
             <div class="max-h-[480px] overflow-auto">
               <table class="w-full text-xs">
                 <thead class="sticky top-0 bg-unq-surface">
-                  <tr class="border-b border-unq-border text-left text-unq-muted">
+                  <tr class="text-unq-muted border-b border-unq-border text-left">
                     <th class="px-2 py-2">{scheduleGrouping === "monthly" ? "Month" : "Year"}</th>
                     <th class="px-2 py-2 text-right">EMI</th>
                     <th class="px-2 py-2 text-right">Interest</th>
@@ -290,7 +290,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
                         <tr key={r.month} class="border-unq-border/40 border-b">
                           <td class="px-2 py-1.5 font-mono">{r.month}</td>
                           <td class="px-2 py-1.5 text-right font-mono">{fmt(r.emi)}</td>
-                          <td class="px-2 py-1.5 text-right font-mono text-unq-muted">
+                          <td class="text-unq-muted px-2 py-1.5 text-right font-mono">
                             {fmt(r.interest)}
                           </td>
                           <td class="px-2 py-1.5 text-right font-mono">{fmt(r.principal)}</td>
@@ -327,7 +327,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
                           <tr key={r.year} class="border-unq-border/40 border-b">
                             <td class="px-2 py-1.5 font-mono">{r.year}</td>
                             <td class="px-2 py-1.5 text-right font-mono">{fmt(r.emi)}</td>
-                            <td class="px-2 py-1.5 text-right font-mono text-unq-muted">
+                            <td class="text-unq-muted px-2 py-1.5 text-right font-mono">
                               {fmt(r.interest)}
                             </td>
                             <td class="px-2 py-1.5 text-right font-mono">{fmt(r.principal)}</td>
@@ -347,7 +347,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
         </>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all calculations happen locally in your browser. Nothing is
           uploaded. The standard EMI formula is used:{" "}

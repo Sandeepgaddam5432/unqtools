@@ -140,7 +140,7 @@ export default function HashGenerator() {
           onChange={onFileChange}
         />
         {fileInfo && (
-          <p class="mt-2 text-xs text-unq-muted">
+          <p class="text-unq-muted mt-2 text-xs">
             {fileInfo.name} — {formatBytes(fileInfo.size)}
           </p>
         )}
@@ -163,7 +163,7 @@ export default function HashGenerator() {
         </Card>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all hashing happens locally via the browser's Web Crypto API.
           Your input and files never leave your device. SHA-1 is included for legacy compatibility

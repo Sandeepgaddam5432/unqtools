@@ -1,10 +1,8 @@
 ---
 /**
- * SearchBar — server-rendered input + a Preact island that does fuzzy search
- * over the registry and renders a dropdown of results.
- *
- * The actual fuzzy search runs client-side using src/lib/search.ts.
- * SearchBar.tsx is hydrated as a Preact island.
+ * SearchBar — server-rendered input + client-side fuzzy search dropdown.
+ * The actual search runs client-side using src/lib/search.ts (pure DOM, no
+ * Preact island) so the homepage stays tiny.
  */
 import { TOOLS } from "../lib/registry";
 import { CATEGORY_LABELS } from "../lib/tool";
@@ -21,20 +19,37 @@ const tools = TOOLS.map((t) => ({
 
 <div class="w-full" data-search-root>
   <label for="unq-search" class="sr-only">Search tools</label>
-  <input
-    id="unq-search"
-    type="search"
-    placeholder="Search tools… (e.g. json, base64, pdf, color)"
-    autocomplete="off"
-    spellcheck="false"
-    class="unq-input w-full text-base"
-    data-search-input
-  />
+  <div class="relative">
+    <svg
+      class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-unq-text-subtle"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+    </svg>
+    <input
+      id="unq-search"
+      type="search"
+      placeholder="Search tools by name, category, or keyword…"
+      autocomplete="off"
+      spellcheck="false"
+      class="unq-input-base h-12 pl-11 pr-4 text-base"
+      data-search-input
+    />
+  </div>
   <ul
     data-search-results
     role="listbox"
     aria-label="Search results"
-    class="unq-card mt-2 hidden divide-y divide-unq-border overflow-hidden"
+    class="absolute z-50 mt-2 hidden max-h-[400px] w-full divide-y divide-unq-border overflow-hidden overflow-y-auto rounded-lg border border-unq-border bg-unq-surface-elevated shadow-lg"
   >
   </ul>
 
@@ -48,6 +63,6 @@ const tools = TOOLS.map((t) => ({
   const dataEl = root?.querySelector("[data-search-data]");
   if (root && dataEl && dataEl.textContent) {
     const tools = JSON.parse(dataEl.textContent);
-    ClientSearch(root, tools);
+    ClientSearch(root as HTMLElement, tools);
   }
 </script>

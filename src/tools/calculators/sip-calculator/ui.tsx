@@ -190,21 +190,21 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
         <>
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Total Invested</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Total Invested</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.totalInvested)}</p>
-              <p class="mt-1 text-xs text-unq-muted">{fmtC(result.totalInvested)}</p>
+              <p class="text-unq-muted mt-1 text-xs">{fmtC(result.totalInvested)}</p>
             </Card>
             <Card class="border-unq-success/40 !p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Future Value</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Future Value</p>
               <p class="mt-1 text-2xl font-bold tabular-nums text-unq-success">
                 {fmt(result.futureValue)}
               </p>
-              <p class="mt-1 text-xs text-unq-muted">{fmtC(result.futureValue)}</p>
+              <p class="text-unq-muted mt-1 text-xs">{fmtC(result.futureValue)}</p>
             </Card>
             <Card class="!p-4 text-center">
-              <p class="text-xs uppercase tracking-wide text-unq-muted">Total Returns</p>
+              <p class="text-unq-muted text-xs uppercase tracking-wide">Total Returns</p>
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.totalReturns)}</p>
-              <p class="mt-1 text-xs text-unq-muted">{result.wealthRatio}x wealth ratio</p>
+              <p class="text-unq-muted mt-1 text-xs">{result.wealthRatio}x wealth ratio</p>
             </Card>
           </div>
 
@@ -213,7 +213,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
               <p class="text-sm">
                 <strong>Inflation-adjusted value:</strong>{" "}
                 <span class="font-mono">{fmt(result.realFutureValue)}</span>
-                <span class="ml-2 text-xs text-unq-muted">
+                <span class="text-unq-muted ml-2 text-xs">
                   (real purchasing power at {inflationPct}% inflation)
                 </span>
               </p>
@@ -239,7 +239,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
             <div class="max-h-[420px] overflow-auto">
               <table class="w-full text-xs">
                 <thead class="sticky top-0 bg-unq-surface">
-                  <tr class="border-b border-unq-border text-left text-unq-muted">
+                  <tr class="text-unq-muted border-b border-unq-border text-left">
                     <th class="px-2 py-2">Year</th>
                     <th class="px-2 py-2 text-right">Invested (year)</th>
                     <th class="px-2 py-2 text-right">Total Invested</th>
@@ -256,7 +256,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
                       <td class="px-2 py-1.5 text-right font-mono text-unq-success">
                         {fmt(r.yearEndValue)}
                       </td>
-                      <td class="px-2 py-1.5 text-right font-mono text-unq-muted">
+                      <td class="text-unq-muted px-2 py-1.5 text-right font-mono">
                         {fmt(r.returns)}
                       </td>
                     </tr>
@@ -268,7 +268,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
         </>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all calculations happen locally in your browser. The standard
           SIP formula{" "}

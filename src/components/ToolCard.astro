@@ -1,28 +1,50 @@
 ---
 import type { ToolManifest } from "../lib/tool";
 import { CATEGORY_LABELS } from "../lib/tool";
+import { Star } from "lucide-preact";
 
 interface Props {
   tool: ToolManifest;
 }
 
 const { tool } = Astro.props;
+const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
 ---
 
 <a
   href={`/tools/${tool.id}`}
-  class="unq-card group block p-5 transition-colors hover:border-unq-accent"
+  class="unq-card unq-card-interactive group relative block p-4"
+  data-tool-id={tool.id}
 >
   <div class="flex items-start justify-between gap-3">
     <div class="min-w-0 flex-1">
-      <h3 class="text-lg font-semibold transition-colors group-hover:text-unq-accent">
+      <h3 class="text-sm font-semibold transition-colors duration-fast group-hover:text-unq-accent">
         {tool.name}
       </h3>
-      <p class="mt-1 line-clamp-2 text-sm text-unq-muted">{tool.description}</p>
+      <p class="mt-1 line-clamp-2 text-pretty text-xs text-unq-text-muted">
+        {tool.description}
+      </p>
     </div>
-    <span class="shrink-0 text-2xl" aria-hidden="true">{tool.icon}</span>
+    <button
+      type="button"
+      class="favorite-btn absolute right-3 top-3 p-1 text-unq-text-subtle opacity-0 transition-opacity duration-fast hover:text-unq-warning group-hover:opacity-100"
+      data-favorite-id={tool.id}
+      aria-label={`Favorite ${tool.name}`}
+      onclick="event.preventDefault(); event.stopPropagation(); window.dispatchEvent(new CustomEvent('unq:toggle-favorite', { detail: this.dataset.favoriteId }));"
+    >
+      <Star size={14} />
+    </button>
   </div>
-  <p class="mt-4 text-[10px] uppercase tracking-wider text-unq-muted">
-    {CATEGORY_LABELS[tool.category]}
+  <p class="mt-3 text-[10px] font-medium uppercase tracking-wider text-unq-text-subtle">
+    {categoryShort}
   </p>
 </a>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

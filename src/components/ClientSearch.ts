@@ -1,9 +1,6 @@
 /**
  * ClientSearch — pure-DOM client-side fuzzy search mounted on the SearchBar's
  * root element. Uses src/lib/search.ts for scoring.
- *
- * Kept as direct DOM manipulation (not Preact) so the homepage search input
- * stays tiny — the heavier Preact islands only load when a tool page opens.
  */
 import { searchTools } from "../lib/search";
 import type { ToolManifest } from "../lib/tool";
@@ -21,6 +18,19 @@ export function ClientSearch(root: HTMLElement, tools: SearchEntry[]): void {
   let activeIndex = -1;
   let currentResults: SearchEntry[] = [];
 
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => {
+      const m: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return m[c] ?? c;
+    });
+  }
+
   function render(entries: SearchEntry[]): void {
     currentResults = entries;
     activeIndex = -1;
@@ -33,28 +43,19 @@ export function ClientSearch(root: HTMLElement, tools: SearchEntry[]): void {
     results!.innerHTML = entries
       .map(
         (t, i) => `
-        <li role="option" data-idx="${i}">
-          <a href="/tools/${t.id}" class="block px-4 py-3 hover:bg-unq-surface transition-colors">
-            <div class="font-medium">${escapeHtml(t.name)}</div>
-            <div class="text-xs text-unq-muted truncate">${escapeHtml(t.description)}</div>
-            <div class="text-[10px] uppercase tracking-wide text-unq-muted mt-1">${escapeHtml(t.categoryLabel ?? t.category)}</div>
+        <li role="option" data-idx="${i}" class="group">
+          <a href="/tools/${t.id}" class="flex items-start gap-3 px-4 py-3 hover:bg-unq-surface-hover transition-colors duration-fast">
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm text-unq-text">${escapeHtml(t.name)}</div>
+              <div class="text-xs text-unq-text-muted truncate">${escapeHtml(t.description)}</div>
+            </div>
+            <div class="text-[10px] uppercase tracking-wide text-unq-text-subtle shrink-0 mt-0.5">
+              ${escapeHtml(t.categoryLabel ?? t.category)}
+            </div>
           </a>
         </li>`,
       )
       .join("");
-  }
-
-  function escapeHtml(s: string): string {
-    return s.replace(/[&<>"']/g, (c) => {
-      const m: Record<string, string> = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      };
-      return m[c] ?? c;
-    });
   }
 
   input.addEventListener("input", () => {
@@ -90,7 +91,7 @@ export function ClientSearch(root: HTMLElement, tools: SearchEntry[]): void {
     items.forEach((el, i) => {
       const link = el.querySelector("a");
       if (i === activeIndex) {
-        el.style.backgroundColor = "var(--unq-color-surface)";
+        el.style.backgroundColor = "var(--unq-surface-hover)";
         link?.focus();
       } else {
         el.style.backgroundColor = "";

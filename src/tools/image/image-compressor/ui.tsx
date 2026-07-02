@@ -342,7 +342,7 @@ export default function ImageCompressor() {
             checked={stripExif}
             onChange={setStripExif}
           />
-          <span class="text-xs text-unq-muted">
+          <span class="text-unq-muted text-xs">
             {workerSupported
               ? "✓ Worker + OffscreenCanvas ready"
               : "⚠ Worker unavailable — using main thread"}
@@ -371,7 +371,7 @@ export default function ImageCompressor() {
           onChange={(e) => e.currentTarget.files && handleFiles(e.currentTarget.files)}
         />
         <p class="text-lg font-semibold">Drop images here, or click to select</p>
-        <p class="mt-1 text-sm text-unq-muted">JPG, PNG, WebP, GIF, BMP — single or bulk</p>
+        <p class="text-unq-muted mt-1 text-sm">JPG, PNG, WebP, GIF, BMP — single or bulk</p>
       </div>
 
       {entries.length > 0 && (
@@ -425,11 +425,11 @@ export default function ImageCompressor() {
                     <img
                       src={entry.previewUrl}
                       alt={entry.file.name}
-                      class="h-16 w-16 rounded-unq border border-unq-border object-cover"
+                      class="rounded-unq h-16 w-16 border border-unq-border object-cover"
                     />
                     <div class="min-w-0 flex-1">
                       <p class="truncate text-sm font-medium">{entry.file.name}</p>
-                      <p class="text-xs text-unq-muted">
+                      <p class="text-unq-muted text-xs">
                         Original: {formatBytes(entry.originalSize)}
                         {entry.status === "done" && entry.result && (
                           <>
@@ -525,7 +525,7 @@ export default function ImageCompressor() {
         </>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> images never leave your browser. All compression happens locally
           via the Canvas API (in a Web Worker when OffscreenCanvas is available). EXIF metadata is

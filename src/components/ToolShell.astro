@@ -12,13 +12,13 @@ const { tool } = Astro.props;
 <article class="space-y-6">
   <header class="space-y-2">
     <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{tool.name}</h1>
-    <p class="text-base text-unq-muted sm:text-lg">{tool.description}</p>
-    <p class="text-xs uppercase tracking-wider text-unq-muted">
+    <p class="text-unq-muted text-base sm:text-lg">{tool.description}</p>
+    <p class="text-unq-muted text-xs uppercase tracking-wider">
       {CATEGORY_LABELS[tool.category]} · {tool.requiresNetwork ? "needs network" : "works offline"}
     </p>
   </header>
 
-  <div class="unq-card flex items-center gap-2 p-3 text-xs text-unq-muted">
+  <div class="unq-card text-unq-muted flex items-center gap-2 p-3 text-xs">
     <span aria-hidden="true">🔒</span>
     <span
       ><strong>Privacy:</strong> this tool runs entirely in your browser. Your input never leaves your

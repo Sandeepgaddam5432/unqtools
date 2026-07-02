@@ -145,7 +145,7 @@ export default function Base64Tool() {
           </pre>
           {output && (
             <div class="flex items-center justify-between gap-2">
-              <p class="text-xs text-unq-muted">{outputBytes.toLocaleString()} bytes</p>
+              <p class="text-unq-muted text-xs">{outputBytes.toLocaleString()} bytes</p>
               <div class="flex gap-2">
                 <CopyButton getText={() => output} />
                 <DownloadButton
@@ -160,7 +160,7 @@ export default function Base64Tool() {
 
       {error && <ErrorBanner message={error} />}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all encoding/decoding is local. UTF-8 safe via
           TextEncoder/TextDecoder. URL-safe variant follows RFC 4648 §5.

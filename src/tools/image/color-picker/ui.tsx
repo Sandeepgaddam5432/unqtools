@@ -64,13 +64,12 @@ export default function ColorPicker() {
             type="color"
             value={hex.slice(0, 7)}
             onInput={(e) => updateFromHex((e.currentTarget as HTMLInputElement).value)}
-            class="h-32 w-full cursor-pointer rounded-unq border border-unq-border"
+            class="rounded-unq h-32 w-full cursor-pointer border border-unq-border"
             aria-label="Color picker"
           />
           <div
-            class="mt-3"
-            style={{ backgroundColor: rgbToCss(rgb), height: "48px" }}
-            class="rounded-unq border border-unq-border"
+            class="rounded-unq mt-3 h-12 border border-unq-border"
+            style={{ backgroundColor: rgbToCss(rgb) }}
           />
         </Card>
 
@@ -79,7 +78,7 @@ export default function ColorPicker() {
 
           <div class="space-y-3">
             <div>
-              <label class="text-xs text-unq-muted">HEX</label>
+              <label class="text-unq-muted text-xs">HEX</label>
               <div class="flex gap-2">
                 <Input
                   value={hex}
@@ -91,7 +90,7 @@ export default function ColorPicker() {
             </div>
 
             <div>
-              <label class="text-xs text-unq-muted">RGB</label>
+              <label class="text-unq-muted text-xs">RGB</label>
               <div class="grid grid-cols-3 gap-2">
                 <Input
                   type="number"
@@ -128,7 +127,7 @@ export default function ColorPicker() {
             </div>
 
             <div>
-              <label class="text-xs text-unq-muted">HSL</label>
+              <label class="text-unq-muted text-xs">HSL</label>
               <code class="block text-xs">{hslToCss(hsl)}</code>
               <div class="mt-1 flex justify-end">
                 <CopyButton getText={() => hslToCss(hsl)} />
@@ -136,7 +135,7 @@ export default function ColorPicker() {
             </div>
 
             <div>
-              <label class="text-xs text-unq-muted">HSV</label>
+              <label class="text-unq-muted text-xs">HSV</label>
               <code class="block text-xs">
                 hsv({hsv.h}, {hsv.s}%, {hsv.v}%)
               </code>
@@ -151,12 +150,12 @@ export default function ColorPicker() {
           {shades.map((s) => (
             <div key={s.pct} class="text-center">
               <div
-                class="h-12 cursor-pointer rounded-unq border border-unq-border"
+                class="rounded-unq h-12 cursor-pointer border border-unq-border"
                 style={{ backgroundColor: s.hex }}
                 onClick={() => updateFromHex(s.hex)}
                 title={`${s.pct}% — ${s.hex}`}
               />
-              <p class="mt-1 text-[10px] text-unq-muted">{s.pct}%</p>
+              <p class="text-unq-muted mt-1 text-[10px]">{s.pct}%</p>
             </div>
           ))}
         </div>
@@ -166,19 +165,19 @@ export default function ColorPicker() {
         <p class="mb-3 text-sm font-semibold">Complementary color</p>
         <div class="flex items-center gap-4">
           <div
-            class="h-16 w-16 rounded-unq border border-unq-border"
+            class="rounded-unq h-16 w-16 border border-unq-border"
             style={{ backgroundColor: rgbToCss(rgb) }}
             title="Original"
           />
           <span class="text-2xl">→</span>
           <div
-            class="h-16 w-16 cursor-pointer rounded-unq border border-unq-border"
+            class="rounded-unq h-16 w-16 cursor-pointer border border-unq-border"
             style={{ backgroundColor: rgbToCss(comp) }}
             onClick={() => updateFromHex(rgbToHex(comp))}
             title="Complementary"
           />
           <div class="ml-2">
-            <p class="text-xs text-unq-muted">Complement</p>
+            <p class="text-unq-muted text-xs">Complement</p>
             <code class="text-sm">{rgbToHex(comp)}</code>
             <div class="mt-1">
               <CopyButton getText={() => rgbToHex(comp)} />
@@ -191,7 +190,7 @@ export default function ColorPicker() {
         <p class="mb-3 text-sm font-semibold">WCAG contrast checker</p>
         <div class="mb-3 grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-unq-muted">Foreground</label>
+            <label class="text-unq-muted text-xs">Foreground</label>
             <div class="flex gap-2">
               <input
                 type="color"
@@ -207,7 +206,7 @@ export default function ColorPicker() {
             </div>
           </div>
           <div>
-            <label class="text-xs text-unq-muted">Background</label>
+            <label class="text-unq-muted text-xs">Background</label>
             <div class="flex gap-2">
               <input
                 type="color"
@@ -271,7 +270,7 @@ export default function ColorPicker() {
         </Button>
       </Card>
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> all color math runs locally in your browser. Conversions are
           mathematically exact. WCAG contrast uses the official relative-luminance formula.

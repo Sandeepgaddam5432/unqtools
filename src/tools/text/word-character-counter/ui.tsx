@@ -139,8 +139,8 @@ Try pasting your own text here. 👋🌍`;
   const statCard = (label: string, value: number | string, hint?: string) => (
     <Card class="!p-3 text-center">
       <p class="text-2xl font-bold tabular-nums">{value}</p>
-      <p class="mt-1 text-xs uppercase tracking-wide text-unq-muted">{label}</p>
-      {hint && <p class="mt-0.5 text-[10px] text-unq-muted">{hint}</p>}
+      <p class="text-unq-muted mt-1 text-xs uppercase tracking-wide">{label}</p>
+      {hint && <p class="text-unq-muted mt-0.5 text-[10px]">{hint}</p>}
     </Card>
   );
 
@@ -301,11 +301,11 @@ Try pasting your own text here. 👋🌍`;
             />
           </div>
           {keywords.length === 0 ? (
-            <p class="text-sm text-unq-muted">No keywords found.</p>
+            <p class="text-unq-muted text-sm">No keywords found.</p>
           ) : (
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-unq-border text-left text-xs text-unq-muted">
+                <tr class="text-unq-muted border-b border-unq-border text-left text-xs">
                   <th class="py-1">#</th>
                   <th class="py-1">Word</th>
                   <th class="py-1 text-right">Count</th>
@@ -315,7 +315,7 @@ Try pasting your own text here. 👋🌍`;
               <tbody>
                 {keywords.map((k, i) => (
                   <tr key={k.word} class="border-unq-border/50 border-b">
-                    <td class="py-1 text-unq-muted">{i + 1}</td>
+                    <td class="text-unq-muted py-1">{i + 1}</td>
                     <td class="py-1 font-mono">{k.word}</td>
                     <td class="py-1 text-right font-mono">{k.count}</td>
                     <td class="py-1 text-right font-mono">{k.density}%</td>
@@ -327,7 +327,7 @@ Try pasting your own text here. 👋🌍`;
         </Card>
       )}
 
-      <Card class="!p-4 text-xs text-unq-muted">
+      <Card class="text-unq-muted !p-4 text-xs">
         <p>
           <strong>Privacy:</strong> your text never leaves your browser. All counting is local;
           large inputs are processed in a background worker.

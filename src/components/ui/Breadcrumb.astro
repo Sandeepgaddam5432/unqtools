@@ -1,0 +1,45 @@
+---
+/**
+ * Breadcrumb (Astro) — server-rendered, accessible nav.
+ * Preact version lives in ui/Breadcrumb.tsx for island use.
+ */
+import { ChevronRight } from "lucide-preact";
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+  class?: string;
+}
+
+const { items, class: cls } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class={cls}>
+  <ol class="flex flex-wrap items-center gap-1.5 text-sm text-unq-text-muted">
+    {
+      items.map((item, i) => {
+        const isLast = i === items.length - 1;
+        return (
+          <li class="flex items-center gap-1.5">
+            {i > 0 && (
+              <ChevronRight size={14} class="shrink-0 text-unq-text-subtle" aria-hidden="true" />
+            )}
+            {item.href && !isLast ? (
+              <a href={item.href} class="transition-colors duration-fast hover:text-unq-text">
+                {item.label}
+              </a>
+            ) : (
+              <span aria-current={isLast ? "page" : undefined} class="font-medium text-unq-text">
+                {item.label}
+              </span>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
