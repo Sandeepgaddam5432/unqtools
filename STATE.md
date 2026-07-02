@@ -1,15 +1,15 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T16:00:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T17:00:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v6.0 — Scratch UI rebuild (shell complete, tool interiors queued)** 🔄 IN PROGRESS
+**v6.1 — Reference-matched rebuild (shell complete, tool interiors queued)** 🔄 IN PROGRESS
 
-22 tools live, all gates green. Old presentation layer DELETED (~2,863 lines removed).
-New OKLCH dark-first token foundation + app-shell + glass topbar + sidebar + bento
-homepage + workbench-ready ToolLayout built from zero. CSS dropped from 13.3 KB to
-10.4 KB gz. Remaining: tool interior rewires to workbench kit + VLM quality loop ≥9/10.
+22 tools live, all gates green. Reference file (ai_studio_code.html) committed as canonical
+design truth. New token foundation with reference's exact hex colors (slate + blue + orange).
+Glass cards, gradient-text, aurora backdrop, floating pill nav, stats grid, filter chips
+all implemented. Remaining: tool interior rewires to workbench kit + VLM quality loop ≥9/10.
 
 ## Context (why this session happened)
 
