@@ -1,15 +1,14 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T17:00:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T18:00:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v6.1 — Reference-matched rebuild (shell complete, tool interiors queued)** 🔄 IN PROGRESS
+**v7.0 — Toolhub design port (shell complete, tool interiors queued)** 🔄 IN PROGRESS
 
-22 tools live, all gates green. Reference file (ai_studio_code.html) committed as canonical
-design truth. New token foundation with reference's exact hex colors (slate + blue + orange).
-Glass cards, gradient-text, aurora backdrop, floating pill nav, stats grid, filter chips
-all implemented. Remaining: tool interior rewires to workbench kit + VLM quality loop ≥9/10.
+22 tools live. toolhub repo cloned as canonical design truth. OKLCH token system + component
+CSS + Tailwind config ported verbatim. Glass header, bg-grid hero, tool-card grid, footer,
+ToolLayout all ported. Remaining: rewire 22 tool interiors to toolhub's class recipes + fidelity gate.
 
 ## Context (why this session happened)
 
