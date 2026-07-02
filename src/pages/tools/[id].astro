@@ -1,0 +1,56 @@
+---
+import { TOOLS, byId } from "../../lib/registry";
+import { CATEGORY_LABELS } from "../../lib/tool";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ToolShell from "../../components/ToolShell.astro";
+
+export function getStaticPaths() {
+  return TOOLS.map((t) => ({ params: { id: t.id }, props: { tool: t } }));
+}
+
+const { tool } = Astro.props;
+const t = byId(tool.id);
+if (!t) {
+  return Astro.redirect("/404");
+}
+const title = t.seo?.title ?? `${t.name} — UnQTools`;
+---
+
+<BaseLayout title={title} description={t.description}>
+  <nav aria-label="Breadcrumb" class="mb-4 text-sm text-unq-muted">
+    <a href="/" class="hover:underline">All tools</a>
+    <span class="mx-2">/</span>
+    <a href={`/category/${t.category}`} class="hover:underline">{CATEGORY_LABELS[t.category]}</a>
+    <span class="mx-2">/</span>
+    <span class="text-unq-text">{t.name}</span>
+  </nav>
+
+  <ToolShell tool={t}>
+    <div id="tool-root" data-tool-id={t.id} data-tool-component></div>
+  </ToolShell>
+</BaseLayout>
+
+<script>
+  // Lazy-mount the tool's Preact island. Each tool's manifest exports a
+  // `component` loader; we resolve it here so the heavy code only ships
+  // when the user actually opens this tool's page.
+  import { render, h } from "preact";
+  import { byId } from "../../lib/registry";
+
+  const root = document.getElementById("tool-root");
+  const id = root?.dataset.toolId;
+  if (root && id) {
+    const tool = byId(id);
+    if (tool) {
+      tool
+        .component()
+        .then((mod) => {
+          const Comp = mod.default;
+          render(h(Comp, {}), root);
+        })
+        .catch((err) => {
+          root.innerHTML = `<div class="unq-card p-4 text-unq-danger">Failed to load tool: ${err.message}</div>`;
+        });
+    }
+  }
+</script>

@@ -31,16 +31,16 @@ npm run dev
 
 ## Scripts
 
-| Script | Purpose |
-| --- | --- |
-| `npm run dev` | Local dev server |
-| `npm run build` | Production build |
-| `npm run preview` | Preview the production build |
-| `npm run lint` | ESLint + Prettier check |
-| `npm run format` | Prettier write |
-| `npm run test` | Vitest unit tests |
-| `npm run test:watch` | Vitest watch mode |
-| `npm run e2e` | Playwright e2e tests |
+| Script               | Purpose                      |
+| -------------------- | ---------------------------- |
+| `npm run dev`        | Local dev server             |
+| `npm run build`      | Production build             |
+| `npm run preview`    | Preview the production build |
+| `npm run lint`       | ESLint + Prettier check      |
+| `npm run format`     | Prettier write               |
+| `npm run test`       | Vitest unit tests            |
+| `npm run test:watch` | Vitest watch mode            |
+| `npm run e2e`        | Playwright e2e tests         |
 
 ## Documentation
 

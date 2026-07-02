@@ -47,17 +47,17 @@
 
 ## 2. Locked tech stack (do NOT change without owner approval)
 
-| Layer | Choice |
-| --- | --- |
-| Framework | **Astro** (static output) + **Preact islands** |
-| Language | **TypeScript strict** (`strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`) |
-| Styling | **Tailwind CSS** + design tokens (`--unq-*`) |
-| Heavy compute | **Web Workers** + **WASM** (`ffmpeg.wasm`, `pdf-lib`, `libarchive`, …) — lazy-loaded |
-| PWA | **Workbox** service worker + web app manifest |
-| Unit tests | **Vitest** |
-| e2e tests | **Playwright** (+ axe-core a11y assertions) |
-| Lint / format | **ESLint** + **Prettier** |
-| CI | **GitHub Actions** |
+| Layer         | Choice                                                                                                     |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| Framework     | **Astro** (static output) + **Preact islands**                                                             |
+| Language      | **TypeScript strict** (`strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`) |
+| Styling       | **Tailwind CSS** + design tokens (`--unq-*`)                                                               |
+| Heavy compute | **Web Workers** + **WASM** (`ffmpeg.wasm`, `pdf-lib`, `libarchive`, …) — lazy-loaded                       |
+| PWA           | **Workbox** service worker + web app manifest                                                              |
+| Unit tests    | **Vitest**                                                                                                 |
+| e2e tests     | **Playwright** (+ axe-core a11y assertions)                                                                |
+| Lint / format | **ESLint** + **Prettier**                                                                                  |
+| CI            | **GitHub Actions**                                                                                         |
 
 ---
 
@@ -110,15 +110,15 @@ unqtools/
 
 ## 5. Naming conventions
 
-| Thing | Convention | Example |
-| --- | --- | --- |
-| Tool id / folder | kebab-case | `json-formatter` |
-| Component files | PascalCase | `CopyButton.tsx` |
-| Logic / util files | camelCase | `runWorker.ts` |
-| Types / interfaces | PascalCase | `ToolManifest` |
-| Constants | UPPER_SNAKE | `MAX_FILE_SIZE` |
-| CSS tokens | `--unq-*` | `--unq-color-bg` |
-| Routes | kebab-case | `/tools/json-formatter` |
+| Thing              | Convention  | Example                 |
+| ------------------ | ----------- | ----------------------- |
+| Tool id / folder   | kebab-case  | `json-formatter`        |
+| Component files    | PascalCase  | `CopyButton.tsx`        |
+| Logic / util files | camelCase   | `runWorker.ts`          |
+| Types / interfaces | PascalCase  | `ToolManifest`          |
+| Constants          | UPPER_SNAKE | `MAX_FILE_SIZE`         |
+| CSS tokens         | `--unq-*`   | `--unq-color-bg`        |
+| Routes             | kebab-case  | `/tools/json-formatter` |
 
 ---
 
@@ -165,7 +165,7 @@ unqtools/
 - Never throw to the user. Catch, show a friendly `ErrorBanner` with the reason.
 - Validate input size; warn before processing very large files.
 - All processing client-side; show a clear privacy note:
-  *"Your files never leave your browser."*
+  _"Your files never leave your browser."_
 
 ---
 

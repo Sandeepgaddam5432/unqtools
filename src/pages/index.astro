@@ -1,0 +1,66 @@
+---
+import { TOOLS, countByCategory } from "../lib/registry";
+import { ALL_CATEGORIES, CATEGORY_LABELS } from "../lib/tool";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SearchBar from "../components/SearchBar.astro";
+import ToolCard from "../components/ToolCard.astro";
+
+const counts = countByCategory();
+const popularCategories = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0).slice(0, 13);
+const toolCount = TOOLS.length;
+---
+
+<BaseLayout>
+  <section class="py-8 text-center sm:py-16">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
+      Free, private, <span class="text-unq-accent">offline</span> browser tools.
+    </h1>
+    <p class="mx-auto mt-4 max-w-2xl text-base text-unq-muted sm:text-lg">
+      UnQTools is a 100% static PWA — {toolCount} tool{toolCount === 1 ? "" : "s"} and counting. Every
+      tool runs entirely in your browser. Your data never leaves your device.
+    </p>
+    <div class="mx-auto mt-8 max-w-xl">
+      <SearchBar />
+    </div>
+  </section>
+
+  {
+    popularCategories.length > 0 && (
+      <section class="mt-8">
+        <h2 class="mb-4 text-2xl font-semibold">Browse by category</h2>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {popularCategories.map((c) => (
+            <a
+              href={`/category/${c}`}
+              class="unq-card p-4 transition-colors hover:border-unq-accent"
+            >
+              <p class="font-medium">{CATEGORY_LABELS[c]}</p>
+              <p class="mt-1 text-xs text-unq-muted">{counts[c] ?? 0} tools</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="mt-12">
+    <h2 class="mb-4 text-2xl font-semibold">All tools</h2>
+    {
+      toolCount === 0 ? (
+        <div class="unq-card p-8 text-center">
+          <p class="text-unq-muted">
+            No tools shipped yet. <strong>Phase 0</strong> scaffold is complete — the Tool Module
+            Contract is ready. The first tool (JSON Formatter) lands in
+            <strong>Phase 1</strong>.
+          </p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TOOLS.map((t) => (
+            <ToolCard tool={t} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

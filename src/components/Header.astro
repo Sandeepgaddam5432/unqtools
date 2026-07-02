@@ -1,0 +1,80 @@
+---
+import { ALL_CATEGORIES, CATEGORY_LABELS } from "../lib/tool";
+import { countByCategory } from "../lib/registry";
+
+const counts = countByCategory();
+const navCategories = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
+---
+
+<header class="bg-unq-bg/80 sticky top-0 z-40 border-b border-unq-border backdrop-blur-md">
+  <div class="unq-container flex h-14 items-center justify-between gap-4">
+    <a
+      href="/"
+      class="flex items-center gap-2 font-semibold tracking-tight"
+      aria-label="UnQTools home"
+    >
+      <span
+        class="inline-flex h-8 w-8 items-center justify-center rounded-unq bg-unq-primary text-sm font-bold text-unq-bg"
+        >U</span
+      >
+      <span class="text-base">UnQTools</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm md:flex">
+      <a href="/" class="rounded-unq px-3 py-2 transition-colors hover:bg-unq-surface">All tools</a>
+      {
+        navCategories.slice(0, 6).map((c) => (
+          <a
+            href={`/category/${c}`}
+            class="whitespace-nowrap rounded-unq px-3 py-2 transition-colors hover:bg-unq-surface"
+          >
+            {CATEGORY_LABELS[c]}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button
+        id="theme-toggle"
+        type="button"
+        class="unq-btn !min-h-[40px] border border-unq-border !px-2"
+        aria-label="Toggle color theme"
+        title="Toggle theme"
+      >
+        <span id="theme-icon">◐</span>
+      </button>
+    </div>
+  </div>
+
+  <script is:inline>
+    (function () {
+      const KEY = "unq-theme";
+      const btn = document.getElementById("theme-toggle");
+      const icon = document.getElementById("theme-icon");
+      function current() {
+        const v = localStorage.getItem(KEY);
+        return v === "light" || v === "dark" || v === "system" ? v : "system";
+      }
+      function resolved(t) {
+        if (t === "system") {
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        return t;
+      }
+      function paint() {
+        const t = current();
+        const r = resolved(t);
+        if (icon) icon.textContent = r === "dark" ? "◑" : "◐";
+      }
+      btn?.addEventListener("click", () => {
+        const cur = resolved(current());
+        const next = cur === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem(KEY, next);
+        paint();
+      });
+      paint();
+    })();
+  </script>
+</header>

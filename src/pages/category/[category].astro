@@ -1,0 +1,46 @@
+---
+import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "../../lib/tool";
+import { byCategory } from "../../lib/registry";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ToolCard from "../../components/ToolCard.astro";
+
+export function getStaticPaths() {
+  return ALL_CATEGORIES.map((c) => ({ params: { category: c } }));
+}
+
+const { category } = Astro.params as { category: ToolCategory };
+const tools = byCategory(category);
+const label = CATEGORY_LABELS[category];
+---
+
+<BaseLayout
+  title={`${label} — UnQTools`}
+  description={`${label} tools — all client-side, private, offline.`}
+>
+  <nav aria-label="Breadcrumb" class="mb-4 text-sm text-unq-muted">
+    <a href="/" class="hover:underline">All tools</a>
+    <span class="mx-2">/</span>
+    <span class="text-unq-text">{label}</span>
+  </nav>
+
+  <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{label}</h1>
+  <p class="mt-2 text-unq-muted">
+    {tools.length} tool{tools.length === 1 ? "" : "s"} in this category.
+  </p>
+
+  {
+    tools.length === 0 ? (
+      <div class="unq-card mt-6 p-8 text-center">
+        <p class="text-unq-muted">
+          No tools in this category yet. The catalog ships in later phases.
+        </p>
+      </div>
+    ) : (
+      <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tools.map((t) => (
+          <ToolCard tool={t} />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

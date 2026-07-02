@@ -1,0 +1,28 @@
+---
+import type { ToolManifest } from "../lib/tool";
+import { CATEGORY_LABELS } from "../lib/tool";
+
+interface Props {
+  tool: ToolManifest;
+}
+
+const { tool } = Astro.props;
+---
+
+<a
+  href={`/tools/${tool.id}`}
+  class="unq-card group block p-5 transition-colors hover:border-unq-accent"
+>
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      <h3 class="text-lg font-semibold transition-colors group-hover:text-unq-accent">
+        {tool.name}
+      </h3>
+      <p class="mt-1 line-clamp-2 text-sm text-unq-muted">{tool.description}</p>
+    </div>
+    <span class="shrink-0 text-2xl" aria-hidden="true">{tool.icon}</span>
+  </div>
+  <p class="mt-4 text-[10px] uppercase tracking-wider text-unq-muted">
+    {CATEGORY_LABELS[tool.category]}
+  </p>
+</a>

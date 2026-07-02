@@ -1,0 +1,53 @@
+---
+/**
+ * SearchBar — server-rendered input + a Preact island that does fuzzy search
+ * over the registry and renders a dropdown of results.
+ *
+ * The actual fuzzy search runs client-side using src/lib/search.ts.
+ * SearchBar.tsx is hydrated as a Preact island.
+ */
+import { TOOLS } from "../lib/registry";
+import { CATEGORY_LABELS } from "../lib/tool";
+
+const tools = TOOLS.map((t) => ({
+  id: t.id,
+  name: t.name,
+  description: t.description,
+  category: t.category,
+  categoryLabel: CATEGORY_LABELS[t.category],
+  keywords: t.keywords,
+}));
+---
+
+<div class="w-full" data-search-root>
+  <label for="unq-search" class="sr-only">Search tools</label>
+  <input
+    id="unq-search"
+    type="search"
+    placeholder="Search tools… (e.g. json, base64, pdf, color)"
+    autocomplete="off"
+    spellcheck="false"
+    class="unq-input w-full text-base"
+    data-search-input
+  />
+  <ul
+    data-search-results
+    role="listbox"
+    aria-label="Search results"
+    class="unq-card mt-2 hidden divide-y divide-unq-border overflow-hidden"
+  >
+  </ul>
+
+  <script type="application/json" data-search-data set:html={JSON.stringify(tools)} />
+</div>
+
+<script>
+  import { ClientSearch } from "../components/ClientSearch";
+
+  const root = document.querySelector("[data-search-root]");
+  const dataEl = root?.querySelector("[data-search-data]");
+  if (root && dataEl && dataEl.textContent) {
+    const tools = JSON.parse(dataEl.textContent);
+    ClientSearch(root, tools);
+  }
+</script>
