@@ -44,7 +44,7 @@ export function Switch({
         onClick={() => onChange(!checked)}
         class={`relative inline-flex ${dims.track} duration-fast shrink-0 items-center rounded-full transition-colors ease-out ${
           checked ? "bg-unq-accent" : "bg-unq-border-strong"
-        } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-unq-accent`}
+        } focus-visible:outline-unq-accent focus-visible:outline-2 focus-visible:outline-offset-2`}
       >
         <span
           class={`duration-fast inline-block rounded-full bg-white shadow-sm transition-transform ease-out ${
@@ -58,7 +58,7 @@ export function Switch({
           <label for={switchId} class={`cursor-pointer text-sm font-medium ${disabled ? "" : ""}`}>
             {label}
           </label>
-          {description && <p class="text-xs text-unq-text-muted">{description}</p>}
+          {description && <p class="text-unq-text-muted text-xs">{description}</p>}
         </div>
       )}
     </div>

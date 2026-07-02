@@ -185,7 +185,7 @@ export default function UrlEncoderTool() {
               <div class="unq-scroll-x">
                 <table class="w-full text-xs">
                   <thead>
-                    <tr class="text-unq-muted border-b border-unq-border text-left">
+                    <tr class="text-unq-muted border-unq-border border-b text-left">
                       <th class="py-1 pr-2">Key</th>
                       <th class="py-1">Value</th>
                     </tr>

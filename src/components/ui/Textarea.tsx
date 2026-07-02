@@ -36,7 +36,7 @@ export function Textarea({
       {(label || showCount) && (
         <div class="flex items-center justify-between">
           {label && (
-            <label for={inputId} class="text-sm font-medium text-unq-text">
+            <label for={inputId} class="text-unq-text text-sm font-medium">
               {label}
             </label>
           )}
@@ -59,8 +59,8 @@ export function Textarea({
         aria-invalid={error ? true : undefined}
         {...rest}
       />
-      {hint && !error && <p class="text-xs text-unq-text-muted">{hint}</p>}
-      {error && <p class="text-xs text-unq-danger">{error}</p>}
+      {hint && !error && <p class="text-unq-text-muted text-xs">{hint}</p>}
+      {error && <p class="text-unq-danger text-xs">{error}</p>}
     </div>
   );
 }

@@ -20,6 +20,7 @@
     "@astrojs/tailwind": "5.1.4",
     "@fontsource/dm-sans": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/space-grotesk": "^5.2.10",
     "astro": "4.16.18",
     "lucide-preact": "0.469.0",

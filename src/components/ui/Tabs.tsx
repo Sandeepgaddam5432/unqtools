@@ -32,7 +32,7 @@ export function Tabs({ tabs, initialId, class: cls }: TabsProps) {
 
   return (
     <div class={cls}>
-      <div role="tablist" class="flex border-b border-unq-border" onKeyDown={onKeyDown}>
+      <div role="tablist" class="border-unq-border flex border-b" onKeyDown={onKeyDown}>
         {tabs.map((t, i) => (
           <button
             key={t.id}
@@ -46,7 +46,7 @@ export function Tabs({ tabs, initialId, class: cls }: TabsProps) {
             class={`duration-fast -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
               active === t.id
                 ? "border-unq-accent text-unq-text"
-                : "border-transparent text-unq-text-muted hover:text-unq-text"
+                : "text-unq-text-muted hover:text-unq-text border-transparent"
             }`}
           >
             {t.label}
@@ -86,7 +86,7 @@ export function Segmented({ options, value, onChange, size = "md", class: cls }:
   return (
     <div
       role="radiogroup"
-      class={`inline-flex rounded-lg border border-unq-border bg-unq-surface-hover p-0.5 ${cls ?? ""}`}
+      class={`border-unq-border bg-unq-surface-hover inline-flex rounded-lg border p-0.5 ${cls ?? ""}`}
     >
       {options.map((o) => (
         <button

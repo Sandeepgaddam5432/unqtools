@@ -68,7 +68,7 @@ export default function AddLineBreaks() {
       <Card class="!p-4">
         <div class="flex flex-wrap items-end gap-4">
           <div class="flex flex-col gap-1.5">
-            <label for="alb-strategy" class="text-sm font-medium text-unq-text">
+            <label for="alb-strategy" class="text-unq-text text-sm font-medium">
               Strategy
             </label>
             <Select
@@ -83,7 +83,7 @@ export default function AddLineBreaks() {
           {opts.strategy === "wrap" && (
             <>
               <div class="flex flex-col gap-1.5">
-                <label for="alb-width" class="text-sm font-medium text-unq-text">
+                <label for="alb-width" class="text-unq-text text-sm font-medium">
                   Column width
                 </label>
                 <Input
@@ -99,7 +99,7 @@ export default function AddLineBreaks() {
                 />
               </div>
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-unq-text">Hard break</label>
+                <label class="text-unq-text text-sm font-medium">Hard break</label>
                 <Switch
                   checked={opts.hardBreak}
                   onChange={(v) => update({ hardBreak: v })}
@@ -112,7 +112,7 @@ export default function AddLineBreaks() {
           {opts.strategy === "delimiter" && (
             <>
               <div class="flex flex-col gap-1.5">
-                <label for="alb-delim" class="text-sm font-medium text-unq-text">
+                <label for="alb-delim" class="text-unq-text text-sm font-medium">
                   Delimiter
                 </label>
                 <Input
@@ -127,7 +127,7 @@ export default function AddLineBreaks() {
                 />
               </div>
               <div class="flex flex-col gap-1.5">
-                <label for="alb-dpos" class="text-sm font-medium text-unq-text">
+                <label for="alb-dpos" class="text-unq-text text-sm font-medium">
                   Position
                 </label>
                 <Select
@@ -146,7 +146,7 @@ export default function AddLineBreaks() {
 
           {(opts.strategy === "chars" || opts.strategy === "words") && (
             <div class="flex flex-col gap-1.5">
-              <label for="alb-n" class="text-sm font-medium text-unq-text">
+              <label for="alb-n" class="text-unq-text text-sm font-medium">
                 {opts.strategy === "chars" ? "Characters per line" : "Words per line"}
               </label>
               <Input
@@ -181,7 +181,7 @@ export default function AddLineBreaks() {
             label="Collapse blank lines"
           />
           <div class="flex flex-col gap-1.5">
-            <label for="alb-le" class="text-sm font-medium text-unq-text">
+            <label for="alb-le" class="text-unq-text text-sm font-medium">
               Line ending
             </label>
             <Select
@@ -199,7 +199,7 @@ export default function AddLineBreaks() {
 
         <div class="mt-4 flex flex-wrap gap-4">
           <div class="flex flex-col gap-1.5">
-            <label for="alb-indent" class="text-sm font-medium text-unq-text">
+            <label for="alb-indent" class="text-unq-text text-sm font-medium">
               Indent
             </label>
             <Input
@@ -212,7 +212,7 @@ export default function AddLineBreaks() {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label for="alb-hang" class="text-sm font-medium text-unq-text">
+            <label for="alb-hang" class="text-unq-text text-sm font-medium">
               Hanging indent
             </label>
             <Input

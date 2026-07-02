@@ -403,7 +403,7 @@ export default function ImageCompressor() {
             <Card class="border-unq-success/40 bg-unq-success/5 !p-4">
               <p class="text-sm">
                 <strong>Total savings:</strong>{" "}
-                <span class="font-mono text-unq-success">
+                <span class="text-unq-success font-mono">
                   {formatBytes(totalSaved)} ({savedPct}%)
                 </span>{" "}
                 across {entries.filter((e) => e.status === "done").length} files
@@ -425,7 +425,7 @@ export default function ImageCompressor() {
                     <img
                       src={entry.previewUrl}
                       alt={entry.file.name}
-                      class="rounded-unq h-16 w-16 border border-unq-border object-cover"
+                      class="rounded-unq border-unq-border h-16 w-16 border object-cover"
                     />
                     <div class="min-w-0 flex-1">
                       <p class="truncate text-sm font-medium">{entry.file.name}</p>
@@ -434,7 +434,7 @@ export default function ImageCompressor() {
                         {entry.status === "done" && entry.result && (
                           <>
                             {" → "}
-                            <span class="font-mono text-unq-success">
+                            <span class="text-unq-success font-mono">
                               {formatBytes(compressedSize)}
                             </span>{" "}
                             <span class="text-unq-success">({savedPct}% saved)</span>
@@ -510,7 +510,7 @@ export default function ImageCompressor() {
                       )}
                       <button
                         type="button"
-                        class="unq-btn !min-h-[36px] border border-unq-border !px-2 text-xs"
+                        class="unq-btn border-unq-border !min-h-[36px] border !px-2 text-xs"
                         aria-label={`Remove ${entry.file.name}`}
                         onClick={() => removeEntry(entry.id)}
                       >

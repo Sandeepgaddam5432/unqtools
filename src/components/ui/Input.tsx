@@ -32,13 +32,13 @@ export function Input({
   return (
     <div class={`flex flex-col gap-1.5 ${cls ?? ""}`}>
       {label && (
-        <label for={inputId} class="text-sm font-medium text-unq-text">
+        <label for={inputId} class="text-unq-text text-sm font-medium">
           {label}
         </label>
       )}
       <div class="relative flex items-center">
         {leadingIcon && (
-          <span class="pointer-events-none absolute left-3 text-unq-text-subtle" aria-hidden="true">
+          <span class="text-unq-text-subtle pointer-events-none absolute left-3" aria-hidden="true">
             {leadingIcon}
           </span>
         )}
@@ -54,12 +54,12 @@ export function Input({
         {trailing && <span class="absolute right-2 flex items-center">{trailing}</span>}
       </div>
       {hint && !error && (
-        <p id={`${inputId}-hint`} class="text-xs text-unq-text-muted">
+        <p id={`${inputId}-hint`} class="text-unq-text-muted text-xs">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${inputId}-error`} class="text-xs text-unq-danger">
+        <p id={`${inputId}-error`} class="text-unq-danger text-xs">
           {error}
         </p>
       )}

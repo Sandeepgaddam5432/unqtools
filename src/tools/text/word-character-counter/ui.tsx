@@ -167,7 +167,7 @@ Try pasting your own text here. 👋🌍`;
               Load sample
             </button>
             <button
-              class="unq-btn !min-h-[40px] border border-unq-border !px-3 text-sm"
+              class="unq-btn border-unq-border !min-h-[40px] border !px-3 text-sm"
               onClick={clearAll}
               disabled={!input}
             >
@@ -306,7 +306,7 @@ Try pasting your own text here. 👋🌍`;
             <div class="unq-scroll-x">
               <table class="w-full text-sm">
                 <thead>
-                  <tr class="text-unq-muted border-b border-unq-border text-left text-xs">
+                  <tr class="text-unq-muted border-unq-border border-b text-left text-xs">
                     <th class="py-1">#</th>
                     <th class="py-1">Word</th>
                     <th class="py-1 text-right">Count</th>

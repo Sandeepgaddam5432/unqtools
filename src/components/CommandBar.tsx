@@ -151,11 +151,11 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
-        class="unq-glass relative mt-[10vh] w-full max-w-xl overflow-hidden rounded-xl border border-unq-border shadow-xl sm:mt-[15vh]"
+        class="unq-glass border-unq-border relative mt-[10vh] w-full max-w-xl overflow-hidden rounded-xl border shadow-xl sm:mt-[15vh]"
       >
         {/* Search input */}
-        <div class="flex items-center gap-3 border-b border-unq-border px-4">
-          <Search size={18} class="shrink-0 text-unq-text-muted" />
+        <div class="border-unq-border flex items-center gap-3 border-b px-4">
+          <Search size={18} class="text-unq-text-muted shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -163,14 +163,14 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
             value={query}
             onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)}
             onKeyDown={onKeyDown}
-            class="h-14 flex-1 bg-transparent text-base outline-none placeholder:text-unq-text-subtle"
+            class="placeholder:text-unq-text-subtle h-14 flex-1 bg-transparent text-base outline-none"
             aria-label="Search tools"
             aria-controls="cmdbar-results"
             aria-activedescendant={results[activeIndex] ? `cmdbar-item-${activeIndex}` : undefined}
             autocomplete="off"
             spellcheck={false}
           />
-          <kbd class="hidden h-6 items-center gap-0.5 rounded border border-unq-border bg-unq-surface-hover px-1.5 font-mono text-[10px] text-unq-text-muted sm:flex">
+          <kbd class="border-unq-border bg-unq-surface-hover text-unq-text-muted hidden h-6 items-center gap-0.5 rounded border px-1.5 font-mono text-[10px] sm:flex">
             ESC
           </kbd>
         </div>
@@ -184,7 +184,7 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
           class="max-h-[50vh] overflow-y-auto py-2"
         >
           {results.length === 0 ? (
-            <li class="px-4 py-8 text-center text-sm text-unq-text-muted">
+            <li class="text-unq-text-muted px-4 py-8 text-center text-sm">
               No tools found for “{query}”.
             </li>
           ) : (
@@ -202,7 +202,7 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
                   }`}
                   onMouseEnter={() => setActiveIndex(i)}
                 >
-                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-unq-surface-hover text-xs">
+                  <span class="bg-unq-surface-hover flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs">
                     {r.tool.icon === "braces"
                       ? "{ }"
                       : r.tool.icon === "calculator"
@@ -233,7 +233,7 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
                     >
                       {r.tool.name}
                     </p>
-                    <p class="truncate text-xs text-unq-text-muted">{r.tool.description}</p>
+                    <p class="text-unq-text-muted truncate text-xs">{r.tool.description}</p>
                   </div>
                   <div class="flex shrink-0 items-center gap-1.5">
                     {r.isRecent && (
@@ -246,7 +246,7 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
                         <Star size={12} fill="currentColor" />
                       </span>
                     )}
-                    <span class="text-[10px] uppercase tracking-wide text-unq-text-subtle">
+                    <span class="text-unq-text-subtle text-[10px] uppercase tracking-wide">
                       {CATEGORY_LABELS[r.tool.category].split(" ")[0]}
                     </span>
                   </div>
@@ -257,16 +257,16 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
         </ul>
 
         {/* Footer */}
-        <div class="flex items-center justify-between border-t border-unq-border px-4 py-2.5 text-xs text-unq-text-muted">
+        <div class="border-unq-border text-unq-text-muted flex items-center justify-between border-t px-4 py-2.5 text-xs">
           <div class="flex items-center gap-3">
             <span class="flex items-center gap-1">
-              <kbd class="inline-flex h-5 items-center rounded border border-unq-border bg-unq-surface-hover px-1 font-mono">
+              <kbd class="border-unq-border bg-unq-surface-hover inline-flex h-5 items-center rounded border px-1 font-mono">
                 ↑↓
               </kbd>
               Navigate
             </span>
             <span class="flex items-center gap-1">
-              <kbd class="inline-flex h-5 items-center rounded border border-unq-border bg-unq-surface-hover px-1 font-mono">
+              <kbd class="border-unq-border bg-unq-surface-hover inline-flex h-5 items-center rounded border px-1 font-mono">
                 <CornerDownLeft size={10} />
               </kbd>
               Open

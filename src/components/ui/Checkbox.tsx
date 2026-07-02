@@ -36,7 +36,7 @@ export function Checkbox({
           class="peer sr-only"
         />
         <span
-          class={`w-4.5 h-4.5 flex items-center justify-center rounded border transition-colors ${
+          class={`flex h-4.5 w-4.5 items-center justify-center rounded border transition-colors ${
             checked
               ? "border-unq-accent bg-unq-accent"
               : "border-unq-border-strong bg-unq-surface peer-hover:border-unq-text-subtle"
@@ -49,7 +49,7 @@ export function Checkbox({
       {(label || description) && (
         <span class="flex flex-col">
           {label && <span class="text-sm font-medium leading-tight">{label}</span>}
-          {description && <span class="mt-0.5 text-xs text-unq-text-muted">{description}</span>}
+          {description && <span class="text-unq-text-muted mt-0.5 text-xs">{description}</span>}
         </span>
       )}
     </label>
@@ -103,20 +103,20 @@ export function RadioGroup({
                 class="peer sr-only"
               />
               <span
-                class={`w-4.5 h-4.5 flex items-center justify-center rounded-full border-2 transition-colors ${
+                class={`flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 transition-colors ${
                   selected
                     ? "border-unq-accent"
                     : "border-unq-border-strong peer-hover:border-unq-text-subtle"
                 }`}
                 style={{ width: "18px", height: "18px" }}
               >
-                {selected && <span class="h-2 w-2 rounded-full bg-unq-accent" />}
+                {selected && <span class="bg-unq-accent h-2 w-2 rounded-full" />}
               </span>
             </span>
             <span class="flex flex-col">
               <span class="text-sm font-medium leading-tight">{o.label}</span>
               {o.description && (
-                <span class="mt-0.5 text-xs text-unq-text-muted">{o.description}</span>
+                <span class="text-unq-text-muted mt-0.5 text-xs">{o.description}</span>
               )}
             </span>
           </label>

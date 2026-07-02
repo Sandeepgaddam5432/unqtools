@@ -64,11 +64,11 @@ export default function ColorPicker() {
             type="color"
             value={hex.slice(0, 7)}
             onInput={(e) => updateFromHex((e.currentTarget as HTMLInputElement).value)}
-            class="rounded-unq h-32 w-full cursor-pointer border border-unq-border"
+            class="rounded-unq border-unq-border h-32 w-full cursor-pointer border"
             aria-label="Color picker"
           />
           <div
-            class="rounded-unq mt-3 h-12 border border-unq-border"
+            class="rounded-unq border-unq-border mt-3 h-12 border"
             style={{ backgroundColor: rgbToCss(rgb) }}
           />
         </Card>
@@ -154,7 +154,7 @@ export default function ColorPicker() {
           {shades.map((s) => (
             <div key={s.pct} class="text-center">
               <div
-                class="rounded-unq h-12 cursor-pointer border border-unq-border"
+                class="rounded-unq border-unq-border h-12 cursor-pointer border"
                 style={{ backgroundColor: s.hex }}
                 onClick={() => updateFromHex(s.hex)}
                 title={`${s.pct}% — ${s.hex}`}
@@ -169,13 +169,13 @@ export default function ColorPicker() {
         <p class="mb-3 text-sm font-semibold">Complementary color</p>
         <div class="flex items-center gap-4">
           <div
-            class="rounded-unq h-16 w-16 border border-unq-border"
+            class="rounded-unq border-unq-border h-16 w-16 border"
             style={{ backgroundColor: rgbToCss(rgb) }}
             title="Original"
           />
           <span class="text-2xl">→</span>
           <div
-            class="rounded-unq h-16 w-16 cursor-pointer border border-unq-border"
+            class="rounded-unq border-unq-border h-16 w-16 cursor-pointer border"
             style={{ backgroundColor: rgbToCss(comp) }}
             onClick={() => updateFromHex(rgbToHex(comp))}
             title="Complementary"
@@ -200,7 +200,7 @@ export default function ColorPicker() {
                 type="color"
                 value={fgHex.slice(0, 7)}
                 onInput={(e) => setFgHex((e.currentTarget as HTMLInputElement).value)}
-                class="h-10 w-12 rounded border border-unq-border"
+                class="border-unq-border h-10 w-12 rounded border"
                 aria-label="Foreground color picker"
               />
               <Input
@@ -218,7 +218,7 @@ export default function ColorPicker() {
                 type="color"
                 value={bgHex.slice(0, 7)}
                 onInput={(e) => setBgHex((e.currentTarget as HTMLInputElement).value)}
-                class="h-10 w-12 rounded border border-unq-border"
+                class="border-unq-border h-10 w-12 rounded border"
                 aria-label="Background color picker"
               />
               <Input

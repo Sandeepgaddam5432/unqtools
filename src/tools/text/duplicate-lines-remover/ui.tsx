@@ -55,7 +55,7 @@ export default function DuplicateLinesRemover() {
         <Switch checked={opts.sort} onChange={(v) => update({ sort: v })} label="Sort result" />
         {opts.sort && (
           <div class="flex flex-col gap-1.5">
-            <label for="dl-sort" class="text-sm font-medium text-unq-text">
+            <label for="dl-sort" class="text-unq-text text-sm font-medium">
               Sort by
             </label>
             <Select
@@ -68,7 +68,7 @@ export default function DuplicateLinesRemover() {
           </div>
         )}
         <div class="flex flex-col gap-1.5">
-          <label for="dl-keep" class="text-sm font-medium text-unq-text">
+          <label for="dl-keep" class="text-unq-text text-sm font-medium">
             Keep
           </label>
           <Select

@@ -64,7 +64,7 @@ export default function AddPrefixSuffix() {
       <Card class="!p-4">
         <div class="flex flex-wrap gap-4">
           <div class="flex flex-col gap-1.5">
-            <label for="aps-prefix" class="text-sm font-medium text-unq-text">
+            <label for="aps-prefix" class="text-unq-text text-sm font-medium">
               Prefix
             </label>
             <Input
@@ -77,7 +77,7 @@ export default function AddPrefixSuffix() {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label for="aps-suffix" class="text-sm font-medium text-unq-text">
+            <label for="aps-suffix" class="text-unq-text text-sm font-medium">
               Suffix
             </label>
             <Input
@@ -95,7 +95,7 @@ export default function AddPrefixSuffix() {
           {PRESETS.map((p) => (
             <button
               type="button"
-              class="duration-normal text-unq-text-2 ease-apple rounded-full border border-unq-border px-3 py-1 text-xs transition-all hover:border-unq-accent hover:text-unq-accent"
+              class="duration-normal text-unq-text-2 ease-apple border-unq-border hover:border-unq-accent hover:text-unq-accent rounded-full border px-3 py-1 text-xs transition-all"
               onClick={() => applyPreset(p)}
             >
               {p.name}
@@ -123,7 +123,7 @@ export default function AddPrefixSuffix() {
 
         <div class="mt-4 flex flex-wrap gap-4">
           <div class="flex flex-col gap-1.5">
-            <label for="aps-start" class="text-sm font-medium text-unq-text">
+            <label for="aps-start" class="text-unq-text text-sm font-medium">
               Counter start
             </label>
             <Input
@@ -137,7 +137,7 @@ export default function AddPrefixSuffix() {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label for="aps-step" class="text-sm font-medium text-unq-text">
+            <label for="aps-step" class="text-unq-text text-sm font-medium">
               Counter step
             </label>
             <Input
@@ -151,7 +151,7 @@ export default function AddPrefixSuffix() {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label for="aps-pad" class="text-sm font-medium text-unq-text">
+            <label for="aps-pad" class="text-unq-text text-sm font-medium">
               Counter padding
             </label>
             <Input
@@ -170,7 +170,7 @@ export default function AddPrefixSuffix() {
 
         <div class="mt-4 flex flex-wrap gap-4">
           <div class="flex flex-col gap-1.5">
-            <label for="aps-regex" class="text-sm font-medium text-unq-text">
+            <label for="aps-regex" class="text-unq-text text-sm font-medium">
               Only wrap lines matching (regex)
             </label>
             <Input
@@ -183,7 +183,7 @@ export default function AddPrefixSuffix() {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label for="aps-escape" class="text-sm font-medium text-unq-text">
+            <label for="aps-escape" class="text-unq-text text-sm font-medium">
               Escape content for
             </label>
             <Select
@@ -197,7 +197,7 @@ export default function AddPrefixSuffix() {
         </div>
 
         <p class="text-unq-text-3 mt-3 text-xs">
-          Use <code class="font-mono text-unq-accent">{"{n}"}</code> in prefix/suffix for the line
+          Use <code class="text-unq-accent font-mono">{"{n}"}</code> in prefix/suffix for the line
           counter.
         </p>
       </Card>

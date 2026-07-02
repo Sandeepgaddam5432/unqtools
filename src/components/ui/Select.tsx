@@ -22,7 +22,7 @@ export function Select({ label, hint, options, id, class: cls, ...rest }: Select
   return (
     <div class={`flex flex-col gap-1.5 ${cls ?? ""}`}>
       {label && (
-        <label for={inputId} class="text-sm font-medium text-unq-text">
+        <label for={inputId} class="text-unq-text text-sm font-medium">
           {label}
         </label>
       )}
@@ -39,7 +39,7 @@ export function Select({ label, hint, options, id, class: cls, ...rest }: Select
           ))}
         </select>
         <svg
-          class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-unq-text-muted"
+          class="text-unq-text-muted pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
           width="14"
           height="14"
           viewBox="0 0 24 24"
@@ -53,7 +53,7 @@ export function Select({ label, hint, options, id, class: cls, ...rest }: Select
           <path d="m6 9 6 6 6-6" />
         </svg>
       </div>
-      {hint && <p class="text-xs text-unq-text-muted">{hint}</p>}
+      {hint && <p class="text-unq-text-muted text-xs">{hint}</p>}
     </div>
   );
 }

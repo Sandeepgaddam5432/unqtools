@@ -131,12 +131,12 @@ export default function DiffChecker() {
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div>
           <div class="mb-1.5 flex items-center justify-between">
-            <label for="dc-old" class="text-sm font-medium text-unq-text">
+            <label for="dc-old" class="text-unq-text text-sm font-medium">
               Original
             </label>
             <button
               type="button"
-              class="text-unq-text-3 text-xs hover:text-unq-accent"
+              class="text-unq-text-3 hover:text-unq-accent text-xs"
               onClick={() => oldFileRef.current?.click()}
             >
               📁 Load file
@@ -160,12 +160,12 @@ export default function DiffChecker() {
         </div>
         <div>
           <div class="mb-1.5 flex items-center justify-between">
-            <label for="dc-new" class="text-sm font-medium text-unq-text">
+            <label for="dc-new" class="text-unq-text text-sm font-medium">
               Modified
             </label>
             <button
               type="button"
-              class="text-unq-text-3 text-xs hover:text-unq-accent"
+              class="text-unq-text-3 hover:text-unq-accent text-xs"
               onClick={() => newFileRef.current?.click()}
             >
               📁 Load file
@@ -262,8 +262,8 @@ export default function DiffChecker() {
       ) : (
         <>
           {/* Stats bar */}
-          <div class="flex flex-wrap items-center gap-4 rounded-lg border border-unq-border-subtle px-4 py-2 text-sm">
-            <span class="font-medium text-unq-text">Diff</span>
+          <div class="border-unq-border-subtle flex flex-wrap items-center gap-4 rounded-lg border px-4 py-2 text-sm">
+            <span class="text-unq-text font-medium">Diff</span>
             <span class="text-unq-success-strong">+{stats.additions} added</span>
             <span class="text-unq-danger-strong">−{stats.deletions} removed</span>
             <span class="text-unq-text-3">{stats.changes} changed</span>

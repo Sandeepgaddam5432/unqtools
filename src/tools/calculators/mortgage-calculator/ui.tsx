@@ -264,7 +264,7 @@ export default function MortgageCalculator() {
             </Card>
             <Card class="border-unq-accent/40 !p-4 text-center">
               <p class="text-unq-muted text-xs uppercase tracking-wide">Total Monthly</p>
-              <p class="mt-1 text-2xl font-bold tabular-nums text-unq-accent">
+              <p class="text-unq-accent mt-1 text-2xl font-bold tabular-nums">
                 {fmt(result.monthlyBreakdown.total)}
               </p>
               <p class="text-unq-muted text-[10px]">P&I + tax + ins + PMI + HOA</p>
@@ -302,7 +302,7 @@ export default function MortgageCalculator() {
                   {result.monthlyBreakdown.hoa > 0 ? fmt(result.monthlyBreakdown.hoa) : "—"}
                 </span>
               </div>
-              <div class="flex justify-between border-t border-unq-border pt-2 font-semibold">
+              <div class="border-unq-border flex justify-between border-t pt-2 font-semibold">
                 <span>Total monthly</span>
                 <span class="font-mono">{fmt(result.monthlyBreakdown.total)}</span>
               </div>
@@ -325,9 +325,9 @@ export default function MortgageCalculator() {
               {result.interestSaved > 0 && (
                 <p class="mt-1 text-sm">
                   <strong>Extra payments save:</strong>{" "}
-                  <span class="font-mono text-unq-success">{fmt(result.interestSaved)}</span>{" "}
+                  <span class="text-unq-success font-mono">{fmt(result.interestSaved)}</span>{" "}
                   interest and{" "}
-                  <span class="font-mono text-unq-success">{result.monthsSaved} months</span> off
+                  <span class="text-unq-success font-mono">{result.monthsSaved} months</span> off
                   your loan.
                 </p>
               )}
@@ -340,13 +340,13 @@ export default function MortgageCalculator() {
                 <p class="text-sm font-semibold">Amortization schedule</p>
                 <div class="flex gap-1 text-xs">
                   <button
-                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "monthly" ? "bg-unq-primary text-unq-bg" : "border border-unq-border"}`}
+                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "monthly" ? "bg-unq-primary text-unq-bg" : "border-unq-border border"}`}
                     onClick={() => setScheduleGrouping("monthly")}
                   >
                     Monthly
                   </button>
                   <button
-                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "yearly" ? "bg-unq-primary text-unq-bg" : "border border-unq-border"}`}
+                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "yearly" ? "bg-unq-primary text-unq-bg" : "border-unq-border border"}`}
                     onClick={() => setScheduleGrouping("yearly")}
                   >
                     Yearly
@@ -371,8 +371,8 @@ export default function MortgageCalculator() {
               aria-label="Amortization schedule table — scrollable"
             >
               <table class="w-full text-xs">
-                <thead class="sticky top-0 bg-unq-surface">
-                  <tr class="text-unq-muted border-b border-unq-border text-left">
+                <thead class="bg-unq-surface sticky top-0">
+                  <tr class="text-unq-muted border-unq-border border-b text-left">
                     <th class="px-2 py-2">{scheduleGrouping === "monthly" ? "Mo" : "Yr"}</th>
                     <th class="px-2 py-2 text-right">Interest</th>
                     <th class="px-2 py-2 text-right">Principal</th>

@@ -227,7 +227,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
               <p class="mt-1 text-2xl font-bold tabular-nums">
                 {result.actualMonths}
                 {result.monthsSaved > 0 && (
-                  <span class="block text-sm text-unq-success">−{result.monthsSaved} saved</span>
+                  <span class="text-unq-success block text-sm">−{result.monthsSaved} saved</span>
                 )}
               </p>
             </Card>
@@ -237,7 +237,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
             <Card class="border-unq-success/40 bg-unq-success/5 !p-4">
               <p class="text-sm">
                 <strong>Interest saved by prepayment:</strong>{" "}
-                <span class="font-mono text-unq-success">{fmt(result.interestSaved)}</span>
+                <span class="text-unq-success font-mono">{fmt(result.interestSaved)}</span>
               </p>
             </Card>
           )}
@@ -248,13 +248,13 @@ Interest Saved: ${fmt(result.interestSaved)}`;
                 <p class="text-sm font-semibold">Amortization schedule</p>
                 <div class="flex gap-1 text-xs">
                   <button
-                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "monthly" ? "bg-unq-primary text-unq-bg" : "border border-unq-border"}`}
+                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "monthly" ? "bg-unq-primary text-unq-bg" : "border-unq-border border"}`}
                     onClick={() => setScheduleGrouping("monthly")}
                   >
                     Monthly
                   </button>
                   <button
-                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "yearly" ? "bg-unq-primary text-unq-bg" : "border border-unq-border"}`}
+                    class={`rounded-unq px-3 py-1 ${scheduleGrouping === "yearly" ? "bg-unq-primary text-unq-bg" : "border-unq-border border"}`}
                     onClick={() => setScheduleGrouping("yearly")}
                   >
                     Yearly
@@ -279,8 +279,8 @@ Interest Saved: ${fmt(result.interestSaved)}`;
               aria-label="Amortization schedule table — scrollable"
             >
               <table class="w-full text-xs">
-                <thead class="sticky top-0 bg-unq-surface">
-                  <tr class="text-unq-muted border-b border-unq-border text-left">
+                <thead class="bg-unq-surface sticky top-0">
+                  <tr class="text-unq-muted border-unq-border border-b text-left">
                     <th class="px-2 py-2">{scheduleGrouping === "monthly" ? "Month" : "Year"}</th>
                     <th class="px-2 py-2 text-right">EMI</th>
                     <th class="px-2 py-2 text-right">Interest</th>

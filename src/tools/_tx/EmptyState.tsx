@@ -14,7 +14,7 @@ interface EmptyStateProps {
 export function EmptyState({ icon = "✨", title, hint, children }: EmptyStateProps) {
   return (
     <div
-      class="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-unq-border p-8 text-center"
+      class="border-unq-border flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-8 text-center"
       style="min-height: 120px;"
     >
       <span style="font-size: 1.5rem;" aria-hidden="true">

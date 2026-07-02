@@ -174,12 +174,12 @@ export function ErrorBanner({
   return (
     <div
       role="alert"
-      class="border-unq-danger/40 flex items-start gap-3 rounded-lg border bg-unq-danger-subtle p-4"
+      class="border-unq-danger/40 bg-unq-danger-subtle flex items-start gap-3 rounded-lg border p-4"
     >
-      <AlertCircle size={18} class="mt-0.5 shrink-0 text-unq-danger" />
+      <AlertCircle size={18} class="text-unq-danger mt-0.5 shrink-0" />
       <div class="flex-1">
-        <p class="text-sm font-medium text-unq-danger">{title}</p>
-        <p class="mt-0.5 text-sm text-unq-text-muted">{message}</p>
+        <p class="text-unq-danger text-sm font-medium">{title}</p>
+        <p class="text-unq-text-muted mt-0.5 text-sm">{message}</p>
         {children}
       </div>
     </div>

@@ -51,11 +51,11 @@ export default function CaesarCipher() {
         class="min-h-[120px] resize-y"
       />
       <Card class="!p-4">
-        <p class="mb-2 text-sm font-medium text-unq-text">Mode</p>
+        <p class="text-unq-text mb-2 text-sm font-medium">Mode</p>
         <Segmented options={MODE_OPTIONS} value={mode} onChange={(v) => setMode(v as Mode)} />
         {(mode === "encrypt" || mode === "decrypt") && (
           <div class="mt-4 flex items-center gap-3">
-            <label for="cc-shift" class="text-sm font-medium text-unq-text">
+            <label for="cc-shift" class="text-unq-text text-sm font-medium">
               Shift (1–25):
             </label>
             <Input
@@ -93,13 +93,13 @@ export default function CaesarCipher() {
       )}
       {mode === "brute" && bruteResults.length > 0 && (
         <Card class="!p-4">
-          <p class="mb-3 text-sm font-medium text-unq-text">
+          <p class="text-unq-text mb-3 text-sm font-medium">
             All 25 candidates (ranked by frequency analysis)
           </p>
           <div class="unq-scroll-x max-h-[400px] overflow-y-auto">
             <table class="w-full text-sm">
-              <thead class="sticky top-0 bg-unq-surface">
-                <tr class="text-unq-text-2 border-b border-unq-border text-left">
+              <thead class="bg-unq-surface sticky top-0">
+                <tr class="text-unq-text-2 border-unq-border border-b text-left">
                   <th class="px-3 py-2">Rank</th>
                   <th class="px-3 py-2">Shift</th>
                   <th class="px-3 py-2">Plaintext</th>

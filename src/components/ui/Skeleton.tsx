@@ -30,13 +30,13 @@ export function EmptyState({ icon, title, description, action, class: cls }: Emp
   return (
     <div class={`px-4 py-12 text-center ${cls ?? ""}`}>
       {icon && (
-        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-unq-surface-hover text-unq-text-muted">
+        <div class="bg-unq-surface-hover text-unq-text-muted mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
           {icon}
         </div>
       )}
       <p class="text-base font-medium">{title}</p>
       {description && (
-        <p class="mx-auto mt-1 max-w-md text-pretty text-sm text-unq-text-muted">{description}</p>
+        <p class="text-unq-text-muted mx-auto mt-1 max-w-md text-pretty text-sm">{description}</p>
       )}
       {action && <div class="mt-4">{action}</div>}
     </div>

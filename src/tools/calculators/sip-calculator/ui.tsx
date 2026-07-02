@@ -238,8 +238,8 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
             </div>
             <div class="unq-scroll-x max-h-[420px] overflow-y-auto">
               <table class="w-full text-xs">
-                <thead class="sticky top-0 bg-unq-surface">
-                  <tr class="text-unq-muted border-b border-unq-border text-left">
+                <thead class="bg-unq-surface sticky top-0">
+                  <tr class="text-unq-muted border-unq-border border-b text-left">
                     <th class="px-2 py-2">Year</th>
                     <th class="px-2 py-2 text-right">Invested (year)</th>
                     <th class="px-2 py-2 text-right">Total Invested</th>

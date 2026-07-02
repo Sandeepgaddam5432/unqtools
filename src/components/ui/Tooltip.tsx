@@ -52,7 +52,7 @@ export function Tooltip({ text, children, side = "top", delay = 300 }: TooltipPr
       {show && (
         <span
           role="tooltip"
-          class={`absolute z-50 ${sideClass} pointer-events-none whitespace-nowrap rounded-md bg-unq-text px-2 py-1 text-xs font-medium text-unq-bg shadow-md`}
+          class={`absolute z-50 ${sideClass} bg-unq-text text-unq-bg pointer-events-none whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium shadow-md`}
         >
           {text}
         </span>

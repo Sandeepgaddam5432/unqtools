@@ -6,11 +6,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const counts = countByCategory();
 const cats = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
 const toolCount = TOOLS.length;
-const featuredIds = ["json-formatter", "diff-checker", "caesar-cipher", "color-picker"];
-const featured = featuredIds
-  .map((id) => TOOLS.find((t) => t.id === id))
-  .filter(Boolean)
-  .slice(0, 4);
 const ICON_MAP: Record<string, string> = {
   braces: "{ }",
   binary: "01",
@@ -27,245 +22,163 @@ const ICON_MAP: Record<string, string> = {
 ---
 
 <BaseLayout>
-  {/* Hero with aurora + floating blobs */}
-  <section class="hero">
-    <div class="aurora-bg absolute inset-0 opacity-60"></div>
-    <div class="blob blob--blue" style="top:25%;left:25%;"></div>
-    <div class="blob blob--orange" style="bottom:25%;right:25%;"></div>
-    <div class="hero__inner">
-      <h1 class="hero__title">
-        <span class="gradient-text">Tools</span> that respect<br />your data.
-      </h1>
-      <p class="hero__subtitle">
-        {toolCount} fast, free, offline-capable browser tools — converters, calculators, generators,
-        formatters. No uploads, no tracking, no accounts.
-      </p>
-      <div class="hero__terminal">
-        <span class="hero__terminal-prompt">$</span>
-        <span style="color:#fff;">uipro init --ai claude</span>
-        <span class="hero__terminal-cursor" style="color:#fff;">▋</span>
-      </div>
-      <div class="hero__ctas">
-        <a href="#tools" class="btn-primary">Browse tools</a>
-        <button
-          class="btn-secondary"
-          onclick="window.dispatchEvent(new CustomEvent('unq:open-command-bar'))"
+  <section class="relative overflow-hidden">
+    <div class="bg-grid absolute inset-0 opacity-50"></div>
+    <div class="relative mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-24">
+      <div
+        class="mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs text-fg-muted"
+      >
+        <svg
+          class="h-3 w-3 text-accent"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><path d="M12 3l1.9 5.8L20 10l-5.8 1.9L12 18l-1.9-6.1L4 10l6.1-1.2L12 3z"></path></svg
         >
-          Search (⌘K)
+        100% client-side · Privacy-first · No backend
+      </div>
+      <h1 class="text-balance text-4xl font-bold tracking-tight lg:text-5xl">
+        Every utility you need.
+        <br />
+        <span class="text-fg-muted">Nothing leaves your browser.</span>
+      </h1>
+      <p class="mx-auto mt-5 max-w-xl text-pretty text-base text-fg-muted lg:text-lg">
+        {toolCount} premium calculators, converters, and productivity tools — built to last, engineered
+        for speed, and designed to respect your privacy.
+      </p>
+      <div class="mx-auto mt-8 max-w-xl">
+        <button
+          id="hero-search"
+          class="flex h-12 w-full cursor-pointer items-center gap-2 rounded-xl border border-border bg-surface pl-4 pr-4 text-sm text-fg-subtle shadow-soft transition-colors hover:bg-surface-2"
+          aria-label="Search tools"
+        >
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
+          >
+          <span class="flex-1 text-left"
+            >Search {toolCount}+ tools — JSON, diff, EMI, word counter…</span
+          >
+          <kbd
+            class="inline-flex items-center rounded border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-2xs font-medium"
+            >⌘K</kbd
+          >
         </button>
       </div>
-    </div>
-  </section>
-
-  {/* Stats grid */}
-  <section class="content-wrap" style="padding-top:0;padding-bottom:48px;">
-    <div class="stats-grid">
-      <div class="glass-card glass-card-hover stat-tile">
-        <div class="stat-tile__icon">
+      <div
+        class="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-fg-subtle"
+      >
+        <span class="flex items-center gap-1.5">
           <svg
-            width="24"
-            height="24"
+            class="h-3.5 w-3.5 text-success"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="1.5"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-2.733a2.548 2.548 0 1 0-3.586-3.586l-9.408 9.408"
-            ></path></svg
+            stroke-width="2"
+            ><rect x="3" y="11" width="18" height="11" rx="2"></rect><path
+              d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg
           >
-        </div>
-        <div class="stat-tile__num gradient-text" data-countup={toolCount}>0</div>
-        <div class="stat-tile__label">Tools live</div>
-      </div>
-      <div class="glass-card glass-card-hover stat-tile">
-        <div class="stat-tile__icon">
+          No data uploaded
+        </span>
+        <span class="flex items-center gap-1.5">
           <svg
-            width="24"
-            height="24"
+            class="h-3.5 w-3.5 text-warning"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="1.5"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6Zm0 9.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25Zm9.75-9.75A2.25 2.25 0 0 1 15.75 3.75H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6Z"
-            ></path></svg
+            stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg
           >
-        </div>
-        <div class="stat-tile__num gradient-text" data-countup="13">0</div>
-        <div class="stat-tile__label">Categories</div>
-      </div>
-      <div class="glass-card glass-card-hover stat-tile">
-        <div class="stat-tile__icon">
+          Runs in your browser
+        </span>
+        <span class="flex items-center gap-1.5">
           <svg
-            width="24"
-            height="24"
+            class="h-3.5 w-3.5 text-accent"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="1.5"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.746 3.746 0 0 1 21 12Z"
-            ></path></svg
+            stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg
           >
-        </div>
-        <div class="stat-tile__num gradient-text" data-countup="100">0</div>
-        <div class="stat-tile__label">% private</div>
-      </div>
-      <div class="glass-card glass-card-hover stat-tile">
-        <div class="stat-tile__icon">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z"
-            ></path></svg
-          >
-        </div>
-        <div class="stat-tile__num gradient-text" data-countup="0">0</div>
-        <div class="stat-tile__label">Bytes uploaded</div>
+          Open-source libraries
+        </span>
       </div>
     </div>
   </section>
 
-  {/* Featured bento */}
-  {
-    featured.length > 0 && (
-      <section class="section content-wrap" id="tools">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow" style="margin:0 0 4px;">
-              Popular this week
-            </p>
-            <h2>
-              <span class="gradient-text">Featured</span> tools
-            </h2>
-          </div>
-        </div>
-        <div class="bento reveal">
-          {featured.map((t) => {
-            const glyph = ICON_MAP[t!.icon] ?? t!.icon.slice(0, 2).toUpperCase();
-            return (
-              <a href={`/tools/${t!.id}`} class="glass-card glass-card-hover card">
-                <span class="card__icon" aria-hidden="true">
-                  {glyph}
-                </span>
-                <h3 class="card__title">{t!.name}</h3>
-                <p class="card__desc">{t!.description}</p>
-                <div class="card__tags">
-                  <span class="card__tag">{CATEGORY_LABELS[t!.category].split(" ")[0]}</span>
-                </div>
-              </a>
-            );
-          })}
-        </div>
-      </section>
-    )
-  }
-
-  {/* All tools grid */}
-  <section class="section section--alt content-wrap">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow" style="margin:0 0 4px;">All tools</p>
-        <h2>Browse <span class="gradient-text">everything</span></h2>
-      </div>
-      <span class="section-head__count">{toolCount} total</span>
-    </div>
-    <div class="tool-grid reveal">
-      {
-        TOOLS.map((t) => {
-          const glyph = ICON_MAP[t.icon] ?? t.icon.slice(0, 2).toUpperCase();
-          return (
-            <a href={`/tools/${t.id}`} class="glass-card glass-card-hover card">
-              <span class="card__icon" aria-hidden="true">
-                {glyph}
-              </span>
-              <h3 class="card__title">{t.name}</h3>
-              <p class="card__desc">{t.description}</p>
-              <div class="card__tags">
-                <span class="card__tag">{CATEGORY_LABELS[t.category].split(" ")[0]}</span>
-              </div>
-            </a>
-          );
-        })
-      }
-    </div>
-  </section>
-
-  {/* Category sections */}
-  {
-    cats.map((c) => {
-      const tools = TOOLS.filter((t) => t.category === c);
-      return (
-        <section class="section content-wrap">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow" style="margin:0 0 4px;">
-                {tools.length} tool{tools.length === 1 ? "" : "s"}
-              </p>
-              <h2>
-                {CATEGORY_LABELS[c].split(" ")[0]}{" "}
-                <span class="gradient-text">
-                  {CATEGORY_LABELS[c].split(" ").slice(1).join(" ")}
-                </span>
+  <div class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    {/* Categories — ported from toolhub's category section pattern */}
+    {
+      cats.map((cat) => {
+        const tools = TOOLS.filter((t) => t.category === cat);
+        return (
+          <section class="mb-10">
+            <div class="mb-3 flex items-center justify-between">
+              <h2 class="text-sm font-semibold uppercase tracking-wide text-fg-muted">
+                {CATEGORY_LABELS[cat]}
               </h2>
+              <span class="text-xs text-fg-subtle">
+                {tools.length} tool{tools.length === 1 ? "" : "s"}
+              </span>
             </div>
-            <a href={`/category/${c}`} class="cta-link">
-              View all
-            </a>
-          </div>
-          <div class="tool-grid reveal">
-            {tools.slice(0, 8).map((t) => {
-              const glyph = ICON_MAP[t.icon] ?? t.icon.slice(0, 2).toUpperCase();
-              return (
-                <a href={`/tools/${t.id}`} class="glass-card glass-card-hover card">
-                  <span class="card__icon" aria-hidden="true">
-                    {glyph}
-                  </span>
-                  <h3 class="card__title">{t.name}</h3>
-                  <p class="card__desc">{t.description}</p>
-                  <div class="card__tags">
-                    <span class="card__tag">{CATEGORY_LABELS[t.category].split(" ")[0]}</span>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        </section>
-      );
-    })
-  }
-
-  {/* CTA band */}
-  <section class="section content-wrap">
-    <div
-      class="glass-card aurora-bg"
-      style="padding:clamp(32px,5vw,56px);text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;"
-    >
-      <p class="eyebrow" style="margin:0;">Install UnQTools</p>
-      <h2 style="font-size:var(--text-h2);max-width:540px;">
-        Add it to your home screen. Works offline, no account.
-      </h2>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:4px;">
-        <button
-          class="btn-primary"
-          onclick="window.dispatchEvent(new CustomEvent('unq:install-prompt'))"
-          >Install UnQTools</button
-        >
-        <a href="/category/developer" class="btn-secondary">Browse tools</a>
-      </div>
-    </div>
-  </section>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {tools.map((tool) => {
+                const glyph = ICON_MAP[tool.icon] ?? tool.icon.slice(0, 2).toUpperCase();
+                return (
+                  <a
+                    href={`/tools/${tool.id}`}
+                    class="tool-card group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                  >
+                    <div class="mb-3 flex items-start justify-between">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-soft font-mono text-sm text-accent transition-transform group-hover:scale-105">
+                        {glyph}
+                      </div>
+                    </div>
+                    <h3 class="mb-1 text-sm font-semibold tracking-tight transition-colors group-hover:text-accent">
+                      {tool.name}
+                    </h3>
+                    <p class="line-clamp-2 text-xs leading-relaxed text-fg-muted">
+                      {tool.description}
+                    </p>
+                    <div class="mt-3 flex items-center gap-1 text-xs text-fg-subtle opacity-0 transition-opacity group-hover:opacity-100">
+                      Open
+                      <svg
+                        class="h-3 w-3"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
 </BaseLayout>
+
+<script is:inline>
+  document.getElementById("hero-search")?.addEventListener("click", () => {
+    window.dispatchEvent(new CustomEvent("unq:open-command-bar"));
+  });
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

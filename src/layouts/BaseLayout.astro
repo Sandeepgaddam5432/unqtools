@@ -1,44 +1,22 @@
 ---
 import "../styles/global.css";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/700.css";
-import "@fontsource/space-grotesk/400.css";
-import "@fontsource/space-grotesk/500.css";
-import "@fontsource/space-grotesk/600.css";
-import "@fontsource/space-grotesk/700.css";
-import "@fontsource/dm-sans/400.css";
-import "@fontsource/dm-sans/500.css";
-import "@fontsource/dm-sans/700.css";
 import { themeNoFoUcScript } from "../lib/theme";
-import { TOOLS } from "../lib/registry";
-import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "../lib/tool";
 import CommandBarMount from "../components/CommandBarMount.astro";
 
 interface Props {
   title?: string;
   description?: string;
-  activeCategory?: ToolCategory;
+  activeCategory?: string;
 }
 
 const {
-  title = "UnQTools — Free, private, offline browser tools",
-  description = "UnQTools is a 100% static, privacy-first, offline-capable PWA of fast browser-based tools.",
-  activeCategory,
+  title = "UnQTools — All-in-One Utility Hub (100% Private, No Backend)",
+  description = "Premium collection of free online tools — calculators, converters, formatters. 100% client-side, privacy-first, no uploads.",
 } = Astro.props;
 
 const site = Astro.site ?? new URL("https://unqtools.pages.dev");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL("/icons/icon-512.png", site);
-const counts = ALL_CATEGORIES.reduce(
-  (acc, c) => {
-    acc[c] = TOOLS.filter((t) => t.category === c).length;
-    return acc;
-  },
-  {} as Record<string, number>,
-);
-const cats = ALL_CATEGORIES.filter((c) => counts[c] > 0).slice(0, 6);
 ---
 
 <!doctype html>
@@ -67,7 +45,6 @@ const cats = ALL_CATEGORIES.filter((c) => counts[c] > 0).slice(0, 6);
       is:inline
       set:html={JSON.stringify({
         prefetch: [{ where: { href_matches: "/tools/*" }, eagerness: "moderate" }],
-        prerender: [{ where: { selector_matches: ".card a" }, eagerness: "moderate" }],
       })}
     />
   </head>
@@ -75,234 +52,104 @@ const cats = ALL_CATEGORIES.filter((c) => counts[c] > 0).slice(0, 6);
     <a
       href="#main"
       class="sr-only"
-      style="position:absolute;left:12px;top:12px;z-index:99;background:var(--primary-fill);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;"
+      style="position:absolute;left:12px;top:12px;z-index:99;background:oklch(var(--accent));color:oklch(var(--accent-fg));padding:8px 16px;border-radius:8px;font-size:14px;"
       >Skip to content</a
     >
-    <div class="progress-bar" aria-hidden="true"></div>
 
-    {/* Floating pill glass nav */}
-    <nav class="nav-pill glass-card">
-      <a href="/" class="nav-pill__logo" aria-label="UnQTools home">
-        <span class="nav-pill__logo-mark">U</span>
-        <span>UnQTools</span>
-      </a>
-      <div class="nav-pill__links">
-        {
-          cats.map((c) => (
-            <a href={`/category/${c}`} aria-current={c === activeCategory ? "page" : undefined}>
-              {CATEGORY_LABELS[c].split(" ")[0]}
-            </a>
-          ))
-        }
-      </div>
-      <button class="nav-pill__search" id="cmdk-trigger" aria-label="Open command palette (⌘K)">
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
-        >
-        <span>Search tools…</span>
-        <span class="nav-pill__search-hint">⌘K</span>
-      </button>
-      <div class="nav-pill__actions">
-        <button
-          class="nav-pill__btn"
-          id="theme-toggle"
-          aria-label="Toggle color theme"
-          title="Toggle theme"
-        >
-          <svg
-            id="theme-icon-sun"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="hidden"
-            aria-hidden="true"
-            ><circle cx="12" cy="12" r="4"></circle><path
-              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
-            ></path></svg
-          >
-          <svg
-            id="theme-icon-moon"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="hidden"
-            aria-hidden="true"
-            ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg
-          >
-        </button>
-      </div>
-    </nav>
-
-    {/* Mobile category chips */}
-    {
-      activeCategory !== undefined && (
-        <div class="filter-chips content-wrap" style="padding-top:80px;">
-          <a
-            href="/"
-            class="filter-chip"
-            aria-current={activeCategory === undefined ? "page" : undefined}
-          >
-            All
-          </a>
-          {ALL_CATEGORIES.filter((c) => counts[c] > 0).map((c) => (
-            <a
-              href={`/category/${c}`}
-              class="filter-chip"
-              aria-current={c === activeCategory ? "page" : undefined}
+    {/* Glass header — ported from toolhub Header.tsx */}
+    <header class="glass sticky top-0 z-40 border-b border-border">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-14 items-center justify-between gap-3">
+          <a href="/" class="flex shrink-0 items-center gap-2" aria-label="UnQTools home">
+            <div
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-sm font-bold text-accent-fg"
             >
-              {CATEGORY_LABELS[c].split(" ")[0]}
-            </a>
-          ))}
+              U
+            </div>
+            <span class="hidden text-base font-semibold tracking-tight sm:inline">UnQTools</span>
+          </a>
+          <div class="max-w-md flex-1">
+            <button
+              id="cmdk-trigger"
+              class="flex w-full items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg-subtle transition-colors hover:bg-surface-2"
+              aria-label="Search tools (⌘K)"
+            >
+              <svg
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
+              >
+              <span class="flex-1 text-left">Search tools…</span>
+              <kbd
+                class="hidden items-center rounded border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-2xs font-medium sm:inline-flex"
+                >⌘K</kbd
+              >
+            </button>
+          </div>
+          <div class="flex shrink-0 items-center gap-1.5">
+            <button
+              id="theme-toggle"
+              class="flex h-9 w-9 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
+              aria-label="Toggle color theme"
+              title="Toggle theme"
+            >
+              <svg
+                id="theme-icon-sun"
+                class="hidden h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><circle cx="12" cy="12" r="4"></circle><path
+                  d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                ></path></svg
+              >
+              <svg
+                id="theme-icon-moon"
+                class="hidden h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg
+              >
+            </button>
+          </div>
         </div>
-      )
-    }
+      </div>
+    </header>
 
-    <main id="main" style="padding-top:72px;">
+    <main id="main" class="flex-1">
       <slot />
     </main>
 
-    {/* Footer */}
-    <footer class="footer">
-      <div class="footer__grid">
-        <div class="footer__col">
-          <a href="/" class="nav-pill__logo" style="margin-bottom:12px;">
-            <span class="nav-pill__logo-mark">U</span><span>UnQTools</span>
-          </a>
-          <p
-            style="color:var(--text-muted);font-size:var(--text-sm);max-width:280px;margin:8px 0 0;"
-          >
-            {TOOLS.length} browser-based tools — all private, all offline-capable.
+    {/* Footer — ported from toolhub Footer */}
+    <footer class="mt-20 border-t border-border py-8">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col items-center justify-between gap-3 text-xs text-fg-subtle sm:flex-row"
+        >
+          <p class="flex items-center gap-1.5">
+            <span class="font-medium text-fg-muted">UnQTools</span>
+            · 100% client-side · No tracking · No uploads
           </p>
+          <p>Built with Astro, Preact &amp; WebAssembly</p>
         </div>
-        <div class="footer__col">
-          <h3>Categories</h3>
-          <ul>
-            <li><a href="/category/developer">Developer</a></li>
-            <li><a href="/category/calculators">Calculators</a></li>
-            <li><a href="/category/text">Text &amp; Writing</a></li>
-            <li><a href="/category/image">Image</a></li>
-          </ul>
-        </div>
-        <div class="footer__col">
-          <h3>Popular</h3>
-          <ul>
-            <li><a href="/tools/json-formatter">JSON Formatter</a></li>
-            <li><a href="/tools/diff-checker">Diff Checker</a></li>
-            <li><a href="/tools/base64">Base64</a></li>
-            <li><a href="/tools/caesar-cipher">Caesar Cipher</a></li>
-          </ul>
-        </div>
-        <div class="footer__col">
-          <h3>About</h3>
-          <ul>
-            <li>100% private</li>
-            <li>Installable PWA</li>
-            <li>Works offline</li>
-            <li>
-              <a
-                href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
-                target="_blank"
-                rel="noopener">LICENSE</a
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer__bottom">
-        <p>&copy; {new Date().getFullYear()} UnQTools. All rights reserved.</p>
-        <p>Proprietary &amp; confidential · 100% static</p>
       </div>
     </footer>
 
     <CommandBarMount />
 
-    {/* Reveal + spotlight + theme + cmdk scripts */}
-    <script is:inline>
-      (function () {
-        function init() {
-          const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
-          const reveals = document.querySelectorAll(".reveal:not(.is-in)");
-          if (rm || !("IntersectionObserver" in window)) {
-            reveals.forEach((el) => el.classList.add("is-in"));
-          } else {
-            const io = new IntersectionObserver(
-              (entries) => {
-                entries.forEach((e) => {
-                  if (e.isIntersecting) {
-                    e.target.classList.add("is-in");
-                    io.unobserve(e.target);
-                  }
-                });
-              },
-              { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
-            );
-            reveals.forEach((el, i) => {
-              el.style.setProperty("--i", i % 6);
-              io.observe(el);
-            });
-          }
-          if (!rm) {
-            document.querySelectorAll(".glass-card-hover:not([data-spot])").forEach((card) => {
-              card.dataset.spot = "1";
-              card.addEventListener("pointermove", (e) => {
-                const r = card.getBoundingClientRect();
-                card.style.setProperty("--mx", e.clientX - r.left + "px");
-                card.style.setProperty("--my", e.clientY - r.top + "px");
-              });
-            });
-          }
-          // Count-up
-          document.querySelectorAll("[data-countup]").forEach((el) => {
-            if (rm) {
-              el.textContent = el.getAttribute("data-countup");
-              return;
-            }
-            const cio = new IntersectionObserver(
-              (entries) => {
-                entries.forEach((e) => {
-                  if (!e.isIntersecting) return;
-                  cio.unobserve(e.target);
-                  const end = Number(e.target.getAttribute("data-countup"));
-                  const t0 = performance.now();
-                  const dur = 1200;
-                  function tick(t) {
-                    const p = Math.min(1, (t - t0) / dur);
-                    e.target.textContent = Math.round(
-                      end * (1 - Math.pow(1 - p, 3)),
-                    ).toLocaleString();
-                    if (p < 1) requestAnimationFrame(tick);
-                  }
-                  requestAnimationFrame(tick);
-                });
-              },
-              { threshold: 0.6 },
-            );
-            cio.observe(el);
-          });
-        }
-        document.addEventListener("astro:page-load", init);
-        init();
-      })();
-    </script>
+    {/* Theme + cmdk scripts */}
     <script is:inline>
       (function () {
         const KEY = "unq-theme";
