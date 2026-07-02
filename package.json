@@ -7,14 +7,17 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "npm run build && wrangler dev",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "11",
     "@astrojs/preact": "4.0.7",
     "@astrojs/sitemap": "3.2.1",
     "@astrojs/tailwind": "5.1.4",
@@ -42,7 +45,8 @@
     "prettier-plugin-tailwindcss": "0.6.9",
     "typescript": "5.7.2",
     "typescript-eslint": "8.19.1",
-    "vitest": "2.1.8"
+    "vitest": "2.1.8",
+    "wrangler": "^4.107.0"
   },
   "engines": {
     "node": ">=20.0.0"

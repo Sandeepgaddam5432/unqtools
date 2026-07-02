@@ -4,6 +4,8 @@ import preact from "@astrojs/preact";
 import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // UnQTools — static, privacy-first, offline-capable PWA.
 // Static output only; no SSR, no server-side runtime, no SPA fallback.
 // Deploy target: Cloudflare Pages (every route is its own prerendered HTML file).
@@ -13,7 +15,8 @@ import sitemap from "@astrojs/sitemap";
 // — update this once and everything downstream updates with it.
 export default defineConfig({
   site: "https://unqtools.pages.dev",
-  output: "static",
+  output: "hybrid",
+
   // No `adapter` — pure static build. Cloudflare Pages serves the dist/ directory as-is.
   integrations: [
     preact({ compat: true }),
@@ -27,11 +30,15 @@ export default defineConfig({
       filter: (page) => !page.includes("/404"),
     }),
   ],
+
   vite: {
     worker: { format: "es" },
   },
+
   build: {
     // Inline small stylesheets to reduce render-blocking requests.
     inlineStylesheets: "auto",
   },
+
+  adapter: cloudflare()
 });
