@@ -3,94 +3,92 @@ const year = new Date().getFullYear();
 const toolCount = (await import("../lib/registry")).TOOLS.length;
 ---
 
-<footer class="mt-20 border-t border-unq-border">
-  <div class="unq-container py-10 sm:py-12">
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+<footer class="mt-32 border-t border-unq-border">
+  <div class="unq-container py-14 sm:py-16">
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
       <div class="sm:col-span-1">
         <a
           href="/"
-          class="flex items-center gap-2 font-semibold tracking-tight"
+          class="flex items-center gap-2.5 font-semibold tracking-tight"
           aria-label="UnQTools home"
         >
           <span
-            class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-unq-accent text-sm font-bold text-unq-accent-contrast"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-unq-accent text-sm font-bold text-unq-accent-contrast shadow-sm"
           >
             U
           </span>
-          <span class="text-base">UnQTools</span>
+          <span class="text-base tracking-tight">UnQTools</span>
         </a>
-        <p class="mt-3 max-w-xs text-pretty text-sm text-unq-text-muted">
+        <p class="mt-4 max-w-xs text-pretty text-sm leading-relaxed text-unq-text-muted">
           {toolCount} browser-based tools — all private, all offline-capable. Your data never leaves
           your device.
         </p>
       </div>
 
       <div>
-        <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-unq-text-subtle">
+        <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-unq-text-subtle">
           Product
         </p>
-        <ul class="space-y-2 text-sm">
+        <ul class="space-y-2.5 text-sm">
           <li>
-            <a href="/" class="text-unq-text-muted transition-colors hover:text-unq-text"
+            <a
+              href="/"
+              class="duration-normal text-unq-text-muted transition-colors ease-apple hover:text-unq-text"
               >All tools</a
             >
           </li>
           <li>
             <a
               href="/category/developer"
-              class="text-unq-text-muted transition-colors hover:text-unq-text">Developer</a
+              class="duration-normal text-unq-text-muted transition-colors ease-apple hover:text-unq-text"
+              >Developer</a
             >
           </li>
           <li>
             <a
               href="/category/calculators"
-              class="text-unq-text-muted transition-colors hover:text-unq-text">Calculators</a
+              class="duration-normal text-unq-text-muted transition-colors ease-apple hover:text-unq-text"
+              >Calculators</a
             >
           </li>
           <li>
             <a
               href="/category/text"
-              class="text-unq-text-muted transition-colors hover:text-unq-text">Text & Writing</a
+              class="duration-normal text-unq-text-muted transition-colors ease-apple hover:text-unq-text"
+              >Text &amp; Writing</a
             >
           </li>
           <li>
             <a
               href="/category/image"
-              class="text-unq-text-muted transition-colors hover:text-unq-text">Image</a
+              class="duration-normal text-unq-text-muted transition-colors ease-apple hover:text-unq-text"
+              >Image</a
             >
           </li>
         </ul>
       </div>
 
       <div>
-        <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-unq-text-subtle">
+        <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-unq-text-subtle">
           About
         </p>
-        <ul class="space-y-2 text-sm">
-          <li>
-            <span class="text-unq-text-muted">100% private</span>
-          </li>
-          <li>
-            <span class="text-unq-text-muted">Installable PWA</span>
-          </li>
-          <li>
-            <span class="text-unq-text-muted">No accounts, no tracking</span>
-          </li>
-          <li>
-            <span class="text-unq-text-muted">Works offline</span>
-          </li>
+        <ul class="space-y-2.5 text-sm text-unq-text-muted">
+          <li>100% private</li>
+          <li>Installable PWA</li>
+          <li>No accounts, no tracking</li>
+          <li>Works offline</li>
         </ul>
       </div>
     </div>
 
     <div
-      class="mt-10 flex flex-col items-start justify-between gap-3 border-t border-unq-border pt-6 text-xs text-unq-text-muted sm:flex-row sm:items-center"
+      class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-unq-border pt-7 text-xs text-unq-text-muted sm:flex-row sm:items-center"
     >
       <p>&copy; {year} UnQTools. Proprietary &amp; confidential. All rights reserved.</p>
       <p>
         <a
           href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
-          class="underline underline-offset-2 transition-colors hover:text-unq-text"
+          class="duration-normal underline underline-offset-2 transition-colors ease-apple hover:text-unq-text"
           target="_blank"
           rel="noopener"
         >

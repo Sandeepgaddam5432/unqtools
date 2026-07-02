@@ -4,20 +4,26 @@ import { Home, Search } from "lucide-preact";
 ---
 
 <BaseLayout title="Not found — UnQTools">
-  <div class="flex min-h-[60vh] items-center justify-center py-16 text-center">
-    <div class="space-y-6">
-      <p class="text-7xl font-bold tracking-tighter text-unq-text-subtle sm:text-8xl">404</p>
-      <div class="space-y-2">
-        <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Page not found</h1>
-        <p class="mx-auto max-w-md text-pretty text-unq-text-muted">
+  <div class="flex min-h-[60vh] items-center justify-center py-20 text-center">
+    <div class="space-y-7">
+      <p
+        class="text-7xl font-semibold tracking-display-lg text-unq-text-subtle sm:text-8xl lg:text-9xl"
+      >
+        404
+      </p>
+      <div class="space-y-3">
+        <h1 class="text-balance text-2xl font-semibold tracking-display sm:text-3xl">
+          Page not found
+        </h1>
+        <p class="mx-auto max-w-md text-pretty leading-relaxed text-unq-text-muted">
           The tool or page you're looking for doesn't exist, or may have moved. Try searching for
           what you need.
         </p>
       </div>
-      <div class="flex flex-wrap items-center justify-center gap-2">
+      <div class="flex flex-wrap items-center justify-center gap-3">
         <a
           href="/"
-          class="unq-btn-base h-11 bg-unq-accent px-5 text-sm text-unq-accent-contrast shadow-sm hover:bg-unq-accent-hover hover:shadow-md"
+          class="unq-btn-base h-11 bg-unq-accent px-6 text-sm text-unq-accent-contrast shadow-sm hover:bg-unq-accent-hover hover:shadow-md"
         >
           <Home size={16} />
           Back to home
@@ -25,7 +31,7 @@ import { Home, Search } from "lucide-preact";
         <button
           type="button"
           onclick="window.dispatchEvent(new CustomEvent('unq:open-command-bar'))"
-          class="unq-btn-base h-11 border border-unq-border bg-unq-surface-elevated px-5 text-sm text-unq-text hover:bg-unq-surface-hover"
+          class="unq-btn-base h-11 border border-unq-border bg-unq-surface-elevated px-6 text-sm text-unq-text hover:border-unq-border-strong hover:bg-unq-surface-hover"
         >
           <Search size={16} />
           Search tools (⌘K)

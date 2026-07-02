@@ -1,15 +1,7 @@
 ---
 /**
- * ToolLayout — the consistent shell for every tool page.
- *
- * Sections:
- *  1. Breadcrumb (home / category / tool name)
- *  2. Eyebrow (category label) + title + subtitle + status badges
- *  3. ToolActions bar (Copy / Download / Share / Print / Reset) — slot
- *  4. The tool's actual UI — <slot />
- *  5. Privacy notice
- *  6. Related tools (same category, max 4)
- *  7. SEO content (intro + How-to + FAQ) — driven by tool manifest
+ * ToolLayout v2.1 — Apple-grade refinement.
+ * Consistent shell for every tool page.
  */
 import type { ToolManifest } from "../lib/tool";
 import { CATEGORY_LABELS } from "../lib/tool";
@@ -28,7 +20,7 @@ const relatedTools = byCategory(tool.category)
 const categoryLabel = CATEGORY_LABELS[tool.category];
 ---
 
-<article class="space-y-8">
+<article class="space-y-10">
   <!-- Breadcrumb -->
   <Breadcrumb
     items={[
@@ -38,50 +30,52 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
     ]}
   />
 
-  <!-- Header -->
-  <header class="space-y-3">
-    <div class="flex flex-wrap items-center gap-2">
-      <span class="text-xs font-semibold uppercase tracking-wider text-unq-accent">
+  <!-- Header — Apple-grade: tight tracking, generous air -->
+  <header class="space-y-4">
+    <div class="flex flex-wrap items-center gap-2.5">
+      <span class="text-xs font-semibold uppercase tracking-widest text-unq-accent">
         {categoryLabel}
       </span>
       {
         tool.requiresNetwork ? (
-          <span class="inline-flex items-center gap-1 rounded-full bg-unq-warning-subtle px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-unq-warning">
+          <span class="ring-unq-warning/20 inline-flex items-center gap-1.5 rounded-full bg-unq-warning-subtle px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-warning ring-1">
+            <span class="h-1.5 w-1.5 rounded-full bg-unq-warning" />
             Needs network
           </span>
         ) : (
-          <span class="inline-flex items-center gap-1 rounded-full bg-unq-success-subtle px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-unq-success">
+          <span class="ring-unq-success/20 inline-flex items-center gap-1.5 rounded-full bg-unq-success-subtle px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-success ring-1">
+            <span class="h-1.5 w-1.5 rounded-full bg-unq-success" />
             Offline-ready
           </span>
         )
       }
     </div>
-    <h1 class="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+    <h1 class="text-balance text-3xl font-semibold tracking-display-lg sm:text-4xl lg:text-5xl">
       {tool.name}
     </h1>
-    <p class="max-w-2xl text-pretty text-base text-unq-text-muted sm:text-lg">
+    <p class="max-w-2xl text-pretty text-lg leading-relaxed text-unq-text-muted sm:text-xl">
       {tool.description}
     </p>
   </header>
 
-  <!-- Tool UI (slot) -->
-  <div class="unq-card p-5 sm:p-6">
+  <!-- Tool UI (slot) — wrapped in a refined card -->
+  <div class="unq-card p-6 shadow-sm sm:p-8">
     <slot />
   </div>
 
-  <!-- Privacy notice -->
+  <!-- Privacy notice — Apple-grade refined -->
   <div
-    class="border-unq-success/30 flex items-start gap-3 rounded-lg border bg-unq-success-subtle p-4"
+    class="border-unq-success/20 flex items-start gap-3.5 rounded-xl border bg-unq-success-subtle p-5"
     role="note"
   >
     <svg
       class="mt-0.5 shrink-0 text-unq-success"
-      width="18"
-      height="18"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
+      stroke-width="1.75"
       stroke-linecap="round"
       stroke-linejoin="round"
       aria-hidden="true"
@@ -90,20 +84,20 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
       <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
     </svg>
     <div>
-      <p class="text-sm font-medium text-unq-text">100% private</p>
-      <p class="mt-0.5 text-sm text-unq-text-muted">
+      <p class="text-sm font-semibold text-unq-text">100% private</p>
+      <p class="mt-0.5 text-sm leading-relaxed text-unq-text-muted">
         This tool runs entirely in your browser. Your input never leaves your device — no uploads,
         no tracking, no accounts.
       </p>
     </div>
   </div>
 
-  <!-- Related tools -->
+  <!-- Related tools — Apple-grade spacing -->
   {
     relatedTools.length > 0 && (
       <section>
-        <h2 class="mb-4 text-lg font-semibold">Related tools</h2>
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 class="mb-5 text-xl font-semibold tracking-display">Related tools</h2>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {relatedTools.map((t) => (
             <ToolCard tool={t} />
           ))}
@@ -112,9 +106,9 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
     )
   }
 
-  <!-- SEO content -->
+  <!-- SEO content — Apple-grade typography -->
   <section
-    class="prose prose-sm prose-headings:tracking-tight prose-p:text-unq-text-muted prose-h2:text-unq-text prose-h3:text-unq-text prose-strong:text-unq-text prose-code:text-unq-text prose-code:bg-unq-surface-hover prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none max-w-none"
+    class="prose prose-sm prose-headings:tracking-display prose-headings:font-semibold prose-p:text-unq-text-muted prose-p:leading-relaxed prose-h2:text-unq-text prose-h3:text-unq-text prose-strong:text-unq-text prose-code:text-unq-text prose-code:bg-unq-surface-hover prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-li:text-unq-text-muted prose-li:leading-relaxed prose-ol:marker:text-unq-text-subtle max-w-none"
   >
     <h2>About {tool.name}</h2>
     <p>{tool.description}</p>
@@ -137,7 +131,7 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
             {tool.seo.faq.map((item) => (
               <>
                 <dt class="font-semibold text-unq-text">{item.q}</dt>
-                <dd class="mb-3">{item.a}</dd>
+                <dd class="mb-4 leading-relaxed">{item.a}</dd>
               </>
             ))}
           </dl>

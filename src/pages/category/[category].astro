@@ -12,51 +12,47 @@ export function getStaticPaths() {
 const { category } = Astro.params as { category: ToolCategory };
 const tools = byCategory(category);
 const label = CATEGORY_LABELS[category];
-
-// Pick the first tool's description as the category subtitle (or a default)
-const subtitle = tools[0]?.description
-  ? `Free, private, browser-based ${label.toLowerCase()} tools.`
-  : `${label} tools — all private, all offline-capable.`;
+const subtitle = `${tools.length} ${label.toLowerCase()} tool${tools.length === 1 ? "" : "s"} — all private, all offline-capable.`;
 ---
 
 <BaseLayout title={`${label} — UnQTools`} description={subtitle}>
-  <div class="space-y-8">
+  <div class="space-y-10">
     <Breadcrumb items={[{ label: "All tools", href: "/" }, { label }]} />
 
-    <header class="space-y-3">
-      <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-unq-accent">
+    <header class="space-y-4">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <span class="text-xs font-semibold uppercase tracking-widest text-unq-accent">
           Category
         </span>
         <span
-          class="inline-flex items-center gap-1 rounded-full bg-unq-surface-hover px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-unq-text-muted"
+          class="inline-flex items-center rounded-full bg-unq-surface-hover px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-text-muted ring-1 ring-unq-border"
         >
           {tools.length} tool{tools.length === 1 ? "" : "s"}
         </span>
       </div>
-      <h1 class="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+      <h1 class="text-balance text-3xl font-semibold tracking-display-lg sm:text-4xl lg:text-5xl">
         {label}
       </h1>
-      <p class="max-w-2xl text-pretty text-base text-unq-text-muted sm:text-lg">
+      <p class="max-w-2xl text-pretty text-lg leading-relaxed text-unq-text-muted sm:text-xl">
         {subtitle}
       </p>
     </header>
 
     {
       tools.length === 0 ? (
-        <div class="unq-card p-8 text-center">
-          <p class="text-unq-text-muted">
+        <div class="unq-card p-10 text-center">
+          <p class="text-pretty text-unq-text-muted">
             No tools in this category yet. The catalog expands every week.
           </p>
           <a
             href="/"
-            class="unq-btn-base mt-4 inline-flex h-11 bg-unq-accent px-4 text-sm text-unq-accent-contrast"
+            class="unq-btn-base mt-5 inline-flex h-11 bg-unq-accent px-5 text-sm text-unq-accent-contrast shadow-sm hover:bg-unq-accent-hover hover:shadow-md"
           >
             Browse all tools
           </a>
         </div>
       ) : (
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {tools.map((t) => (
             <ToolCard tool={t} />
           ))}

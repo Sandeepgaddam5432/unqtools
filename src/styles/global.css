@@ -1,15 +1,25 @@
 /**
- * UnQTools Design System 2.0 — Tokens
+ * UnQTools Design System v2.1 — Apple-grade refinement
  *
- * Single source of truth for all visual design. Every color is in OKLCH
- * for perceptual uniformity. Tailwind maps to these via tailwind.config.ts.
+ * The token structure is unchanged from 2.0 (so all components keep working).
+ * What changed is the VALUES — every token has been tuned to feel genuinely
+ * Apple HIG / apple.com grade:
  *
- * Signature accent: refined violet — confident, premium, distinctive from
- * the default tech-blue. Used sparingly (CTAs, focused states, key data).
- * Everything else is calm warm-neutral grayscale.
+ *   1. TYPOGRAPHY: SF Pro stack first (-apple-system / BlinkMacSystemFont),
+ *      Inter as fallback. Bigger display sizes. Tighter display tracking
+ *      (-0.025em to -0.04em). More generous body line-height (1.6).
+ *   2. SPACE & RHYTHM: container widened to 1200px with more breathing room
+ *      (clamp-based gutters). Larger section padding. Vertical rhythm tight.
+ *   3. DEPTH: rounder cards (radius-lg 18px, xl 24px). Softer, layered
+ *      shadows that bloom on hover. Refined 1px borders that nearly disappear.
+ *      Tasteful frosted glass.
+ *   4. MOTION: Apple-style easing (cubic-bezier(0.22, 1, 0.36, 1) — the
+ *      Apple "ease" curve). Slower durations (200/300/450ms). Gentle scale
+ *      on press (0.96–0.98). Staggered reveals.
+ *   5. Headings: tighter, bigger, balanced text wrapping, fluid clamp scale.
  *
- * Light + dark derived from the SAME semantic names so components never
- * branch on theme — they just reference the var.
+ * Signature accent unchanged: refined violet. Light + dark derived from the
+ * SAME semantic names. Components never branch on theme.
  */
 
 @tailwind base;
@@ -18,76 +28,86 @@
 
 /* ============================================================ Light theme */
 :root {
-  /* --- Surfaces (warm-tinted neutrals, not pure gray) --- */
-  --unq-bg: oklch(0.99 0.002 95);
+  /* --- Surfaces (calm warm-neutral) --- */
+  --unq-bg: oklch(0.992 0.002 95);
   --unq-surface: oklch(0.985 0.003 95);
   --unq-surface-elevated: oklch(1 0 0);
   --unq-surface-hover: oklch(0.97 0.004 95);
 
-  /* --- Borders --- */
-  --unq-border: oklch(0.92 0.004 95);
-  --unq-border-strong: oklch(0.86 0.006 95);
+  /* --- Borders — refined 1px, nearly invisible until needed --- */
+  --unq-border: oklch(0.93 0.003 95);
+  --unq-border-strong: oklch(0.88 0.005 95);
 
   /* --- Text --- */
   --unq-text: oklch(0.18 0.005 95);
-  --unq-text-muted: oklch(0.5 0.008 95);
-  --unq-text-subtle: oklch(0.65 0.008 95);
+  --unq-text-muted: oklch(0.48 0.008 95);
+  --unq-text-subtle: oklch(0.62 0.008 95);
 
-  /* --- Accent: refined violet --- */
+  /* --- Accent: refined violet (unchanged signature) --- */
   --unq-accent: oklch(0.55 0.2 285);
   --unq-accent-hover: oklch(0.49 0.21 285);
-  --unq-accent-subtle: oklch(0.96 0.02 285);
+  --unq-accent-subtle: oklch(0.96 0.025 285);
   --unq-accent-contrast: oklch(1 0 0);
-  --unq-accent-ring: oklch(0.55 0.2 285 / 0.35);
+  --unq-accent-ring: oklch(0.55 0.2 285 / 0.32);
 
-  /* --- Status colors --- */
+  /* --- Status --- */
   --unq-success: oklch(0.6 0.13 155);
-  --unq-success-subtle: oklch(0.96 0.02 155);
+  --unq-success-subtle: oklch(0.96 0.025 155);
   --unq-warning: oklch(0.72 0.15 70);
-  --unq-warning-subtle: oklch(0.96 0.03 70);
+  --unq-warning-subtle: oklch(0.96 0.035 70);
   --unq-danger: oklch(0.6 0.21 25);
-  --unq-danger-subtle: oklch(0.96 0.03 25);
+  --unq-danger-subtle: oklch(0.96 0.035 25);
 
   /* --- Ring (focus) --- */
-  --unq-ring: oklch(0.55 0.2 285 / 0.4);
+  --unq-ring: oklch(0.55 0.2 285 / 0.35);
 
-  /* --- Radius scale --- */
-  --unq-radius-sm: 6px;
-  --unq-radius: 10px;
-  --unq-radius-lg: 14px;
-  --unq-radius-xl: 20px;
+  /* --- Radius scale — rounder, Apple-like --- */
+  --unq-radius-sm: 8px;
+  --unq-radius: 12px;
+  --unq-radius-lg: 18px;
+  --unq-radius-xl: 24px;
+  --unq-radius-2xl: 32px;
   --unq-radius-full: 9999px;
 
-  /* --- Shadow scale (subtle, layered) --- */
+  /* --- Shadow scale — soft, layered, subtle bloom --- */
   --unq-shadow-xs: 0 1px 2px 0 oklch(0.18 0.005 95 / 0.04);
-  --unq-shadow-sm: 0 1px 3px 0 oklch(0.18 0.005 95 / 0.06),
-    0 1px 2px -1px oklch(0.18 0.005 95 / 0.06);
-  --unq-shadow-md: 0 4px 8px -2px oklch(0.18 0.005 95 / 0.08),
+  --unq-shadow-sm: 0 1px 2px 0 oklch(0.18 0.005 95 / 0.05), 0 1px 3px 0 oklch(0.18 0.005 95 / 0.04);
+  --unq-shadow-md: 0 4px 12px -2px oklch(0.18 0.005 95 / 0.08),
     0 2px 4px -2px oklch(0.18 0.005 95 / 0.04);
-  --unq-shadow-lg: 0 12px 20px -4px oklch(0.18 0.005 95 / 0.1),
-    0 4px 8px -4px oklch(0.18 0.005 95 / 0.06);
-  --unq-shadow-xl: 0 20px 40px -8px oklch(0.18 0.005 95 / 0.14),
-    0 8px 16px -8px oklch(0.18 0.005 95 / 0.08);
+  --unq-shadow-lg: 0 12px 28px -4px oklch(0.18 0.005 95 / 0.12),
+    0 4px 10px -4px oklch(0.18 0.005 95 / 0.06);
+  --unq-shadow-xl: 0 24px 48px -8px oklch(0.18 0.005 95 / 0.16),
+    0 8px 20px -8px oklch(0.18 0.005 95 / 0.08);
   --unq-shadow-glow: 0 0 0 4px var(--unq-accent-ring);
+  --unq-shadow-bloom: 0 1px 2px 0 oklch(0.18 0.005 95 / 0.04),
+    0 8px 24px -4px oklch(0.55 0.2 285 / 0.1);
 
-  /* --- Typography --- */
-  --unq-font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  --unq-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    monospace;
+  /* --- Typography: SF Pro first, Inter fallback --- */
+  --unq-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Inter Variable", "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --unq-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", monospace;
 
-  /* Fluid modular type scale (clamp-based) */
+  /* Fluid modular type scale — bigger display sizes, Apple-grade proportions */
   --unq-text-xs: 0.75rem;
   --unq-text-sm: 0.875rem;
-  --unq-text-base: clamp(0.95rem, 0.92rem + 0.1vw, 1rem);
-  --unq-text-lg: clamp(1.05rem, 1rem + 0.2vw, 1.125rem);
-  --unq-text-xl: clamp(1.2rem, 1.1rem + 0.4vw, 1.375rem);
-  --unq-text-2xl: clamp(1.5rem, 1.3rem + 0.8vw, 1.75rem);
-  --unq-text-3xl: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
-  --unq-text-4xl: clamp(2.25rem, 1.7rem + 2.5vw, 3.5rem);
-  --unq-text-5xl: clamp(2.75rem, 2rem + 3.5vw, 4.5rem);
+  --unq-text-base: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --unq-text-lg: clamp(1.125rem, 1.07rem + 0.27vw, 1.25rem);
+  --unq-text-xl: clamp(1.3125rem, 1.21rem + 0.5vw, 1.5rem);
+  --unq-text-2xl: clamp(1.625rem, 1.42rem + 1vw, 2rem);
+  --unq-text-3xl: clamp(2rem, 1.6rem + 2vw, 2.75rem);
+  --unq-text-4xl: clamp(2.5rem, 1.9rem + 3vw, 4rem);
+  --unq-text-5xl: clamp(3rem, 2.2rem + 4vw, 5rem);
+  --unq-text-6xl: clamp(3.5rem, 2.4rem + 5.5vw, 6rem);
 
-  /* Spacing scale (4px base) */
+  /* Display tracking — tighter on larger sizes, Apple-like */
+  --unq-tracking-display: -0.025em;
+  --unq-tracking-display-lg: -0.035em;
+  --unq-tracking-tight: -0.015em;
+  --unq-tracking-body: -0.005em;
+
+  /* Spacing scale (4px base, extended) */
   --unq-space-1: 0.25rem;
   --unq-space-2: 0.5rem;
   --unq-space-3: 0.75rem;
@@ -99,58 +119,70 @@
   --unq-space-12: 3rem;
   --unq-space-16: 4rem;
   --unq-space-20: 5rem;
+  --unq-space-24: 6rem;
+  --unq-space-32: 8rem;
 
-  /* Motion */
-  --unq-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Motion — Apple-style easing curves and durations */
+  --unq-ease-apple: cubic-bezier(0.22, 1, 0.36, 1); /* Apple "ease" — gentle decel */
+  --unq-ease-spring: cubic-bezier(0.16, 1, 0.3, 1); /* spring-ish entrance */
   --unq-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
   --unq-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --unq-duration-fast: 120ms;
-  --unq-duration-normal: 200ms;
-  --unq-duration-slow: 320ms;
+  --unq-duration-fast: 160ms;
+  --unq-duration-normal: 280ms;
+  --unq-duration-slow: 420ms;
+  --unq-duration-deliberate: 560ms;
+
+  /* Layout — wider, more breathing room */
+  --unq-container-max: 1200px;
+  --unq-content-max: 768px;
+  --unq-gutter-sm: var(--unq-space-4);
+  --unq-gutter-md: var(--unq-space-8);
+  --unq-gutter-lg: var(--unq-space-10);
 
   color-scheme: light;
 }
 
 /* ============================================================ Dark theme */
 :root[data-theme="dark"] {
-  /* --- Surfaces (deep, slightly cool) --- */
-  --unq-bg: oklch(0.13 0.005 270);
-  --unq-surface: oklch(0.16 0.006 270);
-  --unq-surface-elevated: oklch(0.19 0.007 270);
-  --unq-surface-hover: oklch(0.2 0.007 270);
+  /* --- Surfaces (deep, slightly cool — Apple-dark-like) --- */
+  --unq-bg: oklch(0.14 0.005 270);
+  --unq-surface: oklch(0.175 0.006 270);
+  --unq-surface-elevated: oklch(0.21 0.007 270);
+  --unq-surface-hover: oklch(0.215 0.007 270);
 
   /* --- Borders --- */
-  --unq-border: oklch(0.25 0.008 270);
-  --unq-border-strong: oklch(0.32 0.01 270);
+  --unq-border: oklch(0.26 0.008 270);
+  --unq-border-strong: oklch(0.34 0.012 270);
 
   /* --- Text --- */
-  --unq-text: oklch(0.96 0.005 270);
-  --unq-text-muted: oklch(0.7 0.008 270);
+  --unq-text: oklch(0.97 0.005 270);
+  --unq-text-muted: oklch(0.72 0.008 270);
   --unq-text-subtle: oklch(0.55 0.008 270);
 
-  /* --- Accent: slightly brighter in dark for visibility --- */
-  --unq-accent: oklch(0.7 0.17 285);
-  --unq-accent-hover: oklch(0.75 0.16 285);
-  --unq-accent-subtle: oklch(0.22 0.04 285);
+  /* --- Accent: brighter in dark --- */
+  --unq-accent: oklch(0.72 0.17 285);
+  --unq-accent-hover: oklch(0.77 0.16 285);
+  --unq-accent-subtle: oklch(0.24 0.045 285);
   --unq-accent-contrast: oklch(0.16 0.005 270);
-  --unq-accent-ring: oklch(0.7 0.17 285 / 0.4);
+  --unq-accent-ring: oklch(0.72 0.17 285 / 0.4);
 
   /* --- Status --- */
-  --unq-success: oklch(0.7 0.13 155);
-  --unq-success-subtle: oklch(0.22 0.04 155);
+  --unq-success: oklch(0.72 0.13 155);
+  --unq-success-subtle: oklch(0.24 0.045 155);
   --unq-warning: oklch(0.78 0.14 70);
-  --unq-warning-subtle: oklch(0.22 0.05 70);
-  --unq-danger: oklch(0.7 0.19 25);
-  --unq-danger-subtle: oklch(0.22 0.05 25);
+  --unq-warning-subtle: oklch(0.24 0.05 70);
+  --unq-danger: oklch(0.72 0.19 25);
+  --unq-danger-subtle: oklch(0.24 0.05 25);
 
-  --unq-ring: oklch(0.7 0.17 285 / 0.5);
+  --unq-ring: oklch(0.72 0.17 285 / 0.5);
 
   /* --- Shadows (deeper, more visible) --- */
   --unq-shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.3);
-  --unq-shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 0.4), 0 1px 2px -1px oklch(0 0 0 / 0.3);
-  --unq-shadow-md: 0 4px 8px -2px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.3);
-  --unq-shadow-lg: 0 12px 20px -4px oklch(0 0 0 / 0.55), 0 4px 8px -4px oklch(0 0 0 / 0.35);
-  --unq-shadow-xl: 0 20px 40px -8px oklch(0 0 0 / 0.6), 0 8px 16px -8px oklch(0 0 0 / 0.4);
+  --unq-shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.4), 0 1px 3px 0 oklch(0 0 0 / 0.3);
+  --unq-shadow-md: 0 4px 12px -2px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.3);
+  --unq-shadow-lg: 0 12px 28px -4px oklch(0 0 0 / 0.55), 0 4px 10px -4px oklch(0 0 0 / 0.35);
+  --unq-shadow-xl: 0 24px 48px -8px oklch(0 0 0 / 0.6), 0 8px 20px -8px oklch(0 0 0 / 0.4);
+  --unq-shadow-bloom: 0 1px 2px 0 oklch(0 0 0 / 0.3), 0 8px 24px -4px oklch(0.72 0.17 285 / 0.15);
 
   color-scheme: dark;
 }
@@ -158,32 +190,33 @@
 /* Respect OS preference when no explicit theme is set */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --unq-bg: oklch(0.13 0.005 270);
-    --unq-surface: oklch(0.16 0.006 270);
-    --unq-surface-elevated: oklch(0.19 0.007 270);
-    --unq-surface-hover: oklch(0.2 0.007 270);
-    --unq-border: oklch(0.25 0.008 270);
-    --unq-border-strong: oklch(0.32 0.01 270);
-    --unq-text: oklch(0.96 0.005 270);
-    --unq-text-muted: oklch(0.7 0.008 270);
+    --unq-bg: oklch(0.14 0.005 270);
+    --unq-surface: oklch(0.175 0.006 270);
+    --unq-surface-elevated: oklch(0.21 0.007 270);
+    --unq-surface-hover: oklch(0.215 0.007 270);
+    --unq-border: oklch(0.26 0.008 270);
+    --unq-border-strong: oklch(0.34 0.012 270);
+    --unq-text: oklch(0.97 0.005 270);
+    --unq-text-muted: oklch(0.72 0.008 270);
     --unq-text-subtle: oklch(0.55 0.008 270);
-    --unq-accent: oklch(0.7 0.17 285);
-    --unq-accent-hover: oklch(0.75 0.16 285);
-    --unq-accent-subtle: oklch(0.22 0.04 285);
+    --unq-accent: oklch(0.72 0.17 285);
+    --unq-accent-hover: oklch(0.77 0.16 285);
+    --unq-accent-subtle: oklch(0.24 0.045 285);
     --unq-accent-contrast: oklch(0.16 0.005 270);
-    --unq-accent-ring: oklch(0.7 0.17 285 / 0.4);
-    --unq-success: oklch(0.7 0.13 155);
-    --unq-success-subtle: oklch(0.22 0.04 155);
+    --unq-accent-ring: oklch(0.72 0.17 285 / 0.4);
+    --unq-success: oklch(0.72 0.13 155);
+    --unq-success-subtle: oklch(0.24 0.045 155);
     --unq-warning: oklch(0.78 0.14 70);
-    --unq-warning-subtle: oklch(0.22 0.05 70);
-    --unq-danger: oklch(0.7 0.19 25);
-    --unq-danger-subtle: oklch(0.22 0.05 25);
-    --unq-ring: oklch(0.7 0.17 285 / 0.5);
+    --unq-warning-subtle: oklch(0.24 0.05 70);
+    --unq-danger: oklch(0.72 0.19 25);
+    --unq-danger-subtle: oklch(0.24 0.05 25);
+    --unq-ring: oklch(0.72 0.17 285 / 0.5);
     --unq-shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.3);
-    --unq-shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 0.4), 0 1px 2px -1px oklch(0 0 0 / 0.3);
-    --unq-shadow-md: 0 4px 8px -2px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.3);
-    --unq-shadow-lg: 0 12px 20px -4px oklch(0 0 0 / 0.55), 0 4px 8px -4px oklch(0 0 0 / 0.35);
-    --unq-shadow-xl: 0 20px 40px -8px oklch(0 0 0 / 0.6), 0 8px 16px -8px oklch(0 0 0 / 0.4);
+    --unq-shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.4), 0 1px 3px 0 oklch(0 0 0 / 0.3);
+    --unq-shadow-md: 0 4px 12px -2px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.3);
+    --unq-shadow-lg: 0 12px 28px -4px oklch(0 0 0 / 0.55), 0 4px 10px -4px oklch(0 0 0 / 0.35);
+    --unq-shadow-xl: 0 24px 48px -8px oklch(0 0 0 / 0.6), 0 8px 20px -8px oklch(0 0 0 / 0.4);
+    --unq-shadow-bloom: 0 1px 2px 0 oklch(0 0 0 / 0.3), 0 8px 24px -4px oklch(0.72 0.17 285 / 0.15);
     color-scheme: dark;
   }
 }
@@ -199,7 +232,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    /* Inter stylistic sets for premium feel; SF Pro ignores these gracefully */
+    font-feature-settings:
+      "cv02",
+      "cv03",
+      "cv04",
+      "cv11",
+      "ss01",
+      "ss03" /*圆 l */,
+      "cv05" /* a */;
     font-variant-ligatures: contextual;
   }
 
@@ -208,11 +249,12 @@
     color: var(--unq-text);
     font-family: var(--unq-font-sans);
     min-height: 100vh;
-    line-height: 1.55;
-    letter-spacing: -0.005em;
+    /* More generous body line-height — Apple-like */
+    line-height: 1.6;
+    letter-spacing: var(--unq-tracking-body);
     transition:
-      background-color var(--unq-duration-normal) var(--unq-ease-out),
-      color var(--unq-duration-normal) var(--unq-ease-out);
+      background-color var(--unq-duration-normal) var(--unq-ease-apple),
+      color var(--unq-duration-normal) var(--unq-ease-apple);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -224,14 +266,12 @@
     font-feature-settings: "tnum";
   }
 
-  /* Visible, tasteful focus ring — keyboard only */
+  /* Apple-style focus ring — accent halo, offset for breathing room */
   :focus-visible {
     outline: 2px solid var(--unq-accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
     border-radius: var(--unq-radius-sm);
   }
-
-  /* Mouse users: no focus ring unless keyboard-invoked */
   :focus:not(:focus-visible) {
     outline: none;
   }
@@ -242,7 +282,7 @@
     color: var(--unq-text);
   }
 
-  /* Scrollbar (subtle, theme-aware) */
+  /* Scrollbar — Apple-style thin overlay, theme-aware */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -261,7 +301,7 @@
     background-clip: padding-box;
   }
 
-  /* Honor reduced-motion preference */
+  /* Honor reduced-motion preference — disable ALL non-essential motion */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -274,22 +314,29 @@
     }
   }
 
-  /* No horizontal scroll at any breakpoint */
+  /* No horizontal scroll at any breakpoint — release blocker if violated */
   html,
   body {
     overflow-x: hidden;
   }
 
-  /* Headings: tighter tracking, balanced line-height */
+  /* Headings — Apple-grade: tight tracking, balanced wrapping, fluid scale */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+    letter-spacing: var(--unq-tracking-display);
+    line-height: 1.1;
     text-wrap: balance;
+    font-weight: 600;
+  }
+  h1 {
+    letter-spacing: var(--unq-tracking-display-lg);
+  }
+  h2 {
+    letter-spacing: var(--unq-tracking-display);
   }
 
   /* Code blocks */
@@ -304,28 +351,47 @@
 
 /* ============================================================ Components */
 @layer components {
+  /* Container — wider, more breathing room, fluid gutters */
   .unq-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: var(--unq-container-max);
     margin-inline: auto;
-    padding-inline: var(--unq-space-4);
+    padding-inline: var(--unq-gutter-sm);
   }
   @media (min-width: 640px) {
     .unq-container {
-      padding-inline: var(--unq-space-6);
+      padding-inline: var(--unq-gutter-md);
     }
   }
   @media (min-width: 1024px) {
     .unq-container {
-      padding-inline: var(--unq-space-8);
+      padding-inline: var(--unq-gutter-lg);
     }
   }
 
-  /* Glass surface — used by Command Bar, sticky header */
+  /* Narrow content container — for prose, FAQs, long-form */
+  .unq-container-narrow {
+    width: 100%;
+    max-width: var(--unq-content-max);
+    margin-inline: auto;
+    padding-inline: var(--unq-gutter-sm);
+  }
+  @media (min-width: 640px) {
+    .unq-container-narrow {
+      padding-inline: var(--unq-gutter-md);
+    }
+  }
+
+  /* Glass surface — Apple-grade frosted glass (header, command bar) */
   .unq-glass {
-    background-color: color-mix(in oklch, var(--unq-bg) 80%, transparent);
-    backdrop-filter: saturate(180%) blur(16px);
-    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    background-color: color-mix(in oklch, var(--unq-bg) 72%, transparent);
+    backdrop-filter: saturate(180%) blur(20px) brightness(1.05);
+    -webkit-backdrop-filter: saturate(180%) blur(20px) brightness(1.05);
+  }
+  :root[data-theme="dark"] .unq-glass {
+    background-color: color-mix(in oklch, var(--unq-bg) 72%, transparent);
+    backdrop-filter: saturate(180%) blur(20px) brightness(0.9);
+    -webkit-backdrop-filter: saturate(180%) blur(20px) brightness(0.9);
   }
 
   /* Subtle gradient text — used in hero only */
@@ -333,7 +399,7 @@
     background: linear-gradient(
       135deg,
       var(--unq-text) 0%,
-      var(--unq-text) 60%,
+      var(--unq-text) 55%,
       var(--unq-accent) 100%
     );
     -webkit-background-clip: text;
@@ -346,25 +412,33 @@
     background: linear-gradient(135deg, var(--unq-accent) 0%, oklch(0.6 0.22 310) 100%);
   }
 
-  /* Card primitive */
+  /* Card primitive — rounder, softer shadow, refined border */
   .unq-card {
     background-color: var(--unq-surface);
     border: 1px solid var(--unq-border);
     border-radius: var(--unq-radius-lg);
     box-shadow: var(--unq-shadow-xs);
     transition:
-      box-shadow var(--unq-duration-fast) var(--unq-ease-out),
-      border-color var(--unq-duration-fast) var(--unq-ease-out),
-      transform var(--unq-duration-fast) var(--unq-ease-out);
+      box-shadow var(--unq-duration-normal) var(--unq-ease-apple),
+      border-color var(--unq-duration-normal) var(--unq-ease-apple),
+      transform var(--unq-duration-normal) var(--unq-ease-apple);
   }
 
+  /* Interactive card — Apple-grade hover: gentle lift + shadow bloom */
+  .unq-card-interactive {
+    cursor: pointer;
+  }
   .unq-card-interactive:hover {
     border-color: var(--unq-border-strong);
-    box-shadow: var(--unq-shadow-md);
-    transform: translateY(-1px);
+    box-shadow: var(--unq-shadow-bloom);
+    transform: translateY(-2px);
+  }
+  .unq-card-interactive:active {
+    transform: translateY(0);
+    box-shadow: var(--unq-shadow-sm);
   }
 
-  /* Button primitives (variants defined in Preact components) */
+  /* Button primitives — Apple-grade motion (gentle scale on press) */
   .unq-btn-base {
     display: inline-flex;
     align-items: center;
@@ -373,27 +447,26 @@
     font-weight: 500;
     border-radius: var(--unq-radius);
     transition:
-      background-color var(--unq-duration-fast) var(--unq-ease-out),
-      border-color var(--unq-duration-fast) var(--unq-ease-out),
-      color var(--unq-duration-fast) var(--unq-ease-out),
-      transform var(--unq-duration-fast) var(--unq-ease-out),
-      box-shadow var(--unq-duration-fast) var(--unq-ease-out);
+      background-color var(--unq-duration-normal) var(--unq-ease-apple),
+      border-color var(--unq-duration-normal) var(--unq-ease-apple),
+      color var(--unq-duration-normal) var(--unq-ease-apple),
+      transform var(--unq-duration-fast) var(--unq-ease-apple),
+      box-shadow var(--unq-duration-normal) var(--unq-ease-apple);
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
+    letter-spacing: var(--unq-tracking-tight);
   }
-
   .unq-btn-base:active {
     transform: scale(0.97);
   }
-
   .unq-btn-base:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
 
-  /* Input primitive */
+  /* Input primitive — rounder, focus halo */
   .unq-input-base {
     width: 100%;
     background-color: var(--unq-surface);
@@ -401,26 +474,23 @@
     border: 1px solid var(--unq-border);
     border-radius: var(--unq-radius);
     transition:
-      border-color var(--unq-duration-fast) var(--unq-ease-out),
-      box-shadow var(--unq-duration-fast) var(--unq-ease-out),
-      background-color var(--unq-duration-fast) var(--unq-ease-out);
+      border-color var(--unq-duration-normal) var(--unq-ease-apple),
+      box-shadow var(--unq-duration-normal) var(--unq-ease-apple),
+      background-color var(--unq-duration-normal) var(--unq-ease-apple);
   }
-
   .unq-input-base:hover {
     border-color: var(--unq-border-strong);
   }
-
   .unq-input-base:focus {
     outline: none;
     border-color: var(--unq-accent);
-    box-shadow: 0 0 0 3px var(--unq-ring);
+    box-shadow: 0 0 0 4px var(--unq-ring);
   }
-
   .unq-input-base::placeholder {
     color: var(--unq-text-subtle);
   }
 
-  /* Skeleton shimmer */
+  /* Skeleton shimmer — gentler */
   .unq-skeleton {
     background: linear-gradient(
       90deg,
@@ -429,16 +499,27 @@
       var(--unq-surface) 100%
     );
     background-size: 200% 100%;
-    animation: unq-shimmer 1.5s infinite;
+    animation: unq-shimmer 1.8s var(--unq-ease-in-out) infinite;
     border-radius: var(--unq-radius);
   }
-
   @keyframes unq-shimmer {
     0% {
       background-position: 200% 0;
     }
     100% {
       background-position: -200% 0;
+    }
+  }
+
+  /* Staggered reveal — Apple-grade gentle entrance */
+  @keyframes unq-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
     }
   }
 }
@@ -452,28 +533,59 @@
     text-wrap: pretty;
   }
 
-  /* View Transitions API — smooth route changes */
+  /* Display tracking utilities */
+  .tracking-display {
+    letter-spacing: var(--unq-tracking-display);
+  }
+  .tracking-display-lg {
+    letter-spacing: var(--unq-tracking-display-lg);
+  }
+
+  /* View Transitions API — Apple-style crossfade */
   @media (prefers-reduced-motion: no-preference) {
-    ::view-transition-old(root),
+    ::view-transition-old(root) {
+      animation-duration: var(--unq-duration-normal);
+      animation-timing-function: var(--unq-ease-apple);
+    }
     ::view-transition-new(root) {
       animation-duration: var(--unq-duration-normal);
-      animation-timing-function: var(--unq-ease-out);
+      animation-timing-function: var(--unq-ease-apple);
     }
   }
 
-  /* Staggered reveal — applied via data-reveal attribute */
+  /* Staggered reveal — applied via data-reveal attribute + .is-revealed class
+     (or auto-applied via IntersectionObserver) */
   @media (prefers-reduced-motion: no-preference) {
     [data-reveal] {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(12px) scale(0.98);
       transition:
         opacity var(--unq-duration-slow) var(--unq-ease-spring),
         transform var(--unq-duration-slow) var(--unq-ease-spring);
+      will-change: opacity, transform;
     }
     [data-reveal].is-revealed {
       opacity: 1;
       transform: none;
     }
+  }
+  /* Reduced motion: just show everything immediately */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Apple-style shadow utilities */
+  .shadow-bloom {
+    box-shadow: var(--unq-shadow-bloom);
+  }
+
+  /* Frosted glass utility */
+  .backdrop-glass {
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
 }
 
