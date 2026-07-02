@@ -47,6 +47,21 @@ a {
   text-decoration: none;
   cursor: pointer;
 }
+/* Dark mode: links + eyebrows need a lighter accent for AA on dark bg.
+   --accent (oklch 0.55) is dark enough for white-text-on-accent (buttons/sidebar),
+   but too dark for accent-text-on-dark-bg. Use oklch(0.7) for text contexts. */
+[data-theme="dark"] a,
+[data-theme="dark"] .eyebrow,
+[data-theme="dark"] .cta-link {
+  color: oklch(0.7 0.18 259);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) a,
+  :root:not([data-theme]) .eyebrow,
+  :root:not([data-theme]) .cta-link {
+    color: oklch(0.7 0.18 259);
+  }
+}
 a:hover {
   text-decoration: underline;
 }
