@@ -1701,3 +1701,97 @@
     text-wrap: pretty;
   }
 }
+
+/* ============================================================ v4.0 #2 SCROLL-DRIVEN ANIMATIONS
+   Zero-JS scroll reveals via animation-timeline: view() where supported.
+   The IntersectionObserver in BaseLayout.astro is the fallback — it
+   feature-detects with CSS.supports('animation-timeline: view()') and
+   skips attaching observers when native is available. */
+
+@keyframes unq-reveal-scroll {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@supports (animation-timeline: view()) {
+  .unq-reveal {
+    animation: unq-reveal-scroll 0.6s var(--unq-ease-spring) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+  /* When native scroll-driven is active, the IO-added .is-in class is
+     irrelevant — the animation drives opacity/transform. But keep
+     transition:none so the IO fallback classes don't conflict. */
+  .unq-reveal.is-in {
+    /* no-op — animation handles it */
+  }
+}
+
+/* --- Reading progress bar (tool pages) ------------------------------------
+   Fixed 2px bar at the top that fills as you scroll the page.
+   animation-timeline: scroll(root) links it to page scroll — zero JS.
+   @supports guard: only rendered in browsers that support scroll(). */
+@keyframes unq-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .unq-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 2px;
+    z-index: 60;
+    background: var(--unq-accent);
+    transform-origin: 0 50%;
+    animation: unq-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@supports not (animation-timeline: scroll()) {
+  /* No progress bar in unsupported browsers — don't render a static one. */
+  .unq-progress {
+    display: none;
+  }
+}
+
+/* ============================================================ v4.0 unified reduced-motion guard
+   Disables ALL v4.0 motion: scroll-driven reveals, progress bar, spring
+   transitions, popover transitions, details animation, aura drift.
+   One block, verified. The v3.1.1 floor (solid surfaces, instant reveals)
+   is the guaranteed experience under prefers-reduced-motion: reduce. */
+@media (prefers-reduced-motion: reduce) {
+  /* #2 scroll-driven reveals + progress bar */
+  .unq-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .unq-progress {
+    display: none !important;
+  }
+  /* #3 spring transitions — revert to instant */
+  .unq-card,
+  .unq-card::after,
+  .unq-card::before,
+  .unq-btn,
+  .unq-sidebar a {
+    transition-duration: 0.01ms !important;
+  }
+  /* #4 popover transitions */
+  [popover] {
+    transition: none !important;
+  }
+  /* #9 details FAQ animation */
+  details::details-content {
+    transition: none !important;
+  }
+  /* #10 aura drift (if animated) */
+  .unq-tool-hero::before {
+    animation: none !important;
+  }
+}

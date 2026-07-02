@@ -24,6 +24,13 @@ const relatedTools = byCategory(tool.category)
 const categoryLabel = CATEGORY_LABELS[tool.category];
 ---
 
+{
+  /* v4.0 #2: Reading progress bar — fixed 2px accent bar at top, fills as
+    you scroll. animation-timeline: scroll(root) = zero JS. Hidden in
+    browsers without scroll() support (display:none via @supports not). */
+}
+<div class="unq-progress" aria-hidden="true"></div>
+
 {/* Mobile category chip row (above the tool content) */}
 <CategoryChips active={tool.category} />
 

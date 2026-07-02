@@ -108,10 +108,27 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
       (function () {
         function unqInitMotion() {
           const rm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          // v4.0 #2: If native CSS scroll-driven animations are supported,
+          // skip the IntersectionObserver — the @supports (animation-timeline:
+          // view()) CSS rule handles reveals with zero JS. Still show elements
+          // immediately under reduced-motion (the CSS @supports block doesn't
+          // run under prefers-reduced-motion, so IO is the fallback there).
+          const nativeScrollDriven =
+            typeof CSS !== "undefined" &&
+            typeof CSS.supports === "function" &&
+            CSS.supports("animation-timeline: view()");
           const reveals = document.querySelectorAll(
             ".unq-reveal:not(.is-in), [data-reveal]:not(.is-revealed)",
           );
           if (rm || !("IntersectionObserver" in window)) {
+            reveals.forEach(function (el) {
+              el.classList.add("is-in");
+              el.classList.add("is-revealed");
+            });
+          } else if (nativeScrollDriven) {
+            // Native scroll-driven animations active — mark all as visible
+            // so the CSS animation-timeline drives them. The .is-in class
+            // is a no-op under @supports(animation-timeline: view()).
             reveals.forEach(function (el) {
               el.classList.add("is-in");
               el.classList.add("is-revealed");
