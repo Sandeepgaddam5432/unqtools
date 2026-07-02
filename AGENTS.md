@@ -211,4 +211,34 @@ If it matters, it is committed to GitHub before the session ends.
 
 - Owner: **Sandeep Gaddam** (`Sandeepgaddam5432` on GitHub).
 - Licensing: **Proprietary — all rights reserved.** See `LICENSE`.
-- This is **NOT open source**. Do not add any open-source license file.
+- This is **NOT open source.** Do not add any open-source license file.
+
+---
+
+## 14. MANDATORY — UI/UX skill (permanent rule)
+
+**All UI/UX work must use the ui-ux-pro-max skill installed in this repo
+(`.claude/skills/ui-ux-pro-max/`).** This rule stays active until the project
+is complete.
+
+On a fresh sandbox:
+
+1. `git pull` — the skill files live in `.claude/skills/ui-ux-pro-max/`.
+2. Verify the skill exists: `ls .claude/skills/ui-ux-pro-max/SKILL.md`.
+3. If missing, reinstall: `npm install -g ui-ux-pro-max-cli && uipro init --ai claude`.
+4. Generate the design system BEFORE writing any UI code:
+   ```bash
+   python3 .claude/skills/ui-ux-pro-max/scripts/design_system.py \
+     "your product description" --project-name "UnQTools" --format markdown
+   ```
+5. Follow the skill's output (pattern, style, palette, typography, effects,
+   anti-patterns, pre-delivery checklist) as the design contract.
+6. Record deviations in `DESIGN-SYSTEM-V5.md` with reasons — no silent cherry-picking.
+7. Enforce the pre-delivery checklist everywhere:
+   - SVG icons (Lucide/Heroicons) — NO emojis as icons
+   - `cursor-pointer` on every clickable element
+   - 150–300ms hover transitions
+   - Text contrast ≥ 4.5:1 (WCAG AA)
+   - Visible focus states for keyboard nav
+   - `prefers-reduced-motion` respected
+   - Responsive at 375/768/1024/1440px

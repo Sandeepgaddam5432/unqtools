@@ -6,3 +6,4 @@ playwright-report/
 test-results/
 *.min.js
 public/sw.js
+.claude/**

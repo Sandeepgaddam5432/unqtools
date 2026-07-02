@@ -13,6 +13,7 @@ export default [
       "test-results/**",
       "public/sw.js",
       "src/env.d.ts",
+      ".claude/**",
     ],
   },
   ...tseslint.configs.recommended,
