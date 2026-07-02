@@ -31,14 +31,12 @@
   --unq-border-subtle: #e8e8ed;
   --unq-border-strong: #d2d2d7; /* alias of --unq-border */
 
-  /* --- Apple neutral text (text-3 bumped to pass WCAG AA 4.5:1 on white;
-       apple.com uses #86868b for decorative tertiary text, but we need
-       "no critical/serious axe violations" so text-3 = text-2 value) --- */
-  --unq-text: #1d1d1f;
-  --unq-text-2: #6e6e73;
-  --unq-text-3: #6e6e73;
-  --unq-text-muted: #6e6e73; /* alias of --unq-text-2 */
-  --unq-text-subtle: #6e6e73; /* alias of --unq-text-2 */
+  /* --- v5.0: Slate text (skill palette adapted for light mode AA) --- */
+  --unq-text: #0f172a; /* Skill bg repurposed as light-mode primary text */
+  --unq-text-2: #475569; /* Slate-600 (AA on white) */
+  --unq-text-3: #475569; /* Same as text-2 (AA requirement) */
+  --unq-text-muted: #475569;
+  --unq-text-subtle: #475569;
 
   /* --- Apple single-blue accent --- */
   --unq-link: #0066cc;
@@ -52,15 +50,15 @@
   --unq-ring: rgba(0, 113, 227, 0.35); /* alias of --unq-accent-ring */
 
   /* --- Apple status colors --- */
-  --unq-success: #34c759;
-  --unq-success-subtle: rgba(52, 199, 89, 0.1);
-  --unq-success-strong: #1d7a31; /* AA-compliant green for text on white */
+  --unq-success: #16a34a; /* v5.0: Green-600 (AA on white, skill-derived) */
+  --unq-success-subtle: rgba(22, 163, 74, 0.1);
+  --unq-success-strong: #16a34a;
   --unq-warning: #ff9f0a;
   --unq-warning-subtle: rgba(255, 159, 10, 0.1);
-  --unq-warning-strong: #a35e00; /* AA-compliant orange for text on white */
-  --unq-danger: #ff3b30;
-  --unq-danger-subtle: rgba(255, 59, 48, 0.1);
-  --unq-danger-strong: #b00020; /* AA-compliant red for text on white */
+  --unq-warning-strong: #a35e00;
+  --unq-danger: #dc2626; /* v5.0: Skill destructive */
+  --unq-danger-subtle: rgba(220, 38, 38, 0.1);
+  --unq-danger-strong: #b91c1c; /* Red-700 (AA on white) */
 
   /* --- Frosted glass (header, command bar) — v4.0 uses color-mix for
        better oklch blending with the surface underneath --- */
@@ -222,27 +220,27 @@
   color-scheme: light;
 }
 
-/* ============================================================ Dark theme */
+/* ============================================================ Dark theme (v5.0: skill-driven slate palette) */
 :root[data-theme="dark"] {
-  /* --- Apple dark neutral surfaces --- */
-  --unq-bg: #000000;
-  --unq-bg-secondary: #101012;
-  --unq-surface: #1d1d1f;
-  --unq-surface-2: #161618;
-  --unq-surface-elevated: #1d1d1f;
-  --unq-surface-hover: #161618;
+  /* --- v5.0: Slate-tinted dark surfaces (ui-ux-pro-max skill recommendation) --- */
+  --unq-bg: #0f172a; /* Skill: background — slate-900 */
+  --unq-bg-secondary: #10192e; /* Skill: muted */
+  --unq-surface: #1e293b; /* Derived: slate-800 */
+  --unq-surface-2: #334155; /* Skill: secondary — slate-700 */
+  --unq-surface-elevated: #1e293b;
+  --unq-surface-hover: #334155;
 
-  /* --- Apple dark borders --- */
-  --unq-border: #38383c;
-  --unq-border-subtle: #2a2a2d;
-  --unq-border-strong: #38383c;
+  /* --- v5.0: Slate borders (skill recommendation) --- */
+  --unq-border: rgba(255, 255, 255, 0.08); /* Skill: border */
+  --unq-border-subtle: rgba(255, 255, 255, 0.05);
+  --unq-border-strong: rgba(255, 255, 255, 0.12);
 
-  /* --- Apple dark text (text-3 bumped to text-2 value for WCAG AA on black) --- */
-  --unq-text: #f5f5f7;
-  --unq-text-2: #a1a1a6;
-  --unq-text-3: #a1a1a6;
-  --unq-text-muted: #a1a1a6;
-  --unq-text-subtle: #a1a1a6;
+  /* --- v5.0: Text (skill: foreground #FFFFFF + derived slate-400 for muted) --- */
+  --unq-text: #ffffff; /* Skill: foreground */
+  --unq-text-2: #94a3b8; /* Derived: slate-400 (AA on #0F172A) */
+  --unq-text-3: #94a3b8; /* Same as text-2 (AA requirement) */
+  --unq-text-muted: #94a3b8;
+  --unq-text-subtle: #94a3b8;
 
   /* --- Apple dark single-blue accent (brighter for contrast) --- */
   --unq-link: #2997ff;
@@ -255,16 +253,16 @@
   --unq-focus: #0a84ff;
   --unq-ring: rgba(10, 132, 255, 0.4);
 
-  /* --- Apple dark status (slightly brighter for AA contrast on dark) --- */
-  --unq-success: #30d158;
-  --unq-success-subtle: rgba(48, 209, 88, 0.18);
-  --unq-success-strong: #30d158;
+  /* --- v5.0: Status colors (skill: accent green #22C55E for success) --- */
+  --unq-success: #22c55e; /* Skill: accent/CTA — connected green */
+  --unq-success-subtle: rgba(34, 197, 94, 0.18);
+  --unq-success-strong: #22c55e;
   --unq-warning: #ff9f0a;
   --unq-warning-subtle: rgba(255, 159, 10, 0.18);
   --unq-warning-strong: #ff9f0a;
-  --unq-danger: #ff453a;
-  --unq-danger-subtle: rgba(255, 69, 58, 0.18);
-  --unq-danger-strong: #ff453a;
+  --unq-danger: #dc2626; /* Skill: destructive */
+  --unq-danger-subtle: rgba(220, 38, 38, 0.18);
+  --unq-danger-strong: #dc2626;
 
   /* --- Dark frosted glass — v4.0 color-mix --- */
   --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
@@ -287,21 +285,21 @@
    in BaseLayout sets data-theme before first paint; this is the fallback). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --unq-bg: #000000;
-    --unq-bg-secondary: #101012;
-    --unq-surface: #1d1d1f;
-    --unq-surface-2: #161618;
-    --unq-surface-elevated: #1d1d1f;
-    --unq-surface-hover: #161618;
-    --unq-border: #38383c;
-    --unq-border-subtle: #2a2a2d;
-    --unq-border-strong: #38383c;
-    --unq-text: #f5f5f7;
-    --unq-text-2: #a1a1a6;
-    --unq-text-3: #a1a1a6;
-    --unq-text-muted: #a1a1a6;
-    --unq-text-subtle: #a1a1a6;
-    --unq-link: #2997ff;
+    --unq-bg: #0f172a;
+    --unq-bg-secondary: #10192e;
+    --unq-surface: #1e293b;
+    --unq-surface-2: #334155;
+    --unq-surface-elevated: #1e293b;
+    --unq-surface-hover: #334155;
+    --unq-border: rgba(255, 255, 255, 0.08);
+    --unq-border-subtle: rgba(255, 255, 255, 0.05);
+    --unq-border-strong: rgba(255, 255, 255, 0.12);
+    --unq-text: #ffffff;
+    --unq-text-2: #94a3b8;
+    --unq-text-3: #94a3b8;
+    --unq-text-muted: #94a3b8;
+    --unq-text-subtle: #94a3b8;
+    --unq-link: #3b82f6;
     --unq-accent: #0a84ff;
     --unq-accent-hover: #409cff;
     --unq-accent-active: #0a84ff;
@@ -310,15 +308,15 @@
     --unq-accent-ring: rgba(10, 132, 255, 0.4);
     --unq-focus: #0a84ff;
     --unq-ring: rgba(10, 132, 255, 0.4);
-    --unq-success: #30d158;
-    --unq-success-subtle: rgba(48, 209, 88, 0.18);
-    --unq-success-strong: #30d158;
+    --unq-success: #22c55e;
+    --unq-success-subtle: rgba(34, 197, 94, 0.18);
+    --unq-success-strong: #22c55e;
     --unq-warning: #ff9f0a;
     --unq-warning-subtle: rgba(255, 159, 10, 0.18);
     --unq-warning-strong: #ff9f0a;
-    --unq-danger: #ff453a;
-    --unq-danger-subtle: rgba(255, 69, 58, 0.18);
-    --unq-danger-strong: #ff453a;
+    --unq-danger: #dc2626;
+    --unq-danger-subtle: rgba(220, 38, 38, 0.18);
+    --unq-danger-strong: #dc2626;
     --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
     --unq-glass-border: rgba(255, 255, 255, 0.1);
     --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
