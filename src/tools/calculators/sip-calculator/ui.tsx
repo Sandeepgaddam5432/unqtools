@@ -236,7 +236,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
                 label="Copy"
               />
             </div>
-            <div class="max-h-[420px] overflow-auto">
+            <div class="unq-scroll-x max-h-[420px] overflow-y-auto">
               <table class="w-full text-xs">
                 <thead class="sticky top-0 bg-unq-surface">
                   <tr class="text-unq-muted border-b border-unq-border text-left">

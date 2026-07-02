@@ -182,22 +182,24 @@ export default function UrlEncoderTool() {
               <p class="mb-2 text-xs font-semibold">
                 Query parameters ({parsed.searchParams.length})
               </p>
-              <table class="w-full text-xs">
-                <thead>
-                  <tr class="text-unq-muted border-b border-unq-border text-left">
-                    <th class="py-1 pr-2">Key</th>
-                    <th class="py-1">Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {parsed.searchParams.map((p, i) => (
-                    <tr key={i} class="border-unq-border/40 border-b">
-                      <td class="py-1 pr-2 font-mono">{p.key}</td>
-                      <td class="break-all py-1 font-mono">{p.value}</td>
+              <div class="unq-scroll-x">
+                <table class="w-full text-xs">
+                  <thead>
+                    <tr class="text-unq-muted border-b border-unq-border text-left">
+                      <th class="py-1 pr-2">Key</th>
+                      <th class="py-1">Value</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {parsed.searchParams.map((p, i) => (
+                      <tr key={i} class="border-unq-border/40 border-b">
+                        <td class="py-1 pr-2 font-mono">{p.key}</td>
+                        <td class="break-all py-1 font-mono">{p.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </Card>

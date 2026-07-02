@@ -273,7 +273,7 @@ Interest Saved: ${fmt(result.interestSaved)}`;
             </div>
 
             <div
-              class="max-h-[480px] overflow-auto"
+              class="unq-scroll-x max-h-[480px] overflow-y-auto"
               tabindex="0"
               role="region"
               aria-label="Amortization schedule table — scrollable"

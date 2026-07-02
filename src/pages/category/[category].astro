@@ -37,8 +37,8 @@ const icon = CATEGORY_ICONS[category];
 <BaseLayout title={`${label} — UnQTools`} description={subtitle}>
   {/* Compact header — breadcrumb + category title + count, no full-screen hero */}
   <section style="padding: 24px 0 16px;">
-    <div class="unq-shell" style="grid-template-columns: 1fr; gap: 0;">
-      <div style="max-width: 720px;">
+    <div class="unq-shell" style="grid-template-columns: minmax(0, 1fr); gap: 0;">
+      <div style="max-width: 720px; width: 100%; min-width: 0;">
         <Breadcrumb items={[{ label: "All tools", href: "/" }, { label }]} />
         <div class="unq-cat-head" style="margin: 16px 0 0 0;">
           <span class="unq-cat-head__icon" aria-hidden="true">{icon}</span>

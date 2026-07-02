@@ -17,7 +17,14 @@ const title = t.seo?.title ?? `${t.name} — UnQTools`;
 
 <BaseLayout title={title} description={t.description}>
   <ToolLayout tool={t}>
-    <div id="tool-root" data-tool-id={t.id} data-tool-component></div>
+    {
+      /* v3.1.1: min-height reserves space for the Preact island BEFORE
+        hydration. Without this, the empty #tool-root is ~0px tall, then
+        after JS loads the tool UI fills in and pushes everything below it
+        down → CLS ~0.12. The 320px min-height approximates the smallest
+        tool UI; larger tools grow naturally (min-height, not fixed height). */
+    }
+    <div id="tool-root" data-tool-id={t.id} data-tool-component style="min-height: 560px;"></div>
   </ToolLayout>
 </BaseLayout>
 

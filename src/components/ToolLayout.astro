@@ -143,7 +143,12 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
               {tool.seo.faq.map((item) => (
                 <>
                   <dt class="font-semibold text-unq-text">{item.q}</dt>
-                  <dd class="mb-4 leading-relaxed">{item.a}</dd>
+                  <dd
+                    class="mb-4 leading-relaxed"
+                    style="overflow-wrap: break-word; word-break: break-word;"
+                  >
+                    {item.a}
+                  </dd>
                 </>
               ))}
             </dl>

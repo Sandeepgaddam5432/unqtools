@@ -1,10 +1,20 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T11:05:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T11:50:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v3.1 — modern premium polish** ✅ COMPLETE → awaiting user confirmation before Phase 3
+**v3.1.1 — horizontal overflow fix + full-site audit** ✅ COMPLETE → awaiting user confirmation before Phase 3
+
+## Context (why this session happened)
+
+A real 390px mobile screenshot of /tools/emi-calculator confirmed horizontal
+overflow: the amortization table was clipping the last column (Balance),
+and the page-level overflow was clipping the privacy note, green callout,
+and Related tools cards. The root cause was a CSS Grid blowout: `.unq-shell`
+used `1fr` (= `minmax(auto, 1fr)`) which respects content min-width, so a
+wide table expanded the grid column beyond the viewport. The `html, body
+{ overflow-x: hidden }` band-aid was hiding the symptom, not fixing the cause.
 
 ## Context (why this session happened)
 
@@ -20,6 +30,172 @@ v3.0 (product-grade density) + v2.2 (motion + richer IA) + v2.1 (Apple tokens)
 are all DONE and correct. v3.1 only ADDS premium effects and OVERRIDES a few
 transition/gradient values. All tokens, motion primitives, density classes,
 and component structure from prior versions are preserved.
+
+## Done (this session — v3.1.1 horizontal overflow fix + full-site audit)
+
+### Resume ritual
+
+- [x] Fresh `git clone` of both repos (v3.1 commit `886c9f7` confirmed as base)
+- [x] Baseline gates: lint 0/0, 343/343 tests, 27 pages built
+
+### Root cause analysis
+
+The EMI amortization table (6 columns of currency values) was wider than the
+viewport on mobile. The `.unq-shell` grid used `grid-template-columns: 1fr`
+which behaves as `minmax(auto, 1fr)` — the `auto` minimum respects content
+intrinsic min-width, so the grid column expanded to fit the table, pushing
+the page wider. The `html, body { overflow-x: hidden }` band-aid hid the
+symptom (scrollWidth > innerWidth was masked at the documentElement level)
+but body.scrollWidth was still 529px in a 390px viewport.
+
+### Fixes applied
+
+1. **Removed `html, body { overflow-x: hidden }` band-aid** from `global.css`.
+   This was hiding the real overflow. Now if any element overflows, it's
+   immediately visible.
+
+2. **CSS Grid blowout fix**: `.unq-shell` changed from `grid-template-columns:
+236px 1fr` → `236px minmax(0, 1fr)`. The `minmax(0, 1fr)` allows the grid
+   column to shrink to 0, so `min-width: 0` on children works and wide content
+   scrolls inside `.unq-scroll-x` instead of pushing the page wider. Same fix
+   applied to the mobile breakpoint (`minmax(0, 1fr)` instead of `1fr`).
+
+3. **Inline style overrides fixed**: `index.astro` and `category/[category].astro`
+   had inline `style="grid-template-columns: 1fr"` that overrode the CSS class.
+   Changed both to `minmax(0, 1fr)`.
+
+4. **New `.unq-scroll-x` utility class**: `max-width: 100%; min-width: 0;
+overflow-x: auto` — the proper way to make a scroll container. Without
+   `max-width: 100%`, a div with `overflow: auto` grows to fit its content
+   instead of scrolling.
+
+5. **Tables wrapped in `.unq-scroll-x`**: EMI, mortgage, SIP amortization
+   tables + url-encoder query params table + word-counter keywords table +
+   UUID generator list. All now scroll horizontally inside their own box.
+
+6. **`.unq-card` hardened**: added `min-width: 0; max-width: 100%;
+overflow-wrap: break-word; word-break: break-word` — prevents card content
+   from pushing the page wider.
+
+7. **`.unq-prose` hardened**: added `width: 100%; min-width: 0;
+overflow-wrap: break-word` — prevents the 720px prose container from
+   expanding beyond its grid column.
+
+8. **`.unq-input` class created** (was missing): provides `max-width: 100%;
+min-width: 0` for `<pre>` output elements in json-formatter, base64,
+   hash-generator, url-encoder, case-converter.
+
+9. **`.unq-input-base` hardened**: added `max-width: 100%; min-width: 0`.
+
+10. **`.unq-cat-head` hardened**: added `min-width: 0; max-width: 100%` —
+    prevents the long "File Management, Archiving & Compression" title from
+    overflowing at 320px.
+
+11. **Headings hardened**: `.unq-hero-title` and `.unq-h1` got
+    `overflow-wrap: break-word` — prevents long category names from overflowing.
+
+12. **ToolLayout FAQ `<dd>`**: added `overflow-wrap: break-word;
+word-break: break-word` — prevents long FAQ answers from overflowing.
+
+13. **CLS fix**: `#tool-root` div in `tools/[id].astro` got
+    `min-height: 560px` — reserves space for the Preact island before
+    hydration, reducing CLS from ~0.12 to 0.0001 on tool pages.
+
+### Full-site audit — ALL 108 checks PASS
+
+**Overflow gate: 27 pages × 4 viewports (320 / 390 / 768 / 1440px)**
+
+Hard gate: `document.documentElement.scrollWidth <= window.innerWidth + 1`
+AND `document.body.scrollWidth <= window.innerWidth + 1`.
+
+```
+Route                                      | 320  | 390  | 768  | 1440
+/                                          | PASS | PASS | PASS | PASS
+/404.html                                  | PASS | PASS | PASS | PASS
+/tools/json-formatter                      | PASS | PASS | PASS | PASS
+/tools/base64                              | PASS | PASS | PASS | PASS
+/tools/url-encoder                         | PASS | PASS | PASS | PASS
+/tools/uuid-generator                      | PASS | PASS | PASS | PASS
+/tools/hash-generator                      | PASS | PASS | PASS | PASS
+/tools/color-picker                        | PASS | PASS | PASS | PASS
+/tools/image-compressor                    | PASS | PASS | PASS | PASS
+/tools/emi-calculator                      | PASS | PASS | PASS | PASS
+/tools/mortgage-calculator                 | PASS | PASS | PASS | PASS
+/tools/sip-calculator                      | PASS | PASS | PASS | PASS
+/tools/case-converter                      | PASS | PASS | PASS | PASS
+/tools/word-character-counter              | PASS | PASS | PASS | PASS
+/category/developer                        | PASS | PASS | PASS | PASS
+/category/calculators                      | PASS | PASS | PASS | PASS
+/category/text                             | PASS | PASS | PASS | PASS
+/category/image                            | PASS | PASS | PASS | PASS
+/category/pdf                              | PASS | PASS | PASS | PASS
+/category/audio-video                      | PASS | PASS | PASS | PASS
+/category/seo                              | PASS | PASS | PASS | PASS
+/category/network-security                 | PASS | PASS | PASS | PASS
+/category/file                             | PASS | PASS | PASS | PASS
+/category/business                         | PASS | PASS | PASS | PASS
+/category/education                        | PASS | PASS | PASS | PASS
+/category/social                           | PASS | PASS | PASS | PASS
+/category/ai                               | PASS | PASS | PASS | PASS
+
+Total: 108 pass, 0 fail
+```
+
+Tool pages were primed with real inputs (loan amounts, interest rates, sample
+JSON, long strings, etc.) before measuring, to ensure tables and output
+areas were actually rendered.
+
+### Other gates — ALL GREEN
+
+- [x] `npm run lint` — 0 errors, 0 warnings
+- [x] `npm run test` — 343/343 unit tests pass
+- [x] `npm run build` — 27 pages built
+- [x] `npx playwright test` — 13/13 e2e pass (incl. axe-core on json-formatter)
+- [x] **axe-core: zero critical/serious across ALL 27 pages**
+- [x] **CLS < 0.01 on all measured pages** (homepage=0.0001, EMI=0.0001, mortgage=0.0001, SIP=0.0001, json-formatter=0.0001)
+- [x] Per-island JS ≤ 50 KB gz (largest = 6.4 KB)
+- [x] No PAT leaked
+
+### VLM-confirmed before/after
+
+**EMI page at 390px — BEFORE:**
+
+- VLM: "The last column 'Balance' in the amortization table is completely clipped/cut off at the right edge. The privacy note text is also clipped at the right edge."
+
+**EMI page at 390px — AFTER:**
+
+- VLM: "No horizontal overflow exists, and all content is visible within the viewport. Nothing is clipped. The table is contained within its own scrollable container."
+
+**Other pages at 390px — AFTER (all VLM-confirmed):**
+
+- Homepage: "No horizontal overflow, clipped content, or content cut off"
+- Mortgage calculator: "All elements, including tables, text, cards, and callouts, appear fully contained"
+- SIP calculator: "All elements, including the table and text, fit within the 390px width"
+- Category/file: "All elements fit within the 390px width without issues"
+
+### Screenshots
+
+| File                                | Location                                          | Notes                                             |
+| ----------------------------------- | ------------------------------------------------- | ------------------------------------------------- |
+| `emi-mobile-390-before.png`         | `/home/z/my-project/download/screenshots/before/` | VLM: Balance column clipped, privacy text clipped |
+| `emi-mobile-390-after.png`          | `/home/z/my-project/download/screenshots/after/`  | VLM: No overflow, table scrolls in container      |
+| `home-390.png`                      | `/home/z/my-project/download/screenshots/after/`  | VLM: No overflow                                  |
+| `tools-mortgage-calculator-390.png` | `/home/z/my-project/download/screenshots/after/`  | VLM: No overflow                                  |
+| `tools-sip-calculator-390.png`      | `/home/z/my-project/download/screenshots/after/`  | VLM: No overflow                                  |
+| `category-file-390.png`             | `/home/z/my-project/download/screenshots/after/`  | VLM: No overflow                                  |
+
+### Bundle sizes (unchanged from v3.1)
+
+- Largest per-island JS: 6.4 KB gz
+- Compiled CSS: 12.1 KB gz (+0.1 KB for `.unq-scroll-x` + `.unq-input` + hardening)
+- All under 50 KB gz budget
+
+---
+
+## v3.1 (prior session — preserved as base)
+
+<details>
+<summary>Click to expand v3.1 details</summary>
 
 ## Done (this session — v3.1 modern premium polish)
 

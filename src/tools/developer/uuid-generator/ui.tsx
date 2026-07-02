@@ -120,7 +120,7 @@ export default function UuidGenerator() {
           <p class="mb-3 text-sm font-semibold">
             {results.length} UUID{results.length === 1 ? "" : "s"}
           </p>
-          <div class="unq-card max-h-[480px] overflow-auto !p-2">
+          <div class="unq-card unq-scroll-x max-h-[480px] overflow-y-auto !p-2">
             <ul class="space-y-1">
               {results.map((uuid, i) => (
                 <li

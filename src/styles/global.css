@@ -129,11 +129,13 @@
     }
   }
 
-  /* No horizontal scroll at any breakpoint — release blocker if violated */
-  html,
-  body {
-    overflow-x: hidden;
-  }
+  /* v3.1.1: REMOVED `overflow-x: hidden` band-aid.
+     Previously this hid the symptom of wide tables/pre elements pushing the
+     page wider than the viewport. The real fix is at the source: every scroll
+     container now has `max-width: 100%; min-width: 0` via .unq-scroll-x, and
+     .unq-card/.unq-prose have `min-width: 0; overflow-wrap: break-word`.
+     If you re-add `overflow-x: hidden` here you are hiding a real bug — fix
+     the overflowing element instead. */
 
   /* Links — Apple: blue, no underline by default */
   a {
@@ -171,12 +173,14 @@
     letter-spacing: -0.015em;
     line-height: 1.05;
     text-wrap: balance;
+    overflow-wrap: break-word;
   }
   .unq-h1 {
     font-size: var(--unq-h1);
     font-weight: 600;
     letter-spacing: -0.015em;
     line-height: 1.07;
+    overflow-wrap: break-word;
   }
   .unq-h2 {
     font-size: var(--unq-h2);
@@ -386,6 +390,13 @@
     padding: 26px 24px;
     text-decoration: none;
     color: inherit;
+    /* v3.1.1: prevent card content from pushing page wider than viewport.
+       min-width:0 allows the flex item to shrink below its content's
+       intrinsic min-width; overflow-wrap breaks long words/URLs. */
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
     transition:
       transform 0.28s var(--unq-ease),
       box-shadow 0.28s var(--unq-ease),
@@ -497,9 +508,25 @@
     transform: none;
   }
 
+  /* v3.1.1: .unq-input — used by <pre> output elements in tools (json-formatter,
+     base64, hash-generator, url-encoder, case-converter). Provides the same
+     overflow-prevention as .unq-input-base: max-width:100% + min-width:0 so
+     long content scrolls inside the <pre> instead of pushing the page wider. */
+  .unq-input {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    background-color: var(--unq-surface);
+    color: var(--unq-text);
+    border: 1px solid var(--unq-border);
+    border-radius: var(--unq-radius);
+  }
+
   /* Old input primitive — kept for tools that use .unq-input-base */
   .unq-input-base {
     width: 100%;
+    max-width: 100%; /* v3.1.1: prevent overflow in flex/grid contexts */
+    min-width: 0;
     background-color: var(--unq-surface);
     color: var(--unq-text);
     border: 1px solid var(--unq-border);
@@ -845,6 +872,8 @@
     align-items: center;
     gap: 14px;
     margin-bottom: 24px;
+    min-width: 0; /* v3.1.1: allow shrinking in grid */
+    max-width: 100%;
   }
   .unq-cat-head__icon {
     display: inline-grid;
@@ -975,7 +1004,12 @@
   /* --- App shell: sticky left sidebar + main content (desktop ≥1024px) ----- */
   .unq-shell {
     display: grid;
-    grid-template-columns: 236px 1fr;
+    /* v3.1.1: minmax(0, 1fr) instead of 1fr — prevents grid blowout.
+       `1fr` = `minmax(auto, 1fr)` which respects content min-width, so a
+       wide table expands the column beyond the viewport. `minmax(0, 1fr)`
+       allows the column to shrink to 0, so min-width:0 on children works
+       and overflow scrolls inside .unq-scroll-x instead of pushing the page. */
+    grid-template-columns: 236px minmax(0, 1fr);
     gap: 32px;
     max-width: var(--unq-content);
     margin: 0 auto;
@@ -983,7 +1017,7 @@
   }
   @media (max-width: 1024px) {
     .unq-shell {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 0;
     }
   }
@@ -1146,13 +1180,43 @@
 
   /* --- Tool page prose width (720px for readability) --------------------- */
   .unq-prose {
+    width: 100%;
     max-width: var(--unq-content-prose);
     margin-inline: auto;
+    min-width: 0; /* v3.1.1: allow shrinking in grid, prevent overflow */
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   /* --- Sidebar-aware main content (used inside .unq-shell) --------------- */
   .unq-main {
     min-width: 0; /* prevent grid blowout from long tool names */
+  }
+
+  /* --- v3.1.1: Horizontal scroll container for wide tables/pre ------------
+     CRITICAL: a div with `overflow: auto` but NO width constraint will grow
+     to fit its content (the wide table) rather than scroll. This class forces
+     `max-width: 100%` so the element stays within its parent, and `min-width: 0`
+     so it can shrink in flex/grid contexts. The table inside then scrolls
+     horizontally instead of pushing the page wider. */
+  .unq-scroll-x {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* When a table is inside .unq-scroll-x, let it use its natural width (don't
+     force w-full) so columns don't squish — the container scrolls. */
+  .unq-scroll-x > table {
+    width: 100%;
+    min-width: max-content;
+  }
+  /* <pre> inside .unq-scroll-x should not wrap — it scrolls horizontally */
+  .unq-scroll-x > pre {
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   /* --- Mobile category chip row (replaces sidebar on ≤1024px) ------------ */

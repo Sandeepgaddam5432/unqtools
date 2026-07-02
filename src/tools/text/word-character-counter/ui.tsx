@@ -303,26 +303,28 @@ Try pasting your own text here. 👋🌍`;
           {keywords.length === 0 ? (
             <p class="text-unq-muted text-sm">No keywords found.</p>
           ) : (
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="text-unq-muted border-b border-unq-border text-left text-xs">
-                  <th class="py-1">#</th>
-                  <th class="py-1">Word</th>
-                  <th class="py-1 text-right">Count</th>
-                  <th class="py-1 text-right">Density</th>
-                </tr>
-              </thead>
-              <tbody>
-                {keywords.map((k, i) => (
-                  <tr key={k.word} class="border-unq-border/50 border-b">
-                    <td class="text-unq-muted py-1">{i + 1}</td>
-                    <td class="py-1 font-mono">{k.word}</td>
-                    <td class="py-1 text-right font-mono">{k.count}</td>
-                    <td class="py-1 text-right font-mono">{k.density}%</td>
+            <div class="unq-scroll-x">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-unq-muted border-b border-unq-border text-left text-xs">
+                    <th class="py-1">#</th>
+                    <th class="py-1">Word</th>
+                    <th class="py-1 text-right">Count</th>
+                    <th class="py-1 text-right">Density</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {keywords.map((k, i) => (
+                    <tr key={k.word} class="border-unq-border/50 border-b">
+                      <td class="text-unq-muted py-1">{i + 1}</td>
+                      <td class="py-1 font-mono">{k.word}</td>
+                      <td class="py-1 text-right font-mono">{k.count}</td>
+                      <td class="py-1 text-right font-mono">{k.density}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </Card>
       )}
