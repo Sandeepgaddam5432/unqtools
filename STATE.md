@@ -1,13 +1,14 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T15:00:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T15:10:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**TX 1.0 — Fix Broken Tools + Modern Tool Experience Upgrade** ✅ COMPLETE
+**v5.0 — Skill-driven UI redesign (tokens applied, shell+tool interiors queued)** 🔄 IN PROGRESS
 
-22 tools live, all verified working in browser. Diff Checker rebuilt as flagship.
-Text & Writing: 12/100. Next 10 tools still queued.
+22 tools live, all gates green. Skill installed in-repo (permanent). Design system
+generated + recorded. Slate dark palette + skill green applied to tokens.css.
+Remaining: full shell + tool interior redesign + TX rollout to all 22 tools.
 
 ## Context (why this session happened)
 
