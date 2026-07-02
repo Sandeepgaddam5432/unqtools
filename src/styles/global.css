@@ -1911,3 +1911,54 @@
     font-size: var(--unq-sm);
   }
 }
+
+/* ============================================================ v4.0 #6 CONTAINER QUERIES ON TOOL CARDS
+   Cards respond to their CONTAINER, not the viewport — so the same card
+   is layout-perfect in the 4-col grid, the 2×2 bento tile, and the
+   Related-tools rail. @container guard — unsupported browsers use the
+   default (viewport-responsive) layout. */
+
+@supports (container-type: inline-size) {
+  .unq-card-wrap {
+    container-type: inline-size;
+  }
+  @container (max-width: 260px) {
+    .unq-card {
+      gap: 4px;
+    }
+    .unq-card .unq-card__icon {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+    .unq-card .unq-card__desc {
+      -webkit-line-clamp: 1;
+    }
+  }
+}
+
+/* ============================================================ v4.0 #10 AMBIENT PER-CATEGORY GLOW ON TOOL HEADERS
+   Subtle ambient aura behind each tool-page hero using the category accent.
+   overflow: clip on the hero section prevents the negative insets from
+   creating horizontal overflow (the #1 risk per spec). */
+
+@layer components {
+  .unq-tool-hero {
+    position: relative;
+    overflow: clip;
+  }
+  .unq-tool-hero::before {
+    content: "";
+    position: absolute;
+    inset: -40% -20% auto;
+    height: 420px;
+    z-index: -1;
+    background: radial-gradient(
+      60% 60% at 50% 30%,
+      color-mix(in oklch, var(--unq-cat-accent, var(--unq-accent)) 16%, transparent),
+      transparent 70%
+    );
+    filter: blur(40px);
+    pointer-events: none;
+  }
+}

@@ -36,7 +36,11 @@ const glyph = ICON_MAP[tool.icon] ?? tool.icon.slice(0, 2).toUpperCase();
   data-tool-id={tool.id}
 >
   <div class="flex items-start justify-between gap-3">
-    <span class={`unq-card__icon unq-card__icon--${tool.category}`} aria-hidden="true">
+    <span
+      class={`unq-card__icon unq-card__icon--${tool.category}`}
+      aria-hidden="true"
+      style={`view-transition-name: tool-${tool.id};`}
+    >
       {glyph}
     </span>
     <button

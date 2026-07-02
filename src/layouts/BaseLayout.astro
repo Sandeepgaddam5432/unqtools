@@ -58,6 +58,19 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
     <title>{title}</title>
     {/* Inline theme-init script — runs BEFORE first paint, no FOUC */}
     <script is:inline set:html={themeNoFoUcScript} />
+    {
+      /* v4.0 #8: Speculation Rules — prefetch tool pages on hover, prerender
+        card links. Chromium-only; inert JSON elsewhere (harmless).
+        eagerness: moderate so we never mass-prerender 100 pages. */
+    }
+    <script
+      type="speculationrules"
+      is:inline
+      set:html={JSON.stringify({
+        prefetch: [{ where: { href_matches: "/tools/*" }, eagerness: "moderate" }],
+        prerender: [{ where: { selector_matches: ".unq-card a" }, eagerness: "moderate" }],
+      })}
+    />
     {/* View Transitions API — smooth route changes */}
     <meta name="view-transition" content="same-origin" />
     <style is:global>

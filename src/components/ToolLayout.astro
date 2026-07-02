@@ -22,6 +22,40 @@ const relatedTools = byCategory(tool.category)
   .filter((t) => t.id !== tool.id)
   .slice(0, 4);
 const categoryLabel = CATEGORY_LABELS[tool.category];
+
+// v4.0 #10: Per-category accent color for the ambient hero aura.
+const CATEGORY_ACCENTS: Record<string, string> = {
+  developer: "#0071e3",
+  image: "#ff375f",
+  calculators: "#30d158",
+  text: "#bf5af2",
+  pdf: "#ff453a",
+  "audio-video": "#ff9f0a",
+  seo: "#64d2ff",
+  "network-security": "#5e5ce6",
+  file: "#ac8e68",
+  business: "#30b0c7",
+  education: "#ffd60a",
+  social: "#ff2d55",
+  ai: "#5e5ce6",
+};
+const catAccent = CATEGORY_ACCENTS[tool.category] ?? "#0071e3";
+
+// v4.0 #7: Icon glyph for the tool page header (matches ToolCard's ICON_MAP).
+const ICON_MAP: Record<string, string> = {
+  braces: "{ }",
+  binary: "01",
+  link: "🔗",
+  hash: "#",
+  type: "Aa",
+  image: "🎨",
+  calculator: "🧮",
+  "trending-up": "📈",
+  home: "🏠",
+  palette: "🎨",
+  fingerprint: "🔑",
+};
+const glyph = ICON_MAP[tool.icon] ?? tool.icon.slice(0, 2).toUpperCase();
 ---
 
 {
@@ -47,9 +81,23 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
       ]}
     />
 
-    {/* Header — eyebrow + status badge + h1 + subtitle */}
-    <header style="display: flex; flex-direction: column; gap: 12px;">
+    {
+      /* Header — eyebrow + status badge + h1 + subtitle.
+        v4.0 #10: .unq-tool-hero wraps the header with an ambient per-category
+        glow aura (::before radial gradient using --unq-cat-accent). */
+    }
+    <header
+      class="unq-tool-hero"
+      style={`display: flex; flex-direction: column; gap: 12px; --unq-cat-accent: ${catAccent};`}
+    >
       <div class="flex flex-wrap items-center gap-2.5">
+        <span
+          class={`unq-card__icon unq-card__icon--${tool.category}`}
+          aria-hidden="true"
+          style={`view-transition-name: tool-${tool.id};`}
+        >
+          {glyph}
+        </span>
         <span class="unq-eyebrow">{categoryLabel}</span>
         {
           tool.requiresNetwork ? (
