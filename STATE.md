@@ -1,14 +1,15 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T18:00:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T18:15:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v7.0 — Toolhub design port (shell complete, tool interiors queued)** 🔄 IN PROGRESS
+**v7.1 — Mechanical class migration done, tool interior rebuild + overflow fixes queued** 🔄 IN PROGRESS
 
-22 tools live. toolhub repo cloned as canonical design truth. OKLCH token system + component
-CSS + Tailwind config ported verbatim. Glass header, bg-grid hero, tool-card grid, footer,
-ToolLayout all ported. Remaining: rewire 22 tool interiors to toolhub's class recipes + fidelity gate.
+22 tools live. ALL dead --unq-\* classes migrated to toolhub semantics (231 replacements).
+AA nudges applied (6 token adjustments, all logged). Production breakage STOPPED — tools
+render correctly with toolhub's OKLCH token system. Remaining: fix 11 overflow failures at
+320/390px + CLS on diff-checker + rebuild tool interiors on toolhub kit + fidelity gate.
 
 ## Context (why this session happened)
 
