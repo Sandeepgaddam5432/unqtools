@@ -242,16 +242,16 @@
   --unq-text-muted: #94a3b8;
   --unq-text-subtle: #94a3b8;
 
-  /* --- Apple dark single-blue accent (brighter for contrast) --- */
-  --unq-link: #2997ff;
-  --unq-accent: #0a84ff;
-  --unq-accent-hover: #409cff;
-  --unq-accent-active: #0a84ff;
-  --unq-accent-subtle: rgba(10, 132, 255, 0.16);
+  /* --- v5.0: Dark accent (darker blue for AA contrast with white text on it) --- */
+  --unq-link: #3b82f6;
+  --unq-accent: #2563eb; /* Blue-600: 4.73:1 with white text (AA pass) */
+  --unq-accent-hover: #1d4ed8;
+  --unq-accent-active: #1e40af;
+  --unq-accent-subtle: rgba(37, 99, 235, 0.16);
   --unq-accent-contrast: #ffffff;
-  --unq-accent-ring: rgba(10, 132, 255, 0.4);
-  --unq-focus: #0a84ff;
-  --unq-ring: rgba(10, 132, 255, 0.4);
+  --unq-accent-ring: rgba(37, 99, 235, 0.4);
+  --unq-focus: #2563eb;
+  --unq-ring: rgba(37, 99, 235, 0.4);
 
   /* --- v5.0: Status colors (skill: accent green #22C55E for success) --- */
   --unq-success: #22c55e; /* Skill: accent/CTA — connected green */
@@ -300,14 +300,14 @@
     --unq-text-muted: #94a3b8;
     --unq-text-subtle: #94a3b8;
     --unq-link: #3b82f6;
-    --unq-accent: #0a84ff;
-    --unq-accent-hover: #409cff;
-    --unq-accent-active: #0a84ff;
-    --unq-accent-subtle: rgba(10, 132, 255, 0.16);
+    --unq-accent: #2563eb;
+    --unq-accent-hover: #1d4ed8;
+    --unq-accent-active: #1e40af;
+    --unq-accent-subtle: rgba(37, 99, 235, 0.16);
     --unq-accent-contrast: #ffffff;
-    --unq-accent-ring: rgba(10, 132, 255, 0.4);
-    --unq-focus: #0a84ff;
-    --unq-ring: rgba(10, 132, 255, 0.4);
+    --unq-accent-ring: rgba(37, 99, 235, 0.4);
+    --unq-focus: #2563eb;
+    --unq-ring: rgba(37, 99, 235, 0.4);
     --unq-success: #22c55e;
     --unq-success-subtle: rgba(34, 197, 94, 0.18);
     --unq-success-strong: #22c55e;
