@@ -1,103 +1,105 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T04:30:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T05:35:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**Phase 0 — Scaffold** ✅ COMPLETE → ready for Phase 1 (JSON Formatter)
+**Phase 1 — Reference tool (JSON Formatter)** ✅ COMPLETE → ready for Phase 2 (v1 core set)
 
-## Done (this session)
+## Done (this session — Phase 1)
 
-### Setup
-- [x] Created private GitHub repo `Sandeepgaddam5432/unqtools` (code)
-- [x] Created private GitHub repo `Sandeepgaddam5432/unqtools-docs` (documentation)
-- [x] Added proprietary `LICENSE` (all rights reserved) to both repos
-- [x] Pushed 1,794 Notion-export markdown files to `unqtools-docs` (initial commit)
-- [x] Wrote `AGENTS.md` (build rules) at root of `unqtools`
-- [x] Wrote initial `STATE.md` at root of `unqtools`
-- [x] Initial commit + push of `unqtools` (auth verified)
+### Resume ritual
+- [x] `git pull` on both `unqtools` and `unqtools-docs` — no remote changes
+- [x] Read `AGENTS.md` + this `STATE.md`
+- [x] `npm ci` — 614 packages restored
+- [x] Read JSON Formatter spec from `unqtools-docs` doc #10
 
-### Phase 0 — Scaffold (Definition of Done MET)
-- [x] Astro + Preact + Tailwind + TypeScript strict project scaffolded
-- [x] `tsconfig.json` with `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`
-- [x] Pinned all deps in `package.json` + committed `package-lock.json` (reproducible `npm ci`)
-- [x] ESLint flat config + Prettier (with astro + tailwind plugins); `npm run lint` GREEN
-- [x] Vitest configured with passing unit tests (`tests/search.test.ts`, 7 tests); `npm run test` GREEN
-- [x] Playwright configured with Phase 0 smoke e2e (`tests/shell.e2e.ts`)
-- [x] `npm run build` GREEN — 15 static pages prerendered (home, 404, 13 category pages)
-- [x] GitHub Actions CI (`.github/workflows/ci.yml`) — install → lint → test → build → deploy to Pages
-- [x] App shell: `BaseLayout` with header (logo + nav + theme toggle), footer, skip-link, PWA registration
-- [x] Theme toggle (light/dark/system) with no-FOUC inline script; respects `prefers-color-scheme`
-- [x] Routing: `/`, `/tools/[id]`, `/category/[category]` (getStaticPaths from registry), `/404`
-- [x] Global client-side fuzzy search (`src/lib/search.ts` + `ClientSearch.ts`) on the homepage
-- [x] Shared component library (`src/components/ui.tsx`): Button, Input, Textarea, Select, Toggle,
-      Slider, Card, Tabs, Accordion, Tooltip, Toast, CopyButton, DownloadButton, ShareButton,
-      ErrorBanner — all keyboard-first, WCAG 2.1 AA, `--unq-*` tokens
-- [x] Design tokens (`src/styles/global.css`) — light/dark themes, `--unq-*` namespace, focus rings,
-      reduced-motion, no horizontal scroll
-- [x] Tool Module Contract interface (`src/lib/tool.ts`) — `ToolManifest`, `ToolCategory`,
-      `ToolResult<T>`, `ALL_CATEGORIES`, `CATEGORY_LABELS`
-- [x] Tool registry (`src/lib/registry.ts`) — Vite glob auto-collects `src/tools/**/manifest.ts`,
-      exports `TOOLS`, `byCategory`, `byId`, `countByCategory`
-- [x] Web Worker harness (`src/lib/runWorker.ts`) — generic `runInWorker<I,O>` with timeout
-- [x] URL/query shareable state helper (`src/lib/utils.ts` → `buildShareableUrl`)
-- [x] PWA: `public/manifest.webmanifest`, `public/sw.js` (precache shell + stale-while-revalidate),
-      PNG icons (192/512) generated via `scripts/gen_icons.py`
-- [x] `ToolShell.astro` wrapper — privacy banner, breadcrumb, title
-- [x] `ToolCard.astro` for the homepage / category grids
-- [x] Production preview server verified: home/manifest/sw/favicon/icons all serve 200; 404 returns 404
+### Phase 1 — JSON Formatter (Definition of Done MET)
+- [x] `src/tools/developer/json-formatter/manifest.ts` — implements `ToolManifest`; id `json-formatter`; category `developer`; icon `braces`; SEO title + FAQ
+- [x] `src/tools/developer/json-formatter/logic.ts` — pure functions: `formatJson`, `minifyJson`, `validateJson`, `sortDeep`; exports `WORKER_THRESHOLD_BYTES` (100 KB)
+- [x] `src/tools/developer/json-formatter/logic.test.ts` — 31 Vitest tests covering valid/invalid/edge/large/nested/unicode/scientific-notation/empty/whitespace-only/primitives/recursive-sort
+- [x] `src/tools/developer/json-formatter/worker.ts` — Web Worker wrapping the same logic for inputs ≥ 100 KB
+- [x] `src/tools/developer/json-formatter/ui.tsx` — Preact island using shared primitives (Button, Textarea, Select, Toggle, CopyButton, DownloadButton, ErrorBanner, Card, ToastContainer)
+  - Two-pane layout (input / output) responsive on mobile
+  - Options bar: indent (2/4/tab), sort-keys toggle, format/minify/validate/load-sample/clear/share-link
+  - Live byte counter on input + output
+  - Friendly error banner with `line:column` from V8 SyntaxError (handles both V8 message formats)
+  - Worker offload auto-triggered for large inputs (≥100 KB)
+  - URL state share: `?i=base64(input)` round-trips input
+- [x] `tests/json-formatter.e2e.ts` — 10 Playwright tests: load, load-sample, format, sort-keys, minify, invalid-error, empty-error, validate, keyboard-only, **axe-core a11y scan** (zero critical/serious violations)
+- [x] `@axe-core/playwright` dependency added
+- [x] Registry auto-collected the tool — it appears on the homepage grid and `/category/developer` with zero manual wiring
+- [x] Verified locally:
+  - `npm run lint` ✅ (ESLint + Prettier clean)
+  - `npm run test` ✅ (38 tests passing: 7 search + 31 JSON formatter)
+  - `npm run build` ✅ (16 static pages — 15 from Phase 0 + 1 for json-formatter)
+  - Production preview: `/tools/json-formatter` returns 200 with correct title
+- [x] Performance budget verified:
+  - Per-tool island JS: **15.1 KB gzipped** total (budget: 50 KB) — 69% headroom
+  - Lazy-loaded only when `/tools/json-formatter` opens
 
 ## In progress
 
-- _Nothing._ Phase 0 complete; awaiting kickoff of Phase 1.
+- _Nothing._ Phase 1 complete; awaiting kickoff of Phase 2.
 
-## Next up (Phase 1 — Reference tool)
+## Next up (Phase 2 — v1 core set)
 
-1. Read `unqtools-docs` doc **"10 Reference Tool Spec — JSON Formatter"** end-to-end.
-2. Create `src/tools/developer/json-formatter/`:
-   - `manifest.ts` — implements `ToolManifest` (id=`json-formatter`, category=`developer`)
-   - `logic.ts` — pure `formatJson(input, opts)` returning `ToolResult<string>`, with `sortKeys`, `indent`, validation
-   - `logic.test.ts` — Vitest covering valid, invalid, edge cases, large input
-   - `ui.tsx` — Preact island using shared primitives (Textarea, Select, Toggle, CopyButton, DownloadButton, ErrorBanner)
-   - `worker.ts` — wrap `formatJson` for large inputs via `runInWorker`
-3. Add Playwright e2e: load `/tools/json-formatter` → enter sample → see output → copy → a11y scan.
-4. Verify perf budgets (per-tool island JS ≤ 50KB gzipped; Lighthouse ≥ 95).
-5. Update STATE.md + push.
+Pick the next batch from `unqtools-docs` → `3 Tool Catalog`. Suggested first wave
+(all simple, all 100% client-side, all follow the JSON Formatter shape):
+
+1. **Base64 Encoder/Decoder** (`developer/base64`) — pure logic, no worker needed
+2. **URL Encoder/Decoder** (`developer/url-encoder`) — pure logic
+3. **Hash Generator** (`developer/hash-generator`) — SHA-1/256/512 via Web Crypto; worker for large files
+4. **Color Picker / Converter** (`image/color-picker`) — HEX ↔ RGB ↔ HSL
+5. **Text Case Converter** (`text/case-converter`) — upper/lower/title/sentence/kebab/snake/camel
+6. **Markdown Preview** (`text/markdown-preview`) — minimal CommonMark renderer
+7. **UUID Generator** (`developer/uuid-generator`) — `crypto.randomUUID` + bulk
+
+Each tool ships as one folder under `src/tools/<category>/<id>/` with
+`manifest.ts` + `logic.ts` + `logic.test.ts` + `ui.tsx` (optional `worker.ts`),
+one Playwright e2e with axe-core, and the registry auto-wires it everywhere.
+
+## Phase 1 — Definition of Done (verdict)
+
+| Criterion (from doc #10 acceptance) | Status |
+| --- | --- |
+| Valid JSON formats with 2/4-space indent | ✅ |
+| Keys sort toggle works (recursive) | ✅ |
+| Minify produces compact output | ✅ |
+| Invalid JSON shows friendly error (`role="alert"`) | ✅ |
+| Empty input handled gracefully | ✅ |
+| Copy and Download work | ✅ |
+| Load sample populates input | ✅ |
+| Fully keyboard operable | ✅ (Playwright keyboard test passes) |
+| Passes axe-core a11y scan | ✅ (zero critical/serious) |
+| Unit tests cover valid/invalid/edge/empty | ✅ (31 tests) |
+| e2e happy path passes | ✅ (10 Playwright tests) |
+| Works offline; no network calls | ✅ |
+| Appears in search + developer category | ✅ |
+| Meets 10x Framework (sample, presets, instant, accessible, privacy note) | ✅ |
+| Per-tool JS ≤ 50 KB gzipped | ✅ (15.1 KB) |
 
 ## Key decisions / notes
 
 - **Locked stack** per `AGENTS.md` §2 — do NOT change without owner approval.
-- **Proprietary license** — NOT open source. Do not add an OSS license file.
-- **Docs repo** lives at `https://github.com/Sandeepgaddam5432/unqtools-docs` —
-  clone it locally when you need a spec (e.g. doc #10 for the JSON Formatter,
-  doc #8 for the Tool Module Contract, doc #5 for the design system).
-- **No backend.** Everything is static + client-side. User data never leaves the browser.
-- **Git remote** uses the PAT inline: `https://<PAT>@github.com/Sandeepgaddam5432/unqtools.git`.
-  The PAT is supplied by the owner at session start; never commit it to the repo.
-- **File names** from the Notion export contained mangled emoji bytes — they were
-  cleaned (replaced with `-`) before pushing to `unqtools-docs`. Do not "restore" them.
-- **Astro static output** with Preact islands; only `tools/[id].astro` lazy-imports
-  a tool's component — keeps the homepage bundle tiny.
-- **Search** is implemented as plain DOM (no Preact island on the homepage) to keep
-  the homepage JS well under the 60KB gzipped budget.
-- **GitHub Pages** is the deployment target (`pages: write` permission in CI).
-  The `site` field in `astro.config.mjs` is a placeholder (`unqtools.example.com`)
-  — update it once the real domain is known.
-- **axe-core a11y assertions** in Playwright are deferred to Phase 1 (the dependency
-  is installed; the wire-up lands alongside the first real tool e2e).
-
-## Phase 0 — Definition of Done (verdict)
-
-| Criterion | Status |
-| --- | --- |
-| `npm ci` reproducible | ✅ (lockfile committed) |
-| `npm run lint` green | ✅ |
-| `npm run test` green | ✅ (7 tests) |
-| `npm run build` green | ✅ (15 pages) |
-| Empty shell deployed | ⏳ (CI will deploy on push to `main`) |
-| PWA installable + works offline | ✅ (manifest + SW + icons; offline cache strategy implemented) |
-| Tool Module Contract ready | ✅ (`src/lib/tool.ts` + registry + worker harness) |
+- **Proprietary license** — NOT open source.
+- **Docs repo** at `https://github.com/Sandeepgaddam5432/unqtools-docs` — clone locally for specs.
+- **No backend.** Everything static + client-side.
+- **Git remote** uses PAT inline — never commit the PAT.
+- **V8 SyntaxError** has two message formats: `"at position N (line L column C)"` and
+  `"Unexpected token 'X', \"...\" is not valid JSON"`. `extractPosition` in
+  `logic.ts` handles both.
+- **Worker threshold** is 100 KB. Below that, sync on main thread (instant). Above,
+  routes through `worker.ts` via `new Worker(new URL("./worker.ts", import.meta.url))`.
+- **Tool island bundle** = 15.1 KB gzipped (Preact + signals + hooks + ui + preload-helper).
+  Well under the 50 KB budget. Watch this number as more shared primitives land.
+- **URL share state** uses base64 of the raw input — fine for moderate inputs, will
+  fail (gracefully) for very large inputs because URLs have practical length limits.
+- **axe-core scan** uses `wcag2a` + `wcag2aa` tags; failures only on `critical`/`serious`.
+  `moderate`/`minor` issues are tracked but don't block.
+- **`src/env.d.ts`** is auto-generated by Astro on `build`. Added to ESLint ignores
+  (triple-slash reference is the Astro convention, not a real lint issue).
 
 ## Blockers
 
-- _None._ Ready for Phase 1.
+- _None._ Ready for Phase 2.
