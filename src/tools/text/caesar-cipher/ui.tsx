@@ -52,7 +52,7 @@ export default function CaesarCipher() {
       />
       <Card class="!p-4">
         <p class="mb-2 text-sm font-medium text-unq-text">Mode</p>
-        <Segmented items={MODE_OPTIONS} value={mode} onChange={(v) => setMode(v as Mode)} />
+        <Segmented options={MODE_OPTIONS} value={mode} onChange={(v) => setMode(v as Mode)} />
         {(mode === "encrypt" || mode === "decrypt") && (
           <div class="mt-4 flex items-center gap-3">
             <label for="cc-shift" class="text-sm font-medium text-unq-text">

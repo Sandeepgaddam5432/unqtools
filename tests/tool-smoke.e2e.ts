@@ -54,6 +54,13 @@ for (const tool of tools) {
           { timeout: 10000 },
         );
 
+        // 1b. Verify the tool actually rendered (not a "Failed to load" error)
+        const rootText = await toolRoot.textContent();
+        expect(
+          rootText,
+          `Tool ${tool.id} failed to load — showing error instead of UI`,
+        ).not.toContain("Failed to load tool");
+
         // 2. Try clicking "Load sample" button if it exists
         const loadSampleBtn = page.getByRole("button", { name: /load sample/i });
         if ((await loadSampleBtn.count()) > 0) {

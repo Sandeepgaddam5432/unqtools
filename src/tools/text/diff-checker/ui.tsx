@@ -193,12 +193,16 @@ export default function DiffChecker() {
         <div class="flex flex-wrap items-center gap-4">
           <div class="flex flex-col gap-1">
             <span class="text-unq-text-2 text-xs font-medium">View</span>
-            <Segmented items={VIEW_OPTIONS} value={view} onChange={(v) => setView(v as DiffView)} />
+            <Segmented
+              options={VIEW_OPTIONS}
+              value={view}
+              onChange={(v) => setView(v as DiffView)}
+            />
           </div>
           <div class="flex flex-col gap-1">
             <span class="text-unq-text-2 text-xs font-medium">Granularity</span>
             <Segmented
-              items={GRANULARITY_OPTIONS}
+              options={GRANULARITY_OPTIONS}
               value={diffOpts.granularity}
               onChange={(v) => updateOpts({ granularity: v as DiffGranularity })}
             />

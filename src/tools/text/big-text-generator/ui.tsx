@@ -42,7 +42,7 @@ export default function BigTextGenerator() {
       <Card class="!p-4">
         <p class="mb-2 text-sm font-medium text-unq-text">Style</p>
         <Segmented
-          items={STYLE_OPTIONS.map((s) => ({ value: s.value, label: s.label }))}
+          options={STYLE_OPTIONS.map((s) => ({ value: s.value, label: s.label }))}
           value={style}
           onChange={(v) => setStyle(v as BigTextStyle)}
         />
