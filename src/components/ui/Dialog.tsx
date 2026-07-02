@@ -98,7 +98,7 @@ export function Dialog({
         aria-modal="true"
         aria-labelledby={title ? "dialog-title" : undefined}
         aria-describedby={description ? "dialog-desc" : undefined}
-        class={`relative w-full ${sizeMap[size]} duration-normal mt-12 rounded-xl border border-unq-border bg-unq-surface-elevated shadow-xl transition-all sm:mt-20 ${
+        class={`relative w-full ${sizeMap[size]} duration-normal bg-unq-surface-elevated mt-12 rounded-xl border border-unq-border shadow-xl transition-all sm:mt-20 ${
           open ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
         } ${cls ?? ""}`}
       >

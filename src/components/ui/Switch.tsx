@@ -42,12 +42,12 @@ export function Switch({
         aria-label={label}
         disabled={disabled}
         onClick={() => onChange(!checked)}
-        class={`relative inline-flex ${dims.track} shrink-0 items-center rounded-full transition-colors duration-fast ease-out ${
+        class={`relative inline-flex ${dims.track} duration-fast shrink-0 items-center rounded-full transition-colors ease-out ${
           checked ? "bg-unq-accent" : "bg-unq-border-strong"
         } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-unq-accent`}
       >
         <span
-          class={`inline-block rounded-full bg-white shadow-sm transition-transform duration-fast ease-out ${
+          class={`duration-fast inline-block rounded-full bg-white shadow-sm transition-transform ease-out ${
             checked ? dims.translate : "translate-x-0.5"
           } ${size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"}`}
           style={size === "sm" ? { width: "14px", height: "14px" } : undefined}

@@ -256,13 +256,13 @@ export default function DiffChecker() {
         />
       ) : diffLines.length === 0 || diffLines.every((l) => l.type === "equal") ? (
         <Card class="!p-8 text-center">
-          <p class="text-sm font-medium text-unq-success-strong">✓ Texts are identical</p>
+          <p class="text-unq-success-strong text-sm font-medium">✓ Texts are identical</p>
           <p class="text-unq-text-3 mt-1 text-xs">No differences found.</p>
         </Card>
       ) : (
         <>
           {/* Stats bar */}
-          <div class="border-unq-border-subtle flex flex-wrap items-center gap-4 rounded-lg border px-4 py-2 text-sm">
+          <div class="flex flex-wrap items-center gap-4 rounded-lg border border-unq-border-subtle px-4 py-2 text-sm">
             <span class="font-medium text-unq-text">Diff</span>
             <span class="text-unq-success-strong">+{stats.additions} added</span>
             <span class="text-unq-danger-strong">−{stats.deletions} removed</span>

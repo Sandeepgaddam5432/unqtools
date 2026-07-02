@@ -95,7 +95,7 @@ export default function AddPrefixSuffix() {
           {PRESETS.map((p) => (
             <button
               type="button"
-              class="duration-normal text-unq-text-2 rounded-full border border-unq-border px-3 py-1 text-xs transition-all ease-apple hover:border-unq-accent hover:text-unq-accent"
+              class="duration-normal text-unq-text-2 ease-apple rounded-full border border-unq-border px-3 py-1 text-xs transition-all hover:border-unq-accent hover:text-unq-accent"
               onClick={() => applyPreset(p)}
             >
               {p.name}

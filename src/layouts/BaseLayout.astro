@@ -1,32 +1,47 @@
 ---
 import "../styles/global.css";
-// Self-hosted Inter — preload critical weights (400 + 600) for first paint.
-// Other weights (500, 700) load lazily.
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import { themeNoFoUcScript } from "../lib/theme";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
+import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "../lib/tool";
+import { countByCategory } from "../lib/registry";
 import CommandBarMount from "../components/CommandBarMount.astro";
 
 interface Props {
   title?: string;
   description?: string;
-  ogImage?: string;
+  activeCategory?: ToolCategory;
 }
 
 const {
   title = "UnQTools — Free, private, offline browser tools",
-  description = "UnQTools is a 100% static, privacy-first, offline-capable PWA of fast browser-based tools. Your data never leaves your browser.",
-  ogImage = "/icons/icon-512.png",
+  description = "UnQTools is a 100% static, privacy-first, offline-capable PWA of fast browser-based tools.",
+  activeCategory,
 } = Astro.props;
 
 const site = Astro.site ?? new URL("https://unqtools.pages.dev");
 const canonicalURL = new URL(Astro.url.pathname, site);
-const ogImageURL = new URL(ogImage, site);
-const ogType = Astro.url.pathname === "/" ? "website" : "article";
+const ogImageURL = new URL("/icons/icon-512.png", site);
+const counts = countByCategory();
+const cats = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
+
+const CAT_ICONS: Record<ToolCategory, string> = {
+  pdf: "📄",
+  image: "🎨",
+  "audio-video": "🎬",
+  developer: "{ }",
+  seo: "🔍",
+  calculators: "🧮",
+  text: "Aa",
+  "network-security": "🔒",
+  file: "📦",
+  business: "💼",
+  education: "📚",
+  social: "👥",
+  ai: "✨",
+};
 ---
 
 <!doctype html>
@@ -34,185 +49,306 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="canonical" href={canonicalURL.href} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content={ogType} />
+    <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:image" content={ogImageURL.href} />
-    <meta property="og:site_name" content="UnQTools" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImageURL.href} />
     <title>{title}</title>
-    {/* Inline theme-init script — runs BEFORE first paint, no FOUC */}
     <script is:inline set:html={themeNoFoUcScript} />
-    {
-      /* v4.0 #8: Speculation Rules — prefetch tool pages on hover, prerender
-        card links. Chromium-only; inert JSON elsewhere (harmless).
-        eagerness: moderate so we never mass-prerender 100 pages. */
-    }
+    <meta name="view-transition" content="same-origin" />
     <script
       type="speculationrules"
       is:inline
       set:html={JSON.stringify({
         prefetch: [{ where: { href_matches: "/tools/*" }, eagerness: "moderate" }],
-        prerender: [{ where: { selector_matches: ".unq-card a" }, eagerness: "moderate" }],
+        prerender: [{ where: { selector_matches: ".card a" }, eagerness: "moderate" }],
       })}
     />
-    {/* View Transitions API — smooth route changes */}
-    <meta name="view-transition" content="same-origin" />
-    <style is:global>
-      @media (prefers-reduced-motion: no-preference) {
-        ::view-transition-old(root),
-        ::view-transition-new(root) {
-          animation-duration: 200ms;
-          animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-        }
-      }
-      @keyframes unq-slide-in {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
   </head>
-  <body class="unq-grain">
+  <body class="grain">
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-md focus:bg-unq-accent focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-unq-accent-contrast"
+      class="sr-only"
+      style="position:absolute;left:12px;top:12px;z-index:99;background:var(--accent);color:var(--accent-contrast);padding:8px 16px;border-radius:8px;font-size:14px;"
+      >Skip to content</a
     >
-      Skip to content
-    </a>
-    <Header />
-    {
-      /* v3.0: pages own their shell (.unq-shell with sidebar + main). BaseLayout
-        just provides <main> as a landmark — no padding/container, pages
-        decide their own horizontal layout. */
-    }
-    <main id="main">
-      <slot />
-    </main>
-    <Footer />
-    {/* Command Bar (⌘K) — hydrated client:idle so it doesn't block first paint */}
+
+    <!-- Progress bar (tool pages only, scroll-driven) -->
+    <div class="progress-bar" aria-hidden="true"></div>
+
+    <!-- Glass topbar -->
+    <header class="topbar">
+      <a href="/" class="topbar__logo" aria-label="UnQTools home">
+        <span class="topbar__logo-mark">U</span>
+        <span>UnQTools</span>
+      </a>
+      <button class="topbar__search" id="cmdk-trigger" aria-label="Open command palette (⌘K)">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
+        >
+        <span>Search tools…</span>
+        <span class="topbar__search-hint">⌘K</span>
+      </button>
+      <div class="topbar__actions">
+        <button
+          class="topbar__btn"
+          id="theme-toggle"
+          aria-label="Toggle color theme"
+          title="Toggle theme"
+        >
+          <svg
+            id="theme-icon-sun"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="hidden"
+            aria-hidden="true"
+            ><circle cx="12" cy="12" r="4"></circle><path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+            ></path></svg
+          >
+          <svg
+            id="theme-icon-moon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="hidden"
+            aria-hidden="true"
+            ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg
+          >
+        </button>
+      </div>
+    </header>
+
+    <!-- App shell: sidebar + content -->
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Tool categories">
+        <p class="sidebar__group-label">Categories</p>
+        <a
+          href="/"
+          class="sidebar__item"
+          aria-current={activeCategory === undefined ? "page" : undefined}
+        >
+          <span class="sidebar__item-icon">★</span>
+          <span class="sidebar__item-label">All tools</span>
+        </a>
+        {
+          cats.map((c) => (
+            <a
+              href={`/category/${c}`}
+              class="sidebar__item"
+              aria-current={c === activeCategory ? "page" : undefined}
+            >
+              <span class="sidebar__item-icon" aria-hidden="true">
+                {CAT_ICONS[c]}
+              </span>
+              <span class="sidebar__item-label">{CATEGORY_LABELS[c]}</span>
+              <span class="sidebar__item-count">{counts[c]}</span>
+            </a>
+          ))
+        }
+      </aside>
+
+      <div class="content">
+        <!-- Mobile category chips -->
+        <nav class="cat-chips" aria-label="Tool categories">
+          <a href="/" aria-current={activeCategory === undefined ? "page" : undefined}>All</a>
+          {
+            cats.map((c) => (
+              <a href={`/category/${c}`} aria-current={c === activeCategory ? "page" : undefined}>
+                {CATEGORY_LABELS[c].split(" ")[0]}
+              </a>
+            ))
+          }
+        </nav>
+
+        <main id="main" class="content__inner">
+          <slot />
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="footer__grid">
+            <div class="footer__col">
+              <a
+                href="/"
+                class="topbar__logo"
+                aria-label="UnQTools home"
+                style="margin-bottom:12px;"
+              >
+                <span class="topbar__logo-mark">U</span>
+                <span>UnQTools</span>
+              </a>
+              <p
+                style="color:var(--text-muted);font-size:var(--text-sm);max-width:280px;margin:8px 0 0;"
+              >
+                {(await import("../lib/registry")).TOOLS.length} browser-based tools — all private, all
+                offline-capable.
+              </p>
+            </div>
+            <div class="footer__col">
+              <h3>Categories</h3>
+              <ul>
+                <li><a href="/category/developer">Developer</a></li>
+                <li><a href="/category/calculators">Calculators</a></li>
+                <li><a href="/category/text">Text &amp; Writing</a></li>
+                <li><a href="/category/image">Image</a></li>
+              </ul>
+            </div>
+            <div class="footer__col">
+              <h3>Popular</h3>
+              <ul>
+                <li><a href="/tools/json-formatter">JSON Formatter</a></li>
+                <li><a href="/tools/diff-checker">Diff Checker</a></li>
+                <li><a href="/tools/base64">Base64</a></li>
+                <li><a href="/tools/caesar-cipher">Caesar Cipher</a></li>
+              </ul>
+            </div>
+            <div class="footer__col">
+              <h3>About</h3>
+              <ul>
+                <li>100% private</li>
+                <li>Installable PWA</li>
+                <li>Works offline</li>
+                <li>
+                  <a
+                    href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
+                    target="_blank"
+                    rel="noopener">LICENSE</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer__bottom">
+            <p>&copy; {new Date().getFullYear()} UnQTools. All rights reserved.</p>
+            <p>Proprietary &amp; confidential · 100% static</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+
     <CommandBarMount />
-    {
-      /* v2.2 motion: reveal IntersectionObserver + count-up.
-         v3.1: + card spotlight pointer handler (deduped via data-spot).
-         All re-run on astro:page-load so they work after Astro View Transitions. */
-    }
+
+    <!-- Reveal + spotlight + theme + cmdk scripts -->
     <script is:inline>
       (function () {
-        function unqInitMotion() {
-          const rm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          // v4.0 #2: Native scroll-driven reveals were tested but disabled
-          // (conflict with axe-core — see global.css note). The IO fallback
-          // is always active. The reading progress bar uses animation-timeline:
-          // scroll() and is unaffected.
-          const reveals = document.querySelectorAll(
-            ".unq-reveal:not(.is-in), [data-reveal]:not(.is-revealed)",
-          );
+        function init() {
+          const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+          // Reveal
+          const reveals = document.querySelectorAll(".reveal:not(.is-in)");
           if (rm || !("IntersectionObserver" in window)) {
-            reveals.forEach(function (el) {
-              el.classList.add("is-in");
-              el.classList.add("is-revealed");
-            });
+            reveals.forEach((el) => el.classList.add("is-in"));
           } else {
             const io = new IntersectionObserver(
-              function (entries) {
-                entries.forEach(function (entry) {
-                  if (entry.isIntersecting) {
-                    entry.target.classList.add("is-in");
-                    entry.target.classList.add("is-revealed");
-                    io.unobserve(entry.target);
+              (entries) => {
+                entries.forEach((e) => {
+                  if (e.isIntersecting) {
+                    e.target.classList.add("is-in");
+                    io.unobserve(e.target);
                   }
                 });
               },
               { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
             );
-            reveals.forEach(function (el, i) {
-              // Stagger index: siblings inside the same parent share a 0-5
-              // counter so cards in the same grid reveal 70ms apart.
-              el.style.setProperty("--i", String(i % 6));
+            reveals.forEach((el, i) => {
+              el.style.setProperty("--i", i % 6);
               io.observe(el);
             });
           }
-          // Count-up animation for [data-countup] elements.
-          document.querySelectorAll("[data-countup]").forEach(function (el) {
-            const end = Number(el.getAttribute("data-countup"));
-            if (!Number.isFinite(end)) return;
-            if (rm || !("IntersectionObserver" in window)) {
-              el.textContent = end.toLocaleString();
-              return;
-            }
-            const cio = new IntersectionObserver(
-              function (entries) {
-                entries.forEach(function (entry) {
-                  if (!entry.isIntersecting) return;
-                  cio.unobserve(entry.target);
-                  const t0 = performance.now();
-                  const dur = 1200;
-                  function tick(t) {
-                    const p = Math.min(1, (t - t0) / dur);
-                    // ease-out cubic
-                    el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))).toLocaleString();
-                    if (p < 1) requestAnimationFrame(tick);
-                  }
-                  requestAnimationFrame(tick);
-                });
-              },
-              { threshold: 0.6 },
-            );
-            cio.observe(el);
-          });
-        }
-
-        // v3.1: Card spotlight — pointer-following radial glow.
-        // Deduped via data-spot attribute so re-running on astro:page-load
-        // doesn't double-bind. Skipped entirely under prefers-reduced-motion.
-        function unqInitSpotlight() {
-          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-          const cards = document.querySelectorAll(".unq-card:not([data-spot])");
-          cards.forEach(function (card) {
-            card.dataset.spot = "1";
-            card.addEventListener("pointermove", function (e) {
-              const r = card.getBoundingClientRect();
-              card.style.setProperty("--mx", e.clientX - r.left + "px");
-              card.style.setProperty("--my", e.clientY - r.top + "px");
+          // Spotlight
+          if (!rm) {
+            document.querySelectorAll(".card:not([data-spot])").forEach((card) => {
+              card.dataset.spot = "1";
+              card.addEventListener("pointermove", (e) => {
+                const r = card.getBoundingClientRect();
+                card.style.setProperty("--mx", e.clientX - r.left + "px");
+                card.style.setProperty("--my", e.clientY - r.top + "px");
+              });
             });
-          });
+          }
         }
-
-        document.addEventListener("astro:page-load", function () {
-          unqInitMotion();
-          unqInitSpotlight();
-        });
-        unqInitMotion();
-        unqInitSpotlight();
+        document.addEventListener("astro:page-load", init);
+        init();
       })();
     </script>
-    {/* Service worker registration */}
+    <script is:inline>
+      (function () {
+        const KEY = "unq-theme";
+        const btn = document.getElementById("theme-toggle");
+        const sun = document.getElementById("theme-icon-sun");
+        const moon = document.getElementById("theme-icon-moon");
+        function current() {
+          const v = localStorage.getItem(KEY);
+          return v === "light" || v === "dark" || v === "system" ? v : "system";
+        }
+        function resolved(t) {
+          return t === "system"
+            ? matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : t;
+        }
+        function paint() {
+          const r = resolved(current());
+          if (sun && moon) {
+            sun.classList.toggle("hidden", r !== "light");
+            moon.classList.toggle("hidden", r !== "dark");
+          }
+        }
+        btn?.addEventListener("click", () => {
+          const next = resolved(current()) === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          localStorage.setItem(KEY, next);
+          paint();
+        });
+        paint();
+      })();
+    </script>
+    <script is:inline>
+      document.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("unq:open-command-bar"));
+        }
+      });
+      document.getElementById("cmdk-trigger")?.addEventListener("click", () => {
+        window.dispatchEvent(new CustomEvent("unq:open-command-bar"));
+      });
+    </script>
     <script is:inline>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/sw.js").catch(() => {});
-        });
+        window.addEventListener("load", () =>
+          navigator.serviceWorker.register("/sw.js").catch(() => {}),
+        );
       }
     </script>
   </body>

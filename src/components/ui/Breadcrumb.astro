@@ -29,7 +29,7 @@ const { items, class: cls } = Astro.props;
               <ChevronRight size={14} class="shrink-0 text-unq-text-subtle" aria-hidden="true" />
             )}
             {item.href && !isLast ? (
-              <a href={item.href} class="transition-colors duration-fast hover:text-unq-text">
+              <a href={item.href} class="duration-fast transition-colors hover:text-unq-text">
                 {item.label}
               </a>
             ) : (

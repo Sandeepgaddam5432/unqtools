@@ -196,7 +196,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
             </Card>
             <Card class="border-unq-success/40 !p-4 text-center">
               <p class="text-unq-muted text-xs uppercase tracking-wide">Future Value</p>
-              <p class="mt-1 text-2xl font-bold tabular-nums text-unq-success-strong">
+              <p class="text-unq-success-strong mt-1 text-2xl font-bold tabular-nums">
                 {fmt(result.futureValue)}
               </p>
               <p class="text-unq-muted mt-1 text-xs">{fmtC(result.futureValue)}</p>
@@ -253,7 +253,7 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
                       <td class="px-2 py-1.5 font-mono">{r.year}</td>
                       <td class="px-2 py-1.5 text-right font-mono">{fmt(r.investedThisYear)}</td>
                       <td class="px-2 py-1.5 text-right font-mono">{fmt(r.totalInvested)}</td>
-                      <td class="px-2 py-1.5 text-right font-mono text-unq-success-strong">
+                      <td class="text-unq-success-strong px-2 py-1.5 text-right font-mono">
                         {fmt(r.yearEndValue)}
                       </td>
                       <td class="text-unq-muted px-2 py-1.5 text-right font-mono">

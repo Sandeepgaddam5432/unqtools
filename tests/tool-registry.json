@@ -1,112 +1,112 @@
 [
   {
     "id": "add-line-breaks",
-    "name": "Add Line Breaks",
+    "name": "add-line-breaks",
     "route": "/tools/add-line-breaks"
   },
   {
     "id": "add-prefix-suffix",
-    "name": "Add Prefix/Suffix to Lines",
+    "name": "add-prefix-suffix",
     "route": "/tools/add-prefix-suffix"
   },
   {
     "id": "base64",
-    "name": "Base64 Encoder / Decoder",
+    "name": "base64",
     "route": "/tools/base64"
   },
   {
     "id": "big-text-generator",
-    "name": "Big Text Generator",
+    "name": "big-text-generator",
     "route": "/tools/big-text-generator"
   },
   {
     "id": "bold-text-generator",
-    "name": "Bold Text Generator",
+    "name": "bold-text-generator",
     "route": "/tools/bold-text-generator"
   },
   {
     "id": "bubble-text-generator",
-    "name": "Bubble Text Generator",
+    "name": "bubble-text-generator",
     "route": "/tools/bubble-text-generator"
   },
   {
     "id": "caesar-cipher",
-    "name": "Caesar Cipher",
+    "name": "caesar-cipher",
     "route": "/tools/caesar-cipher"
   },
   {
     "id": "case-converter",
-    "name": "Text Case Converter",
+    "name": "case-converter",
     "route": "/tools/case-converter"
   },
   {
     "id": "color-picker",
-    "name": "Color Picker &amp; Converter",
+    "name": "color-picker",
     "route": "/tools/color-picker"
   },
   {
     "id": "csv-to-markdown",
-    "name": "CSV to Markdown Table",
+    "name": "csv-to-markdown",
     "route": "/tools/csv-to-markdown"
   },
   {
     "id": "csv-to-text-list",
-    "name": "CSV to Text List",
+    "name": "csv-to-text-list",
     "route": "/tools/csv-to-text-list"
   },
   {
     "id": "diff-checker",
-    "name": "Diff Checker",
+    "name": "diff-checker",
     "route": "/tools/diff-checker"
   },
   {
     "id": "duplicate-lines-remover",
-    "name": "Duplicate Lines Remover",
+    "name": "duplicate-lines-remover",
     "route": "/tools/duplicate-lines-remover"
   },
   {
     "id": "emi-calculator",
-    "name": "Loan / EMI Calculator",
+    "name": "emi-calculator",
     "route": "/tools/emi-calculator"
   },
   {
     "id": "hash-generator",
-    "name": "Hash Generator",
+    "name": "hash-generator",
     "route": "/tools/hash-generator"
   },
   {
     "id": "image-compressor",
-    "name": "Image Compressor",
+    "name": "image-compressor",
     "route": "/tools/image-compressor"
   },
   {
     "id": "json-formatter",
-    "name": "JSON Formatter",
+    "name": "json-formatter",
     "route": "/tools/json-formatter"
   },
   {
     "id": "mortgage-calculator",
-    "name": "Mortgage Calculator",
+    "name": "mortgage-calculator",
     "route": "/tools/mortgage-calculator"
   },
   {
     "id": "sip-calculator",
-    "name": "SIP Calculator",
+    "name": "sip-calculator",
     "route": "/tools/sip-calculator"
   },
   {
     "id": "url-encoder",
-    "name": "URL Encoder / Decoder",
+    "name": "url-encoder",
     "route": "/tools/url-encoder"
   },
   {
     "id": "uuid-generator",
-    "name": "UUID Generator",
+    "name": "uuid-generator",
     "route": "/tools/uuid-generator"
   },
   {
     "id": "word-character-counter",
-    "name": "Word &amp; Character Counter",
+    "name": "word-character-counter",
     "route": "/tools/word-character-counter"
   }
 ]

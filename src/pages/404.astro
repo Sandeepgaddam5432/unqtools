@@ -1,43 +1,30 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { Home, Search } from "lucide-preact";
 ---
 
 <BaseLayout title="Not found — UnQTools">
-  <section
-    class="unq-section"
-    style="min-height: 60vh; display: flex; align-items: center; justify-content: center; padding-inline: 24px;"
-  >
-    <div
-      style="display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; max-width: 540px;"
-    >
+  <div style="min-height:50vh;display:flex;align-items:center;justify-content:center;">
+    <div style="text-align:center;display:flex;flex-direction:column;gap:20px;max-width:420px;">
       <p
-        class="unq-muted"
-        style="font-size: clamp(80px, 18vw, 160px); font-weight: 600; line-height: 1; letter-spacing: -0.04em; margin: 0;"
+        style="font-size:clamp(64px,14vw,128px);font-weight:600;line-height:1;letter-spacing:-0.04em;margin:0;color:var(--text-subtle);"
       >
         404
       </p>
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <h1 class="unq-h2" style="margin: 0;">Page not found</h1>
-        <p class="unq-muted" style="max-width: 420px; margin: 0 auto; line-height: 1.4;">
-          The tool or page you're looking for doesn't exist, or may have moved. Try searching for
-          what you need.
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <h1 style="font-size:var(--text-h2);margin:0;">Page not found</h1>
+        <p class="muted" style="margin:0;">
+          The tool or page you're looking for doesn't exist, or may have moved.
         </p>
       </div>
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <a href="/" class="unq-btn">
-          <Home size={16} />
-          Back to home
-        </a>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+        <a href="/" class="btn">Back to home</a>
         <button
-          type="button"
+          class="btn btn--secondary"
           onclick="window.dispatchEvent(new CustomEvent('unq:open-command-bar'))"
-          class="unq-btn unq-btn--secondary"
         >
-          <Search size={16} />
           Search tools (⌘K)
         </button>
       </div>
     </div>
-  </section>
+  </div>
 </BaseLayout>

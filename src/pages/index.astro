@@ -2,210 +2,204 @@
 import { TOOLS, countByCategory } from "../lib/registry";
 import { ALL_CATEGORIES, CATEGORY_LABELS } from "../lib/tool";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ToolCard from "../components/ToolCard.astro";
-import SearchBar from "../components/SearchBar.astro";
-import Sidebar from "../components/Sidebar.astro";
-import CategoryChips from "../components/CategoryChips.astro";
 
 const counts = countByCategory();
-const categoriesWithTools = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
+const cats = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
 const toolCount = TOOLS.length;
 
-// Featured tools: curated row above the full grid.
-const featuredIds = ["json-formatter", "image-compressor", "emi-calculator", "color-picker"];
-const featuredTools = featuredIds
+const featuredIds = ["json-formatter", "diff-checker", "caesar-cipher", "color-picker"];
+const featured = featuredIds
   .map((id) => TOOLS.find((t) => t.id === id))
-  .filter((t): t is NonNullable<typeof t> => Boolean(t))
+  .filter(Boolean)
   .slice(0, 4);
+
+const ICON_MAP: Record<string, string> = {
+  braces: "{ }",
+  binary: "01",
+  link: "🔗",
+  hash: "#",
+  type: "Aa",
+  image: "🎨",
+  calculator: "🧮",
+  "trending-up": "📈",
+  home: "🏠",
+  palette: "🎨",
+  fingerprint: "🔑",
+};
 ---
 
 <BaseLayout>
-  {
-    /* ════════════════════════════════════════════════════════════════════
-      COMPACT SEARCH-FIRST HERO — H1 + one-line subtitle + prominent search
-      + slim inline stats. Tool grid starts immediately under it (visible
-      above the fold on desktop). No more full-screen marketing hero.
-      ════════════════════════════════════════════════════════════════════ */
-  }
-  <section class="unq-hero unq-hero-anim">
-    <div class="unq-shell" style="grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 0;">
-      <div style="max-width: 720px; width: 100%; min-width: 0;">
-        <p
-          class="unq-eyebrow"
-          style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;"
+  {/* Hero */}
+  <section class="hero">
+    <div style="max-width:720px;margin:0 auto;">
+      <p class="eyebrow" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span
+          style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;"
+        ></span>
+        100% private · runs in your browser
+      </p>
+      <h1 class="hero__title">Tools that respect your data.</h1>
+      <p class="hero__subtitle">
+        {toolCount} fast, free, offline-capable browser tools — converters, calculators, generators,
+        formatters. No uploads, no tracking, no accounts.
+      </p>
+      <div class="hero__search-wrap">
+        <button
+          class="topbar__search"
+          id="hero-search-trigger"
+          style="width:100%;height:44px;"
+          aria-label="Search tools"
         >
-          <span
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
             aria-hidden="true"
-            style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--unq-success);"
-          ></span>
-          100% private · runs in your browser
-        </p>
-        <h1 class="unq-hero-title" style="margin: 0;">
-          Tools that <span class="unq-gradient">respect</span> your data.
-        </h1>
-        <p
-          class="unq-muted"
-          style="font-size: 17px; line-height: 1.4; margin: 10px 0 0; max-width: 580px;"
-        >
-          {toolCount} fast, free, offline-capable browser tools — converters, calculators, generators,
-          formatters. No uploads, no tracking, no accounts.
-        </p>
-        <div style="margin: 20px 0 0; max-width: 580px;">
-          <SearchBar />
-        </div>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--unq-text-3);">
-          Press
-          <kbd
-            class="inline-flex h-5 items-center rounded border border-unq-border bg-unq-surface-hover px-1.5 font-mono text-[10px]"
-            >⌘K</kbd
+            ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
           >
-          anywhere to search
-        </p>
-        {/* Slim inline stats — one row, no section band */}
-        <p class="unq-stats-inline">
-          <span><strong data-countup={toolCount}>0</strong> tools</span>
-          <span class="unq-stats-inline__sep">·</span>
-          <span><strong data-countup="343">0</strong> tests</span>
-          <span class="unq-stats-inline__sep">·</span>
-          <span><strong data-countup="0">0</strong> bytes sent</span>
-          <span class="unq-stats-inline__sep">·</span>
-          <span><strong data-countup="100">0</strong>% offline</span>
-        </p>
+          <span>Search tools by name, category, or keyword…</span>
+          <span class="topbar__search-hint">⌘K</span>
+        </button>
+      </div>
+      <div class="hero__trust">
+        <span class="hero__trust-item">✓ No sign-up</span>
+        <span class="hero__trust-item">✓ No tracking</span>
+        <span class="hero__trust-item">✓ Works offline</span>
       </div>
     </div>
   </section>
 
-  {/* Mobile category chip row (replaces sidebar on ≤1024px) */}
-  <CategoryChips />
+  {/* Stats strip */}
+  <div class="stats-strip">
+    <span><strong>{toolCount}</strong> tools</span>
+    <span>·</span>
+    <span><strong>529</strong> tests passing</span>
+    <span>·</span>
+    <span><strong>0</strong> bytes sent to a server</span>
+    <span>·</span>
+    <span><strong>100%</strong> offline-capable</span>
+  </div>
 
+  {/* Featured bento */}
   {
-    /* ════════════════════════════════════════════════════════════════════
-      APP SHELL — sticky left sidebar (desktop ≥1024px) + main content.
-      Main content: Featured row → All tools grid → per-category sections.
-      ════════════════════════════════════════════════════════════════════ */
-  }
-  <div class="unq-shell" style="padding-block: 0 64px;">
-    <Sidebar />
-
-    <main class="unq-main" style="display: flex; flex-direction: column; gap: 40px;">
-      {/* Featured row */}
-      {
-        featuredTools.length > 0 && (
-          <section class="unq-reveal">
-            <div class="unq-section-head" style="margin-bottom: 16px;">
-              <div>
-                <p class="unq-eyebrow" style="margin: 0 0 2px 0;">
-                  Popular this week
-                </p>
-                <h2 class="unq-h3" style="margin: 0;">
-                  Featured tools
-                </h2>
-              </div>
-            </div>
-            <div class="unq-bento">
-              {featuredTools.map((t) => (
-                <ToolCard tool={t} featured={true} />
-              ))}
-            </div>
-          </section>
-        )
-      }
-
-      {/* All tools — single dense grid, no category headers, fills the width */}
-      <section class="unq-reveal">
-        <div class="unq-section-head" style="margin-bottom: 16px;">
+    featured.length > 0 && (
+      <section style="margin-top:32px;">
+        <div class="section-head">
           <div>
-            <p class="unq-eyebrow" style="margin: 0 0 2px 0;">All tools</p>
-            <h2 class="unq-h3" style="margin: 0;">Browse everything</h2>
+            <p class="eyebrow" style="margin:0 0 4px;">
+              Popular this week
+            </p>
+            <h2 style="font-size:var(--text-h2);margin:0;">Featured tools</h2>
           </div>
-          <span
-            style="font-size: var(--unq-sm); color: var(--unq-text-3); font-variant-numeric: tabular-nums;"
-          >
-            {toolCount} total
-          </span>
         </div>
-        <div class="unq-grid">
-          {TOOLS.map((t) => <ToolCard tool={t} />)}
+        <div class="bento reveal">
+          {featured.map((t) => {
+            const glyph = ICON_MAP[t!.icon] ?? t!.icon.slice(0, 2).toUpperCase();
+            return (
+              <a href={`/tools/${t!.id}`} class="card">
+                <span class="card__icon" aria-hidden="true">
+                  {glyph}
+                </span>
+                <h3 class="card__title">{t!.name}</h3>
+                <p class="card__desc">{t!.description}</p>
+                <p class="card__cat">{CATEGORY_LABELS[t!.category].split(" ")[0]}</p>
+              </a>
+            );
+          })}
         </div>
       </section>
+    )
+  }
 
-      {/* Per-category sections — alternating bg, each with header + grid */}
+  {/* All tools grid */}
+  <section style="margin-top:32px;">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow" style="margin:0 0 4px;">All tools</p>
+        <h2 style="font-size:var(--text-h2);margin:0;">Browse everything</h2>
+      </div>
+      <span class="section-head__count">{toolCount} total</span>
+    </div>
+    <div class="tool-grid reveal">
       {
-        categoriesWithTools.map((c, i) => {
-          const tools = TOOLS.filter((t) => t.category === c);
-          const isGray = i % 2 === 1;
+        TOOLS.map((t) => {
+          const glyph = ICON_MAP[t.icon] ?? t.icon.slice(0, 2).toUpperCase();
           return (
-            <section
-              class={isGray ? "unq-section unq-section--gray" : "unq-section"}
-              style="padding: clamp(32px, 4vw, 48px) 0; margin: 0 -24px; padding-inline: 24px; border-radius: 0;"
-            >
-              <div class="unq-section-head" style="margin-bottom: 16px;">
-                <div>
-                  <p class="unq-eyebrow" style="margin: 0 0 2px 0;">
-                    {tools.length} tool{tools.length === 1 ? "" : "s"}
-                  </p>
-                  <h2 class="unq-h3" style="margin: 0;">
-                    {CATEGORY_LABELS[c]}
-                  </h2>
-                </div>
-                <a href={`/category/${c}`} class="unq-cta-link">
-                  View all
-                </a>
-              </div>
-              <div class="unq-grid unq-reveal">
-                {tools.slice(0, 8).map((t) => (
-                  <ToolCard tool={t} />
-                ))}
-              </div>
-            </section>
+            <a href={`/tools/${t.id}`} class="card">
+              <span class="card__icon" aria-hidden="true">
+                {glyph}
+              </span>
+              <h3 class="card__title">{t.name}</h3>
+              <p class="card__desc">{t.description}</p>
+              <p class="card__cat">{CATEGORY_LABELS[t.category].split(" ")[0]}</p>
+            </a>
           );
         })
       }
+    </div>
+  </section>
 
-      {/* CTA band — install PWA */}
-      <section class="unq-reveal">
-        <div class="unq-cta-band unq-glass" style="padding: clamp(32px, 4vw, 48px);">
-          <p class="unq-eyebrow" style="margin: 0;">Install UnQTools</p>
-          <h2 class="unq-h3" style="margin: 0; max-width: 540px;">
-            Add it to your home screen. Works offline, no account.
-          </h2>
-          <div
-            style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 4px;"
-          >
-            <button
-              type="button"
-              class="unq-btn"
-              onclick="window.dispatchEvent(new CustomEvent('unq:install-prompt'));"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline
-                  points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"
-                ></line></svg
-              >
-              Install UnQTools
-            </button>
-            <a href="/category/developer" class="unq-btn unq-btn--secondary"> Browse tools </a>
+  {/* Category sections */}
+  {
+    cats.map((c, i) => {
+      const tools = TOOLS.filter((t) => t.category === c);
+      return (
+        <section style={`margin-top:32px;${i % 2 === 1 ? "" : ""}`}>
+          <div class="section-head">
+            <div>
+              <p class="eyebrow" style="margin:0 0 4px;">
+                {tools.length} tool{tools.length === 1 ? "" : "s"}
+              </p>
+              <h2 style="font-size:var(--text-h2);margin:0;">{CATEGORY_LABELS[c]}</h2>
+            </div>
+            <a href={`/category/${c}`} class="cta-link">
+              View all
+            </a>
           </div>
-        </div>
-      </section>
-    </main>
-  </div>
+          <div class="tool-grid reveal">
+            {tools.slice(0, 8).map((t) => {
+              const glyph = ICON_MAP[t.icon] ?? t.icon.slice(0, 2).toUpperCase();
+              return (
+                <a href={`/tools/${t.id}`} class="card">
+                  <span class="card__icon" aria-hidden="true">
+                    {glyph}
+                  </span>
+                  <h3 class="card__title">{t.name}</h3>
+                  <p class="card__desc">{t.description}</p>
+                  <p class="card__cat">{CATEGORY_LABELS[t.category].split(" ")[0]}</p>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      );
+    })
+  }
+
+  {/* CTA band */}
+  <section style="margin-top:48px;" class="reveal">
+    <div class="cta-band">
+      <p class="eyebrow" style="margin:0;">Install UnQTools</p>
+      <h2 style="font-size:var(--text-h2);margin:0;max-width:540px;">
+        Add it to your home screen. Works offline, no account.
+      </h2>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:4px;">
+        <button class="btn" onclick="window.dispatchEvent(new CustomEvent('unq:install-prompt'))">
+          Install UnQTools
+        </button>
+        <a href="/category/developer" class="btn btn--secondary">Browse tools</a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
-<style>
-  /* Reserved grid heights to prevent CLS during reveal:
-     each .unq-reveal grid cell reserves its content height via the grid
-     itself — we animate only opacity/transform, so no layout shift. */
-  .unq-grid.unq-reveal {
-    min-height: 0;
-  }
-</style>
+<script is:inline>
+  document.getElementById("hero-search-trigger")?.addEventListener("click", () => {
+    window.dispatchEvent(new CustomEvent("unq:open-command-bar"));
+  });
+</script>

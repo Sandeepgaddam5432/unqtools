@@ -43,7 +43,7 @@ export function Tabs({ tabs, initialId, class: cls }: TabsProps) {
             id={`tab-${t.id}`}
             tabindex={active === t.id ? 0 : -1}
             onClick={() => setActive(t.id)}
-            class={`-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors duration-fast ${
+            class={`duration-fast -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
               active === t.id
                 ? "border-unq-accent text-unq-text"
                 : "border-transparent text-unq-text-muted hover:text-unq-text"
@@ -94,7 +94,7 @@ export function Segmented({ options, value, onChange, size = "md", class: cls }:
           role="radio"
           aria-checked={value === o.value}
           onClick={() => onChange(o.value)}
-          class={`${size === "sm" ? "h-7 px-2.5 text-xs" : "h-9 px-3.5 text-sm"} rounded-md font-medium transition-all duration-fast ${
+          class={`${size === "sm" ? "h-7 px-2.5 text-xs" : "h-9 px-3.5 text-sm"} duration-fast rounded-md font-medium transition-all ${
             value === o.value
               ? "bg-unq-surface-elevated text-unq-text shadow-sm"
               : "text-unq-text-muted hover:text-unq-text"

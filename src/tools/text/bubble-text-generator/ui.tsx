@@ -55,7 +55,7 @@ export default function BubbleTextGenerator() {
             <CopyButton getText={() => output} />
           </div>
           <div
-            class="unq-scroll-x border-unq-border-subtle rounded-lg border p-4"
+            class="unq-scroll-x rounded-lg border border-unq-border-subtle p-4"
             style="font-size: 1.5rem; line-height: 1.4; word-break: break-word; overflow-wrap: break-word;"
           >
             {output}

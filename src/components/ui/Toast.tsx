@@ -66,7 +66,7 @@ export function ToastContainer() {
         return (
           <div
             key={t.id}
-            class={`pointer-events-auto flex min-w-[260px] max-w-sm items-start gap-2.5 rounded-lg border bg-unq-surface-elevated p-3 pr-2 shadow-lg ${cfg.class} animate-[unq-slide-in_0.2s_ease-out]`}
+            class={`bg-unq-surface-elevated pointer-events-auto flex min-w-[260px] max-w-sm items-start gap-2.5 rounded-lg border p-3 pr-2 shadow-lg ${cfg.class} animate-[unq-slide-in_0.2s_ease-out]`}
           >
             <span class="mt-0.5 shrink-0">{cfg.icon}</span>
             <p class="flex-1 text-sm leading-snug">{t.message}</p>

@@ -1,331 +1,170 @@
 /**
- * UnQTools Design Tokens v2.1 — Apple.com exact neutral + single-blue system
- *
- * REPLACES the prior violet-accent system. The owner rejected "violet startup";
- * the UI must look like apple.com: pure neutral grayscale + ONE blue accent.
- *
- * BACKWARD COMPAT: every old --unq-* token name the components / Tailwind
- * config still reference is preserved as an alias of the new Apple value.
- * So all 343 tests + every Tailwind class (`bg-unq-accent`, `text-unq-text-muted`,
- * `border-unq-border`, etc.) keep working without per-component edits.
- *
- * The NEW tokens below (--unq-bg-secondary, --unq-surface-2, --unq-text-2/3,
- * --unq-border-subtle, --unq-link, --unq-accent-active, --unq-focus,
- * --unq-glass-bg, --unq-glass-border, --unq-radius-pill, --unq-nav-h,
- * --unq-content, --unq-content-wide, --unq-hero, --unq-h1, --unq-h2, --unq-h3,
- * --unq-body, --unq-sm, --unq-xs) come straight from apple.com's own values.
+ * UnQTools v6.0 — Token Foundation
+ * Scratch rebuild. OKLCH dark-first. Skill-driven (ui-ux-pro-max).
+ * Owner-approved code direction merged with skill output.
  */
 
-/* ============================================================ Light theme */
-:root {
-  /* --- Apple neutral surfaces --- */
-  --unq-bg: #ffffff;
-  --unq-bg-secondary: #f5f5f7;
-  --unq-surface: #ffffff;
-  --unq-surface-2: #fbfbfd;
-  --unq-surface-elevated: #ffffff; /* alias of --unq-surface */
-  --unq-surface-hover: #f5f5f7; /* alias of --unq-bg-secondary */
+/* ═══ DARK (default) ═══ */
+:root,
+[data-theme="dark"] {
+  /* Surfaces — deep slate-indigo, NOT pure black */
+  --bg: oklch(0.145 0.025 262);
+  --surface: oklch(0.185 0.028 262);
+  --surface-2: oklch(0.225 0.03 262);
+  --surface-hover: oklch(0.255 0.032 262);
 
-  /* --- Apple neutral borders --- */
-  --unq-border: #d2d2d7;
-  --unq-border-subtle: #e8e8ed;
-  --unq-border-strong: #d2d2d7; /* alias of --unq-border */
+  /* Borders */
+  --border: oklch(0.32 0.03 262 / 55%);
+  --border-subtle: oklch(0.28 0.028 262 / 40%);
+  --border-strong: oklch(0.38 0.035 262 / 70%);
 
-  /* --- v5.0: Slate text (skill palette adapted for light mode AA) --- */
-  --unq-text: #0f172a; /* Skill bg repurposed as light-mode primary text */
-  --unq-text-2: #475569; /* Slate-600 (AA on white) */
-  --unq-text-3: #475569; /* Same as text-2 (AA requirement) */
-  --unq-text-muted: #475569;
-  --unq-text-subtle: #475569;
+  /* Text */
+  --text: oklch(0.965 0.005 262);
+  --text-muted: oklch(0.74 0.02 262);
+  --text-subtle: oklch(0.62 0.018 262);
 
-  /* --- Apple single-blue accent --- */
-  --unq-link: #0066cc;
-  --unq-accent: #0071e3;
-  --unq-accent-hover: #0077ed;
-  --unq-accent-active: #006edb;
-  --unq-accent-subtle: rgba(0, 113, 227, 0.08);
-  --unq-accent-contrast: #ffffff;
-  --unq-accent-ring: rgba(0, 113, 227, 0.35);
-  --unq-focus: #0071e3;
-  --unq-ring: rgba(0, 113, 227, 0.35); /* alias of --unq-accent-ring */
+  /* Accent — electric blue */
+  --accent: oklch(0.64 0.19 259);
+  --accent-hover: oklch(0.58 0.2 259);
+  --accent-active: oklch(0.52 0.2 259);
+  --accent-subtle: oklch(0.64 0.19 259 / 12%);
+  --accent-contrast: oklch(0.99 0 0);
+  --accent-ring: oklch(0.64 0.19 259 / 35%);
 
-  /* --- Apple status colors --- */
-  --unq-success: #16a34a; /* v5.0: Green-600 (AA on white, skill-derived) */
-  --unq-success-subtle: rgba(22, 163, 74, 0.1);
-  --unq-success-strong: #16a34a;
-  --unq-warning: #ff9f0a;
-  --unq-warning-subtle: rgba(255, 159, 10, 0.1);
-  --unq-warning-strong: #a35e00;
-  --unq-danger: #dc2626; /* v5.0: Skill destructive */
-  --unq-danger-subtle: rgba(220, 38, 38, 0.1);
-  --unq-danger-strong: #b91c1c; /* Red-700 (AA on white) */
+  /* Status */
+  --success: oklch(0.72 0.17 149);
+  --success-subtle: oklch(0.72 0.17 149 / 12%);
+  --warning: oklch(0.78 0.16 71);
+  --warning-subtle: oklch(0.78 0.16 71 / 12%);
+  --danger: oklch(0.65 0.21 25);
+  --danger-subtle: oklch(0.65 0.21 25 / 12%);
 
-  /* --- Frosted glass (header, command bar) — v4.0 uses color-mix for
-       better oklch blending with the surface underneath --- */
-  --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
-  --unq-glass-border: rgba(0, 0, 0, 0.08);
+  /* Glass */
+  --glass-bg: oklch(0.145 0.025 262 / 62%);
+  --glass-border: oklch(0.32 0.03 262 / 45%);
 
-  /* --- Apple radius scale --- */
-  --unq-radius-sm: 8px;
-  --unq-radius: 12px;
-  --unq-radius-lg: 18px;
-  --unq-radius-xl: 28px;
-  --unq-radius-2xl: 32px;
-  --unq-radius-pill: 980px;
-  --unq-radius-full: 9999px;
+  /* Effects */
+  --glow: oklch(0.64 0.19 259 / 22%);
 
-  /* --- Apple shadow scale (neutral, layered) --- */
-  --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --unq-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --unq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08); /* alias of --unq-shadow */
-  --unq-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
-  --unq-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.16);
-  --unq-shadow-glow: 0 0 0 4px var(--unq-accent-ring);
-  --unq-shadow-bloom: 0 4px 16px rgba(0, 113, 227, 0.1), 0 1px 3px rgba(0, 0, 0, 0.04);
+  /* Layout */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+  --radius-pill: 980px;
+  --topbar-h: 56px;
+  --sidebar-w: 248px;
+  --content-max: 1280px;
+  --gutter: 24px;
 
-  /* --- Layout (product-app density: 1280px shell, 720px prose) ---
-       v3.0: widened from apple.com marketing widths (980/1024) to a
-       Raycast/Linear/Vercel-style product shell. Tool pages keep a 720px
-       prose width for readability; homepage + category pages use the full
-       1280px shell with a sticky sidebar. */
-  --unq-nav-h: 48px;
-  --unq-content: 1280px;
-  --unq-content-wide: 1280px;
-  --unq-content-prose: 720px;
-  --unq-container-max: 1280px; /* alias of --unq-content */
-  --unq-content-max: 1280px; /* alias of --unq-content */
+  /* Shadows */
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow: 0 4px 16px oklch(0 0 0 / 0.4);
+  --shadow-lg: 0 12px 40px oklch(0 0 0 / 0.5);
 
-  /* --- Gutters — 24px side padding (slightly wider than v2.1's 22px) --- */
-  --unq-gutter-sm: 24px;
-  --unq-gutter-md: 24px;
-  --unq-gutter-lg: 24px;
-
-  /* --- Motion — Apple ease curve + v3.1 premium easing --- */
-  --unq-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --unq-ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1); /* alias of --unq-ease */
-  --unq-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  /* v3.1: --unq-ease-out upgraded to the Linear/Vercel "ease-out" curve
-     (was cubic-bezier(0.33,1,0.68,1) — gentler; the new one decelerates
-     harder, feels more premium on hover/spotlight transitions). */
-  --unq-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --unq-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  /* v3.1: spring easing via linear() — a real spring curve with slight
-     overshoot. Used sparingly on entrances. Fallback browsers ignore it
-     and use the previous transition (graceful degradation). */
-  --unq-spring: linear(
+  /* Motion */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: linear(
     0,
-    0.009,
-    0.035 2.1%,
-    0.219 6.6%,
-    0.55 12.9%,
-    0.77 17.5%,
-    0.905 22.4%,
-    0.968 27.1%,
-    1.008 34%,
-    1.014 41.9%,
-    1.001 100%
+    0.36 5.6%,
+    0.63 10.2%,
+    0.86 15.3%,
+    1.02 21%,
+    1.08 27.3%,
+    1.05 36.4%,
+    1.01 50.2%,
+    1
   );
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur: 250ms;
+  --dur-slow: 400ms;
 
-  /* v4.0: Real spring motion via linear() — physics-feel with slight overshoot.
-     Replaces the v3.1 --unq-ease-spring (which was a plain cubic-bezier).
-     @supports guard below provides the cubic-bezier fallback for browsers
-     that don't support linear() (Firefox/Safari < 17.4). */
-  --unq-ease-spring: linear(
-    0,
-    0.006,
-    0.025 2.8%,
-    0.101 6.1%,
-    0.539 18.9%,
-    0.721 25.3%,
-    0.849 31.5%,
-    0.937 38.1%,
-    0.968 41.8%,
-    0.991 45.7%,
-    1.006 50.1%,
-    1.015 55%,
-    1.017 63.9%,
-    1.001
-  );
-  --unq-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", sans-serif;
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* --- v3.1 gradient stops (for spotlight border + aurora + headline) --- */
-  --unq-grad-1: #0071e3; /* Apple blue */
-  --unq-grad-2: #42a5ff; /* light blue */
-  --unq-grad-3: #bf5af2; /* soft purple — gradient endpoint only, not an accent */
-
-  /* --- v4.0 Liquid Glass material tokens --- */
-  --unq-glass-blur: 20px;
-  --unq-glass-saturate: 1.8;
-  --unq-glass-edge: linear-gradient(
-    135deg,
-    rgb(255 255 255 / 0.45),
-    rgb(255 255 255 / 0.08) 40%,
-    rgb(255 255 255 / 0) 60%,
-    rgb(255 255 255 / 0.22)
-  );
-  --unq-duration-fast: 160ms;
-  --unq-duration-normal: 280ms;
-  --unq-duration-slow: 420ms;
-  --unq-duration-deliberate: 560ms;
-
-  /* --- Typography — SF Pro stack first (true SF on Apple devices),
-       Inter as fallback. No SF Pro bundling (Apple proprietary). --- */
-  --unq-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter",
-    "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --unq-font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-
-  /* --- Apple fluid heading scale --- */
-  --unq-hero: clamp(2.75rem, 6vw, 4.5rem);
-  --unq-h1: clamp(2rem, 4.5vw, 3rem);
-  --unq-h2: clamp(1.5rem, 3vw, 2.25rem);
-  --unq-h3: clamp(1.25rem, 2vw, 1.5rem);
-  --unq-body: 1.0625rem;
-  --unq-sm: 0.875rem;
-  --unq-xs: 0.75rem;
-
-  /* --- Backward compat: Tailwind fontSize scale (kept for unq-text-* classes) --- */
-  --unq-text-xs: 0.75rem;
-  --unq-text-sm: 0.875rem;
-  --unq-text-base: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
-  --unq-text-lg: clamp(1.125rem, 1.07rem + 0.27vw, 1.25rem);
-  --unq-text-xl: clamp(1.3125rem, 1.21rem + 0.5vw, 1.5rem);
-  --unq-text-2xl: clamp(1.625rem, 1.42rem + 1vw, 2rem);
-  --unq-text-3xl: clamp(2rem, 1.6rem + 2vw, 2.75rem);
-  --unq-text-4xl: clamp(2.5rem, 1.9rem + 3vw, 4rem);
-  --unq-text-5xl: clamp(3rem, 2.2rem + 4vw, 5rem);
-  --unq-text-6xl: clamp(3.5rem, 2.4rem + 5.5vw, 6rem);
-
-  /* --- Apple tracking (tighter on display, body uses -.022em per apple.com) --- */
-  --unq-tracking-display: -0.025em;
-  --unq-tracking-display-lg: -0.035em;
-  --unq-tracking-tight: -0.015em;
-  --unq-tracking-body: -0.022em;
-
-  /* --- 4px-base spacing scale (kept for Tailwind spacing extension) --- */
-  --unq-space-1: 0.25rem;
-  --unq-space-2: 0.5rem;
-  --unq-space-3: 0.75rem;
-  --unq-space-4: 1rem;
-  --unq-space-5: 1.25rem;
-  --unq-space-6: 1.5rem;
-  --unq-space-8: 2rem;
-  --unq-space-10: 2.5rem;
-  --unq-space-12: 3rem;
-  --unq-space-16: 4rem;
-  --unq-space-20: 5rem;
-  --unq-space-24: 6rem;
-  --unq-space-32: 8rem;
-
-  color-scheme: light;
-}
-
-/* ============================================================ Dark theme (v5.0: skill-driven slate palette) */
-:root[data-theme="dark"] {
-  /* --- v5.0: Slate-tinted dark surfaces (ui-ux-pro-max skill recommendation) --- */
-  --unq-bg: #0f172a; /* Skill: background — slate-900 */
-  --unq-bg-secondary: #10192e; /* Skill: muted */
-  --unq-surface: #1e293b; /* Derived: slate-800 */
-  --unq-surface-2: #334155; /* Skill: secondary — slate-700 */
-  --unq-surface-elevated: #1e293b;
-  --unq-surface-hover: #334155;
-
-  /* --- v5.0: Slate borders (skill recommendation) --- */
-  --unq-border: rgba(255, 255, 255, 0.08); /* Skill: border */
-  --unq-border-subtle: rgba(255, 255, 255, 0.05);
-  --unq-border-strong: rgba(255, 255, 255, 0.12);
-
-  /* --- v5.0: Text (skill: foreground #FFFFFF + derived slate-400 for muted) --- */
-  --unq-text: #ffffff; /* Skill: foreground */
-  --unq-text-2: #94a3b8; /* Derived: slate-400 (AA on #0F172A) */
-  --unq-text-3: #94a3b8; /* Same as text-2 (AA requirement) */
-  --unq-text-muted: #94a3b8;
-  --unq-text-subtle: #94a3b8;
-
-  /* --- v5.0: Dark accent (darker blue for AA contrast with white text on it) --- */
-  --unq-link: #3b82f6;
-  --unq-accent: #2563eb; /* Blue-600: 4.73:1 with white text (AA pass) */
-  --unq-accent-hover: #1d4ed8;
-  --unq-accent-active: #1e40af;
-  --unq-accent-subtle: rgba(37, 99, 235, 0.16);
-  --unq-accent-contrast: #ffffff;
-  --unq-accent-ring: rgba(37, 99, 235, 0.4);
-  --unq-focus: #2563eb;
-  --unq-ring: rgba(37, 99, 235, 0.4);
-
-  /* --- v5.0: Status colors (skill: accent green #22C55E for success) --- */
-  --unq-success: #22c55e; /* Skill: accent/CTA — connected green */
-  --unq-success-subtle: rgba(34, 197, 94, 0.18);
-  --unq-success-strong: #22c55e;
-  --unq-warning: #ff9f0a;
-  --unq-warning-subtle: rgba(255, 159, 10, 0.18);
-  --unq-warning-strong: #ff9f0a;
-  --unq-danger: #dc2626; /* Skill: destructive */
-  --unq-danger-subtle: rgba(220, 38, 38, 0.18);
-  --unq-danger-strong: #dc2626;
-
-  /* --- Dark frosted glass — v4.0 color-mix --- */
-  --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
-  --unq-glass-border: rgba(255, 255, 255, 0.1);
-
-  /* --- Dark shadows (deeper) --- */
-  --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
-  --unq-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --unq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --unq-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
-  --unq-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.7);
-  --unq-shadow-glow: 0 0 0 4px var(--unq-accent-ring);
-  --unq-shadow-bloom: 0 4px 16px rgba(10, 132, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+  /* Fluid type */
+  --text-hero: clamp(2rem, 4.5vw, 3.2rem);
+  --text-h1: clamp(1.5rem, 3vw, 2.25rem);
+  --text-h2: clamp(1.25rem, 2vw, 1.625rem);
+  --text-h3: clamp(1.0625rem, 1.5vw, 1.25rem);
+  --text-body: 0.9375rem;
+  --text-sm: 0.8125rem;
+  --text-xs: 0.6875rem;
 
   color-scheme: dark;
 }
 
-/* Respect OS preference when no explicit theme is set (no-FOUC inline script
-   in BaseLayout sets data-theme before first paint; this is the fallback). */
+/* ═══ LIGHT (full parity) ═══ */
+[data-theme="light"] {
+  --bg: oklch(0.985 0.002 262);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.96 0.004 262);
+  --surface-hover: oklch(0.94 0.005 262);
+
+  --border: oklch(0.88 0.01 262 / 80%);
+  --border-subtle: oklch(0.92 0.008 262 / 60%);
+  --border-strong: oklch(0.82 0.012 262);
+
+  --text: oklch(0.2 0.02 262);
+  --text-muted: oklch(0.45 0.02 262);
+  --text-subtle: oklch(0.55 0.018 262);
+
+  --accent: oklch(0.55 0.22 259);
+  --accent-hover: oklch(0.5 0.22 259);
+  --accent-active: oklch(0.46 0.22 259);
+  --accent-subtle: oklch(0.55 0.22 259 / 8%);
+  --accent-contrast: oklch(1 0 0);
+  --accent-ring: oklch(0.55 0.22 259 / 30%);
+
+  --success: oklch(0.55 0.17 149);
+  --success-subtle: oklch(0.55 0.17 149 / 8%);
+  --warning: oklch(0.68 0.17 71);
+  --warning-subtle: oklch(0.68 0.17 71 / 8%);
+  --danger: oklch(0.55 0.22 25);
+  --danger-subtle: oklch(0.55 0.22 25 / 8%);
+
+  --glass-bg: oklch(0.985 0.002 262 / 72%);
+  --glass-border: oklch(0 0 0 / 6%);
+
+  --glow: oklch(0.55 0.22 259 / 15%);
+
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow: 0 4px 16px oklch(0 0 0 / 0.08);
+  --shadow-lg: 0 12px 40px oklch(0 0 0 / 0.12);
+
+  color-scheme: light;
+}
+
+/* ═══ System preference fallback ═══ */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --unq-bg: #0f172a;
-    --unq-bg-secondary: #10192e;
-    --unq-surface: #1e293b;
-    --unq-surface-2: #334155;
-    --unq-surface-elevated: #1e293b;
-    --unq-surface-hover: #334155;
-    --unq-border: rgba(255, 255, 255, 0.08);
-    --unq-border-subtle: rgba(255, 255, 255, 0.05);
-    --unq-border-strong: rgba(255, 255, 255, 0.12);
-    --unq-text: #ffffff;
-    --unq-text-2: #94a3b8;
-    --unq-text-3: #94a3b8;
-    --unq-text-muted: #94a3b8;
-    --unq-text-subtle: #94a3b8;
-    --unq-link: #3b82f6;
-    --unq-accent: #2563eb;
-    --unq-accent-hover: #1d4ed8;
-    --unq-accent-active: #1e40af;
-    --unq-accent-subtle: rgba(37, 99, 235, 0.16);
-    --unq-accent-contrast: #ffffff;
-    --unq-accent-ring: rgba(37, 99, 235, 0.4);
-    --unq-focus: #2563eb;
-    --unq-ring: rgba(37, 99, 235, 0.4);
-    --unq-success: #22c55e;
-    --unq-success-subtle: rgba(34, 197, 94, 0.18);
-    --unq-success-strong: #22c55e;
-    --unq-warning: #ff9f0a;
-    --unq-warning-subtle: rgba(255, 159, 10, 0.18);
-    --unq-warning-strong: #ff9f0a;
-    --unq-danger: #dc2626;
-    --unq-danger-subtle: rgba(220, 38, 38, 0.18);
-    --unq-danger-strong: #dc2626;
-    --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
-    --unq-glass-border: rgba(255, 255, 255, 0.1);
-    --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
-    --unq-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --unq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --unq-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
-    --unq-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.7);
-    --unq-shadow-bloom: 0 4px 16px rgba(10, 132, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+    --bg: oklch(0.145 0.025 262);
+    --surface: oklch(0.185 0.028 262);
+    --surface-2: oklch(0.225 0.03 262);
+    --surface-hover: oklch(0.255 0.032 262);
+    --border: oklch(0.32 0.03 262 / 55%);
+    --border-subtle: oklch(0.28 0.028 262 / 40%);
+    --border-strong: oklch(0.38 0.035 262 / 70%);
+    --text: oklch(0.965 0.005 262);
+    --text-muted: oklch(0.74 0.02 262);
+    --text-subtle: oklch(0.62 0.018 262);
+    --accent: oklch(0.64 0.19 259);
+    --accent-hover: oklch(0.58 0.2 259);
+    --accent-active: oklch(0.52 0.2 259);
+    --accent-subtle: oklch(0.64 0.19 259 / 12%);
+    --accent-contrast: oklch(0.99 0 0);
+    --accent-ring: oklch(0.64 0.19 259 / 35%);
+    --success: oklch(0.72 0.17 149);
+    --success-subtle: oklch(0.72 0.17 149 / 12%);
+    --warning: oklch(0.78 0.16 71);
+    --warning-subtle: oklch(0.78 0.16 71 / 12%);
+    --danger: oklch(0.65 0.21 25);
+    --danger-subtle: oklch(0.65 0.21 25 / 12%);
+    --glass-bg: oklch(0.145 0.025 262 / 62%);
+    --glass-border: oklch(0.32 0.03 262 / 45%);
+    --glow: oklch(0.64 0.19 259 / 22%);
     color-scheme: dark;
   }
 }

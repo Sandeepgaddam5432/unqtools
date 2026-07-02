@@ -197,7 +197,7 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
               >
                 <a
                   href={`/tools/${r.tool.id}`}
-                  class={`mx-2 flex items-center gap-3 rounded-lg px-4 py-2.5 transition-colors duration-fast ${
+                  class={`duration-fast mx-2 flex items-center gap-3 rounded-lg px-4 py-2.5 transition-colors ${
                     i === activeIndex ? "bg-unq-accent-subtle" : "hover:bg-unq-surface-hover"
                   }`}
                   onMouseEnter={() => setActiveIndex(i)}
