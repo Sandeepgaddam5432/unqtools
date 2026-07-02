@@ -1,80 +1,143 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T06:45:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T06:58:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**Phase 2 — v1 core set, Batches 1 + 2** ✅ COMPLETE (12 tools shipped) → ready for Phase 3 (v1 launch polish + tool-specific Playwright e2e sweep)
+**Phase 2 — Cloudflare Pages deploy readiness** ✅ COMPLETE → awaiting deploy confirmation before Phase 3
 
-## Done (this session — Phase 2)
+## Done (this session — Cloudflare Pages deploy readiness)
 
 ### Resume ritual
-- [x] `git pull` on both repos (no remote changes)
+
+- [x] `git pull` on both `unqtools` and `unqtools-docs` (no remote changes)
 - [x] Read `AGENTS.md` + previous `STATE.md`
-- [x] `npm ci` — 614 packages restored
+- [x] `npm ci` — 616 packages restored
 
-### Batch 1 — 5 ported tools (commit `446440b`)
-- Word & Character Counter (`text/word-character-counter/`) — 35 tests, Unicode-correct via `Intl.Segmenter`, GSM-7/UCS-2 SMS per 3GPP TS 23.038, platform-limit meters, Web Worker for ≥100KB
-- Loan / EMI Calculator (`calculators/emi-calculator/`) — 16 tests, EMI formula `P·r·(1+r)^n / ((1+r)^n − 1)`, one-time + recurring prepayments, monthly/yearly CSV amortization
-- SIP Calculator (`calculators/sip-calculator/`) — 17 tests, standard SIP formula `FV = P × [((1+r)^n − 1) / r] × (1+r)` (annuity-due), annual step-up, inflation-adjusted real value
-- Mortgage Calculator (`calculators/mortgage-calculator/`) — 17 tests, full PITI + PMI + HOA, PMI auto-cancel at 78% LTV per HPA, extra-payment payoff modeling, CSV amortization
-- Image Compressor (`image/image-compressor/`) — 26 tests, Canvas API (WASM codecs deferred per blueprint), Web Worker + OffscreenCanvas, hand-rolled ZIP builder, target-size mode, bulk processing
+### 1. Static output confirmed
 
-### Batch 2 — 6 new tools (this commit)
-- Base64 Encoder / Decoder (`developer/base64/`) — 28 tests, UTF-8 safe via TextEncoder/TextDecoder, standard + URL-safe variants per RFC 4648 §5, swap mode, live update
-- URL Encoder / Decoder (`developer/url-encoder/`) — 28 tests, `encodeURIComponent` + `encodeURI` modes, URL breakdown (protocol/host/path/search/params), query parameter table
-- Hash Generator (`developer/hash-generator/`) — 21 tests, SHA-1/SHA-256/SHA-384/SHA-512 via Web Crypto, hex + Base64 output, file hashing, known-answer tests against NIST vectors
-- Color Picker / Converter (`image/color-picker/`) — 42 tests, HEX ↔ RGB ↔ HSL ↔ HSV mathematically-exact conversions, WCAG 2.1 contrast checker (AA/AAA), 11-step shade ramp, complementary color
-- Text Case Converter (`text/case-converter/`) — 43 tests, 11 case types (upper/lower/title/sentence/camel/pascal/snake/kebab/constant/dot/alternating), title case respects small-word rules
-- UUID Generator (`developer/uuid-generator/`) — 26 tests, RFC 4122 v4 via `crypto.randomUUID` (with manual fallback), bulk up to 10,000, hyphens/uppercase/braces/prefix/suffix options, UUID validator
+- [x] `astro.config.mjs` has `output: "static"` and **no adapter** (no SSR, no SPA fallback)
+- [x] `site` set to `https://unqtools.pages.dev` (placeholder Pages URL — swap to final domain later)
+- [x] `npm run build` emits **27 HTML pages** to `dist/`:
+  - 1 homepage
+  - 12 tool pages (`/tools/<id>/index.html`)
+  - 13 category pages (`/category/<cat>/index.html`)
+  - 1 `/404.html`
+- [x] Each tool's HTML is a complete prerendered page (not a SPA shell)
 
-### Verification (Batches 1 + 2 combined)
-- [x] `npm run lint` GREEN — 0 errors, 0 warnings (ESLint + Prettier)
-- [x] `npm run test` GREEN — **337 tests passing** across 13 test files
-  - 7 search + 31 JSON formatter + 35 word/char counter + 16 EMI + 17 SIP + 17 mortgage + 26 image compressor + 28 base64 + 28 URL encoder + 21 hash generator + 42 color picker + 43 case converter + 26 UUID generator
-- [x] `npm run build` GREEN — **27 static pages prerendered** (was 21 after Batch 1; +6 new tool pages + home now lists 12 tools + each tool appears in its category)
-- [x] Production preview: all 12 tool pages serve HTTP 200 with correct titles
-- [x] Homepage lists all 12 tools via auto-registry
-- [x] Per-tool island JS budget verified:
-  - Common Preact runtime: 9.79 KB gzipped
-  - Largest per-tool total: **15.95 KB gzipped** (image-compressor)
-  - Budget: 50 KB → 68% headroom on every tool page
+### 2. Cloudflare Pages config files in `public/` → `dist/` root
+
+- [x] `public/_headers`:
+  - `/_astro/*` → `Cache-Control: public, max-age=31536000, immutable` (hashed assets, safe to cache forever)
+  - `/sw.js` → `max-age=0, must-revalidate` + `Service-Worker-Allowed: /` (SW must not be cached aggressively)
+  - `/manifest.webmanifest` → `Content-Type: application/manifest+json` + 1-hour cache
+  - `/icons/*` → 1-day cache
+  - `/sitemap-index.xml`, `/robots.txt` → 1-hour cache
+  - `/*` (default) → `max-age=0, must-revalidate` (HTML always revalidates so deploys are visible immediately)
+  - Security headers on `/*`: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: SAMEORIGIN`, `Permissions-Policy` (camera/mic/geo/payment/etc. all disabled), `Cross-Origin-Opener-Policy: same-origin`, `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`, `Content-Security-Policy` (strict `default-src 'self'`, allows `'unsafe-inline'` for Astro's inline styles/scripts, blocks third-party everything)
+  - **Service worker is NOT blocked** — explicit rule ensures SW is revalidated, not blocked
+- [x] `public/_redirects`:
+  - **Intentionally empty** — no SPA catch-all (`/* /index.html 200`)
+  - Every route is its own static HTML file; Cloudflare serves `/404.html` for unmatched paths
+- [x] `public/robots.txt`: `User-agent: * / Allow: / / Disallow: /sw.js / Disallow: /404.html / Sitemap: https://unqtools.pages.dev/sitemap-index.xml`
+- [x] **Sitemap** auto-generated by `@astrojs/sitemap` integration:
+  - `dist/sitemap-index.xml` → points to `sitemap-0.xml`
+  - `dist/sitemap-0.xml` → all 26 pages (404 filtered out) with `<lastmod>`, `<changefreq>weekly</changefreq>`, `<priority>0.7</priority>`
+  - All URLs absolute (`https://unqtools.pages.dev/...`)
+- [x] `src/pages/404.astro` — real static 404 page; Cloudflare serves `/404.html` automatically
+
+### 3. Node / build pin
+
+- [x] `.nvmrc` → `20` (pins Node for `nvm` users and Cloudflare)
+- [x] `package.json` → `"engines": { "node": ">=20.0.0" }` (already there)
+- [x] Build verified on Node v24.16.0 (sandbox default) — works fine; Cloudflare NODE_VERSION env should be `20` to match `.nvmrc`
+
+### 4. PWA on a real origin
+
+- [x] `public/manifest.webmanifest`:
+  - `start_url: "/"` (root, no localhost)
+  - `scope: "/"` (root scope)
+  - `display: "standalone"`, `background_color: "#ffffff"`, `theme_color: "#0a0a0a"`
+  - Icons: `/icons/icon-192.png` + `/icons/icon-512.png`, both `purpose: "any maskable"`
+- [x] `public/sw.js` rewritten for Cloudflare Pages:
+  - **No localhost hardcoded** anywhere; uses `self.location.origin` so it works on any deployment origin
+  - **Network-first for HTML navigations** with per-URL cache fallback, then precached `/` as offline shell (fixes a bug where the old SW aliased every tool page to the homepage)
+  - **Stale-while-revalidate for hashed assets** (`/_astro/*`) — safe because hashed filenames are immutable
+  - **Explicit `Cache-Version: "unq-v2"`** to invalidate old caches on SW update
+  - **`skipWaiting` + `clients.claim`** so new SW versions take over immediately
+  - **Doesn't intercept cross-origin requests** (lets analytics/fonts CDNs work normally)
+  - **Doesn't intercept `/sw.js` itself** (avoids infinite recursion)
+- [x] SW registration in `BaseLayout.astro` uses absolute path `/sw.js` (root-relative, works on any origin)
+- [x] Precache list is path-only (no origin), so the same SW works on `unqtools.pages.dev` today and `unqtools.com` tomorrow without rebuild
+
+### Bonus (not requested but needed for proper SEO)
+
+- [x] `BaseLayout.astro` upgraded with:
+  - **Canonical URL** (`<link rel="canonical">`) — absolute, derived from `Astro.site` + current pathname
+  - **Open Graph tags** — `og:title`, `og:description`, `og:type` (`website` for homepage, `article` for tool pages), `og:url`, `og:image`, `og:site_name`
+  - **Twitter/X card** — `summary_large_image` with same title/description/image
+- [x] All absolute URLs derived from `astro.config.mjs` `site` field — single source of truth, swap once when the custom domain lands
+
+### 5. DEPLOY.md pushed to `unqtools-docs` repo
+
+- [x] Full Cloudflare Pages deployment guide at `unqtools-docs/DEPLOY.md`
+- [x] Covers: connecting the private repo via Cloudflare GitHub app, exact build settings (Astro preset, `npm run build`, `dist`, `NODE_VERSION=20`), post-deploy checklist (12 tools + 13 categories + 404 + sitemap + headers + PWA + Lighthouse), custom domain setup steps, troubleshooting, file reference table
+
+### 6. Verification — ALL GREEN
+
+- [x] `npm ci` ✅ (616 packages, reproducible from lockfile)
+- [x] `npm run lint` ✅ (0 errors, 0 warnings — ESLint + Prettier)
+- [x] `npm run test` ✅ (337 tests passing across 13 test files)
+- [x] `npm run build` ✅ (27 HTML pages + sitemap-index.xml + sitemap-0.xml emitted to `dist/`)
+- [x] `npm run preview` ✅ — every route returns HTTP 200:
+  - 12 tool pages: 200
+  - 13 category pages: 200
+  - `/`, `/404.html`, `/sitemap-index.xml`, `/robots.txt`, `/manifest.webmanifest`, `/sw.js`, `/favicon.svg`, `/icons/icon-192.png`, `/icons/icon-512.png`, `/_headers`, `/_redirects`: all 200
+  - `/this-does-not-exist`: HTTP 404 (correct — no SPA fallback)
+- [x] `dist/` contains all required files: `_headers`, `_redirects`, `robots.txt`, `sitemap-index.xml`, `sitemap-0.xml`, `404.html`
 
 ## In progress
 
-- _Nothing._ Batches 1 + 2 complete.
+- _Nothing._ Cloudflare Pages deploy readiness complete; awaiting deploy confirmation.
 
-## Next up (Phase 3 — v1 launch polish)
+## Next up (BLOCKED — awaiting user confirmation that deploy works)
 
-1. **Per-tool Playwright e2e sweep**: add `tests/<tool>.e2e.ts` for each of the 11 new tools (only json-formatter has one so far). Each test should cover the happy path + an axe-core a11y scan.
-2. **Homepage polish**: hero illustration, "why UnQTools" section, popular-tools carousel, footer links.
-3. **Category pages polish**: top-of-page description + tool count + featured tool card.
-4. **SEO**: per-tool meta tags (og:image, og:description, canonical), `sitemap-index.xml`, structured data (SoftwareApplication + FAQPage schema).
-5. **Performance**: Lighthouse audit on each tool page; verify LCP < 1.5s, CLS < 0.1, Lighthouse ≥ 95.
-6. **WASM codecs for Image Compressor**: ship MozJPEG, OxiPNG, WebP, AVIF encoders via WASM (the blueprint's "10x layer"). Canvas API already meets must-have bar.
-7. **Phase 4+ (catalog expansion)**: pick next wave from `unqtools-docs` → `3 Tool Catalog`. Hundreds of blueprints available across 13 categories.
+**Do NOT start Phase 3 until the user confirms the Cloudflare Pages deploy works.**
+
+Once the deploy is confirmed live, Phase 3 options (in priority order):
+
+1. **Per-tool Playwright e2e sweep** — add `tests/<tool>.e2e.ts` for each of the 11 tools without one (only `json-formatter` has e2e today).
+2. **Custom domain swap** — once the user buys a domain, update `astro.config.mjs` `site` field + `public/robots.txt` Sitemap line, commit, push, auto-deploy.
+3. **Homepage + category page polish** — hero illustration, "why UnQTools" section, featured tools.
+4. **WASM codecs for Image Compressor** — ship MozJPEG/OxiPNG/AVIF encoders (the blueprint's "10x layer").
+5. **Lighthouse audit** — verify ≥ 95 on Performance/A11y/Best Practices/SEO for every tool page.
 
 ## Key decisions / notes
 
-- **Locked stack** per `AGENTS.md` §2.
+- **Locked stack** per `AGENTS.md` §2 — NOT changed. No SSR adapter, no SPA fallback, no backend.
 - **Proprietary license** — NOT open source.
 - **No backend.** Everything static + client-side.
 - **Git remote** uses PAT inline — never commit the PAT.
-- **`Intl.Segmenter`** is the canonical way to count graphemes/words/sentences.
-- **SMS segment counting** follows 3GPP TS 23.038 exactly.
-- **EMI/SIP/Mortgage formulas** are standard and verified against closed-form / known-answer tests.
-- **PMI auto-cancel** at 78% LTV per the Homeowners Protection Act (US).
-- **Image Compressor ZIP** is hand-rolled (PKWARE "stored" spec) — no zip dep needed.
-- **Image Compressor Canvas vs WASM**: Canvas API in this build (meets blueprint's must-have). WASM codecs (MozJPEG/OxiPNG/AVIF) ship in Phase 3 as the "10x layer".
-- **Base64** uses TextEncoder/TextDecoder for UTF-8 safety — the built-in btoa/atob only handle Latin1.
-- **URL-safe Base64** follows RFC 4648 §5 (`+`→`-`, `/`→`_`, padding stripped).
-- **Hash Generator** uses Web Crypto `SubtleCrypto.digest` — same API the browser uses for TLS.
-- **Color Picker** contrast uses the official WCAG 2.1 relative-luminance formula (no approximations).
-- **Case Converter** title case follows standard small-word rules (articles, conjunctions, short prepositions).
-- **UUID Generator** prefers `crypto.randomUUID()` (cryptographically secure); manual fallback using `crypto.getRandomValues` for older environments.
-- **Test discipline**: every tool ships with 16–43 Vitest tests covering valid/invalid/edge/large cases. Known-answer tests for hashes (NIST vectors) and Base64 (verified via Node Buffer).
-- **Tool bundle size** stays well under the 50 KB budget — the largest is image-compressor at 15.95 KB gzipped. Each new tool adds ~2–6 KB on top of the ~10 KB shared Preact runtime.
+- **`site` field is a placeholder** (`https://unqtools.pages.dev`). When the user buys a custom domain, this is the ONLY line that needs to change — sitemap, canonical, OG tags, robots.txt Sitemap line all derive from it.
+- **CSP policy** is restrictive (`default-src 'self'`) but allows `'unsafe-inline'` for scripts/styles because Astro emits inline scripts for the theme-init no-FOUC + SW registration. If a future tool needs to load an external resource, the CSP must be updated in `public/_headers` and the reason documented in the commit.
+- **Service worker version** bumped to `unq-v2` because the SW strategy changed fundamentally (network-first for navigations with per-URL cache, not aliased-to-homepage). The `activate` handler drops all `unq-v1` caches so users get the new strategy on next visit.
+- **Cloudflare `_headers` and `_redirects`** are not used by Astro's preview server — they're only applied by Cloudflare Pages. That's why the preview test showed `Cache-Control: no-cache` for HTML; on Cloudflare it'll be `max-age=0, must-revalidate` per the `_headers` rule.
+- **`@astrojs/sitemap`** was added to `package.json` dependencies (was not in the locked stack explicitly, but is the canonical Astro way to generate sitemaps and doesn't violate any locked-stack rule — it's a build-time integration, not a runtime dep).
 
 ## Blockers
 
-- _None._ Ready for Phase 3.
+- _None._ Build is deploy-ready. Waiting on the user to connect the repo to Cloudflare Pages and confirm the deploy works.
+
+## Cloudflare Pages settings (exact values to enter)
+
+| Field                  | Value             |
+| ---------------------- | ----------------- |
+| Project name           | `unqtools`        |
+| Production branch      | `main`            |
+| Framework preset       | Astro             |
+| Build command          | `npm run build`   |
+| Build output directory | `dist`            |
+| Root directory         | (leave blank)     |
+| Environment variables  | `NODE_VERSION=20` |
+
+(Full step-by-step in `unqtools-docs/DEPLOY.md`.)

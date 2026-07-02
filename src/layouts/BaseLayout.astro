@@ -7,12 +7,22 @@ import Footer from "../components/Footer.astro";
 interface Props {
   title?: string;
   description?: string;
+  /** Path to OG image relative to site root. Defaults to /og-default.png. */
+  ogImage?: string;
 }
 
 const {
   title = "UnQTools — Free, private, offline browser tools",
   description = "UnQTools is a 100% static, privacy-first, offline-capable PWA of fast browser-based tools. Your data never leaves your browser.",
+  ogImage = "/icons/icon-512.png",
 } = Astro.props;
+
+// Astro.site is configured in astro.config.mjs and drives absolute URLs for
+// canonical, OG, and sitemap. Never hardcode the origin here.
+const site = Astro.site ?? new URL("https://unqtools.pages.dev");
+const canonicalURL = new URL(Astro.url.pathname, site);
+const ogImageURL = new URL(ogImage, site);
+const ogType = Astro.url.pathname === "/" ? "website" : "article";
 ---
 
 <!doctype html>
@@ -30,9 +40,20 @@ const {
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    {/* Canonical URL — absolute, derived from astro.config.mjs `site`. */}
+    <link rel="canonical" href={canonicalURL.href} />
+    {/* Open Graph — absolute URLs required by Facebook, LinkedIn, etc. */}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:image" content={ogImageURL.href} />
+    <meta property="og:site_name" content="UnQTools" />
+    {/* Twitter/X card — same image, summary_large_image for tool pages. */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL.href} />
     <title>{title}</title>
     {/* Inline theme-init script — prevents flash of unstyled theme (FOUC) */}
     <script is:inline set:html={themeNoFoUcScript} />

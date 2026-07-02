@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://unqtools.example.com/sitemap-index.xml
+# Disallow the service worker and 404 page from indexing
+Disallow: /sw.js
+Disallow: /404.html
+
+Sitemap: https://unqtools.pages.dev/sitemap-index.xml
