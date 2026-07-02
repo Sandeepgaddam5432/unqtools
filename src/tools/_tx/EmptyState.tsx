@@ -14,14 +14,14 @@ interface EmptyStateProps {
 export function EmptyState({ icon = "✨", title, hint, children }: EmptyStateProps) {
   return (
     <div
-      class="border-unq-border flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-8 text-center"
+      class="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border p-8 text-center"
       style="min-height: 120px;"
     >
       <span style="font-size: 1.5rem;" aria-hidden="true">
         {icon}
       </span>
-      <p class="text-unq-text-2 text-sm font-medium">{title}</p>
-      {hint && <p class="text-unq-text-3 max-w-sm text-xs">{hint}</p>}
+      <p class="text-sm font-medium text-fg-muted">{title}</p>
+      {hint && <p class="max-w-sm text-xs text-fg-subtle">{hint}</p>}
       {children}
     </div>
   );

@@ -12,8 +12,8 @@
   --border: 0.92 0.004 240;
   --fg: 0.18 0.01 260;
   --fg-muted: 0.5 0.012 260;
-  --fg-subtle: 0.65 0.01 260;
-  --accent: 0.55 0.18 255;
+  --fg-subtle: 0.52 0.012 260; /* AA nudge: toolhub uses 0.65 light, fails 4.5:1 on white */
+  --accent: 0.52 0.19 255; /* AA nudge: toolhub uses 0.55 light, icon-on-soft fails 4.5:1 */
   --accent-fg: 1 0 0;
   --accent-soft: 0.95 0.03 255;
   --success: 0.62 0.15 150;
@@ -31,9 +31,10 @@
   --border: 0.27 0.008 260;
   --fg: 0.95 0.003 260;
   --fg-muted: 0.68 0.01 260;
-  --fg-subtle: 0.5 0.01 260;
-  --accent: 0.7 0.16 255;
-  --accent-fg: 0.16 0.005 260;
+  --fg-subtle: 0.62 0.01 260; /* AA nudge: toolhub uses 0.5, fails 4.5:1 on dark bg */
+  --accent: 0.67 0.18 255; /* AA nudge: toolhub uses 0.7 dark, white-on-accent fails 4.5:1 */
+  --accent-fill: 0.55 0.2 255; /* darker for white-text-on-accent (buttons) */
+  --accent-fg: 0.98 0 0; /* AA nudge: toolhub uses 0.16 dark, white-on-accent passes better */
   --accent-soft: 0.28 0.05 255;
   --success: 0.72 0.15 150;
   --warning: 0.78 0.15 70;
@@ -48,9 +49,10 @@
     --border: 0.27 0.008 260;
     --fg: 0.95 0.003 260;
     --fg-muted: 0.68 0.01 260;
-    --fg-subtle: 0.5 0.01 260;
-    --accent: 0.7 0.16 255;
-    --accent-fg: 0.16 0.005 260;
+    --fg-subtle: 0.62 0.01 260; /* AA nudge: toolhub uses 0.5, fails 4.5:1 on dark bg */
+    --accent: 0.67 0.18 255; /* AA nudge: toolhub uses 0.7 dark, white-on-accent fails 4.5:1 */
+    --accent-fill: 0.55 0.2 255; /* darker for white-text-on-accent (buttons) */
+    --accent-fg: 0.98 0 0; /* AA nudge: toolhub uses 0.16 dark, white-on-accent passes better */
     --accent-soft: 0.28 0.05 255;
     --success: 0.72 0.15 150;
     --warning: 0.78 0.15 70;

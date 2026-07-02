@@ -25,7 +25,7 @@ export function Card({
 }: CardProps) {
   const variantClass =
     variant === "elevated"
-      ? "bg-unq-surface-elevated shadow-md"
+      ? "bg-surface shadow-md"
       : variant === "interactive"
         ? "unq-card unq-card-interactive cursor-pointer"
         : "unq-card";

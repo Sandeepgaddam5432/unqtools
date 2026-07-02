@@ -42,7 +42,7 @@ export default function CsvToMarkdown() {
           label="First row is header"
         />
         <div class="flex flex-col gap-1.5">
-          <label for="ctm-out" class="text-unq-text text-sm font-medium">
+          <label for="ctm-out" class="text-sm font-medium text-fg">
             Output format
           </label>
           <Select

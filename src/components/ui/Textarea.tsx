@@ -36,13 +36,13 @@ export function Textarea({
       {(label || showCount) && (
         <div class="flex items-center justify-between">
           {label && (
-            <label for={inputId} class="text-unq-text text-sm font-medium">
+            <label for={inputId} class="text-sm font-medium text-fg">
               {label}
             </label>
           )}
           {showCount && (
             <span
-              class={`text-xs tabular-nums ${maxCount && count > maxCount ? "text-unq-danger" : "text-unq-text-muted"}`}
+              class={`text-xs tabular-nums ${maxCount && count > maxCount ? "text-danger" : "text-fg-muted"}`}
             >
               {count}
               {maxCount ? ` / ${maxCount}` : ""}
@@ -55,12 +55,12 @@ export function Textarea({
         value={value}
         class={`unq-input-base min-h-[160px] resize-y px-3 py-2.5 text-sm ${
           monospace ? "font-mono" : ""
-        } ${error ? "focus:ring-unq-danger/30 border-unq-danger focus:border-unq-danger" : ""}`}
+        } ${error ? "border-danger focus:border-danger focus:ring-danger/30" : ""}`}
         aria-invalid={error ? true : undefined}
         {...rest}
       />
-      {hint && !error && <p class="text-unq-text-muted text-xs">{hint}</p>}
-      {error && <p class="text-unq-danger text-xs">{error}</p>}
+      {hint && !error && <p class="text-xs text-fg-muted">{hint}</p>}
+      {error && <p class="text-xs text-danger">{error}</p>}
     </div>
   );
 }

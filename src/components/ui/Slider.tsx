@@ -24,7 +24,7 @@ export function Slider({ min, max, step = 1, value, onChange, label, id, format 
           <label for={sliderId} class="text-sm font-medium">
             {label}
           </label>
-          <span class="text-unq-text-muted font-mono text-sm tabular-nums">{display}</span>
+          <span class="font-mono text-sm tabular-nums text-fg-muted">{display}</span>
         </div>
       )}
       <input

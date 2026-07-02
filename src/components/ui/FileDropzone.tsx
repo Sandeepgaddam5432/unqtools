@@ -55,10 +55,10 @@ export function FileDropzone({
       }}
       role="button"
       tabindex={0}
-      class={`unq-card duration-normal cursor-pointer p-8 text-center transition-all ${
+      class={`unq-card cursor-pointer p-8 text-center transition-all duration-250 ${
         dragActive
-          ? "border-unq-accent bg-unq-accent-subtle scale-[1.01]"
-          : "hover:border-unq-border-strong hover:bg-unq-surface-hover"
+          ? "bg-accent-subtle scale-[1.01] border-accent"
+          : "hover:border-border hover:bg-surface-2"
       } ${cls ?? ""}`}
       aria-label={label}
     >
@@ -73,15 +73,13 @@ export function FileDropzone({
       <div class="flex flex-col items-center gap-3">
         <div
           class={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
-            dragActive
-              ? "text-unq-accent-contrast bg-unq-accent"
-              : "bg-unq-surface-hover text-unq-text-muted"
+            dragActive ? "bg-accent text-accent-contrast" : "bg-surface-2 text-fg-muted"
           }`}
         >
           <UploadCloud size={22} />
         </div>
         <p class="text-sm font-medium">{label}</p>
-        {hint && <p class="text-unq-text-muted text-xs">{hint}</p>}
+        {hint && <p class="text-xs text-fg-muted">{hint}</p>}
       </div>
     </div>
   );

@@ -38,18 +38,18 @@ export function Checkbox({
         <span
           class={`flex h-4.5 w-4.5 items-center justify-center rounded border transition-colors ${
             checked
-              ? "border-unq-accent bg-unq-accent"
-              : "border-unq-border-strong bg-unq-surface peer-hover:border-unq-text-subtle"
+              ? "border-accent bg-accent"
+              : "border-border bg-surface peer-hover:border-fg-subtle"
           }`}
           style={{ width: "18px", height: "18px" }}
         >
-          {checked && <Check size={12} class="text-unq-accent-contrast" strokeWidth={3} />}
+          {checked && <Check size={12} class="text-accent-contrast" strokeWidth={3} />}
         </span>
       </span>
       {(label || description) && (
         <span class="flex flex-col">
           {label && <span class="text-sm font-medium leading-tight">{label}</span>}
-          {description && <span class="text-unq-text-muted mt-0.5 text-xs">{description}</span>}
+          {description && <span class="mt-0.5 text-xs text-fg-muted">{description}</span>}
         </span>
       )}
     </label>
@@ -104,20 +104,16 @@ export function RadioGroup({
               />
               <span
                 class={`flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 transition-colors ${
-                  selected
-                    ? "border-unq-accent"
-                    : "border-unq-border-strong peer-hover:border-unq-text-subtle"
+                  selected ? "border-accent" : "border-border peer-hover:border-fg-subtle"
                 }`}
                 style={{ width: "18px", height: "18px" }}
               >
-                {selected && <span class="bg-unq-accent h-2 w-2 rounded-full" />}
+                {selected && <span class="h-2 w-2 rounded-full bg-accent" />}
               </span>
             </span>
             <span class="flex flex-col">
               <span class="text-sm font-medium leading-tight">{o.label}</span>
-              {o.description && (
-                <span class="text-unq-text-muted mt-0.5 text-xs">{o.description}</span>
-              )}
+              {o.description && <span class="mt-0.5 text-xs text-fg-muted">{o.description}</span>}
             </span>
           </label>
         );

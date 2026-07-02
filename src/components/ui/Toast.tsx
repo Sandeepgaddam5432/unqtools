@@ -23,16 +23,16 @@ export function toast(message: string, variant: ToastVariant = "info") {
 }
 
 const variantConfig: Record<ToastVariant, { icon: JSX.Element; class: string }> = {
-  info: { icon: <Info size={16} />, class: "border-unq-border" },
+  info: { icon: <Info size={16} />, class: "border-border" },
   success: {
-    icon: <CheckCircle2 size={16} class="text-unq-success" />,
-    class: "border-unq-success/40",
+    icon: <CheckCircle2 size={16} class="text-success" />,
+    class: "border-success/40",
   },
   warning: {
-    icon: <AlertTriangle size={16} class="text-unq-warning" />,
-    class: "border-unq-warning/40",
+    icon: <AlertTriangle size={16} class="text-warning" />,
+    class: "border-warning/40",
   },
-  error: { icon: <AlertCircle size={16} class="text-unq-danger" />, class: "border-unq-danger/40" },
+  error: { icon: <AlertCircle size={16} class="text-danger" />, class: "border-danger/40" },
 };
 
 export function ToastContainer() {
@@ -66,7 +66,7 @@ export function ToastContainer() {
         return (
           <div
             key={t.id}
-            class={`bg-unq-surface-elevated pointer-events-auto flex min-w-[260px] max-w-sm items-start gap-2.5 rounded-lg border p-3 pr-2 shadow-lg ${cfg.class} animate-[unq-slide-in_0.2s_ease-out]`}
+            class={`pointer-events-auto flex min-w-[260px] max-w-sm items-start gap-2.5 rounded-lg border bg-surface p-3 pr-2 shadow-lg ${cfg.class} animate-[unq-slide-in_0.2s_ease-out]`}
           >
             <span class="mt-0.5 shrink-0">{cfg.icon}</span>
             <p class="flex-1 text-sm leading-snug">{t.message}</p>
@@ -74,7 +74,7 @@ export function ToastContainer() {
               type="button"
               onClick={() => dismiss(t.id)}
               aria-label="Dismiss notification"
-              class="text-unq-text-muted hover:text-unq-text rounded p-0.5 transition-colors"
+              class="rounded p-0.5 text-fg-muted transition-colors hover:text-fg"
             >
               <X size={14} />
             </button>

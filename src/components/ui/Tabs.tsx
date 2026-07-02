@@ -32,7 +32,7 @@ export function Tabs({ tabs, initialId, class: cls }: TabsProps) {
 
   return (
     <div class={cls}>
-      <div role="tablist" class="border-unq-border flex border-b" onKeyDown={onKeyDown}>
+      <div role="tablist" class="flex border-b border-border" onKeyDown={onKeyDown}>
         {tabs.map((t, i) => (
           <button
             key={t.id}
@@ -43,10 +43,10 @@ export function Tabs({ tabs, initialId, class: cls }: TabsProps) {
             id={`tab-${t.id}`}
             tabindex={active === t.id ? 0 : -1}
             onClick={() => setActive(t.id)}
-            class={`duration-fast -mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+            class={`-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors duration-150 ${
               active === t.id
-                ? "border-unq-accent text-unq-text"
-                : "text-unq-text-muted hover:text-unq-text border-transparent"
+                ? "border-accent text-fg"
+                : "border-transparent text-fg-muted hover:text-fg"
             }`}
           >
             {t.label}
@@ -86,7 +86,7 @@ export function Segmented({ options, value, onChange, size = "md", class: cls }:
   return (
     <div
       role="radiogroup"
-      class={`border-unq-border bg-unq-surface-hover inline-flex rounded-lg border p-0.5 ${cls ?? ""}`}
+      class={`inline-flex rounded-lg border border-border bg-surface-2 p-0.5 ${cls ?? ""}`}
     >
       {options.map((o) => (
         <button
@@ -94,10 +94,8 @@ export function Segmented({ options, value, onChange, size = "md", class: cls }:
           role="radio"
           aria-checked={value === o.value}
           onClick={() => onChange(o.value)}
-          class={`${size === "sm" ? "h-7 px-2.5 text-xs" : "h-9 px-3.5 text-sm"} duration-fast rounded-md font-medium transition-all ${
-            value === o.value
-              ? "bg-unq-surface-elevated text-unq-text shadow-sm"
-              : "text-unq-text-muted hover:text-unq-text"
+          class={`${size === "sm" ? "h-7 px-2.5 text-xs" : "h-9 px-3.5 text-sm"} rounded-md font-medium transition-all duration-150 ${
+            value === o.value ? "bg-surface text-fg shadow-sm" : "text-fg-muted hover:text-fg"
           }`}
         >
           {o.label}

@@ -32,20 +32,20 @@ export function Input({
   return (
     <div class={`flex flex-col gap-1.5 ${cls ?? ""}`}>
       {label && (
-        <label for={inputId} class="text-unq-text text-sm font-medium">
+        <label for={inputId} class="text-sm font-medium text-fg">
           {label}
         </label>
       )}
       <div class="relative flex items-center">
         {leadingIcon && (
-          <span class="text-unq-text-subtle pointer-events-none absolute left-3" aria-hidden="true">
+          <span class="pointer-events-none absolute left-3 text-fg-subtle" aria-hidden="true">
             {leadingIcon}
           </span>
         )}
         <input
           id={inputId}
           class={`unq-input-base h-11 px-3 text-sm ${leadingIcon ? "pl-10" : ""} ${trailing ? "pr-10" : ""} ${
-            error ? "focus:ring-unq-danger/30 border-unq-danger focus:border-unq-danger" : ""
+            error ? "border-danger focus:border-danger focus:ring-danger/30" : ""
           }`}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
@@ -54,12 +54,12 @@ export function Input({
         {trailing && <span class="absolute right-2 flex items-center">{trailing}</span>}
       </div>
       {hint && !error && (
-        <p id={`${inputId}-hint`} class="text-unq-text-muted text-xs">
+        <p id={`${inputId}-hint`} class="text-xs text-fg-muted">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${inputId}-error`} class="text-unq-danger text-xs">
+        <p id={`${inputId}-error`} class="text-xs text-danger">
           {error}
         </p>
       )}

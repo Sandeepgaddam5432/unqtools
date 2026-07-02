@@ -31,7 +31,7 @@ export default function CsvToTextList() {
       />
       <Card class="flex flex-wrap gap-4 !p-4">
         <div class="flex flex-col gap-1.5">
-          <label for="cl-col" class="text-unq-text text-sm font-medium">
+          <label for="cl-col" class="text-sm font-medium text-fg">
             Column (-1 = all)
           </label>
           <Input
@@ -44,7 +44,7 @@ export default function CsvToTextList() {
           />
         </div>
         <div class="flex flex-col gap-1.5">
-          <label for="cl-delim" class="text-unq-text text-sm font-medium">
+          <label for="cl-delim" class="text-sm font-medium text-fg">
             Delimiter
           </label>
           <Input
@@ -56,7 +56,7 @@ export default function CsvToTextList() {
           />
         </div>
         <div class="flex flex-col gap-1.5">
-          <label for="cl-quote" class="text-unq-text text-sm font-medium">
+          <label for="cl-quote" class="text-sm font-medium text-fg">
             Quote
           </label>
           <Input

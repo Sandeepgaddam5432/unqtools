@@ -16,10 +16,10 @@ const tools = TOOLS.map((t) => ({
 ---
 
 <div class="w-full" data-search-root>
-  <label for="unq-search" class="sr-only">Search tools</label>
+  <label for="tool-search" class="sr-only">Search tools</label>
   <div class="relative">
     <svg
-      class="text-unq-text-subtle pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+      class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-fg-subtle"
       width="18"
       height="18"
       viewBox="0 0 24 24"
@@ -34,7 +34,7 @@ const tools = TOOLS.map((t) => ({
       <path d="m21 21-4.3-4.3"></path>
     </svg>
     <input
-      id="unq-search"
+      id="tool-search"
       type="search"
       placeholder="Search tools by name, category, or keyword…"
       autocomplete="off"
@@ -47,7 +47,7 @@ const tools = TOOLS.map((t) => ({
     data-search-results
     role="listbox"
     aria-label="Search results"
-    class="bg-unq-surface-elevated divide-unq-border border-unq-border absolute z-50 mt-2 hidden max-h-[420px] w-full divide-y overflow-hidden overflow-y-auto rounded-xl border shadow-lg"
+    class="absolute z-50 mt-2 hidden max-h-[420px] w-full divide-y divide-border overflow-hidden overflow-y-auto rounded-xl border border-border bg-surface shadow-lg"
   >
   </ul>
 

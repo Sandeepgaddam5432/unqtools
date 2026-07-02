@@ -44,12 +44,12 @@ export function ClientSearch(root: HTMLElement, tools: SearchEntry[]): void {
       .map(
         (t, i) => `
         <li role="option" data-idx="${i}" class="group">
-          <a href="/tools/${t.id}" class="flex items-start gap-3 px-4 py-3 hover:bg-unq-surface-hover transition-colors duration-fast">
+          <a href="/tools/${t.id}" class="flex items-start gap-3 px-4 py-3 hover:bg-surface-2 transition-colors duration-150">
             <div class="flex-1 min-w-0">
-              <div class="font-medium text-sm text-unq-text">${escapeHtml(t.name)}</div>
-              <div class="text-xs text-unq-text-muted truncate">${escapeHtml(t.description)}</div>
+              <div class="font-medium text-sm text-fg">${escapeHtml(t.name)}</div>
+              <div class="text-xs text-fg-muted truncate">${escapeHtml(t.description)}</div>
             </div>
-            <div class="text-[10px] uppercase tracking-wide text-unq-text-subtle shrink-0 mt-0.5">
+            <div class="text-[10px] uppercase tracking-wide text-fg-subtle shrink-0 mt-0.5">
               ${escapeHtml(t.categoryLabel ?? t.category)}
             </div>
           </a>

@@ -11,12 +11,12 @@ export interface BadgeProps extends JSX.HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: "bg-unq-surface-hover text-unq-text-muted",
-  accent: "bg-unq-accent-subtle text-unq-accent",
-  success: "bg-unq-success-subtle text-unq-success",
-  warning: "bg-unq-warning-subtle text-unq-warning",
-  danger: "bg-unq-danger-subtle text-unq-danger",
-  outline: "border border-unq-border-strong text-unq-text-muted",
+  default: "bg-surface-2 text-fg-muted",
+  accent: "bg-accent-subtle text-accent",
+  success: "bg-success/10 text-success",
+  warning: "bg-warning/10 text-warning",
+  danger: "bg-danger/10 text-danger",
+  outline: "border border-border text-fg-muted",
 };
 
 export function Badge({

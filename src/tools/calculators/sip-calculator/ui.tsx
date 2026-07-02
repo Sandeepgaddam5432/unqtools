@@ -194,9 +194,9 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
               <p class="mt-1 text-2xl font-bold tabular-nums">{fmt(result.totalInvested)}</p>
               <p class="text-unq-muted mt-1 text-xs">{fmtC(result.totalInvested)}</p>
             </Card>
-            <Card class="border-unq-success/40 !p-4 text-center">
+            <Card class="border-success/40 !p-4 text-center">
               <p class="text-unq-muted text-xs uppercase tracking-wide">Future Value</p>
-              <p class="text-unq-success-strong mt-1 text-2xl font-bold tabular-nums">
+              <p class="mt-1 text-2xl font-bold tabular-nums text-success">
                 {fmt(result.futureValue)}
               </p>
               <p class="text-unq-muted mt-1 text-xs">{fmtC(result.futureValue)}</p>
@@ -238,8 +238,8 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
             </div>
             <div class="unq-scroll-x max-h-[420px] overflow-y-auto">
               <table class="w-full text-xs">
-                <thead class="bg-unq-surface sticky top-0">
-                  <tr class="text-unq-muted border-unq-border border-b text-left">
+                <thead class="sticky top-0 bg-surface">
+                  <tr class="text-unq-muted border-b border-border text-left">
                     <th class="px-2 py-2">Year</th>
                     <th class="px-2 py-2 text-right">Invested (year)</th>
                     <th class="px-2 py-2 text-right">Total Invested</th>
@@ -249,11 +249,11 @@ Wealth Ratio: ${result.wealthRatio}x${result.realFutureValue ? `\nReal Value (in
                 </thead>
                 <tbody>
                   {result.yearlyBreakdown.map((r) => (
-                    <tr key={r.year} class="border-unq-border/40 border-b">
+                    <tr key={r.year} class="border-b border-border/40">
                       <td class="px-2 py-1.5 font-mono">{r.year}</td>
                       <td class="px-2 py-1.5 text-right font-mono">{fmt(r.investedThisYear)}</td>
                       <td class="px-2 py-1.5 text-right font-mono">{fmt(r.totalInvested)}</td>
-                      <td class="text-unq-success-strong px-2 py-1.5 text-right font-mono">
+                      <td class="px-2 py-1.5 text-right font-mono text-success">
                         {fmt(r.yearEndValue)}
                       </td>
                       <td class="text-unq-muted px-2 py-1.5 text-right font-mono">

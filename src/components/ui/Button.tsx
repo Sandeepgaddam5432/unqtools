@@ -20,14 +20,11 @@ export interface ButtonProps extends JSX.HTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    "bg-unq-accent text-unq-accent-contrast hover:bg-unq-accent-hover shadow-sm hover:shadow-md",
-  secondary:
-    "bg-unq-surface-elevated text-unq-text border border-unq-border hover:bg-unq-surface-hover hover:border-unq-border-strong",
-  outline:
-    "bg-transparent text-unq-text border border-unq-border-strong hover:bg-unq-surface-hover",
-  ghost: "bg-transparent text-unq-text-muted hover:text-unq-text hover:bg-unq-surface-hover",
-  danger: "bg-unq-danger text-white hover:brightness-110 shadow-sm hover:shadow-md",
+  primary: "bg-accent-fill text-accent-fg hover:bg-accent shadow-sm hover:shadow-md",
+  secondary: "bg-surface text-fg border border-border hover:bg-surface-2 hover:border-border",
+  outline: "bg-transparent text-fg border border-border hover:bg-surface-2",
+  ghost: "bg-transparent text-fg-muted hover:text-fg hover:bg-surface-2",
+  danger: "bg-danger text-white hover:brightness-110 shadow-sm hover:shadow-md",
 };
 
 const sizeClasses: Record<Size, string> = {

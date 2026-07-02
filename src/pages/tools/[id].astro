@@ -47,7 +47,7 @@ const title = t.seo?.title ?? `${t.name} — UnQTools`;
           render(h(Comp, {}), root);
         })
         .catch((err) => {
-          root.innerHTML = `<div class="p-4 bg-unq-danger-subtle border border-unq-danger/40 rounded-lg text-sm text-unq-danger">Failed to load tool: ${err.message}</div>`;
+          root.innerHTML = `<div class="p-4 bg-danger-subtle border border-danger/40 rounded-lg text-sm text-danger">Failed to load tool: ${err.message}</div>`;
         });
     }
   }

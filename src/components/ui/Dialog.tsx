@@ -87,7 +87,7 @@ export function Dialog({
     >
       {/* Backdrop */}
       <div
-        class="duration-normal fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-250"
         onClick={() => onOpenChange(false)}
         aria-hidden="true"
       />
@@ -98,12 +98,12 @@ export function Dialog({
         aria-modal="true"
         aria-labelledby={title ? "dialog-title" : undefined}
         aria-describedby={description ? "dialog-desc" : undefined}
-        class={`relative w-full ${sizeMap[size]} duration-normal bg-unq-surface-elevated border-unq-border mt-12 rounded-xl border shadow-xl transition-all sm:mt-20 ${
+        class={`relative w-full ${sizeMap[size]} mt-12 rounded-xl border border-border bg-surface shadow-xl transition-all duration-250 sm:mt-20 ${
           open ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
         } ${cls ?? ""}`}
       >
         {(title || description) && (
-          <div class="border-unq-border flex items-start justify-between gap-3 border-b p-5">
+          <div class="flex items-start justify-between gap-3 border-b border-border p-5">
             <div>
               {title && (
                 <h2 id="dialog-title" class="text-balance text-lg font-semibold">
@@ -111,7 +111,7 @@ export function Dialog({
                 </h2>
               )}
               {description && (
-                <p id="dialog-desc" class="text-unq-text-muted mt-1 text-sm">
+                <p id="dialog-desc" class="mt-1 text-sm text-fg-muted">
                   {description}
                 </p>
               )}
@@ -120,7 +120,7 @@ export function Dialog({
               type="button"
               onClick={() => onOpenChange(false)}
               aria-label="Close dialog"
-              class="text-unq-text-muted hover:bg-unq-surface-hover hover:text-unq-text rounded-md p-1.5 transition-colors"
+              class="rounded-md p-1.5 text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
             >
               <X size={18} />
             </button>

@@ -51,11 +51,11 @@ export default function CaesarCipher() {
         class="min-h-[120px] resize-y"
       />
       <Card class="!p-4">
-        <p class="text-unq-text mb-2 text-sm font-medium">Mode</p>
+        <p class="mb-2 text-sm font-medium text-fg">Mode</p>
         <Segmented options={MODE_OPTIONS} value={mode} onChange={(v) => setMode(v as Mode)} />
         {(mode === "encrypt" || mode === "decrypt") && (
           <div class="mt-4 flex items-center gap-3">
-            <label for="cc-shift" class="text-unq-text text-sm font-medium">
+            <label for="cc-shift" class="text-sm font-medium text-fg">
               Shift (1–25):
             </label>
             <Input
@@ -93,13 +93,13 @@ export default function CaesarCipher() {
       )}
       {mode === "brute" && bruteResults.length > 0 && (
         <Card class="!p-4">
-          <p class="text-unq-text mb-3 text-sm font-medium">
+          <p class="mb-3 text-sm font-medium text-fg">
             All 25 candidates (ranked by frequency analysis)
           </p>
           <div class="unq-scroll-x max-h-[400px] overflow-y-auto">
             <table class="w-full text-sm">
-              <thead class="bg-unq-surface sticky top-0">
-                <tr class="text-unq-text-2 border-unq-border border-b text-left">
+              <thead class="sticky top-0 bg-surface">
+                <tr class="border-b border-border text-left text-fg-muted">
                   <th class="px-3 py-2">Rank</th>
                   <th class="px-3 py-2">Shift</th>
                   <th class="px-3 py-2">Plaintext</th>
@@ -110,15 +110,15 @@ export default function CaesarCipher() {
                 {bruteResults.map((r, i) => (
                   <tr
                     key={r.shift}
-                    class={`border-unq-border/40 border-b ${i === 0 ? "bg-unq-accent-subtle font-medium" : ""}`}
+                    class={`border-b border-border/40 ${i === 0 ? "bg-accent-subtle font-medium" : ""}`}
                   >
-                    <td class="text-unq-text-3 px-3 py-2">{i === 0 ? "★" : i + 1}</td>
+                    <td class="px-3 py-2 text-fg-subtle">{i === 0 ? "★" : i + 1}</td>
                     <td class="px-3 py-2 font-mono">{r.shift}</td>
                     <td class="break-all px-3 py-2 font-mono">
                       {r.plaintext.slice(0, 80)}
                       {r.plaintext.length > 80 ? "…" : ""}
                     </td>
-                    <td class="text-unq-text-3 px-3 py-2 text-right font-mono">
+                    <td class="px-3 py-2 text-right font-mono text-fg-subtle">
                       {r.chiSquared.toFixed(2)}
                     </td>
                   </tr>
@@ -126,7 +126,7 @@ export default function CaesarCipher() {
               </tbody>
             </table>
           </div>
-          <p class="text-unq-text-3 mt-2 text-xs">
+          <p class="mt-2 text-xs text-fg-subtle">
             ★ = best guess (lowest chi-squared = closest to English letter frequencies)
           </p>
         </Card>

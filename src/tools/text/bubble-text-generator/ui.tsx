@@ -29,14 +29,14 @@ export default function BubbleTextGenerator() {
         class="min-h-[100px] resize-y"
       />
       <Card class="!p-4">
-        <p class="text-unq-text mb-2 text-sm font-medium">Style</p>
+        <p class="mb-2 text-sm font-medium text-fg">Style</p>
         <Segmented
           options={STYLE_OPTIONS.map((s) => ({ value: s.value, label: s.label }))}
           value={style}
           onChange={(v) => setStyle(v as BubbleStyle)}
         />
-        <p class="text-unq-text-3 mt-3 text-xs">
-          <strong class="text-unq-text-2">Accessibility:</strong> {a11y}
+        <p class="mt-3 text-xs text-fg-subtle">
+          <strong class="text-fg-muted">Accessibility:</strong> {a11y}
         </p>
       </Card>
       <Button
@@ -51,11 +51,11 @@ export default function BubbleTextGenerator() {
       {output && (
         <Card class="!p-4">
           <div class="mb-3 flex items-center justify-between">
-            <p class="text-unq-text text-sm font-medium">Preview</p>
+            <p class="text-sm font-medium text-fg">Preview</p>
             <CopyButton getText={() => output} />
           </div>
           <div
-            class="unq-scroll-x border-unq-border-subtle rounded-lg border p-4"
+            class="unq-scroll-x rounded-lg border border-border p-4"
             style="font-size: 1.5rem; line-height: 1.4; word-break: break-word; overflow-wrap: break-word;"
           >
             {output}

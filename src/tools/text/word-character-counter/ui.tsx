@@ -167,7 +167,7 @@ Try pasting your own text here. 👋🌍`;
               Load sample
             </button>
             <button
-              class="unq-btn border-unq-border !min-h-[40px] border !px-3 text-sm"
+              class="unq-btn !min-h-[40px] border border-border !px-3 text-sm"
               onClick={clearAll}
               disabled={!input}
             >
@@ -235,7 +235,7 @@ Try pasting your own text here. 👋🌍`;
                     <span class="text-unq-muted">{p.label}</span>
                     <span
                       class={`font-mono tabular-nums ${
-                        p.over ? "text-unq-danger" : p.remaining < 20 ? "text-amber-500" : ""
+                        p.over ? "text-danger" : p.remaining < 20 ? "text-amber-500" : ""
                       }`}
                     >
                       {p.remaining >= 0 ? `${p.remaining} left` : `${-p.remaining} over`}
@@ -306,7 +306,7 @@ Try pasting your own text here. 👋🌍`;
             <div class="unq-scroll-x">
               <table class="w-full text-sm">
                 <thead>
-                  <tr class="text-unq-muted border-unq-border border-b text-left text-xs">
+                  <tr class="text-unq-muted border-b border-border text-left text-xs">
                     <th class="py-1">#</th>
                     <th class="py-1">Word</th>
                     <th class="py-1 text-right">Count</th>
@@ -315,7 +315,7 @@ Try pasting your own text here. 👋🌍`;
                 </thead>
                 <tbody>
                   {keywords.map((k, i) => (
-                    <tr key={k.word} class="border-unq-border/50 border-b">
+                    <tr key={k.word} class="border-b border-border/50">
                       <td class="text-unq-muted py-1">{i + 1}</td>
                       <td class="py-1 font-mono">{k.word}</td>
                       <td class="py-1 text-right font-mono">{k.count}</td>

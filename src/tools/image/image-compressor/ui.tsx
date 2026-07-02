@@ -358,7 +358,7 @@ export default function ImageCompressor() {
         onDragLeave={() => setDragActive(false)}
         onDrop={onDrop}
         class={`unq-card cursor-pointer border-2 border-dashed p-8 text-center transition-colors ${
-          dragActive ? "bg-unq-accent/5 border-unq-accent" : "border-unq-border"
+          dragActive ? "border-accent bg-accent/5" : "border-border"
         }`}
         onClick={() => fileInputRef.current?.click()}
       >
@@ -400,10 +400,10 @@ export default function ImageCompressor() {
           </div>
 
           {totalCompressed > 0 && (
-            <Card class="border-unq-success/40 bg-unq-success/5 !p-4">
+            <Card class="border-success/40 bg-success/5 !p-4">
               <p class="text-sm">
                 <strong>Total savings:</strong>{" "}
-                <span class="text-unq-success font-mono">
+                <span class="font-mono text-success">
                   {formatBytes(totalSaved)} ({savedPct}%)
                 </span>{" "}
                 across {entries.filter((e) => e.status === "done").length} files
@@ -425,7 +425,7 @@ export default function ImageCompressor() {
                     <img
                       src={entry.previewUrl}
                       alt={entry.file.name}
-                      class="rounded-unq border-unq-border h-16 w-16 border object-cover"
+                      class="h-16 w-16 rounded-md border border-border object-cover"
                     />
                     <div class="min-w-0 flex-1">
                       <p class="truncate text-sm font-medium">{entry.file.name}</p>
@@ -434,10 +434,10 @@ export default function ImageCompressor() {
                         {entry.status === "done" && entry.result && (
                           <>
                             {" → "}
-                            <span class="text-unq-success font-mono">
+                            <span class="font-mono text-success">
                               {formatBytes(compressedSize)}
                             </span>{" "}
-                            <span class="text-unq-success">({savedPct}% saved)</span>
+                            <span class="text-success">({savedPct}% saved)</span>
                             {" · "}
                             {entry.result.width}×{entry.result.height}
                             {" · "}Q{Math.round(entry.result.quality * 100)}
@@ -446,7 +446,7 @@ export default function ImageCompressor() {
                         {entry.status === "processing" && " · processing…"}
                         {entry.status === "pending" && " · pending"}
                         {entry.status === "error" && (
-                          <span class="text-unq-danger"> · {entry.error}</span>
+                          <span class="text-danger"> · {entry.error}</span>
                         )}
                       </p>
                     </div>
@@ -510,7 +510,7 @@ export default function ImageCompressor() {
                       )}
                       <button
                         type="button"
-                        class="unq-btn border-unq-border !min-h-[36px] border !px-2 text-xs"
+                        class="unq-btn !min-h-[36px] border border-border !px-2 text-xs"
                         aria-label={`Remove ${entry.file.name}`}
                         onClick={() => removeEntry(entry.id)}
                       >

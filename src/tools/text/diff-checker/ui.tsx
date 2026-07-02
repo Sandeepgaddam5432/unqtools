@@ -131,12 +131,12 @@ export default function DiffChecker() {
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div>
           <div class="mb-1.5 flex items-center justify-between">
-            <label for="dc-old" class="text-unq-text text-sm font-medium">
+            <label for="dc-old" class="text-sm font-medium text-fg">
               Original
             </label>
             <button
               type="button"
-              class="text-unq-text-3 hover:text-unq-accent text-xs"
+              class="text-xs text-fg-subtle hover:text-accent"
               onClick={() => oldFileRef.current?.click()}
             >
               📁 Load file
@@ -160,12 +160,12 @@ export default function DiffChecker() {
         </div>
         <div>
           <div class="mb-1.5 flex items-center justify-between">
-            <label for="dc-new" class="text-unq-text text-sm font-medium">
+            <label for="dc-new" class="text-sm font-medium text-fg">
               Modified
             </label>
             <button
               type="button"
-              class="text-unq-text-3 hover:text-unq-accent text-xs"
+              class="text-xs text-fg-subtle hover:text-accent"
               onClick={() => newFileRef.current?.click()}
             >
               📁 Load file
@@ -192,7 +192,7 @@ export default function DiffChecker() {
       <Card class="!p-4">
         <div class="flex flex-wrap items-center gap-4">
           <div class="flex flex-col gap-1">
-            <span class="text-unq-text-2 text-xs font-medium">View</span>
+            <span class="text-xs font-medium text-fg-muted">View</span>
             <Segmented
               options={VIEW_OPTIONS}
               value={view}
@@ -200,7 +200,7 @@ export default function DiffChecker() {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <span class="text-unq-text-2 text-xs font-medium">Granularity</span>
+            <span class="text-xs font-medium text-fg-muted">Granularity</span>
             <Segmented
               options={GRANULARITY_OPTIONS}
               value={diffOpts.granularity}
@@ -208,7 +208,7 @@ export default function DiffChecker() {
             />
           </div>
           <div class="flex flex-col gap-2">
-            <span class="text-unq-text-2 text-xs font-medium">Options</span>
+            <span class="text-xs font-medium text-fg-muted">Options</span>
             <div class="flex flex-wrap gap-3">
               <Switch
                 checked={diffOpts.ignoreWhitespace}
@@ -243,7 +243,7 @@ export default function DiffChecker() {
       </div>
 
       {urlTooLarge && (
-        <p class="text-unq-text-3 text-xs">
+        <p class="text-xs text-fg-subtle">
           ⚠ Input too large for shareable URL — copy the text manually to share.
         </p>
       )}
@@ -256,18 +256,18 @@ export default function DiffChecker() {
         />
       ) : diffLines.length === 0 || diffLines.every((l) => l.type === "equal") ? (
         <Card class="!p-8 text-center">
-          <p class="text-unq-success-strong text-sm font-medium">✓ Texts are identical</p>
-          <p class="text-unq-text-3 mt-1 text-xs">No differences found.</p>
+          <p class="text-sm font-medium text-success">✓ Texts are identical</p>
+          <p class="mt-1 text-xs text-fg-subtle">No differences found.</p>
         </Card>
       ) : (
         <>
           {/* Stats bar */}
-          <div class="border-unq-border-subtle flex flex-wrap items-center gap-4 rounded-lg border px-4 py-2 text-sm">
-            <span class="text-unq-text font-medium">Diff</span>
-            <span class="text-unq-success-strong">+{stats.additions} added</span>
-            <span class="text-unq-danger-strong">−{stats.deletions} removed</span>
-            <span class="text-unq-text-3">{stats.changes} changed</span>
-            <span class="text-unq-text-3 ml-auto text-xs">{stats.totalLines} lines</span>
+          <div class="flex flex-wrap items-center gap-4 rounded-lg border border-border px-4 py-2 text-sm">
+            <span class="font-medium text-fg">Diff</span>
+            <span class="text-success">+{stats.additions} added</span>
+            <span class="text-danger">−{stats.deletions} removed</span>
+            <span class="text-fg-subtle">{stats.changes} changed</span>
+            <span class="ml-auto text-xs text-fg-subtle">{stats.totalLines} lines</span>
             <CopyButton getText={() => patch} label="Copy .patch" />
             <DownloadButton filename="diff.patch" getText={() => patch} label="Download .patch" />
           </div>
@@ -305,14 +305,14 @@ function UnifiedView({ lines }: { lines: DiffLine[] }) {
             }}
           >
             <td
-              class="text-unq-text-3 w-10 select-none px-2 py-0.5 text-right"
-              style="border-right: 1px solid var(--unq-border-subtle);"
+              class="w-10 select-none px-2 py-0.5 text-right text-fg-subtle"
+              style="border-right: 1px solid var(--border);"
             >
               {line.oldNumber ?? ""}
             </td>
             <td
-              class="text-unq-text-3 w-10 select-none px-2 py-0.5 text-right"
-              style="border-right: 1px solid var(--unq-border-subtle);"
+              class="w-10 select-none px-2 py-0.5 text-right text-fg-subtle"
+              style="border-right: 1px solid var(--border);"
             >
               {line.newNumber ?? ""}
             </td>
@@ -321,10 +321,10 @@ function UnifiedView({ lines }: { lines: DiffLine[] }) {
               style={{
                 color:
                   line.type === "add"
-                    ? "var(--unq-success-strong)"
+                    ? "var(--success)"
                     : line.type === "del"
-                      ? "var(--unq-danger-strong)"
-                      : "var(--unq-text-3)",
+                      ? "var(--danger)"
+                      : "var(--fg-subtle)",
               }}
             >
               {line.type === "add" ? "+" : line.type === "del" ? "−" : " "}
@@ -334,9 +334,9 @@ function UnifiedView({ lines }: { lines: DiffLine[] }) {
               style={{
                 color:
                   line.type === "del"
-                    ? "var(--unq-danger-strong)"
+                    ? "var(--danger)"
                     : line.type === "add"
-                      ? "var(--unq-success-strong)"
+                      ? "var(--success)"
                       : "inherit",
               }}
             >
@@ -391,8 +391,8 @@ function SplitView({ lines }: { lines: DiffLine[] }) {
         {pairs.map((pair, idx) => (
           <tr key={idx}>
             <td
-              class="text-unq-text-3 w-8 select-none px-1 py-0.5 text-right"
-              style="border-right: 1px solid var(--unq-border-subtle);"
+              class="w-8 select-none px-1 py-0.5 text-right text-fg-subtle"
+              style="border-right: 1px solid var(--border);"
             >
               {pair.left?.oldNumber ?? ""}
             </td>
@@ -401,8 +401,8 @@ function SplitView({ lines }: { lines: DiffLine[] }) {
               style={{
                 width: "45%",
                 background: pair.left?.type === "del" ? "rgba(255, 59, 48, 0.08)" : "transparent",
-                color: pair.left?.type === "del" ? "var(--unq-danger-strong)" : "inherit",
-                borderRight: "2px solid var(--unq-border)",
+                color: pair.left?.type === "del" ? "var(--danger)" : "inherit",
+                borderRight: "2px solid var(--border)",
               }}
             >
               {pair.left
@@ -422,8 +422,8 @@ function SplitView({ lines }: { lines: DiffLine[] }) {
                 : ""}
             </td>
             <td
-              class="text-unq-text-3 w-8 select-none px-1 py-0.5 text-right"
-              style="border-right: 1px solid var(--unq-border-subtle);"
+              class="w-8 select-none px-1 py-0.5 text-right text-fg-subtle"
+              style="border-right: 1px solid var(--border);"
             >
               {pair.right?.newNumber ?? ""}
             </td>
@@ -432,7 +432,7 @@ function SplitView({ lines }: { lines: DiffLine[] }) {
               style={{
                 width: "45%",
                 background: pair.right?.type === "add" ? "rgba(48, 209, 88, 0.08)" : "transparent",
-                color: pair.right?.type === "add" ? "var(--unq-success-strong)" : "inherit",
+                color: pair.right?.type === "add" ? "var(--success)" : "inherit",
               }}
             >
               {pair.right

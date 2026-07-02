@@ -16,6 +16,8 @@ const config: Config = {
         accent: "oklch(var(--accent) / <alpha-value>)",
         "accent-fg": "oklch(var(--accent-fg) / <alpha-value>)",
         "accent-soft": "oklch(var(--accent-soft) / <alpha-value>)",
+        "accent-contrast": "oklch(var(--accent-fg) / <alpha-value>)",
+        "accent-fill": "oklch(var(--accent-fill, var(--accent)) / <alpha-value>)",
         success: "oklch(var(--success) / <alpha-value>)",
         warning: "oklch(var(--warning) / <alpha-value>)",
         danger: "oklch(var(--danger) / <alpha-value>)",

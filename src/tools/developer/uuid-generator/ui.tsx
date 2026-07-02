@@ -125,7 +125,7 @@ export default function UuidGenerator() {
               {results.map((uuid, i) => (
                 <li
                   key={i}
-                  class="hover:bg-unq-surface flex items-center justify-between gap-2 rounded px-2 py-1 text-sm"
+                  class="flex items-center justify-between gap-2 rounded px-2 py-1 text-sm hover:bg-surface"
                 >
                   <span class="break-all font-mono">{uuid}</span>
                   <CopyButton getText={() => uuid} />
