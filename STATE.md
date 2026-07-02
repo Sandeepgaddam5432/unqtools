@@ -1,14 +1,15 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T15:10:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T16:00:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v5.0 — Skill-driven UI redesign (tokens applied, shell+tool interiors queued)** 🔄 IN PROGRESS
+**v6.0 — Scratch UI rebuild (shell complete, tool interiors queued)** 🔄 IN PROGRESS
 
-22 tools live, all gates green. Skill installed in-repo (permanent). Design system
-generated + recorded. Slate dark palette + skill green applied to tokens.css.
-Remaining: full shell + tool interior redesign + TX rollout to all 22 tools.
+22 tools live, all gates green. Old presentation layer DELETED (~2,863 lines removed).
+New OKLCH dark-first token foundation + app-shell + glass topbar + sidebar + bento
+homepage + workbench-ready ToolLayout built from zero. CSS dropped from 13.3 KB to
+10.4 KB gz. Remaining: tool interior rewires to workbench kit + VLM quality loop ≥9/10.
 
 ## Context (why this session happened)
 
