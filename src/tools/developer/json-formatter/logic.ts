@@ -86,7 +86,7 @@ function extractPosition(message: string, input: string): { line?: number; colum
   const tokenMatch = message.match(/Unexpected token '(.+?)'/i);
   if (tokenMatch) {
     const token = tokenMatch[1];
-    const validJsonChars = new Set([' ', '\t', '\n', '\r', '{', '}', '[', ']', '"', ',', ':']);
+    const validJsonChars = new Set([" ", "\t", "\n", "\r", "{", "}", "[", "]", '"', ",", ":"]);
     for (let i = 0; i < input.length; i++) {
       if (!validJsonChars.has(input[i]!) && input.slice(i, i + token.length) === token) {
         let line = 1;
