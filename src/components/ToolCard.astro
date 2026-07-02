@@ -5,15 +5,17 @@ import { Star } from "lucide-preact";
 
 interface Props {
   tool: ToolManifest;
+  /** Featured cards get a subtle accent-tinted border + background. */
+  featured?: boolean;
 }
 
-const { tool } = Astro.props;
+const { tool, featured = false } = Astro.props;
 const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
 ---
 
 <a
   href={`/tools/${tool.id}`}
-  class="unq-card unq-card-interactive group relative block"
+  class={`unq-card unq-card-interactive group relative block${featured ? " unq-card--featured" : ""}`}
   data-tool-id={tool.id}
 >
   <div class="flex items-start justify-between gap-3">

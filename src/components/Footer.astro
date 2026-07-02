@@ -1,73 +1,83 @@
 ---
+import { TOOLS } from "../lib/registry";
+
 const year = new Date().getFullYear();
-const toolCount = (await import("../lib/registry")).TOOLS.length;
+const toolCount = TOOLS.length;
+
+// Popular tools for the footer column (4 most-likely-useful)
+const popularIds = ["json-formatter", "base64", "image-compressor", "color-picker"];
+const popular = popularIds
+  .map((id) => TOOLS.find((t) => t.id === id))
+  .filter((t): t is NonNullable<typeof t> => Boolean(t))
+  .slice(0, 4);
 ---
 
 <footer
   class="unq-section--gray"
-  style="border-top: 1px solid var(--unq-border); padding: 80px 0 40px;"
+  style="border-top: 1px solid var(--unq-border); padding: clamp(56px, 8vw, 80px) 0 32px;"
 >
   <div class="unq-container">
-    <div class="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
-      <div class="sm:col-span-1">
+    <div class="unq-foot-grid">
+      {/* Col 1 — brand + tagline */}
+      <div class="unq-foot-col">
         <a
           href="/"
           class="flex items-center gap-2.5 font-semibold tracking-tight text-unq-text"
           aria-label="UnQTools home"
+          style="min-height: 36px;"
         >
           <span class="unq-brand-mark">U</span>
           <span class="text-base tracking-tight">UnQTools</span>
         </a>
-        <p class="text-unq-text-3 mt-4 max-w-xs text-pretty text-sm leading-relaxed">
+        <p class="text-unq-text-2 mt-4 max-w-xs text-pretty text-sm leading-relaxed">
           {toolCount} browser-based tools — all private, all offline-capable. Your data never leaves
           your device.
         </p>
       </div>
 
-      <div>
-        <p class="text-unq-text-3 mb-4 text-xs font-semibold uppercase tracking-widest">Product</p>
-        <ul class="text-unq-text-3 space-y-2.5 text-sm">
-          <li>
-            <a href="/" class="duration-normal transition-colors ease-apple hover:text-unq-text"
-              >All tools</a
-            >
-          </li>
-          <li>
-            <a
-              href="/category/developer"
-              class="duration-normal transition-colors ease-apple hover:text-unq-text">Developer</a
-            >
-          </li>
-          <li>
-            <a
-              href="/category/calculators"
-              class="duration-normal transition-colors ease-apple hover:text-unq-text"
-              >Calculators</a
-            >
-          </li>
-          <li>
-            <a
-              href="/category/text"
-              class="duration-normal transition-colors ease-apple hover:text-unq-text"
-              >Text &amp; Writing</a
-            >
-          </li>
-          <li>
-            <a
-              href="/category/image"
-              class="duration-normal transition-colors ease-apple hover:text-unq-text">Image</a
-            >
-          </li>
+      {/* Col 2 — Categories */}
+      <div class="unq-foot-col">
+        <h3>Categories</h3>
+        <ul>
+          <li><a href="/category/developer">Developer &amp; Code</a></li>
+          <li><a href="/category/calculators">Calculators</a></li>
+          <li><a href="/category/text">Text &amp; Writing</a></li>
+          <li><a href="/category/image">Image &amp; Graphics</a></li>
+          <li><a href="/category/network-security">Security &amp; Privacy</a></li>
         </ul>
       </div>
 
-      <div>
-        <p class="text-unq-text-3 mb-4 text-xs font-semibold uppercase tracking-widest">About</p>
-        <ul class="text-unq-text-3 space-y-2.5 text-sm">
+      {/* Col 3 — Popular tools */}
+      <div class="unq-foot-col">
+        <h3>Popular tools</h3>
+        <ul>
+          {
+            popular.map((t) => (
+              <li>
+                <a href={`/tools/${t.id}`}>{t.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      {/* Col 4 — About + Legal */}
+      <div class="unq-foot-col">
+        <h3>About</h3>
+        <ul>
           <li>100% private</li>
           <li>Installable PWA</li>
           <li>No accounts, no tracking</li>
           <li>Works offline</li>
+          <li>
+            <a
+              href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener"
+            >
+              View LICENSE
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -75,17 +85,8 @@ const toolCount = (await import("../lib/registry")).TOOLS.length;
     <div
       class="text-unq-text-3 mt-12 flex flex-col items-start justify-between gap-3 border-t border-unq-border pt-7 text-xs sm:flex-row sm:items-center"
     >
-      <p>&copy; {year} UnQTools. Proprietary &amp; confidential. All rights reserved.</p>
-      <p>
-        <a
-          href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
-          class="duration-normal underline underline-offset-2 transition-colors ease-apple hover:text-unq-text"
-          target="_blank"
-          rel="noopener"
-        >
-          View LICENSE
-        </a>
-      </p>
+      <p>&copy; {year} UnQTools. All rights reserved.</p>
+      <p>Proprietary &amp; confidential · Built with Astro · 100% static</p>
     </div>
   </div>
 </footer>

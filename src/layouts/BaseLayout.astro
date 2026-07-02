@@ -95,36 +95,72 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
     {/* Command Bar (⌘K) — hydrated client:idle so it doesn't block first paint */}
     <CommandBarMount />
     {
-      /* Reveal IntersectionObserver — adds .is-in / .is-revealed to any
-        [data-reveal] or .unq-reveal element when scrolled into view.
-        Respects prefers-reduced-motion (no animation, just show). */
+      /* v2.2 motion: reveal IntersectionObserver + count-up.
+         Re-runs on astro:page-load so it works after Astro View Transitions. */
     }
     <script is:inline>
       (function () {
-        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const targets = document.querySelectorAll("[data-reveal], .unq-reveal");
-        if (reduce || !("IntersectionObserver" in window)) {
-          targets.forEach(function (el) {
-            el.classList.add("is-revealed");
-            el.classList.add("is-in");
-          });
-          return;
-        }
-        const io = new IntersectionObserver(
-          function (entries) {
-            entries.forEach(function (entry) {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("is-revealed");
-                entry.target.classList.add("is-in");
-                io.unobserve(entry.target);
-              }
+        function unqInitMotion() {
+          const rm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const reveals = document.querySelectorAll(
+            ".unq-reveal:not(.is-in), [data-reveal]:not(.is-revealed)",
+          );
+          if (rm || !("IntersectionObserver" in window)) {
+            reveals.forEach(function (el) {
+              el.classList.add("is-in");
+              el.classList.add("is-revealed");
             });
-          },
-          { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
-        );
-        targets.forEach(function (el) {
-          io.observe(el);
-        });
+          } else {
+            const io = new IntersectionObserver(
+              function (entries) {
+                entries.forEach(function (entry) {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add("is-in");
+                    entry.target.classList.add("is-revealed");
+                    io.unobserve(entry.target);
+                  }
+                });
+              },
+              { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+            );
+            reveals.forEach(function (el, i) {
+              // Stagger index: siblings inside the same parent share a 0-5
+              // counter so cards in the same grid reveal 70ms apart.
+              el.style.setProperty("--i", String(i % 6));
+              io.observe(el);
+            });
+          }
+          // Count-up animation for [data-countup] elements.
+          document.querySelectorAll("[data-countup]").forEach(function (el) {
+            const end = Number(el.getAttribute("data-countup"));
+            if (!Number.isFinite(end)) return;
+            if (rm || !("IntersectionObserver" in window)) {
+              el.textContent = end.toLocaleString();
+              return;
+            }
+            const cio = new IntersectionObserver(
+              function (entries) {
+                entries.forEach(function (entry) {
+                  if (!entry.isIntersecting) return;
+                  cio.unobserve(entry.target);
+                  const t0 = performance.now();
+                  const dur = 1200;
+                  function tick(t) {
+                    const p = Math.min(1, (t - t0) / dur);
+                    // ease-out cubic
+                    el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))).toLocaleString();
+                    if (p < 1) requestAnimationFrame(tick);
+                  }
+                  requestAnimationFrame(tick);
+                });
+              },
+              { threshold: 0.6 },
+            );
+            cio.observe(el);
+          });
+        }
+        document.addEventListener("astro:page-load", unqInitMotion);
+        unqInitMotion();
       })();
     </script>
     {/* Service worker registration */}

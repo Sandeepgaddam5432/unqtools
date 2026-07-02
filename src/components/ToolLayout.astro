@@ -54,8 +54,8 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
     </p>
   </header>
 
-  <!-- Tool UI (slot) — wrapped in an Apple tile (.unq-card) -->
-  <div class="unq-card" style="padding: clamp(20px, 4vw, 32px);">
+  <!-- Tool UI (slot) — wrapped in an Apple tile (.unq-card). Reveal on scroll. -->
+  <div class="unq-card unq-reveal" style="padding: clamp(20px, 4vw, 32px);">
     <slot />
   </div>
 
@@ -106,7 +106,7 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
 
   <!-- SEO content — Apple typography -->
   <section
-    class="prose prose-sm prose-headings:tracking-display prose-headings:font-semibold prose-p:text-unq-text-2 prose-p:leading-relaxed prose-h2:text-unq-text prose-h2:unq-h2 prose-h3:text-unq-text prose-strong:text-unq-text prose-code:text-unq-text prose-code:bg-unq-surface-hover prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-li:text-unq-text-2 prose-li:leading-relaxed prose-ol:marker:text-unq-text-3 max-w-none"
+    class="unq-reveal prose prose-sm prose-headings:tracking-display prose-headings:font-semibold prose-p:text-unq-text-2 prose-p:leading-relaxed prose-h2:text-unq-text prose-h2:unq-h2 prose-h3:text-unq-text prose-strong:text-unq-text prose-code:text-unq-text prose-code:bg-unq-surface-hover prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-li:text-unq-text-2 prose-li:leading-relaxed prose-ol:marker:text-unq-text-3 max-w-none"
   >
     <h2>About {tool.name}</h2>
     <p>{tool.description}</p>

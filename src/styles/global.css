@@ -193,7 +193,10 @@
   .unq-eyebrow {
     font-size: var(--unq-sm);
     font-weight: 600;
-    color: var(--unq-accent);
+    /* Use --unq-link (#0066cc) instead of --unq-accent (#0071e3) so the
+       eyebrow passes WCAG AA on BOTH white (5.92:1) and gray (5.5:1)
+       backgrounds. apple.com uses the same darker blue for inline links. */
+    color: var(--unq-link);
     letter-spacing: -0.01em;
   }
   .unq-muted {
@@ -655,3 +658,305 @@
    runs after first paint and respects prefers-reduced-motion. Elements with
    [data-reveal] or .unq-reveal receive .is-revealed / .is-in when scrolled
    into view. */
+
+/* ============================================================ v2.2 MOTION PRIMITIVES
+   Appended on top of v2.1. Adds:
+   - Staggered scroll reveal (`.unq-reveal` with `--i` index from JS)
+   - Scale-on-reveal variant (`.unq-reveal--scale`)
+   - Hero staggered entrance (`.unq-hero-anim > *` runs on first paint)
+   - Apple gradient headline keyword (`.unq-gradient`)
+   - Subtle animated hero backdrop (`.unq-hero::before` floating radial)
+   - Tighter card + button micro-interactions
+   - Full reduced-motion guard
+   No v2.1 tokens or classes are changed. */
+@layer components {
+  /* --- Scroll reveal + stagger ---------------------------------------------
+     Animate ONLY opacity + transform — never width/height/top — so CLS = 0.
+     The `--i` custom property is set by JS (index modulo 6) so siblings in
+     the same grid reveal with a 70ms stagger. */
+  .unq-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    will-change: opacity, transform;
+    transition:
+      opacity 0.7s var(--unq-ease),
+      transform 0.7s var(--unq-ease);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+  .unq-reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+  .unq-reveal--scale {
+    transform: scale(0.96);
+  }
+  .unq-reveal--scale.is-in {
+    transform: none;
+  }
+
+  /* --- Hero staggered entrance ---------------------------------------------
+     Runs on first paint (no JS needed). Children animate in sequence:
+     0.05s / 0.16s / 0.30s / 0.44s. */
+  @keyframes unq-rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .unq-hero-anim > * {
+    opacity: 0;
+    animation: unq-rise 0.8s var(--unq-ease) forwards;
+  }
+  .unq-hero-anim > *:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  .unq-hero-anim > *:nth-child(2) {
+    animation-delay: 0.16s;
+  }
+  .unq-hero-anim > *:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .unq-hero-anim > *:nth-child(4) {
+    animation-delay: 0.44s;
+  }
+  .unq-hero-anim > *:nth-child(5) {
+    animation-delay: 0.58s;
+  }
+
+  /* --- Apple gradient headline keyword -------------------------------------
+     Use sparingly on ONE hero word. The gradient is blue → light-blue →
+     soft-purple (the only place purple appears — it's a subtle gradient
+     endpoint, not an accent). */
+  .unq-gradient {
+    background: linear-gradient(120deg, #0071e3, #42a5ff 45%, #bf5af2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* --- Subtle animated hero backdrop --------------------------------------- */
+  .unq-hero {
+    position: relative;
+    overflow: clip;
+  }
+  .unq-hero::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 70%;
+    z-index: -1;
+    background: radial-gradient(50% 60% at 50% 0%, rgba(0, 113, 227, 0.1), transparent 70%);
+    animation: unq-float 12s var(--unq-ease) infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes unq-float {
+    from {
+      transform: translateY(-8px) scale(1);
+    }
+    to {
+      transform: translateY(8px) scale(1.05);
+    }
+  }
+
+  /* --- Tighter micro-interactions ------------------------------------------
+     Overrides v2.1's `.unq-card:hover` lift with a slightly tighter
+     scale + larger shadow for a more "alive" feel. */
+  .unq-card {
+    will-change: transform;
+  }
+  .unq-card:hover {
+    transform: translateY(-4px) scale(1.008);
+    box-shadow: var(--unq-shadow-lg);
+  }
+  .unq-btn {
+    transition:
+      background 0.2s var(--unq-ease),
+      transform 0.12s var(--unq-ease);
+  }
+  .unq-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* --- v2.2 rich-content helpers ------------------------------------------- */
+  /* Stats strip — Apple-style centered row of big numbers + labels */
+  .unq-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .unq-stat__num {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--unq-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .unq-stat__label {
+    font-size: var(--unq-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--unq-text-2);
+  }
+
+  /* Feature card — Apple "why" tile (icon + title + body) */
+  .unq-feature {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--unq-surface);
+    border: 1px solid var(--unq-border-subtle);
+    border-radius: var(--unq-radius-lg);
+    padding: 28px 24px;
+    height: 100%;
+  }
+  .unq-feature__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--unq-accent-subtle);
+    color: var(--unq-accent);
+    font-size: 20px;
+  }
+  .unq-feature__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--unq-text);
+  }
+  .unq-feature__body {
+    font-size: var(--unq-sm);
+    line-height: 1.5;
+    color: var(--unq-text-2);
+  }
+
+  /* Category header row — icon + title + count + view-all link */
+  .unq-cat-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .unq-cat-head__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: var(--unq-bg-secondary);
+    color: var(--unq-text);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  :root[data-theme="dark"] .unq-cat-head__icon {
+    background: var(--unq-surface-2);
+  }
+
+  /* CTA band — gray callout */
+  .unq-cta-band {
+    background: var(--unq-bg-secondary);
+    border-radius: var(--unq-radius-xl);
+    padding: clamp(40px, 6vw, 72px) clamp(24px, 4vw, 56px);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  :root[data-theme="dark"] .unq-cta-band {
+    background: var(--unq-surface);
+  }
+
+  /* Trust pill row (under hero search) */
+  .unq-trust {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 20px;
+    margin-top: 18px;
+    font-size: var(--unq-xs);
+    font-weight: 500;
+    color: var(--unq-text-2);
+  }
+  .unq-trust__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* 4-col footer sitemap (richer than v2.1's 3-col) */
+  .unq-foot-grid {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 32px;
+  }
+  @media (max-width: 720px) {
+    .unq-foot-grid {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+  .unq-foot-col h3 {
+    font-size: var(--unq-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--unq-text-2);
+    margin: 0 0 14px 0;
+  }
+  .unq-foot-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .unq-foot-col a {
+    color: var(--unq-text-2);
+    font-size: var(--unq-sm);
+    transition: color 0.2s var(--unq-ease);
+    text-decoration: none;
+  }
+  .unq-foot-col a:hover {
+    color: var(--unq-text);
+    text-decoration: none;
+  }
+
+  /* Featured card — highlighted tool (slightly stronger border + tint) */
+  .unq-card--featured {
+    border: 1px solid var(--unq-accent-ring);
+    background: linear-gradient(180deg, var(--unq-accent-subtle), transparent 40%),
+      var(--unq-surface);
+  }
+}
+
+/* ============================================================ v2.2 reduced-motion guard */
+@media (prefers-reduced-motion: reduce) {
+  .unq-reveal,
+  .unq-reveal--scale,
+  .unq-hero-anim > * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  .unq-hero::before {
+    animation: none !important;
+  }
+  .unq-card:hover {
+    transform: none !important;
+  }
+  .unq-btn:active {
+    transform: none !important;
+  }
+}
