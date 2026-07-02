@@ -4,6 +4,8 @@ import { byCategory } from "../../lib/registry";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ToolCard from "../../components/ToolCard.astro";
 import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+import Sidebar from "../../components/Sidebar.astro";
+import CategoryChips from "../../components/CategoryChips.astro";
 
 export function getStaticPaths() {
   return ALL_CATEGORIES.map((c) => ({ params: { category: c } }));
@@ -33,19 +35,18 @@ const icon = CATEGORY_ICONS[category];
 ---
 
 <BaseLayout title={`${label} — UnQTools`} description={subtitle}>
-  <section class="unq-section" style="padding-top: 48px; padding-bottom: 0;">
-    <div class="unq-container">
-      <Breadcrumb items={[{ label: "All tools", href: "/" }, { label }]} />
-
-      <header
-        class="unq-reveal"
-        style="display: flex; flex-direction: column; gap: 16px; margin-top: 24px;"
-      >
-        <div class="unq-cat-head" style="margin-bottom: 0;">
+  {/* Compact header — breadcrumb + category title + count, no full-screen hero */}
+  <section style="padding: 24px 0 16px;">
+    <div class="unq-shell" style="grid-template-columns: 1fr; gap: 0;">
+      <div style="max-width: 720px;">
+        <Breadcrumb items={[{ label: "All tools", href: "/" }, { label }]} />
+        <div class="unq-cat-head" style="margin: 16px 0 0 0;">
           <span class="unq-cat-head__icon" aria-hidden="true">{icon}</span>
           <div style="flex: 1; min-width: 0;">
-            <p class="unq-eyebrow" style="margin: 0 0 4px 0;">Category</p>
-            <h1 class="unq-h1" style="margin: 0;">{label}</h1>
+            <p class="unq-eyebrow" style="margin: 0 0 2px 0;">Category</p>
+            <h1 class="unq-h1" style="margin: 0; font-size: clamp(1.75rem, 3vw, 2.25rem);">
+              {label}
+            </h1>
           </div>
           <span
             class="text-unq-text-2 inline-flex items-center rounded-full bg-unq-surface-hover px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-unq-border"
@@ -56,16 +57,21 @@ const icon = CATEGORY_ICONS[category];
         </div>
         <p
           class="unq-muted"
-          style="font-size: 19px; line-height: 1.4; max-width: 640px; margin: 0;"
+          style="font-size: 16px; line-height: 1.4; max-width: 580px; margin: 10px 0 0;"
         >
           {subtitle}
         </p>
-      </header>
+      </div>
     </div>
   </section>
 
-  <section class="unq-section" style="padding-top: 40px;">
-    <div class="unq-container">
+  {/* Mobile category chip row */}
+  <CategoryChips active={category} />
+
+  {/* App shell: sidebar + tool grid */}
+  <div class="unq-shell" style="padding-block: 0 64px;">
+    <Sidebar active={category} />
+    <main class="unq-main">
       {
         tools.length === 0 ? (
           <div class="unq-card" style="padding: 40px; text-align: center;">
@@ -84,6 +90,6 @@ const icon = CATEGORY_ICONS[category];
           </div>
         )
       }
-    </div>
-  </section>
+    </main>
+  </div>
 </BaseLayout>

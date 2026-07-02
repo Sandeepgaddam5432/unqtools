@@ -11,6 +11,23 @@ interface Props {
 
 const { tool, featured = false } = Astro.props;
 const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
+
+// Map the manifest `icon` string (lucide name or short token) to a compact
+// glyph shown in the card's icon tile. Falls back to the first letter.
+const ICON_MAP: Record<string, string> = {
+  braces: "{ }",
+  binary: "01",
+  link: "🔗",
+  hash: "#",
+  type: "Aa",
+  image: "🎨",
+  calculator: "🧮",
+  "trending-up": "📈",
+  home: "🏠",
+  palette: "🎨",
+  fingerprint: "🔑",
+};
+const glyph = ICON_MAP[tool.icon] ?? tool.icon.slice(0, 2).toUpperCase();
 ---
 
 <a
@@ -19,16 +36,7 @@ const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
   data-tool-id={tool.id}
 >
   <div class="flex items-start justify-between gap-3">
-    <div class="min-w-0 flex-1">
-      <h3
-        class="unq-card__title duration-normal transition-colors ease-apple group-hover:text-unq-accent"
-      >
-        {tool.name}
-      </h3>
-      <p class="unq-card__desc mt-1.5 line-clamp-2 text-pretty">
-        {tool.description}
-      </p>
-    </div>
+    <span class="unq-card__icon" aria-hidden="true">{glyph}</span>
     <button
       type="button"
       class="favorite-btn duration-normal text-unq-text-3 absolute right-4 top-4 p-1 opacity-0 transition-opacity ease-apple hover:text-unq-warning focus:opacity-100 group-hover:opacity-100"
@@ -39,14 +47,11 @@ const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
       <Star size={15} />
     </button>
   </div>
+  <h3
+    class="unq-card__title duration-normal transition-colors ease-apple group-hover:text-unq-accent"
+  >
+    {tool.name}
+  </h3>
+  <p class="unq-card__desc text-pretty">{tool.description}</p>
   <p class="unq-card__cat">{categoryShort}</p>
 </a>
-
-<style>
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>

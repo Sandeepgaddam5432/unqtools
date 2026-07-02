@@ -85,17 +85,22 @@
   --unq-shadow-glow: 0 0 0 4px var(--unq-accent-ring);
   --unq-shadow-bloom: 0 4px 16px rgba(0, 113, 227, 0.1), 0 1px 3px rgba(0, 0, 0, 0.04);
 
-  /* --- Layout (Apple.com content widths) --- */
+  /* --- Layout (product-app density: 1280px shell, 720px prose) ---
+       v3.0: widened from apple.com marketing widths (980/1024) to a
+       Raycast/Linear/Vercel-style product shell. Tool pages keep a 720px
+       prose width for readability; homepage + category pages use the full
+       1280px shell with a sticky sidebar. */
   --unq-nav-h: 48px;
-  --unq-content: 980px;
-  --unq-content-wide: 1024px;
-  --unq-container-max: 1024px; /* alias of --unq-content-wide */
-  --unq-content-max: 980px; /* alias of --unq-content */
+  --unq-content: 1280px;
+  --unq-content-wide: 1280px;
+  --unq-content-prose: 720px;
+  --unq-container-max: 1280px; /* alias of --unq-content */
+  --unq-content-max: 1280px; /* alias of --unq-content */
 
-  /* --- Gutters — Apple.com uses 22px side padding on the 980px container --- */
-  --unq-gutter-sm: 22px;
-  --unq-gutter-md: 22px;
-  --unq-gutter-lg: 22px;
+  /* --- Gutters — 24px side padding (slightly wider than v2.1's 22px) --- */
+  --unq-gutter-sm: 24px;
+  --unq-gutter-md: 24px;
+  --unq-gutter-lg: 24px;
 
   /* --- Motion — Apple ease curve --- */
   --unq-ease: cubic-bezier(0.25, 0.1, 0.25, 1);

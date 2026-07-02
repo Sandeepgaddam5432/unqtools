@@ -88,7 +88,12 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
       Skip to content
     </a>
     <Header />
-    <main id="main" class="unq-container py-8 sm:py-12">
+    {
+      /* v3.0: pages own their shell (.unq-shell with sidebar + main). BaseLayout
+        just provides <main> as a landmark — no padding/container, pages
+        decide their own horizontal layout. */
+    }
+    <main id="main">
       <slot />
     </main>
     <Footer />
