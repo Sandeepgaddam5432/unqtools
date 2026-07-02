@@ -80,7 +80,7 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
       }
     </style>
   </head>
-  <body>
+  <body class="unq-grain">
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-md focus:bg-unq-accent focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-unq-accent-contrast"
@@ -101,7 +101,8 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
     <CommandBarMount />
     {
       /* v2.2 motion: reveal IntersectionObserver + count-up.
-         Re-runs on astro:page-load so it works after Astro View Transitions. */
+         v3.1: + card spotlight pointer handler (deduped via data-spot).
+         All re-run on astro:page-load so they work after Astro View Transitions. */
     }
     <script is:inline>
       (function () {
@@ -164,8 +165,29 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
             cio.observe(el);
           });
         }
-        document.addEventListener("astro:page-load", unqInitMotion);
+
+        // v3.1: Card spotlight — pointer-following radial glow.
+        // Deduped via data-spot attribute so re-running on astro:page-load
+        // doesn't double-bind. Skipped entirely under prefers-reduced-motion.
+        function unqInitSpotlight() {
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          const cards = document.querySelectorAll(".unq-card:not([data-spot])");
+          cards.forEach(function (card) {
+            card.dataset.spot = "1";
+            card.addEventListener("pointermove", function (e) {
+              const r = card.getBoundingClientRect();
+              card.style.setProperty("--mx", e.clientX - r.left + "px");
+              card.style.setProperty("--my", e.clientY - r.top + "px");
+            });
+          });
+        }
+
+        document.addEventListener("astro:page-load", function () {
+          unqInitMotion();
+          unqInitSpotlight();
+        });
         unqInitMotion();
+        unqInitSpotlight();
       })();
     </script>
     {/* Service worker registration */}

@@ -102,12 +102,36 @@
   --unq-gutter-md: 24px;
   --unq-gutter-lg: 24px;
 
-  /* --- Motion — Apple ease curve --- */
+  /* --- Motion — Apple ease curve + v3.1 premium easing --- */
   --unq-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --unq-ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1); /* alias of --unq-ease */
   --unq-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --unq-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  /* v3.1: --unq-ease-out upgraded to the Linear/Vercel "ease-out" curve
+     (was cubic-bezier(0.33,1,0.68,1) — gentler; the new one decelerates
+     harder, feels more premium on hover/spotlight transitions). */
+  --unq-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --unq-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* v3.1: spring easing via linear() — a real spring curve with slight
+     overshoot. Used sparingly on entrances. Fallback browsers ignore it
+     and use the previous transition (graceful degradation). */
+  --unq-spring: linear(
+    0,
+    0.009,
+    0.035 2.1%,
+    0.219 6.6%,
+    0.55 12.9%,
+    0.77 17.5%,
+    0.905 22.4%,
+    0.968 27.1%,
+    1.008 34%,
+    1.014 41.9%,
+    1.001 100%
+  );
+
+  /* --- v3.1 gradient stops (for spotlight border + aurora + headline) --- */
+  --unq-grad-1: #0071e3; /* Apple blue */
+  --unq-grad-2: #42a5ff; /* light blue */
+  --unq-grad-3: #bf5af2; /* soft purple — gradient endpoint only, not an accent */
   --unq-duration-fast: 160ms;
   --unq-duration-normal: 280ms;
   --unq-duration-slow: 420ms;
