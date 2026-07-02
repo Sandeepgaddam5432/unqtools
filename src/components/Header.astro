@@ -6,46 +6,38 @@ const counts = countByCategory();
 const navCategories = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0).slice(0, 8);
 ---
 
-<header
-  class="unq-glass border-unq-border/60 duration-normal sticky top-0 z-40 border-b transition-all ease-apple"
-  data-header
->
-  <div class="unq-container flex h-14 items-center justify-between gap-3 sm:h-16">
-    <!-- Logo — Apple-grade: minimal, refined -->
+<header class="unq-nav" data-header>
+  <div class="unq-nav-inner">
+    <!-- Brand — Apple-grade: minimal square mark + wordmark -->
     <a
       href="/"
-      class="group flex shrink-0 items-center gap-2.5 font-semibold tracking-tight"
+      class="flex shrink-0 items-center gap-2 text-unq-text"
       aria-label="UnQTools home"
+      style="min-height: 36px;"
     >
-      <span
-        class="duration-normal inline-flex h-8 w-8 items-center justify-center rounded-lg bg-unq-accent text-sm font-bold text-unq-accent-contrast shadow-sm transition-transform ease-apple group-hover:scale-105"
-      >
-        U
-      </span>
-      <span class="hidden text-base tracking-tight sm:inline">UnQTools</span>
+      <span class="unq-brand-mark">U</span>
+      <span class="hidden text-sm font-semibold tracking-tight sm:inline">UnQTools</span>
     </a>
 
-    <!-- Nav (desktop) — Apple-grade: minimal labels, generous spacing -->
-    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
-      {
-        navCategories.map((c) => (
-          <a
-            href={`/category/${c}`}
-            class="duration-normal whitespace-nowrap rounded-full px-3 py-1.5 text-unq-text-muted transition-all ease-apple hover:bg-unq-surface-hover hover:text-unq-text"
-          >
-            {CATEGORY_LABELS[c].split(" ")[0]}
-          </a>
-        ))
-      }
+    <!-- Nav links (desktop) — Apple.com pattern: neutral labels, generous gap -->
+    <nav aria-label="Primary" class="hidden lg:block">
+      <ul class="unq-nav-links">
+        {
+          navCategories.map((c) => (
+            <li>
+              <a href={`/category/${c}`}>{CATEGORY_LABELS[c].split(" ")[0]}</a>
+            </li>
+          ))
+        }
+      </ul>
     </nav>
 
-    <!-- Actions -->
+    <!-- Actions — ⌘K trigger + theme toggle -->
     <div class="flex items-center gap-2">
-      <!-- ⌘K trigger — Apple-grade pill -->
       <button
         id="cmdk-trigger"
         type="button"
-        class="duration-normal flex h-9 min-w-[40px] items-center gap-2 rounded-full border border-unq-border bg-unq-surface px-3 text-sm text-unq-text-muted transition-all ease-apple hover:border-unq-border-strong hover:bg-unq-surface-hover sm:min-w-[220px]"
+        class="duration-normal text-unq-text-2 flex h-9 min-w-[40px] items-center gap-2 rounded-full border border-unq-border bg-unq-surface px-3 text-sm transition-all ease-apple hover:border-unq-border-strong hover:bg-unq-surface-hover sm:min-w-[220px]"
         aria-label="Open command palette (⌘K)"
       >
         <svg
@@ -64,17 +56,16 @@ const navCategories = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0).slice(0
         </svg>
         <span class="hidden flex-1 text-left sm:inline">Search tools…</span>
         <kbd
-          class="hidden h-5 items-center gap-0.5 rounded border border-unq-border bg-unq-bg px-1.5 font-mono text-[10px] text-unq-text-subtle sm:flex"
+          class="text-unq-text-3 hidden h-5 items-center gap-0.5 rounded border border-unq-border bg-unq-bg px-1.5 font-mono text-[10px] sm:flex"
         >
           ⌘K
         </kbd>
       </button>
 
-      <!-- Theme toggle — Apple-grade minimal icon -->
       <button
         id="theme-toggle"
         type="button"
-        class="duration-normal flex h-9 w-9 items-center justify-center rounded-full text-unq-text-muted transition-all ease-apple hover:bg-unq-surface-hover hover:text-unq-text"
+        class="unq-icon-btn"
         aria-label="Toggle color theme"
         title="Toggle theme"
       >

@@ -11,100 +11,113 @@ const toolCount = TOOLS.length;
 ---
 
 <BaseLayout>
-  <!-- Hero — Apple-grade: large display headline, calm subtitle, single CTA, plenty of air -->
-  <section class="pb-16 pt-12 text-center sm:pb-24 sm:pt-20 lg:pb-32 lg:pt-28">
-    <div
-      class="ring-unq-accent/10 mb-8 inline-flex items-center gap-2 rounded-full bg-unq-accent-subtle px-3.5 py-1.5 text-xs font-medium text-unq-accent ring-1"
-    >
-      <span class="relative flex h-1.5 w-1.5">
+  <!-- ════════════════════════════════════════════════════════════ HERO
+       Apple.com pattern: white background, centered, max-width ~720px,
+       generous top air, eyebrow + hero title + muted subtitle + search. -->
+  <section
+    class="unq-section"
+    style="padding-top: clamp(72px, 11vw, 140px); padding-bottom: clamp(40px, 6vw, 72px);"
+  >
+    <div class="unq-container" style="max-width: 720px; text-align: center;">
+      <p
+        class="unq-eyebrow"
+        style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;"
+      >
         <span
-          class="absolute inline-flex h-full w-full animate-ping rounded-full bg-unq-accent opacity-75"
-        ></span>
-        <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-unq-accent"></span>
-      </span>
-      100% private · runs in your browser
-    </div>
-    <h1 class="text-balance text-5xl font-semibold tracking-display-lg sm:text-6xl lg:text-7xl">
-      <span class="unq-gradient-text">Tools that respect</span><br />
-      <span class="unq-gradient-text">your data.</span>
-    </h1>
-    <p
-      class="mx-auto mt-7 max-w-2xl text-pretty text-lg leading-relaxed text-unq-text-muted sm:text-xl"
-    >
-      {toolCount} fast, free, offline-capable browser tools — converters, calculators, generators, formatters.
-      No uploads, no tracking, no accounts.
-    </p>
-    <div class="mx-auto mt-10 max-w-2xl">
-      <SearchBar />
-    </div>
-    <p class="mt-4 text-xs text-unq-text-subtle">
-      Press <kbd
-        class="inline-flex h-5 items-center rounded border border-unq-border bg-unq-surface-hover px-1.5 font-mono text-[10px]"
-        >⌘K</kbd
-      > anywhere to search
-    </p>
-  </section>
-
-  <!-- Favorites + Recents (reactive — populated client-side) -->
-  <section id="retention-rows" class="mb-20 space-y-10" hidden>
-    <div>
-      <h2
-        class="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-unq-text-subtle"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <polygon
-            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-          ></polygon>
-        </svg>
-        Favorites
-      </h2>
-      <div id="favorites-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
-    </div>
-    <div>
-      <h2
-        class="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-unq-text-subtle"
-      >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
           aria-hidden="true"
+          style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--unq-success);"
+        ></span>
+        100% private · runs in your browser
+      </p>
+      <h1 class="unq-hero-title" style="margin: 0;">Tools that respect your data.</h1>
+      <p
+        class="unq-muted"
+        style="font-size: 21px; line-height: 1.4; margin: 20px auto 0; max-width: 620px;"
+      >
+        {toolCount} fast, free, offline-capable browser tools — converters, calculators, generators,
+        formatters. No uploads, no tracking, no accounts.
+      </p>
+      <div style="margin: 32px auto 0; max-width: 620px;">
+        <SearchBar />
+      </div>
+      <p style="margin-top: 14px; font-size: 12px; color: var(--unq-text-3);">
+        Press
+        <kbd
+          class="inline-flex h-5 items-center rounded border border-unq-border bg-unq-surface-hover px-1.5 font-mono text-[10px]"
+          >⌘K</kbd
         >
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        Recently used
-      </h2>
-      <div id="recents-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
+        anywhere to search
+      </p>
     </div>
   </section>
 
-  <!-- Category sections — generous spacing, refined grid -->
+  <!-- ════════════════════════════════════════════════════════════ Favorites + Recents
+       Reactive — populated client-side; hidden by default. -->
+  <section id="retention-rows" class="unq-section--gray" style="padding: 32px 0;" hidden>
+    <div class="unq-container" style="display: flex; flex-direction: column; gap: 40px;">
+      <div>
+        <h2
+          class="unq-h3"
+          style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+            ></polygon>
+          </svg>
+          Favorites
+        </h2>
+        <div id="favorites-grid" class="unq-grid"></div>
+      </div>
+      <div>
+        <h2
+          class="unq-h3"
+          style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          Recently used
+        </h2>
+        <div id="recents-grid" class="unq-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════ Category sections
+       Apple.com pattern: ALTERNATING .unq-section (white) and
+       .unq-section--gray (gray). Each section has a .unq-container >
+       .unq-section-head (h2 + "View all" cta-link) > .unq-grid of ToolCards,
+       wrapped in .unq-reveal for staggered entrance. -->
   {
-    categoriesWithTools.map((c) => {
+    categoriesWithTools.map((c, i) => {
       const tools = TOOLS.filter((t) => t.category === c);
+      const isGray = i % 2 === 1; // alternate
       return (
-        <section class="mb-20">
-          <div class="mb-6 flex items-baseline justify-between">
-            <h2 class="text-balance text-2xl font-semibold tracking-display sm:text-3xl">
-              {CATEGORY_LABELS[c]}
-            </h2>
-            <a
-              href={`/category/${c}`}
-              class="duration-normal text-sm text-unq-text-muted transition-colors ease-apple hover:text-unq-text"
-            >
-              View all →
-            </a>
-          </div>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {tools.slice(0, 8).map((t) => (
-              <ToolCard tool={t} />
-            ))}
+        <section class={isGray ? "unq-section unq-section--gray" : "unq-section"}>
+          <div class="unq-container">
+            <div class="unq-section-head">
+              <h2 class="unq-h2">{CATEGORY_LABELS[c]}</h2>
+              <a href={`/category/${c}`} class="unq-cta-link">
+                View all
+              </a>
+            </div>
+            <div class="unq-grid unq-reveal">
+              {tools.slice(0, 8).map((t) => (
+                <ToolCard tool={t} />
+              ))}
+            </div>
           </div>
         </section>
       );
@@ -142,10 +155,10 @@ const toolCount = TOOLS.length;
     grid.innerHTML = tools
       .map(
         (t) => `
-      <a href="/tools/${t.id}" class="unq-card unq-card-interactive group p-5 block">
-        <h3 class="font-semibold text-base group-hover:text-unq-accent transition-colors duration-normal ease-apple">${t.name}</h3>
-        <p class="text-sm text-unq-text-muted mt-1.5 line-clamp-2 leading-relaxed">${t.description}</p>
-        <p class="text-[10px] uppercase tracking-widest text-unq-text-subtle mt-4 font-medium">
+      <a href="/tools/${t.id}" class="unq-card unq-card-interactive group block">
+        <h3 class="unq-card__title duration-normal transition-colors ease-apple group-hover:text-unq-accent">${t.name}</h3>
+        <p class="unq-card__desc mt-1.5 line-clamp-2">${t.description}</p>
+        <p class="unq-card__cat">
           ${CATEGORY_LABELS[t.category].split(" ")[0]}
         </p>
       </a>`,
@@ -171,3 +184,12 @@ const toolCount = TOOLS.length;
   window.addEventListener("storage", refreshRetentionRows);
   window.addEventListener("unq:favorite-changed", refreshRetentionRows);
 </script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

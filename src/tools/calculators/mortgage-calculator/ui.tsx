@@ -364,7 +364,12 @@ export default function MortgageCalculator() {
               </div>
             </div>
 
-            <div class="max-h-[480px] overflow-auto">
+            <div
+              class="max-h-[480px] overflow-auto"
+              tabindex="0"
+              role="region"
+              aria-label="Amortization schedule table — scrollable"
+            >
               <table class="w-full text-xs">
                 <thead class="sticky top-0 bg-unq-surface">
                   <tr class="text-unq-muted border-b border-unq-border text-left">

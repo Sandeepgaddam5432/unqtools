@@ -23,10 +23,13 @@ const config: Config = {
           ring: "var(--unq-ring)",
           success: "var(--unq-success)",
           "success-subtle": "var(--unq-success-subtle)",
+          "success-strong": "var(--unq-success-strong)",
           warning: "var(--unq-warning)",
           "warning-subtle": "var(--unq-warning-subtle)",
+          "warning-strong": "var(--unq-warning-strong)",
           danger: "var(--unq-danger)",
           "danger-subtle": "var(--unq-danger-subtle)",
+          "danger-strong": "var(--unq-danger-strong)",
         },
       },
       fontFamily: {

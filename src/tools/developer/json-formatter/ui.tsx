@@ -232,6 +232,8 @@ export default function JsonFormatter() {
           </label>
           <pre
             id="json-output"
+            role="region"
+            aria-label="Output"
             aria-live="polite"
             class="unq-input min-h-[320px] overflow-auto whitespace-pre-wrap py-2 font-mono text-sm"
           >

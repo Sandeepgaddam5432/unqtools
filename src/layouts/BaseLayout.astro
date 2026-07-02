@@ -94,6 +94,39 @@ const ogType = Astro.url.pathname === "/" ? "website" : "article";
     <Footer />
     {/* Command Bar (⌘K) — hydrated client:idle so it doesn't block first paint */}
     <CommandBarMount />
+    {
+      /* Reveal IntersectionObserver — adds .is-in / .is-revealed to any
+        [data-reveal] or .unq-reveal element when scrolled into view.
+        Respects prefers-reduced-motion (no animation, just show). */
+    }
+    <script is:inline>
+      (function () {
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const targets = document.querySelectorAll("[data-reveal], .unq-reveal");
+        if (reduce || !("IntersectionObserver" in window)) {
+          targets.forEach(function (el) {
+            el.classList.add("is-revealed");
+            el.classList.add("is-in");
+          });
+          return;
+        }
+        const io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-revealed");
+                entry.target.classList.add("is-in");
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
+        );
+        targets.forEach(function (el) {
+          io.observe(el);
+        });
+      })();
+    </script>
     {/* Service worker registration */}
     <script is:inline>
       if ("serviceWorker" in navigator) {

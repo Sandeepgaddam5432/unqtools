@@ -13,23 +13,23 @@ const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
 
 <a
   href={`/tools/${tool.id}`}
-  class="unq-card unq-card-interactive group relative block p-5"
+  class="unq-card unq-card-interactive group relative block"
   data-tool-id={tool.id}
 >
   <div class="flex items-start justify-between gap-3">
     <div class="min-w-0 flex-1">
       <h3
-        class="duration-normal text-base font-semibold tracking-tight transition-colors ease-apple group-hover:text-unq-accent"
+        class="unq-card__title duration-normal transition-colors ease-apple group-hover:text-unq-accent"
       >
         {tool.name}
       </h3>
-      <p class="mt-1.5 line-clamp-2 text-pretty text-sm leading-relaxed text-unq-text-muted">
+      <p class="unq-card__desc mt-1.5 line-clamp-2 text-pretty">
         {tool.description}
       </p>
     </div>
     <button
       type="button"
-      class="favorite-btn duration-normal absolute right-4 top-4 p-1 text-unq-text-subtle opacity-0 transition-opacity ease-apple hover:text-unq-warning focus:opacity-100 group-hover:opacity-100"
+      class="favorite-btn duration-normal text-unq-text-3 absolute right-4 top-4 p-1 opacity-0 transition-opacity ease-apple hover:text-unq-warning focus:opacity-100 group-hover:opacity-100"
       data-favorite-id={tool.id}
       aria-label={`Favorite ${tool.name}`}
       onclick="event.preventDefault(); event.stopPropagation(); window.dispatchEvent(new CustomEvent('unq:toggle-favorite', { detail: this.dataset.favoriteId }));"
@@ -37,9 +37,7 @@ const categoryShort = CATEGORY_LABELS[tool.category].split(" ")[0];
       <Star size={15} />
     </button>
   </div>
-  <p class="mt-5 text-[10px] font-medium uppercase tracking-widest text-unq-text-subtle">
-    {categoryShort}
-  </p>
+  <p class="unq-card__cat">{categoryShort}</p>
 </a>
 
 <style>

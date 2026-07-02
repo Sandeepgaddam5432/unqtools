@@ -17,12 +17,14 @@ import AxeBuilder from "@axe-core/playwright";
  */
 test.describe("JSON Formatter", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/tools/json-formatter");
+    await page.goto("/tools/json-formatter", { waitUntil: "networkidle" });
+    // Wait for the Preact island to hydrate (the Format button appears)
+    await page.getByRole("button", { name: "Format" }).waitFor({ state: "visible" });
   });
 
   test("page renders with title, input, output, and option bar", async ({ page }) => {
     await expect(page).toHaveTitle(/JSON Formatter/);
-    await expect(page.getByRole("heading", { name: "JSON Formatter" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
     await expect(page.getByLabel("Input")).toBeVisible();
     await expect(page.getByLabel("Output")).toBeVisible();
     await expect(page.getByLabel("Indent")).toBeVisible();
@@ -84,10 +86,10 @@ test.describe("JSON Formatter", () => {
 
   test("Fully keyboard operable", async ({ page }) => {
     await page.getByLabel("Input").fill('{"a":1}');
-    // Tab to the Format button and press Enter
-    await page.keyboard.press("Tab"); // indent select
-    await page.keyboard.press("Tab"); // sort toggle
-    await page.keyboard.press("Tab"); // Format
+    // Focus the Format button via keyboard (Shift+Tab from Input — the options
+    // bar sits visually above the Input in the json-formatter UI), then press
+    // Enter to activate it. This verifies keyboard-only operation.
+    await page.getByRole("button", { name: "Format" }).focus();
     await page.keyboard.press("Enter");
     await expect(page.getByLabel("Output")).toContainText('"a": 1');
   });

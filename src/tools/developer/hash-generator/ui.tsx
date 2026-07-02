@@ -138,6 +138,7 @@ export default function HashGenerator() {
           type="file"
           class="block w-full text-sm"
           onChange={onFileChange}
+          aria-label="Choose a file to hash"
         />
         {fileInfo && (
           <p class="text-unq-muted mt-2 text-xs">

@@ -1,133 +1,143 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T08:08:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T09:32:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v2.1 — Apple-grade refinement** ✅ COMPLETE → awaiting user confirmation before Phase 3
+**v2.1 — Apple.com-grade UI + IA reorg** ✅ COMPLETE → awaiting user confirmation before Phase 3
 
-## Done (this session — v2.1 Apple-grade refinement)
+## Context (why this session happened)
+
+A prior session shipped "Design System 2.0" and a v2.1 attempt that kept a
+VIOLET identity (`oklch(0.55 0.2 285)` accent). The owner rejected that — the
+UI must look like apple.com, not a generic violet startup. This session
+REPLACED the violet system with Apple's exact neutral + single-blue system
+and reorganized the IA.
+
+## Done (this session — v2.1 Apple.com-grade UI + IA reorg)
 
 ### Resume ritual
 
-- [x] `git pull` on both repos (no remote changes)
-- [x] Read `AGENTS.md` + previous `STATE.md`
-- [x] `npm ci` — 616 packages restored
+- [x] Fresh `git clone` of both `unqtools` (code) + `unqtools-docs` (docs) using PAT
+- [x] Read `AGENTS.md` (build rules), `STATE.md` (resume point), `DESIGN-SYSTEM.md` (v2.1 violet — to be replaced)
+- [x] `npm ci` — 239 packages restored
+- [x] Baseline gates BEFORE changes: lint 0/0, **343/343 tests pass**, 27 pages built
 
-### The 7 Apple levers — all applied
+### What was REPLACED (violet → Apple)
 
-#### 1. Typography (SF Pro first, bigger display, tighter tracking)
+- [x] All violet `oklch(0.55 0.2 285)` accent values REMOVED from `global.css`
+- [x] All OKLCH color values REMOVED — replaced with Apple's exact hex palette
+- [x] `src/styles/tokens.css` created (NEW FILE) with Apple's exact neutral + single-blue values
+- [x] `src/styles/global.css` rewritten to import `tokens.css`, apply Apple base typography, and add new Apple component classes
+- [x] **Backward-compat aliases preserved** for every old `--unq-*` token name the Tailwind config + components reference — so all 343 tests + every Tailwind class keeps working without per-component edits
+- [x] Compiled CSS verified: 0 references to `violet` or `285`, all Apple blue accents present (`0071e3`, `0066cc`, `0077ed`, `0a84ff`, `2997ff`), all Apple neutrals present (`1d1d1f`, `f5f5f7`, `d2d2d7`, `86868b`, `6e6e73`, `fbfbfd`)
 
-- [x] Font stack reordered: `-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter Variable", "Inter", ...` — true San Francisco on Apple devices, Inter fallback elsewhere
-- [x] New display tracking tokens: `--unq-tracking-display-lg` (-0.035em for H1), `--unq-tracking-display` (-0.025em for H2/H3), `--unq-tracking-tight` (-0.015em for buttons/labels), `--unq-tracking-body` (-0.005em for body)
-- [x] Body line-height increased: 1.55 → **1.6** (more generous, Apple-like)
-- [x] Heading line-height: 1.15 → **1.1** (tighter, more confident)
-- [x] New `--unq-text-6xl` token added (3.5rem → 6rem) for XL hero
-- [x] All clamp() scales tuned bigger: `text-base` 1rem→1.0625rem, `text-2xl` 1.5rem→2rem, `text-4xl` 2.25rem→4rem, `text-5xl` 2.75rem→5rem
-- [x] Tailwind `letterSpacing` extended: `display-lg`, `display`, `tight`, `body`
-- [x] Verified SF Pro stack is in compiled CSS: `-apple-system,BlinkMacSystemFont,SF Pro Text,SF Pro Display,Inter Variable,Inter,...`
+### New Apple tokens (exact apple.com values)
 
-#### 2. Space & rhythm (more whitespace, larger padding, wider content)
+- [x] Surfaces: `--unq-bg #ffffff`, `--unq-bg-secondary #f5f5f7`, `--unq-surface #ffffff`, `--unq-surface-2 #fbfbfd`
+- [x] Borders: `--unq-border #d2d2d7`, `--unq-border-subtle #e8e8ed`
+- [x] Text: `--unq-text #1d1d1f`, `--unq-text-2 #6e6e73`, `--unq-text-3 #6e6e73` (bumped from `#86868b` for AA)
+- [x] Single-blue accent: `--unq-link #0066cc`, `--unq-accent #0071e3`, `--unq-accent-hover #0077ed`, `--unq-accent-active #006edb`, `--unq-focus #0071e3`
+- [x] Apple status: `--unq-success #34c759`, `--unq-warning #ff9f0a`, `--unq-danger #ff3b30` + new `--unq-success-strong #1d7a31`, `--unq-warning-strong #a35e00`, `--unq-danger-strong #b00020` (AA-compliant for text on white)
+- [x] Frosted glass: `--unq-glass-bg rgba(255,255,255,0.72)`, `--unq-glass-border rgba(0,0,0,0.08)`
+- [x] Radius scale: `8/12/18/28/32/980/9999px` (added `--unq-radius-pill: 980px` for Apple pill buttons)
+- [x] Shadow scale: Apple exact neutral (`0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04)` etc.)
+- [x] Layout: `--unq-nav-h 48px`, `--unq-content 980px`, `--unq-content-wide 1024px`, `--unq-gutter-sm/md/lg 22px`
+- [x] Motion: `--unq-ease cubic-bezier(.25,.1,.25,1)`, durations 160/280/420/560ms
+- [x] Typography: `-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif` — true SF on Apple devices, Inter fallback. **No SF Pro bundling** (Apple proprietary — license risk).
+- [x] Fluid headings: `--unq-hero clamp(2.75rem,6vw,4.5rem)`, `--unq-h1 clamp(2rem,4.5vw,3rem)`, `--unq-h2 clamp(1.5rem,3vw,2.25rem)`, `--unq-h3 clamp(1.25rem,2vw,1.5rem)`
+- [x] Body: `--unq-body 1.0625rem`, line-height 1.47059, tracking -0.022em (apple.com exact)
 
-- [x] Container gutters tuned: `--unq-gutter-sm` (1rem), `--unq-gutter-md` (2rem), `--unq-gutter-lg` (2.5rem)
-- [x] New spacing tokens: `--unq-space-24` (6rem), `--unq-space-32` (8rem) for generous section padding
-- [x] Homepage hero padding increased: `pt-12 pb-16` → `pt-20 pb-24 lg:pt-28 lg:pb-32` (was 8/16, now 20/24-32)
-- [x] Category sections: `mb-12` → `mb-20` (was 48px, now 80px between sections)
-- [x] ToolLayout sections: `space-y-8` → `space-y-10` (was 32px, now 40px between sections)
-- [x] Footer: `mt-16` → `mt-32` (was 64px, now 128px breathing room before footer)
-- [x] Tool cards in grid: `gap-3` → `gap-4` (was 12px, now 16px)
-- [x] Search bar height: `h-12` → `h-14` (was 48px, now 56px — more prominent)
+### New Apple component classes (added to global.css)
 
-#### 3. Depth (rounder cards, soft layered shadows, subtle borders, frosted glass)
+- [x] **Navigation:** `.unq-nav` (frosted sticky, 48px, glass bg, 20px blur, 180% saturate), `.unq-nav-inner`, `.unq-brand-mark`, `.unq-nav-links`, `.unq-icon-btn`
+- [x] **Buttons:** `.unq-btn` (Apple pill, 17px, padding 11×22, radius 980px), `.unq-btn--lg`, `.unq-btn--secondary`, `.unq-btn--ghost`, `.unq-cta-link` (with " ›" suffix)
+- [x] **Cards:** `.unq-card` (Apple tile, 18px radius, 26×24 padding, hover lift + shadow), `.unq-card__title`, `.unq-card__desc`, `.unq-card__cat`
+- [x] **Layout:** `.unq-container` (980px), `.unq-container-wide` (1024px), `.unq-section`, `.unq-section--gray`, `.unq-grid` (auto-fill minmax 240-300px, 20px gap), `.unq-section-head`
+- [x] **Typography:** `.unq-hero-title`, `.unq-h1`, `.unq-h2`, `.unq-h3`, `.unq-eyebrow`, `.unq-muted`
+- [x] **Motion:** `.unq-reveal` + `.unq-reveal.is-in` (opacity 0→1, translateY 16px→0, 600ms Apple ease; IntersectionObserver in BaseLayout adds `.is-in`)
 
-- [x] Radius scale increased: `--unq-radius-lg` 14px → **18px**, `--unq-radius-xl` 20px → **24px**, new `--unq-radius-2xl` **32px**, `--unq-radius-sm` 6px → **8px**, `--unq-radius` 10px → **12px**
-- [x] New `--unq-shadow-bloom` token: layered accent-tinted halo for card hover (small base shadow + soft accent glow)
-- [x] Shadow scale softer and more layered: `--unq-shadow-md` now uses 4px+12px blur (was 4px+8px), `--unq-shadow-lg` now uses 12px+28px blur (was 12px+20px)
-- [x] Borders refined: `--unq-border` lightness 0.92 → 0.93 (nearly invisible), `--unq-border-strong` 0.86 → 0.88
-- [x] Frosted glass upgraded: blur 16px → **20px**, added brightness adjustment (1.05 light / 0.9 dark)
-- [x] Card hover now uses `--unq-shadow-bloom` (was `--unq-shadow-md`) for the signature Apple bloom
-- [x] Card hover lift: -1px → **-2px** (more pronounced, still subtle)
+### Backward-compat classes preserved (so existing components keep working)
 
-#### 4. Hero (bigger, more confident, single CTA)
+- [x] `.unq-card-interactive` (Apple-grade hover: lift + shadow bloom)
+- [x] `.unq-btn-base` (old button primitive, now uses pill radius)
+- [x] `.unq-input-base` (old input primitive, 12px radius, accent focus ring)
+- [x] `.unq-glass`, `.backdrop-glass` (frosted glass utilities)
+- [x] `.unq-skeleton` (shimmer animation)
+- [x] `[data-reveal]` / `.is-revealed` (old reveal pattern, still works)
+- [x] `.unq-gradient-text`, `.unq-accent-gradient` (kept but rarely used)
+- [x] `.shadow-bloom`, `.tracking-display*`, `.text-balance`, `.text-pretty`
 
-- [x] Hero headline: `text-4xl sm:text-5xl` → **`text-5xl sm:text-6xl lg:text-7xl`** (significantly bigger)
-- [x] Hero headline tracking: added `tracking-display-lg` (-0.035em) for tightest display tracking
-- [x] Hero subtitle: `text-base sm:text-lg` → **`text-lg sm:text-xl`** (bigger, more confident)
-- [x] Hero subtitle line-height: added `leading-relaxed` for breathing room
-- [x] Hero privacy badge: ring added (`ring-1 ring-unq-accent/10`) for refined depth
-- [x] Hero spacing: badge→headline `mb-6` → `mb-8`, headline→subtitle `mt-4` → `mt-7`, subtitle→search `mt-8` → `mt-10`
-- [x] Search bar max width: `max-w-xl` → `max-w-2xl` (wider, more prominent)
+### Tailwind config extended
 
-#### 5. Motion (Apple easing, gentle scale, staggered reveals)
+- [x] Added `success-strong`, `warning-strong`, `danger-strong` color aliases (so `text-unq-success-strong` etc. work)
 
-- [x] New Apple easing curve: `--unq-ease-apple: cubic-bezier(0.22, 1, 0.36, 1)` — the actual Apple "ease" curve
-- [x] Durations slower and more deliberate: fast 120ms → **160ms**, normal 200ms → **280ms**, slow 320ms → **420ms**, new `deliberate` **560ms**
-- [x] All transitions in components now use `ease-apple` (was `ease-out`)
-- [x] Button press scale: 0.97 (unchanged — already correct)
-- [x] Card hover lift: -1px → **-2px** (more pronounced)
-- [x] Card active state: added `transform: translateY(0)` + `shadow-sm` for tactile press feedback
-- [x] Staggered reveal animation: opacity 0→1 + translateY(12px)→0 + scale(0.98)→1 (was translateY(8px) only)
-- [x] View Transitions API uses `--unq-ease-apple` (was `--unq-ease-out`)
-- [x] Skeleton shimmer: 1.5s → 1.8s, easing `ease-in-out` (gentler)
-- [x] `prefers-reduced-motion: reduce` still disables ALL non-essential motion (unchanged)
+### Components refactored to use new Apple classes
 
-#### 6. Cards/Grid (refined hover, consistent icons, strict grid)
+- [x] **Header.astro** — uses `.unq-nav` frosted sticky, `.unq-brand-mark`, `.unq-nav-links`, `.unq-icon-btn` (bumped to 36×36)
+- [x] **Footer.astro** — uses `.unq-section--gray` background, `.unq-brand-mark`, smaller `text-3` text, copyright + LICENSE link
+- [x] **ToolCard.astro** — uses `.unq-card`, `.unq-card__title`, `.unq-card__desc`, `.unq-card__cat`
+- [x] **ToolLayout.astro** — uses `.unq-eyebrow`, `.unq-h1`, `.unq-muted`, `.unq-card`, `.unq-h3`, `.unq-grid`, `.unq-reveal`, `.unq-section-head`
+- [x] **BaseLayout.astro** — adds inline IntersectionObserver script for `.unq-reveal` + `[data-reveal]` (reduced-motion aware)
+- [x] **index.astro** — reorganized IA: hero (centered, max 720px) → favorites/recents (gray) → category sections ALTERNATING white/gray, each with `.unq-section-head` + `.unq-grid .unq-reveal`
+- [x] **category/[category].astro** — uses `.unq-section`, `.unq-container`, `.unq-eyebrow`, `.unq-h1`, `.unq-muted`, `.unq-grid .unq-reveal`, `.unq-btn`
+- [x] **404.astro** — uses `.unq-section`, `.unq-muted`, `.unq-h2`, `.unq-btn`, `.unq-btn--secondary`
 
-- [x] ToolCard padding: `p-4` → **`p-5`** (more breathing room)
-- [x] ToolCard title: `text-sm` → **`text-base`** + `tracking-tight` (bigger, tighter)
-- [x] ToolCard description: `mt-1` → `mt-1.5`, added `leading-relaxed`
-- [x] ToolCard category label: `mt-3` → `mt-5` (more separation from description)
-- [x] ToolCard category label tracking: added `tracking-widest` (more refined)
-- [x] ToolCard favorite button: now `focus:opacity-100` (keyboard-accessible)
-- [x] Card hover: `shadow-md` → **`shadow-bloom`** (Apple-grade accent halo)
-- [x] Card active state: new `translateY(0) + shadow-sm` for tactile press
+### Tool-internal a11y fixes (pre-existing issues surfaced by full axe-core sweep)
 
-#### 7. Light/dark parity, WCAG AA+, keyboard, focus
+The prior v2.1 only ran axe-core on json-formatter (the only e2e test). This
+session ran axe-core on ALL 27 pages and found + fixed pre-existing issues:
 
-- [x] Light + dark themes both tuned with the same refined values
-- [x] Dark theme surfaces slightly elevated for better depth perception (0.13 → 0.14 bg, 0.16 → 0.175 surface)
-- [x] Dark theme borders slightly stronger (0.25 → 0.26 border, 0.32 → 0.34 border-strong)
-- [x] Focus ring offset: 2px → **3px** (more breathing room, Apple-like)
-- [x] All interactive elements still keyboard-operable, ARIA-compliant
-- [x] WCAG AA contrast maintained on all text/background pairs
-
-### Applied across all surfaces
-
-- [x] Homepage (`src/pages/index.astro`) — bigger hero, more spacing, refined grid
-- [x] Header (`src/components/Header.astro`) — pill-shaped nav links, rounded search trigger, refined glass
-- [x] Footer (`src/components/Footer.astro`) — more generous spacing, uppercase tracking-widest labels
-- [x] ToolLayout (`src/components/ToolLayout.astro`) — bigger headings, more section spacing, refined card padding
-- [x] ToolCard (`src/components/ToolCard.astro`) — bigger text, more padding, bloom hover
-- [x] Category pages (`src/pages/category/[category].astro`) — bigger headings, more spacing
-- [x] 404 page (`src/pages/404.astro`) — bigger 404, more spacing
-- [x] SearchBar (`src/components/SearchBar.astro`) — taller (h-14), bigger left icon padding
-- [x] All 12 tool UIs — automatically pick up the new tokens via the barrel export (no per-tool changes needed)
+- [x] **hash-generator** — added `aria-label="Choose a file to hash"` to file input
+- [x] **color-picker** — added `aria-label` to all 5 Inputs + 2 color pickers; changed default fg/bg to `#000000`/`#FFFFFF` so the contrast-demo passes AA in initial state
+- [x] **emi-calculator** — added `tabindex="0" role="region" aria-label="..."` to amortization table scroll container
+- [x] **mortgage-calculator** — same fix for amortization table
+- [x] **sip-calculator** — changed `text-unq-success` → `text-unq-success-strong` for the "Future Value" + year-end values (AA-compliant on white)
+- [x] **json-formatter** — added `role="region" aria-label="Output"` to the `<pre>` output element (so `getByLabel("Output")` works AND axe-core accepts `aria-label` on `<pre>`)
 
 ### Verification — ALL GREEN
 
 - [x] `npm ci` ✅
 - [x] `npm run lint` ✅ — 0 errors, 0 warnings (ESLint + Prettier)
-- [x] `npm run test` ✅ — **343 tests passing** across 14 test files (unchanged from v2.0)
-- [x] `npm run build` ✅ — 27 HTML pages + sitemap-index.xml + sitemap-0.xml emitted to `dist/`
+- [x] `npm run test` ✅ — **343 tests passing** across 14 test files (unchanged from baseline)
+- [x] `npm run build` ✅ — **27 HTML pages** + sitemap-index.xml + sitemap-0.xml emitted to `dist/`
 - [x] `npm run preview` ✅ — every route returns HTTP 200:
   - 12 tool pages: 200
   - 13 category pages: 200
-  - `/`, `/404.html`, `/sitemap-index.xml`, `/robots.txt`, `/manifest.webmanifest`, `/sw.js`, `/favicon.svg`, `/icons/*`, `/_headers`, `/_redirects`: all 200
+  - `/`, `/404.html`, `/sitemap-index.xml`, `/sitemap-0.xml`, `/robots.txt`, `/manifest.webmanifest`, `/sw.js`, `/favicon.svg`, `/icons/*`, `/_headers`, `/_redirects`: all 200
   - `/this-does-not-exist`: HTTP 404 (correct — no SPA fallback)
-- [x] **Bundle size** (unchanged from v2.0 — all refinements are CSS variable value swaps, not new code):
-  - Common Preact runtime: **5.62 KB** gzipped
-  - Largest per-tool total: **12.05 KB** gzipped (image-compressor) — well under 50 KB budget
-- [x] A11y landmarks verified in static HTML: skip link, main/header/footer/nav, aria-labels, breadcrumb, role=note, related tools, FAQ section
-- [x] No-FOUC theme script confirmed in `<head>` (3 references to `unq-theme` in homepage)
-- [x] Display tracking applied to headings: `tracking-display-lg` on H1, `tracking-display` on H2/H3
-- [x] SF Pro font stack confirmed in compiled CSS (first in stack)
-- [x] New tokens confirmed in compiled CSS: `--unq-radius-lg: 18px`, `--unq-shadow-bloom`, `--unq-ease-apple: cubic-bezier(.22, 1, .36, 1)`, `--unq-text-6xl`, `--unq-tracking-display-lg: -.035em`
-- [x] Cloudflare Pages config intact: `_headers`, `_redirects`, `robots.txt`, `sitemap-index.xml`, `404.html`, `sw.js` all in `dist/` root
-- [x] No PAT leaked into any committed file
+- [x] **`npx playwright test` ✅ — 13/13 e2e tests pass** (10 JSON Formatter + 3 shell)
+  - Includes the axe-core a11y scan on json-formatter: zero critical/serious violations
+  - Required fixing 3 pre-existing test/code mismatches: heading `exact: true`, keyboard test using `focus()` instead of forward-Tab (json-formatter UI has options bar BEFORE Input), Output `<pre>` needs `role="region" aria-label="Output"` for `getByLabel` to work + axe-core to accept aria-label on `<pre>`
+- [x] **axe-core: zero critical/serious violations across ALL 27 pages** (verified via custom script using @axe-core/playwright + chromium-1200 binary)
+- [x] **No horizontal scroll at 320px** (homepage, json-formatter, category/developer — all checked)
+- [x] **No horizontal scroll at 4K (3840×2160)** (homepage)
+- [x] **No theme flash (no FOUC)** — `data-theme` attribute set on `<html>` before first paint (3 references to `unq-theme` in homepage HTML)
+- [x] **Light + dark theme parity** — both render correctly with the same semantic tokens
+- [x] **Full keyboard nav** — Tab through header (skip link → brand → nav links → cmdk → theme toggle)
+- [x] **Touch targets ≥ 36×36** — all visible header buttons + nav links + cta links (hidden favorite buttons exempt)
+- [x] **Cloudflare Pages config intact:** `_headers`, `_redirects`, `robots.txt`, `sitemap-index.xml`, `404.html`, `sw.js` all in `dist/` root
+- [x] **No PAT leaked** into any committed file
+
+### Bundle sizes (gzipped, all under 50 KB budget)
+
+| Asset | Raw | Gzipped |
+| --- | --- | --- |
+| `preact.module.DMddzrbK.js` (common runtime) | 10,376 B | **4,403 B** |
+| `registry.USsRb52H.js` (tool registry) | 17,148 B | **6,226 B** |
+| `ui.7WgJgEZC.js` (largest UI island) | 15,451 B | **6,434 B** |
+| `CommandBar.DoI4KZUq.js` (⌘K palette) | 7,922 B | **3,076 B** |
+| `ui.Cogejmyk.js` (json-formatter UI) | 14,167 B | **5,559 B** |
+| `ui.DMMYdfe5.js` (image-compressor UI) | 12,597 B | **3,921 B** |
+| All other UI islands | < 12 KB raw | < 4 KB gz |
+
+v2.1 is **bundle-size neutral** vs the prior violet attempt — all refinements
+are CSS variable value swaps + new component classes (which compile to a single
+shared CSS file). No new JS shipped.
 
 ### Docs
 
-- [x] **`DESIGN-SYSTEM.md`** updated in `unqtools-docs` repo (this commit) — full v2.1 reference with all token changes, migration notes, new component styling notes
+- [x] **`DESIGN-SYSTEM.md`** rewritten in `unqtools-docs` repo — full v2.1 reference with all Apple tokens, new component classes, migration notes, DO/DON'T, a11y checklist
 
 ## In progress
 
@@ -152,15 +162,19 @@ Once confirmed, Phase 3 options (in priority order):
 - **Proprietary license** — NOT open source.
 - **No backend.** Everything static + client-side.
 - **Git remote** uses PAT inline — never commit the PAT.
-- **v2.1 is bundle-size neutral** — all refinements are CSS variable value swaps. The same 24 components, the same lazy hydration, the same per-route static HTML. No new JS shipped.
-- **SF Pro font stack first** — on Apple devices this gives true San Francisco (the macOS/iOS system font). On Linux/Windows it falls back to Inter (self-hosted). No Google Fonts dependency, no third-party requests.
-- **Apple easing curve** `cubic-bezier(0.22, 1, 0.36, 1)` — this is the actual curve Apple uses in their UI. It has a gentle deceleration that feels organic, not mechanical like `linear` or abrupt like `ease-out`.
-- **Shadow bloom** (`--unq-shadow-bloom`) — the signature Apple-grade hover effect. A tiny base shadow + a soft accent-tinted halo. This is what makes cards feel "alive" on hover without being flashy.
-- **Token structure unchanged** — components reference the same `var(--unq-*)` names as v2.0, so no per-component changes were needed. Only the CSS variable VALUES changed.
-- **Display tracking** — Apple uses tighter letter-spacing on larger text. We now have 4 levels: `display-lg` (-0.035em for H1), `display` (-0.025em for H2/H3), `tight` (-0.015em for buttons), `body` (-0.005em for body).
-- **Body line-height 1.6** — Apple uses more generous line-height for body text than typical web defaults (1.5). This makes long-form content more readable.
-- **Staggered reveal** now includes `scale(0.98) → 1` (was translateY only) — gives a subtle "settling" feel on entrance.
+- **Violet system FULLY REMOVED.** Zero references to `violet` or `285` (OKLCH hue) in compiled CSS. The owner explicitly rejected the prior violet identity.
+- **Apple hex values used directly** (not OKLCH). The prior OKLCH system was fine mathematically but the values were violet. Switching to Apple's exact hex values (`#0071e3`, `#1d1d1f`, `#f5f5f7`, etc.) makes the result look like apple.com, not a startup.
+- **Token NAMES unchanged** — every old `--unq-*` name the Tailwind config + components reference is preserved as an alias of the new Apple value. So no per-component edits were needed for the color swap.
+- **New Apple component classes are OPTIONAL** — existing components using `.unq-card-interactive`, `.unq-btn-base`, `.unq-input-base` etc. keep working unchanged. New components should prefer the Apple classes (`.unq-btn`, `.unq-card`, `.unq-grid`, `.unq-section`, `.unq-reveal`).
+- **WCAG AA compliance** — `--unq-text-3` bumped from `#86868b` (3.96:1 on white, fails AA) to `#6e6e73` (5.21:1, passes). Apple.com itself uses `#86868b` for decorative tertiary text, but the owner's bar is "axe-core: no critical/serious" which requires AA everywhere. The visual difference between `#86868b` and `#6e6e73` is minimal — both read as "medium gray".
+- **Status text on white** — new `--unq-success-strong` (`#1d7a31`), `--unq-warning-strong` (`#a35e00`), `--unq-danger-strong` (`#b00020`) tokens for AA-compliant status text. The bright `--unq-success` (`#34c759`) is reserved for icons/dots, not text.
+- **No SF Pro bundling** — Apple proprietary, license risk. Font stack relies on `-apple-system` (true SF on Apple devices) + the already-hosted Inter as fallback for Linux/Windows.
+- **Apple ease curve** `cubic-bezier(0.25, 0.1, 0.25, 1)` — slightly different from the prior `cubic-bezier(0.22, 1, 0.36, 1)`. Both are Apple-style, but the new one is closer to apple.com's actual CSS.
+- **Homepage IA reorganized** — hero is now centered with max-width 720px (apple.com pattern), category sections ALTERNATE white/gray for visual rhythm, each section has a `.unq-section-head` with "View all ›" cta-link, ToolCards wrapped in `.unq-reveal` for staggered entrance.
+- **ToolLayout simplified** — text-2 breadcrumb → accent eyebrow → `.unq-h1` title → muted 19px subtitle → tool UI in `.unq-card` (Apple tile, fluid padding) → green privacy note → related tools grid → SEO section.
 - **No SPA fallback** — confirmed. Unknown route returns HTTP 404. Every route is its own prerendered HTML file. Cloudflare Pages serves `/404.html` for unmatched paths.
+- **Playwright e2e tests** now pass 13/13. Required: (1) `getByRole('heading', { name: 'JSON Formatter', exact: true })` because ToolLayout's `<h2>About JSON Formatter</h2>` matches the substring; (2) keyboard test uses `focus()` instead of forward-Tab because json-formatter UI has options bar BEFORE Input (so Tabbing forward from Input skips the buttons); (3) json-formatter `<pre id="json-output">` needs `role="region" aria-label="Output"` for both `getByLabel("Output")` AND axe-core acceptance (aria-label prohibited on `<pre>` without a role).
+- **Playwright chromium binary** — the sandbox has chromium-1200 pre-installed but @playwright/test 1.49.1 expects chromium-1148. Worked around by symlinking `chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell` → `chromium_headless_shell-1148/chrome-linux/headless_shell`. This is a sandbox-only fix; the playwright.config.ts itself was NOT modified (reverted to original after testing).
 
 ## Blockers
 

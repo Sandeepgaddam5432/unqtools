@@ -1,6 +1,6 @@
 ---
 /**
- * ToolLayout v2.1 — Apple-grade refinement.
+ * ToolLayout v2.1 — Apple.com-grade UI.
  * Consistent shell for every tool page.
  */
 import type { ToolManifest } from "../lib/tool";
@@ -20,7 +20,7 @@ const relatedTools = byCategory(tool.category)
 const categoryLabel = CATEGORY_LABELS[tool.category];
 ---
 
-<article class="space-y-10">
+<article style="display: flex; flex-direction: column; gap: 40px;">
   <!-- Breadcrumb -->
   <Breadcrumb
     items={[
@@ -30,40 +30,36 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
     ]}
   />
 
-  <!-- Header — Apple-grade: tight tracking, generous air -->
-  <header class="space-y-4">
+  <!-- Header — Apple: text-3 breadcrumb, accent eyebrow, h1 title, muted subtitle -->
+  <header style="display: flex; flex-direction: column; gap: 16px;">
     <div class="flex flex-wrap items-center gap-2.5">
-      <span class="text-xs font-semibold uppercase tracking-widest text-unq-accent">
-        {categoryLabel}
-      </span>
+      <span class="unq-eyebrow">{categoryLabel}</span>
       {
         tool.requiresNetwork ? (
-          <span class="ring-unq-warning/20 inline-flex items-center gap-1.5 rounded-full bg-unq-warning-subtle px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-warning ring-1">
+          <span class="ring-unq-warning/20 inline-flex items-center gap-1.5 rounded-full bg-unq-warning-subtle px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-text ring-1">
             <span class="h-1.5 w-1.5 rounded-full bg-unq-warning" />
             Needs network
           </span>
         ) : (
-          <span class="ring-unq-success/20 inline-flex items-center gap-1.5 rounded-full bg-unq-success-subtle px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-success ring-1">
+          <span class="ring-unq-success/20 inline-flex items-center gap-1.5 rounded-full bg-unq-success-subtle px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-unq-text ring-1">
             <span class="h-1.5 w-1.5 rounded-full bg-unq-success" />
             Offline-ready
           </span>
         )
       }
     </div>
-    <h1 class="text-balance text-3xl font-semibold tracking-display-lg sm:text-4xl lg:text-5xl">
-      {tool.name}
-    </h1>
-    <p class="max-w-2xl text-pretty text-lg leading-relaxed text-unq-text-muted sm:text-xl">
+    <h1 class="unq-h1" style="margin: 0;">{tool.name}</h1>
+    <p class="unq-muted" style="font-size: 19px; line-height: 1.4; max-width: 640px;">
       {tool.description}
     </p>
   </header>
 
-  <!-- Tool UI (slot) — wrapped in a refined card -->
-  <div class="unq-card p-6 shadow-sm sm:p-8">
+  <!-- Tool UI (slot) — wrapped in an Apple tile (.unq-card) -->
+  <div class="unq-card" style="padding: clamp(20px, 4vw, 32px);">
     <slot />
   </div>
 
-  <!-- Privacy notice — Apple-grade refined -->
+  <!-- Privacy notice — Apple-style green-tinted -->
   <div
     class="border-unq-success/20 flex items-start gap-3.5 rounded-xl border bg-unq-success-subtle p-5"
     role="note"
@@ -85,19 +81,21 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
     </svg>
     <div>
       <p class="text-sm font-semibold text-unq-text">100% private</p>
-      <p class="mt-0.5 text-sm leading-relaxed text-unq-text-muted">
+      <p class="text-unq-text-2 mt-0.5 text-sm leading-relaxed">
         This tool runs entirely in your browser. Your input never leaves your device — no uploads,
         no tracking, no accounts.
       </p>
     </div>
   </div>
 
-  <!-- Related tools — Apple-grade spacing -->
+  <!-- Related tools — Apple spacing -->
   {
     relatedTools.length > 0 && (
       <section>
-        <h2 class="mb-5 text-xl font-semibold tracking-display">Related tools</h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="unq-section-head">
+          <h2 class="unq-h3">Related tools</h2>
+        </div>
+        <div class="unq-grid unq-reveal">
           {relatedTools.map((t) => (
             <ToolCard tool={t} />
           ))}
@@ -106,9 +104,9 @@ const categoryLabel = CATEGORY_LABELS[tool.category];
     )
   }
 
-  <!-- SEO content — Apple-grade typography -->
+  <!-- SEO content — Apple typography -->
   <section
-    class="prose prose-sm prose-headings:tracking-display prose-headings:font-semibold prose-p:text-unq-text-muted prose-p:leading-relaxed prose-h2:text-unq-text prose-h3:text-unq-text prose-strong:text-unq-text prose-code:text-unq-text prose-code:bg-unq-surface-hover prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-li:text-unq-text-muted prose-li:leading-relaxed prose-ol:marker:text-unq-text-subtle max-w-none"
+    class="prose prose-sm prose-headings:tracking-display prose-headings:font-semibold prose-p:text-unq-text-2 prose-p:leading-relaxed prose-h2:text-unq-text prose-h2:unq-h2 prose-h3:text-unq-text prose-strong:text-unq-text prose-code:text-unq-text prose-code:bg-unq-surface-hover prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-li:text-unq-text-2 prose-li:leading-relaxed prose-ol:marker:text-unq-text-3 max-w-none"
   >
     <h2>About {tool.name}</h2>
     <p>{tool.description}</p>

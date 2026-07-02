@@ -19,8 +19,8 @@ import {
 export default function ColorPicker() {
   const [hex, setHex] = useState<string>("#3B82F6");
   const [rgb, setRgb] = useState<RGB>({ r: 59, g: 130, b: 246 });
-  const [fgHex, setFgHex] = useState<string>("#FFFFFF");
-  const [bgHex, setBgHex] = useState<string>("#3B82F6");
+  const [fgHex, setFgHex] = useState<string>("#000000");
+  const [bgHex, setBgHex] = useState<string>("#FFFFFF");
 
   function updateFromHex(newHex: string) {
     setHex(newHex);
@@ -48,7 +48,7 @@ export default function ColorPicker() {
 
   function loadSample() {
     updateFromHex("#FF6B35");
-    setFgHex("#FFFFFF");
+    setFgHex("#000000");
     setBgHex("#FF6B35");
     toast("Sample loaded", "info");
   }
@@ -84,6 +84,7 @@ export default function ColorPicker() {
                   value={hex}
                   onInput={(e) => updateFromHex((e.currentTarget as HTMLInputElement).value)}
                   class="font-mono"
+                  aria-label="HEX color value"
                 />
                 <CopyButton getText={() => hex} />
               </div>
@@ -100,6 +101,7 @@ export default function ColorPicker() {
                   onInput={(e) =>
                     updateFromRgb("r", Number((e.currentTarget as HTMLInputElement).value))
                   }
+                  aria-label="Red value"
                 />
                 <Input
                   type="number"
@@ -109,6 +111,7 @@ export default function ColorPicker() {
                   onInput={(e) =>
                     updateFromRgb("g", Number((e.currentTarget as HTMLInputElement).value))
                   }
+                  aria-label="Green value"
                 />
                 <Input
                   type="number"
@@ -118,6 +121,7 @@ export default function ColorPicker() {
                   onInput={(e) =>
                     updateFromRgb("b", Number((e.currentTarget as HTMLInputElement).value))
                   }
+                  aria-label="Blue value"
                 />
               </div>
               <div class="mt-1 flex items-center justify-between">
@@ -197,11 +201,13 @@ export default function ColorPicker() {
                 value={fgHex.slice(0, 7)}
                 onInput={(e) => setFgHex((e.currentTarget as HTMLInputElement).value)}
                 class="h-10 w-12 rounded border border-unq-border"
+                aria-label="Foreground color picker"
               />
               <Input
                 value={fgHex}
                 onInput={(e) => setFgHex((e.currentTarget as HTMLInputElement).value)}
                 class="font-mono"
+                aria-label="Foreground HEX color value"
               />
             </div>
           </div>
@@ -213,11 +219,13 @@ export default function ColorPicker() {
                 value={bgHex.slice(0, 7)}
                 onInput={(e) => setBgHex((e.currentTarget as HTMLInputElement).value)}
                 class="h-10 w-12 rounded border border-unq-border"
+                aria-label="Background color picker"
               />
               <Input
                 value={bgHex}
                 onInput={(e) => setBgHex((e.currentTarget as HTMLInputElement).value)}
                 class="font-mono"
+                aria-label="Background HEX color value"
               />
             </div>
           </div>

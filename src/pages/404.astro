@@ -4,39 +4,40 @@ import { Home, Search } from "lucide-preact";
 ---
 
 <BaseLayout title="Not found — UnQTools">
-  <div class="flex min-h-[60vh] items-center justify-center py-20 text-center">
-    <div class="space-y-7">
+  <section
+    class="unq-section"
+    style="min-height: 60vh; display: flex; align-items: center; justify-content: center;"
+  >
+    <div
+      style="display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center;"
+    >
       <p
-        class="text-7xl font-semibold tracking-display-lg text-unq-text-subtle sm:text-8xl lg:text-9xl"
+        class="unq-muted"
+        style="font-size: clamp(80px, 18vw, 160px); font-weight: 600; line-height: 1; letter-spacing: -0.04em; margin: 0;"
       >
         404
       </p>
-      <div class="space-y-3">
-        <h1 class="text-balance text-2xl font-semibold tracking-display sm:text-3xl">
-          Page not found
-        </h1>
-        <p class="mx-auto max-w-md text-pretty leading-relaxed text-unq-text-muted">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <h1 class="unq-h2" style="margin: 0;">Page not found</h1>
+        <p class="unq-muted" style="max-width: 420px; margin: 0 auto; line-height: 1.4;">
           The tool or page you're looking for doesn't exist, or may have moved. Try searching for
           what you need.
         </p>
       </div>
       <div class="flex flex-wrap items-center justify-center gap-3">
-        <a
-          href="/"
-          class="unq-btn-base h-11 bg-unq-accent px-6 text-sm text-unq-accent-contrast shadow-sm hover:bg-unq-accent-hover hover:shadow-md"
-        >
+        <a href="/" class="unq-btn">
           <Home size={16} />
           Back to home
         </a>
         <button
           type="button"
           onclick="window.dispatchEvent(new CustomEvent('unq:open-command-bar'))"
-          class="unq-btn-base h-11 border border-unq-border bg-unq-surface-elevated px-6 text-sm text-unq-text hover:border-unq-border-strong hover:bg-unq-surface-hover"
+          class="unq-btn unq-btn--secondary"
         >
           <Search size={16} />
           Search tools (⌘K)
         </button>
       </div>
     </div>
-  </div>
+  </section>
 </BaseLayout>

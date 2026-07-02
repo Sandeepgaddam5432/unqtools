@@ -1,0 +1,270 @@
+/**
+ * UnQTools Design Tokens v2.1 — Apple.com exact neutral + single-blue system
+ *
+ * REPLACES the prior violet-accent system. The owner rejected "violet startup";
+ * the UI must look like apple.com: pure neutral grayscale + ONE blue accent.
+ *
+ * BACKWARD COMPAT: every old --unq-* token name the components / Tailwind
+ * config still reference is preserved as an alias of the new Apple value.
+ * So all 343 tests + every Tailwind class (`bg-unq-accent`, `text-unq-text-muted`,
+ * `border-unq-border`, etc.) keep working without per-component edits.
+ *
+ * The NEW tokens below (--unq-bg-secondary, --unq-surface-2, --unq-text-2/3,
+ * --unq-border-subtle, --unq-link, --unq-accent-active, --unq-focus,
+ * --unq-glass-bg, --unq-glass-border, --unq-radius-pill, --unq-nav-h,
+ * --unq-content, --unq-content-wide, --unq-hero, --unq-h1, --unq-h2, --unq-h3,
+ * --unq-body, --unq-sm, --unq-xs) come straight from apple.com's own values.
+ */
+
+/* ============================================================ Light theme */
+:root {
+  /* --- Apple neutral surfaces --- */
+  --unq-bg: #ffffff;
+  --unq-bg-secondary: #f5f5f7;
+  --unq-surface: #ffffff;
+  --unq-surface-2: #fbfbfd;
+  --unq-surface-elevated: #ffffff; /* alias of --unq-surface */
+  --unq-surface-hover: #f5f5f7; /* alias of --unq-bg-secondary */
+
+  /* --- Apple neutral borders --- */
+  --unq-border: #d2d2d7;
+  --unq-border-subtle: #e8e8ed;
+  --unq-border-strong: #d2d2d7; /* alias of --unq-border */
+
+  /* --- Apple neutral text (text-3 bumped to pass WCAG AA 4.5:1 on white;
+       apple.com uses #86868b for decorative tertiary text, but we need
+       "no critical/serious axe violations" so text-3 = text-2 value) --- */
+  --unq-text: #1d1d1f;
+  --unq-text-2: #6e6e73;
+  --unq-text-3: #6e6e73;
+  --unq-text-muted: #6e6e73; /* alias of --unq-text-2 */
+  --unq-text-subtle: #6e6e73; /* alias of --unq-text-2 */
+
+  /* --- Apple single-blue accent --- */
+  --unq-link: #0066cc;
+  --unq-accent: #0071e3;
+  --unq-accent-hover: #0077ed;
+  --unq-accent-active: #006edb;
+  --unq-accent-subtle: rgba(0, 113, 227, 0.08);
+  --unq-accent-contrast: #ffffff;
+  --unq-accent-ring: rgba(0, 113, 227, 0.35);
+  --unq-focus: #0071e3;
+  --unq-ring: rgba(0, 113, 227, 0.35); /* alias of --unq-accent-ring */
+
+  /* --- Apple status colors --- */
+  --unq-success: #34c759;
+  --unq-success-subtle: rgba(52, 199, 89, 0.1);
+  --unq-success-strong: #1d7a31; /* AA-compliant green for text on white */
+  --unq-warning: #ff9f0a;
+  --unq-warning-subtle: rgba(255, 159, 10, 0.1);
+  --unq-warning-strong: #a35e00; /* AA-compliant orange for text on white */
+  --unq-danger: #ff3b30;
+  --unq-danger-subtle: rgba(255, 59, 48, 0.1);
+  --unq-danger-strong: #b00020; /* AA-compliant red for text on white */
+
+  /* --- Frosted glass (header, command bar) --- */
+  --unq-glass-bg: rgba(255, 255, 255, 0.72);
+  --unq-glass-border: rgba(0, 0, 0, 0.08);
+
+  /* --- Apple radius scale --- */
+  --unq-radius-sm: 8px;
+  --unq-radius: 12px;
+  --unq-radius-lg: 18px;
+  --unq-radius-xl: 28px;
+  --unq-radius-2xl: 32px;
+  --unq-radius-pill: 980px;
+  --unq-radius-full: 9999px;
+
+  /* --- Apple shadow scale (neutral, layered) --- */
+  --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --unq-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --unq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08); /* alias of --unq-shadow */
+  --unq-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --unq-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.16);
+  --unq-shadow-glow: 0 0 0 4px var(--unq-accent-ring);
+  --unq-shadow-bloom: 0 4px 16px rgba(0, 113, 227, 0.1), 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  /* --- Layout (Apple.com content widths) --- */
+  --unq-nav-h: 48px;
+  --unq-content: 980px;
+  --unq-content-wide: 1024px;
+  --unq-container-max: 1024px; /* alias of --unq-content-wide */
+  --unq-content-max: 980px; /* alias of --unq-content */
+
+  /* --- Gutters — Apple.com uses 22px side padding on the 980px container --- */
+  --unq-gutter-sm: 22px;
+  --unq-gutter-md: 22px;
+  --unq-gutter-lg: 22px;
+
+  /* --- Motion — Apple ease curve --- */
+  --unq-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --unq-ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1); /* alias of --unq-ease */
+  --unq-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --unq-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --unq-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --unq-duration-fast: 160ms;
+  --unq-duration-normal: 280ms;
+  --unq-duration-slow: 420ms;
+  --unq-duration-deliberate: 560ms;
+
+  /* --- Typography — SF Pro stack first (true SF on Apple devices),
+       Inter as fallback. No SF Pro bundling (Apple proprietary). --- */
+  --unq-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --unq-font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* --- Apple fluid heading scale --- */
+  --unq-hero: clamp(2.75rem, 6vw, 4.5rem);
+  --unq-h1: clamp(2rem, 4.5vw, 3rem);
+  --unq-h2: clamp(1.5rem, 3vw, 2.25rem);
+  --unq-h3: clamp(1.25rem, 2vw, 1.5rem);
+  --unq-body: 1.0625rem;
+  --unq-sm: 0.875rem;
+  --unq-xs: 0.75rem;
+
+  /* --- Backward compat: Tailwind fontSize scale (kept for unq-text-* classes) --- */
+  --unq-text-xs: 0.75rem;
+  --unq-text-sm: 0.875rem;
+  --unq-text-base: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --unq-text-lg: clamp(1.125rem, 1.07rem + 0.27vw, 1.25rem);
+  --unq-text-xl: clamp(1.3125rem, 1.21rem + 0.5vw, 1.5rem);
+  --unq-text-2xl: clamp(1.625rem, 1.42rem + 1vw, 2rem);
+  --unq-text-3xl: clamp(2rem, 1.6rem + 2vw, 2.75rem);
+  --unq-text-4xl: clamp(2.5rem, 1.9rem + 3vw, 4rem);
+  --unq-text-5xl: clamp(3rem, 2.2rem + 4vw, 5rem);
+  --unq-text-6xl: clamp(3.5rem, 2.4rem + 5.5vw, 6rem);
+
+  /* --- Apple tracking (tighter on display, body uses -.022em per apple.com) --- */
+  --unq-tracking-display: -0.025em;
+  --unq-tracking-display-lg: -0.035em;
+  --unq-tracking-tight: -0.015em;
+  --unq-tracking-body: -0.022em;
+
+  /* --- 4px-base spacing scale (kept for Tailwind spacing extension) --- */
+  --unq-space-1: 0.25rem;
+  --unq-space-2: 0.5rem;
+  --unq-space-3: 0.75rem;
+  --unq-space-4: 1rem;
+  --unq-space-5: 1.25rem;
+  --unq-space-6: 1.5rem;
+  --unq-space-8: 2rem;
+  --unq-space-10: 2.5rem;
+  --unq-space-12: 3rem;
+  --unq-space-16: 4rem;
+  --unq-space-20: 5rem;
+  --unq-space-24: 6rem;
+  --unq-space-32: 8rem;
+
+  color-scheme: light;
+}
+
+/* ============================================================ Dark theme */
+:root[data-theme="dark"] {
+  /* --- Apple dark neutral surfaces --- */
+  --unq-bg: #000000;
+  --unq-bg-secondary: #101012;
+  --unq-surface: #1d1d1f;
+  --unq-surface-2: #161618;
+  --unq-surface-elevated: #1d1d1f;
+  --unq-surface-hover: #161618;
+
+  /* --- Apple dark borders --- */
+  --unq-border: #38383c;
+  --unq-border-subtle: #2a2a2d;
+  --unq-border-strong: #38383c;
+
+  /* --- Apple dark text (text-3 bumped to text-2 value for WCAG AA on black) --- */
+  --unq-text: #f5f5f7;
+  --unq-text-2: #a1a1a6;
+  --unq-text-3: #a1a1a6;
+  --unq-text-muted: #a1a1a6;
+  --unq-text-subtle: #a1a1a6;
+
+  /* --- Apple dark single-blue accent (brighter for contrast) --- */
+  --unq-link: #2997ff;
+  --unq-accent: #0a84ff;
+  --unq-accent-hover: #409cff;
+  --unq-accent-active: #0a84ff;
+  --unq-accent-subtle: rgba(10, 132, 255, 0.16);
+  --unq-accent-contrast: #ffffff;
+  --unq-accent-ring: rgba(10, 132, 255, 0.4);
+  --unq-focus: #0a84ff;
+  --unq-ring: rgba(10, 132, 255, 0.4);
+
+  /* --- Apple dark status (slightly brighter for AA contrast on dark) --- */
+  --unq-success: #30d158;
+  --unq-success-subtle: rgba(48, 209, 88, 0.18);
+  --unq-success-strong: #30d158;
+  --unq-warning: #ff9f0a;
+  --unq-warning-subtle: rgba(255, 159, 10, 0.18);
+  --unq-warning-strong: #ff9f0a;
+  --unq-danger: #ff453a;
+  --unq-danger-subtle: rgba(255, 69, 58, 0.18);
+  --unq-danger-strong: #ff453a;
+
+  /* --- Dark frosted glass --- */
+  --unq-glass-bg: rgba(22, 22, 24, 0.72);
+  --unq-glass-border: rgba(255, 255, 255, 0.1);
+
+  /* --- Dark shadows (deeper) --- */
+  --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --unq-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --unq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --unq-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --unq-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.7);
+  --unq-shadow-glow: 0 0 0 4px var(--unq-accent-ring);
+  --unq-shadow-bloom: 0 4px 16px rgba(10, 132, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
+}
+
+/* Respect OS preference when no explicit theme is set (no-FOUC inline script
+   in BaseLayout sets data-theme before first paint; this is the fallback). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --unq-bg: #000000;
+    --unq-bg-secondary: #101012;
+    --unq-surface: #1d1d1f;
+    --unq-surface-2: #161618;
+    --unq-surface-elevated: #1d1d1f;
+    --unq-surface-hover: #161618;
+    --unq-border: #38383c;
+    --unq-border-subtle: #2a2a2d;
+    --unq-border-strong: #38383c;
+    --unq-text: #f5f5f7;
+    --unq-text-2: #a1a1a6;
+    --unq-text-3: #a1a1a6;
+    --unq-text-muted: #a1a1a6;
+    --unq-text-subtle: #a1a1a6;
+    --unq-link: #2997ff;
+    --unq-accent: #0a84ff;
+    --unq-accent-hover: #409cff;
+    --unq-accent-active: #0a84ff;
+    --unq-accent-subtle: rgba(10, 132, 255, 0.16);
+    --unq-accent-contrast: #ffffff;
+    --unq-accent-ring: rgba(10, 132, 255, 0.4);
+    --unq-focus: #0a84ff;
+    --unq-ring: rgba(10, 132, 255, 0.4);
+    --unq-success: #30d158;
+    --unq-success-subtle: rgba(48, 209, 88, 0.18);
+    --unq-success-strong: #30d158;
+    --unq-warning: #ff9f0a;
+    --unq-warning-subtle: rgba(255, 159, 10, 0.18);
+    --unq-warning-strong: #ff9f0a;
+    --unq-danger: #ff453a;
+    --unq-danger-subtle: rgba(255, 69, 58, 0.18);
+    --unq-danger-strong: #ff453a;
+    --unq-glass-bg: rgba(22, 22, 24, 0.72);
+    --unq-glass-border: rgba(255, 255, 255, 0.1);
+    --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+    --unq-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --unq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --unq-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --unq-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.7);
+    --unq-shadow-bloom: 0 4px 16px rgba(10, 132, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
