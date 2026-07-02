@@ -151,7 +151,7 @@ export function CommandBar({ open: controlledOpen, onOpenChange }: CommandBarPro
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
-        class="bg-unq-surface-elevated/95 relative mt-[10vh] w-full max-w-xl overflow-hidden rounded-xl border border-unq-border shadow-xl backdrop-blur-xl sm:mt-[15vh]"
+        class="unq-glass relative mt-[10vh] w-full max-w-xl overflow-hidden rounded-xl border border-unq-border shadow-xl sm:mt-[15vh]"
       >
         {/* Search input */}
         <div class="flex items-center gap-3 border-b border-unq-border px-4">

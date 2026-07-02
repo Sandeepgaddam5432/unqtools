@@ -62,8 +62,9 @@
   --unq-danger-subtle: rgba(255, 59, 48, 0.1);
   --unq-danger-strong: #b00020; /* AA-compliant red for text on white */
 
-  /* --- Frosted glass (header, command bar) --- */
-  --unq-glass-bg: rgba(255, 255, 255, 0.72);
+  /* --- Frosted glass (header, command bar) — v4.0 uses color-mix for
+       better oklch blending with the surface underneath --- */
+  --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
   --unq-glass-border: rgba(0, 0, 0, 0.08);
 
   /* --- Apple radius scale --- */
@@ -128,10 +129,43 @@
     1.001 100%
   );
 
+  /* v4.0: Real spring motion via linear() — physics-feel with slight overshoot.
+     Replaces the v3.1 --unq-ease-spring (which was a plain cubic-bezier).
+     @supports guard below provides the cubic-bezier fallback for browsers
+     that don't support linear() (Firefox/Safari < 17.4). */
+  --unq-ease-spring: linear(
+    0,
+    0.006,
+    0.025 2.8%,
+    0.101 6.1%,
+    0.539 18.9%,
+    0.721 25.3%,
+    0.849 31.5%,
+    0.937 38.1%,
+    0.968 41.8%,
+    0.991 45.7%,
+    1.006 50.1%,
+    1.015 55%,
+    1.017 63.9%,
+    1.001
+  );
+  --unq-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* --- v3.1 gradient stops (for spotlight border + aurora + headline) --- */
   --unq-grad-1: #0071e3; /* Apple blue */
   --unq-grad-2: #42a5ff; /* light blue */
   --unq-grad-3: #bf5af2; /* soft purple — gradient endpoint only, not an accent */
+
+  /* --- v4.0 Liquid Glass material tokens --- */
+  --unq-glass-blur: 20px;
+  --unq-glass-saturate: 1.8;
+  --unq-glass-edge: linear-gradient(
+    135deg,
+    rgb(255 255 255 / 0.45),
+    rgb(255 255 255 / 0.08) 40%,
+    rgb(255 255 255 / 0) 60%,
+    rgb(255 255 255 / 0.22)
+  );
   --unq-duration-fast: 160ms;
   --unq-duration-normal: 280ms;
   --unq-duration-slow: 420ms;
@@ -232,8 +266,8 @@
   --unq-danger-subtle: rgba(255, 69, 58, 0.18);
   --unq-danger-strong: #ff453a;
 
-  /* --- Dark frosted glass --- */
-  --unq-glass-bg: rgba(22, 22, 24, 0.72);
+  /* --- Dark frosted glass — v4.0 color-mix --- */
+  --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
   --unq-glass-border: rgba(255, 255, 255, 0.1);
 
   /* --- Dark shadows (deeper) --- */
@@ -285,7 +319,7 @@
     --unq-danger: #ff453a;
     --unq-danger-subtle: rgba(255, 69, 58, 0.18);
     --unq-danger-strong: #ff453a;
-    --unq-glass-bg: rgba(22, 22, 24, 0.72);
+    --unq-glass-bg: color-mix(in oklch, var(--unq-surface) 62%, transparent);
     --unq-glass-border: rgba(255, 255, 255, 0.1);
     --unq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
     --unq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);

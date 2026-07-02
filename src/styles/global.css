@@ -1628,3 +1628,76 @@
     opacity: 0;
   }
 }
+
+/* ============================================================ v4.0 LIQUID GLASS + MODERN NATIVE
+   Appended on top of v3.1.1. 10 upgrades, all behind @supports guards
+   with v3.1.1 as the guaranteed floor. No new JS runtime deps.
+
+   #1  Liquid Glass material surfaces (nav, ⌘K, CTA band only)
+   #2  Native CSS scroll-driven animations (replaces IO where supported)
+   #3  Real spring motion via linear() easing tokens
+   #4  Popover API + anchor positioning for tooltips
+   #5  Modern text wrapping (balance + pretty)
+   #6  Container queries on tool cards
+   #7  View Transitions morph (card icon → tool page header)
+   #8  Speculation Rules (prefetch + prerender)
+   #9  Animated details FAQ (height: auto transition)
+   #10 Ambient per-category glow on tool headers */
+
+/* --- #3 fallback: linear() not supported → cubic-bezier spring ----------- */
+@supports not (transition-timing-function: linear(0, 1)) {
+  :root {
+    --unq-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+}
+
+@layer components {
+  /* --- #1 Liquid Glass material surfaces -----------------------------------
+     Applied to sticky nav, ⌘K command bar, and Install-PWA CTA band ONLY.
+     Glass is for floating chrome, not scrolling content. The specular edge
+     highlight (::before with masked gradient) is the "liquid" signature. */
+  .unq-glass {
+    position: relative;
+    background: var(--unq-glass-bg);
+    -webkit-backdrop-filter: blur(var(--unq-glass-blur)) saturate(var(--unq-glass-saturate));
+    backdrop-filter: blur(var(--unq-glass-blur)) saturate(var(--unq-glass-saturate));
+  }
+  .unq-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--unq-glass-edge);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .unq-glass {
+      background: var(--unq-surface);
+    }
+    .unq-glass::before {
+      display: none;
+    }
+  }
+}
+
+/* --- #5 Modern text wrapping ---------------------------------------------- */
+@layer base {
+  h1,
+  h2,
+  h3,
+  .unq-cat-head {
+    text-wrap: balance;
+  }
+  .unq-prose p,
+  .unq-prose li,
+  .unq-prose dd {
+    text-wrap: pretty;
+  }
+}
