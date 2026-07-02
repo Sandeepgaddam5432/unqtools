@@ -1795,3 +1795,119 @@
     animation: none !important;
   }
 }
+
+/* ============================================================ v4.0 #4 POPOVER API + ANCHOR POSITIONING
+   Native Popover API + CSS anchor positioning for tooltips/menus.
+   Top layer, Esc dismiss, light-dismiss — zero positioning JS.
+   @starting-style entry animation. @supports guard keeps current
+   CSS-positioned tooltip as fallback. */
+
+@layer components {
+  [popover] {
+    margin: 0;
+    padding: 6px 10px;
+    border: 1px solid var(--unq-border);
+    border-radius: var(--unq-radius-sm);
+    background: var(--unq-surface-elevated);
+    color: var(--unq-text);
+    font-size: var(--unq-sm);
+    box-shadow: var(--unq-shadow-md);
+    transition:
+      opacity 0.18s,
+      transform 0.18s var(--unq-ease-spring),
+      display 0.18s allow-discrete,
+      overlay 0.18s allow-discrete;
+  }
+  [popover]:popover-open {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    [popover]:popover-open {
+      opacity: 0;
+      transform: translateY(4px) scale(0.97);
+    }
+  }
+  /* Anchor-positioned tooltips — position-area requires anchor support */
+  @supports (anchor-name: --a) {
+    [popover][data-anchor] {
+      position-anchor: var(--unq-anchor, --a);
+      position-area: block-start;
+      margin-block-end: 8px;
+    }
+  }
+}
+
+/* ============================================================ v4.0 #9 ANIMATED DETAILS FAQ
+   Smooth height: auto transition on <details> expand/collapse.
+   interpolate-size: allow-keywords lets block-size: auto animate.
+   @supports guard — non-supporting browsers just snap open. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  details::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.3s var(--unq-ease-out-expo),
+      content-visibility 0.3s allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+  }
+  @starting-style {
+    details[open]::details-content {
+      block-size: 0;
+    }
+  }
+}
+
+/* FAQ details styling — Apple-style accordion */
+@layer components {
+  .unq-faq details {
+    border-bottom: 1px solid var(--unq-border-subtle);
+    padding: 16px 0;
+  }
+  .unq-faq details:first-child {
+    border-top: 1px solid var(--unq-border-subtle);
+  }
+  .unq-faq summary {
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--unq-text);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 0;
+    transition: color 0.15s var(--unq-ease-out);
+  }
+  .unq-faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .unq-faq summary::after {
+    content: "+";
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--unq-text-2);
+    transition: transform 0.3s var(--unq-ease-out-expo);
+    flex-shrink: 0;
+  }
+  .unq-faq details[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .unq-faq summary:hover {
+    color: var(--unq-accent);
+  }
+  .unq-faq details[open] > summary {
+    margin-bottom: 8px;
+  }
+  .unq-faq .unq-faq__a {
+    color: var(--unq-text-2);
+    line-height: 1.6;
+    font-size: var(--unq-sm);
+  }
+}
