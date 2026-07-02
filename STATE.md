@@ -1,10 +1,18 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-02T11:50:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-02T13:00:00Z by GLM (z.ai sandbox)_
 
 ## Current phase
 
-**v3.1.1 — horizontal overflow fix + full-site audit** ✅ COMPLETE → awaiting user confirmation before Phase 3
+**v4.0 — Liquid Glass UI modernization** ✅ COMPLETE → awaiting user confirmation before Phase 3
+
+## Context (why this session happened)
+
+v3.1.1 was solid but the owner wanted a genuine 2026-flagship tier UI. v4.0
+layers Apple's Liquid Glass design language on top of the existing
+Raycast/Linear density — translucent material surfaces, physics-based spring
+motion, zero-JS scroll choreography, and instant navigation. All behind
+`@supports` guards with v3.1.1 as the guaranteed floor.
 
 ## Context (why this session happened)
 
@@ -30,6 +38,78 @@ v3.0 (product-grade density) + v2.2 (motion + richer IA) + v2.1 (Apple tokens)
 are all DONE and correct. v3.1 only ADDS premium effects and OVERRIDES a few
 transition/gradient values. All tokens, motion primitives, density classes,
 and component structure from prior versions are preserved.
+
+## Done (this session — v4.0 Liquid Glass UI modernization)
+
+### 10 upgrades shipped (4 commits)
+
+**Commit 1** (`5358599`): #1 Liquid Glass + #3 Springs + #5 Text-wrap
+
+- #1: `.unq-glass` class — backdrop-filter blur(20px)+saturate(1.8) + specular edge highlight (masked gradient ::before). Applied to sticky nav, ⌘K command bar, CTA band ONLY. Glass bg uses `color-mix(in oklch, surface 62%, transparent)`. `@supports` fallback: solid surface.
+- #3: `--unq-ease-spring` upgraded from cubic-bezier to `linear()` physics curve with slight overshoot. `@supports` fallback: `cubic-bezier(0.34, 1.4, 0.64, 1)`. New `--unq-ease-out-expo` token.
+- #5: `text-wrap: balance` on h1/h2/h3/.unq-cat-head; `text-wrap: pretty` on .unq-prose p/li/dd.
+
+**Commit 2** (`6059bb2`): #2 Scroll-driven animations + reading progress bar
+
+- #2: Reading progress bar on tool pages — `.unq-progress` fixed 2px accent bar, `animation-timeline: scroll(root)` = zero JS. `@supports` guard: `display:none` in unsupported browsers.
+- **Honesty note:** Native scroll-driven reveals (`animation-timeline: view()`) were tested but DISABLED after 2 fix attempts. Root cause: elements below the fold sit at opacity:0 (from the `from` keyframe + `both` fill), and axe-core scans the full DOM on page load — it sees them as invisible and fails color-contrast. The IntersectionObserver fallback (which adds `.is-in` only when elements are actually in view) passes all gates cleanly. This is noted per the honesty clause. The reading progress bar (`animation-timeline: scroll()`) is unaffected and remains active.
+- Unified v4.0 reduced-motion guard: disables progress bar, spring transitions, popover transitions, details animation, aura drift.
+
+**Commit 3** (`4825f7c`): #4 Popover API + #9 Animated details FAQ
+
+- #4: `[popover]` CSS infrastructure with `@starting-style` entry animation (opacity + translateY + scale, 0.18s spring). `display`/`overlay` `allow-discrete` transitions. `@supports(anchor-name)` for position-area. Fallback: current CSS-positioned tooltips unchanged.
+- #9: ToolLayout FAQ converted from `<dl>` to `<details>` accordion. `@supports(interpolate-size: allow-keywords)` enables `block-size: auto` transition on `::details-content` (0.3s ease-out-expo). Apple-style accordion: `+` icon rotates 45deg to `×` on open, hover accent. Non-supporting browsers snap open.
+
+**Commit 4** (`4d18ee7`): #6 Container queries + #7 VT morph + #8 Speculation Rules + #10 Aura
+
+- #6: `.unq-card-wrap` `container-type: inline-size`. `@container (max-width: 260px)` shrinks icon to 28px, clamps desc to 1 line. `@supports` guard.
+- #7: `view-transition-name: tool-${id}` on ToolCard icon tile + ToolLayout header icon tile. Shared-element morph on navigation. Unique per tool per page.
+- #8: `<script type="speculationrules">` in `<head>` — prefetch `/tools/*` on hover, prerender `.unq-card a` links. `eagerness: moderate`. Chromium-only; inert JSON elsewhere. `set:html` avoids Astro parser issue.
+- #10: `.unq-tool-hero::before` radial gradient using `--unq-cat-accent` (16% tint, blur 40px). 13 category accent colors mapped. `overflow: clip` on hero prevents h-overflow.
+
+### Verification — ALL GATES PASS
+
+- [x] `npm run lint` — 0/0
+- [x] `npm run test` — 343/343
+- [x] `npm run build` — 27 pages
+- [x] `npx playwright test` — 13/13 e2e
+- [x] **axe-core: zero critical/serious across ALL 27 pages**
+- [x] **108/108 zero-overflow gate** (27 pages × 320/390/768/1440)
+- [x] **CLS < 0.01** on all measured pages (all = 0.0001)
+- [x] **Reduced-motion:** all reveals visible, progress bar hidden
+- [x] v4.0 features present: glassNav, glassCTA, grain, speculationRules, VT name, aura, progress bar
+- [x] No PAT leaked
+
+### VLM verdicts
+
+- **Home desktop light:** "Premium, modern aesthetic with translucent glass nav. No clipping or overflow."
+- **Tool desktop (EMI):** "Ambient per-category aura subtly visible, adding premium depth. No clipping. Elements align cleanly."
+- **Home mobile (390px):** "No horizontal overflow or clipping. Glass nav functions correctly on mobile."
+
+### Bundle sizes (all under budget)
+
+| Asset                 | Gzipped | Budget  | Notes                                                                               |
+| --------------------- | ------- | ------- | ----------------------------------------------------------------------------------- |
+| Largest per-island JS | 6.4 KB  | ≤ 50 KB | unchanged from v3.1.1                                                               |
+| Compiled CSS          | 13.1 KB | ≤ 14 KB | +1.0 KB vs v3.1.1 (glass + springs + scroll + popover + details + container + aura) |
+| Homepage HTML         | 11.2 KB | —       | +0.4 KB (speculation rules + VT names)                                              |
+| New JS (total)        | ~0.5 KB | ≤ 2 KB  | IO script unchanged, no new runtime JS                                              |
+
+### Screenshots (in `/home/z/my-project/download/screenshots/v4/`)
+
+- `home-desktop-light.png` — VLM: "premium, modern, Apple-glass"
+- `home-desktop-dark.png` — dark theme parity
+- `home-mobile-light.png` — VLM: "no overflow, glass nav works"
+- `tool-desktop-light.png` — VLM: "aura visible, premium depth"
+- `tool-mobile-light.png` — single column, readable
+- `category-desktop-light.png` — sidebar + dense grid
+
+---
+
+## v3.1.1 (prior session — preserved as base)
+
+<details>
+<summary>Click to expand v3.1.1 details</summary>
 
 ## Done (this session — v3.1.1 horizontal overflow fix + full-site audit)
 
