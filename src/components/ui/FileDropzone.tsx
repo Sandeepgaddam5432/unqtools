@@ -74,7 +74,7 @@ export function FileDropzone({
         <div
           class={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
             dragActive
-              ? "bg-unq-accent text-unq-accent-contrast"
+              ? "text-unq-accent-contrast bg-unq-accent"
               : "bg-unq-surface-hover text-unq-text-muted"
           }`}
         >

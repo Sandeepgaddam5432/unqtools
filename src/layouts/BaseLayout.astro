@@ -4,9 +4,16 @@ import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
+import "@fontsource/space-grotesk/400.css";
+import "@fontsource/space-grotesk/500.css";
+import "@fontsource/space-grotesk/600.css";
+import "@fontsource/space-grotesk/700.css";
+import "@fontsource/dm-sans/400.css";
+import "@fontsource/dm-sans/500.css";
+import "@fontsource/dm-sans/700.css";
 import { themeNoFoUcScript } from "../lib/theme";
+import { TOOLS } from "../lib/registry";
 import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "../lib/tool";
-import { countByCategory } from "../lib/registry";
 import CommandBarMount from "../components/CommandBarMount.astro";
 
 interface Props {
@@ -24,24 +31,14 @@ const {
 const site = Astro.site ?? new URL("https://unqtools.pages.dev");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL("/icons/icon-512.png", site);
-const counts = countByCategory();
-const cats = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
-
-const CAT_ICONS: Record<ToolCategory, string> = {
-  pdf: "📄",
-  image: "🎨",
-  "audio-video": "🎬",
-  developer: "{ }",
-  seo: "🔍",
-  calculators: "🧮",
-  text: "Aa",
-  "network-security": "🔒",
-  file: "📦",
-  business: "💼",
-  education: "📚",
-  social: "👥",
-  ai: "✨",
-};
+const counts = ALL_CATEGORIES.reduce(
+  (acc, c) => {
+    acc[c] = TOOLS.filter((t) => t.category === c).length;
+    return acc;
+  },
+  {} as Record<string, number>,
+);
+const cats = ALL_CATEGORIES.filter((c) => counts[c] > 0).slice(0, 6);
 ---
 
 <!doctype html>
@@ -51,7 +48,7 @@ const CAT_ICONS: Record<ToolCategory, string> = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -74,24 +71,31 @@ const CAT_ICONS: Record<ToolCategory, string> = {
       })}
     />
   </head>
-  <body class="grain">
+  <body>
     <a
       href="#main"
       class="sr-only"
-      style="position:absolute;left:12px;top:12px;z-index:99;background:var(--accent);color:var(--accent-contrast);padding:8px 16px;border-radius:8px;font-size:14px;"
+      style="position:absolute;left:12px;top:12px;z-index:99;background:var(--primary-fill);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;"
       >Skip to content</a
     >
-
-    <!-- Progress bar (tool pages only, scroll-driven) -->
     <div class="progress-bar" aria-hidden="true"></div>
 
-    <!-- Glass topbar -->
-    <header class="topbar">
-      <a href="/" class="topbar__logo" aria-label="UnQTools home">
-        <span class="topbar__logo-mark">U</span>
+    {/* Floating pill glass nav */}
+    <nav class="nav-pill glass-card">
+      <a href="/" class="nav-pill__logo" aria-label="UnQTools home">
+        <span class="nav-pill__logo-mark">U</span>
         <span>UnQTools</span>
       </a>
-      <button class="topbar__search" id="cmdk-trigger" aria-label="Open command palette (⌘K)">
+      <div class="nav-pill__links">
+        {
+          cats.map((c) => (
+            <a href={`/category/${c}`} aria-current={c === activeCategory ? "page" : undefined}>
+              {CATEGORY_LABELS[c].split(" ")[0]}
+            </a>
+          ))
+        }
+      </div>
+      <button class="nav-pill__search" id="cmdk-trigger" aria-label="Open command palette (⌘K)">
         <svg
           width="14"
           height="14"
@@ -105,11 +109,11 @@ const CAT_ICONS: Record<ToolCategory, string> = {
           ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
         >
         <span>Search tools…</span>
-        <span class="topbar__search-hint">⌘K</span>
+        <span class="nav-pill__search-hint">⌘K</span>
       </button>
-      <div class="topbar__actions">
+      <div class="nav-pill__actions">
         <button
-          class="topbar__btn"
+          class="nav-pill__btn"
           id="theme-toggle"
           aria-label="Toggle color theme"
           title="Toggle theme"
@@ -146,124 +150,96 @@ const CAT_ICONS: Record<ToolCategory, string> = {
           >
         </button>
       </div>
-    </header>
+    </nav>
 
-    <!-- App shell: sidebar + content -->
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Tool categories">
-        <p class="sidebar__group-label">Categories</p>
-        <a
-          href="/"
-          class="sidebar__item"
-          aria-current={activeCategory === undefined ? "page" : undefined}
-        >
-          <span class="sidebar__item-icon">★</span>
-          <span class="sidebar__item-label">All tools</span>
-        </a>
-        {
-          cats.map((c) => (
+    {/* Mobile category chips */}
+    {
+      activeCategory !== undefined && (
+        <div class="filter-chips content-wrap" style="padding-top:80px;">
+          <a
+            href="/"
+            class="filter-chip"
+            aria-current={activeCategory === undefined ? "page" : undefined}
+          >
+            All
+          </a>
+          {ALL_CATEGORIES.filter((c) => counts[c] > 0).map((c) => (
             <a
               href={`/category/${c}`}
-              class="sidebar__item"
+              class="filter-chip"
               aria-current={c === activeCategory ? "page" : undefined}
             >
-              <span class="sidebar__item-icon" aria-hidden="true">
-                {CAT_ICONS[c]}
-              </span>
-              <span class="sidebar__item-label">{CATEGORY_LABELS[c]}</span>
-              <span class="sidebar__item-count">{counts[c]}</span>
+              {CATEGORY_LABELS[c].split(" ")[0]}
             </a>
-          ))
-        }
-      </aside>
+          ))}
+        </div>
+      )
+    }
 
-      <div class="content">
-        <!-- Mobile category chips -->
-        <nav class="cat-chips" aria-label="Tool categories">
-          <a href="/" aria-current={activeCategory === undefined ? "page" : undefined}>All</a>
-          {
-            cats.map((c) => (
-              <a href={`/category/${c}`} aria-current={c === activeCategory ? "page" : undefined}>
-                {CATEGORY_LABELS[c].split(" ")[0]}
-              </a>
-            ))
-          }
-        </nav>
+    <main id="main" style="padding-top:72px;">
+      <slot />
+    </main>
 
-        <main id="main" class="content__inner">
-          <slot />
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-          <div class="footer__grid">
-            <div class="footer__col">
+    {/* Footer */}
+    <footer class="footer">
+      <div class="footer__grid">
+        <div class="footer__col">
+          <a href="/" class="nav-pill__logo" style="margin-bottom:12px;">
+            <span class="nav-pill__logo-mark">U</span><span>UnQTools</span>
+          </a>
+          <p
+            style="color:var(--text-muted);font-size:var(--text-sm);max-width:280px;margin:8px 0 0;"
+          >
+            {TOOLS.length} browser-based tools — all private, all offline-capable.
+          </p>
+        </div>
+        <div class="footer__col">
+          <h3>Categories</h3>
+          <ul>
+            <li><a href="/category/developer">Developer</a></li>
+            <li><a href="/category/calculators">Calculators</a></li>
+            <li><a href="/category/text">Text &amp; Writing</a></li>
+            <li><a href="/category/image">Image</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h3>Popular</h3>
+          <ul>
+            <li><a href="/tools/json-formatter">JSON Formatter</a></li>
+            <li><a href="/tools/diff-checker">Diff Checker</a></li>
+            <li><a href="/tools/base64">Base64</a></li>
+            <li><a href="/tools/caesar-cipher">Caesar Cipher</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h3>About</h3>
+          <ul>
+            <li>100% private</li>
+            <li>Installable PWA</li>
+            <li>Works offline</li>
+            <li>
               <a
-                href="/"
-                class="topbar__logo"
-                aria-label="UnQTools home"
-                style="margin-bottom:12px;"
+                href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
+                target="_blank"
+                rel="noopener">LICENSE</a
               >
-                <span class="topbar__logo-mark">U</span>
-                <span>UnQTools</span>
-              </a>
-              <p
-                style="color:var(--text-muted);font-size:var(--text-sm);max-width:280px;margin:8px 0 0;"
-              >
-                {(await import("../lib/registry")).TOOLS.length} browser-based tools — all private, all
-                offline-capable.
-              </p>
-            </div>
-            <div class="footer__col">
-              <h3>Categories</h3>
-              <ul>
-                <li><a href="/category/developer">Developer</a></li>
-                <li><a href="/category/calculators">Calculators</a></li>
-                <li><a href="/category/text">Text &amp; Writing</a></li>
-                <li><a href="/category/image">Image</a></li>
-              </ul>
-            </div>
-            <div class="footer__col">
-              <h3>Popular</h3>
-              <ul>
-                <li><a href="/tools/json-formatter">JSON Formatter</a></li>
-                <li><a href="/tools/diff-checker">Diff Checker</a></li>
-                <li><a href="/tools/base64">Base64</a></li>
-                <li><a href="/tools/caesar-cipher">Caesar Cipher</a></li>
-              </ul>
-            </div>
-            <div class="footer__col">
-              <h3>About</h3>
-              <ul>
-                <li>100% private</li>
-                <li>Installable PWA</li>
-                <li>Works offline</li>
-                <li>
-                  <a
-                    href="https://github.com/Sandeepgaddam5432/unqtools/blob/main/LICENSE"
-                    target="_blank"
-                    rel="noopener">LICENSE</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="footer__bottom">
-            <p>&copy; {new Date().getFullYear()} UnQTools. All rights reserved.</p>
-            <p>Proprietary &amp; confidential · 100% static</p>
-          </div>
-        </footer>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+      <div class="footer__bottom">
+        <p>&copy; {new Date().getFullYear()} UnQTools. All rights reserved.</p>
+        <p>Proprietary &amp; confidential · 100% static</p>
+      </div>
+    </footer>
 
     <CommandBarMount />
 
-    <!-- Reveal + spotlight + theme + cmdk scripts -->
+    {/* Reveal + spotlight + theme + cmdk scripts */}
     <script is:inline>
       (function () {
         function init() {
           const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
-          // Reveal
           const reveals = document.querySelectorAll(".reveal:not(.is-in)");
           if (rm || !("IntersectionObserver" in window)) {
             reveals.forEach((el) => el.classList.add("is-in"));
@@ -284,9 +260,8 @@ const CAT_ICONS: Record<ToolCategory, string> = {
               io.observe(el);
             });
           }
-          // Spotlight
           if (!rm) {
-            document.querySelectorAll(".card:not([data-spot])").forEach((card) => {
+            document.querySelectorAll(".glass-card-hover:not([data-spot])").forEach((card) => {
               card.dataset.spot = "1";
               card.addEventListener("pointermove", (e) => {
                 const r = card.getBoundingClientRect();
@@ -295,6 +270,34 @@ const CAT_ICONS: Record<ToolCategory, string> = {
               });
             });
           }
+          // Count-up
+          document.querySelectorAll("[data-countup]").forEach((el) => {
+            if (rm) {
+              el.textContent = el.getAttribute("data-countup");
+              return;
+            }
+            const cio = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((e) => {
+                  if (!e.isIntersecting) return;
+                  cio.unobserve(e.target);
+                  const end = Number(e.target.getAttribute("data-countup"));
+                  const t0 = performance.now();
+                  const dur = 1200;
+                  function tick(t) {
+                    const p = Math.min(1, (t - t0) / dur);
+                    e.target.textContent = Math.round(
+                      end * (1 - Math.pow(1 - p, 3)),
+                    ).toLocaleString();
+                    if (p < 1) requestAnimationFrame(tick);
+                  }
+                  requestAnimationFrame(tick);
+                });
+              },
+              { threshold: 0.6 },
+            );
+            cio.observe(el);
+          });
         }
         document.addEventListener("astro:page-load", init);
         init();

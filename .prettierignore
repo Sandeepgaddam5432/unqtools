@@ -7,3 +7,5 @@ test-results/
 *.min.js
 public/sw.js
 .claude/**
+.claude/**
+docs/design-reference/**

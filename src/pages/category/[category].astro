@@ -11,7 +11,6 @@ const { category } = Astro.params as { category: ToolCategory };
 const tools = byCategory(category);
 const label = CATEGORY_LABELS[category];
 const subtitle = `${tools.length} ${label.toLowerCase()} tool${tools.length === 1 ? "" : "s"} — all private, all offline-capable.`;
-
 const ICON_MAP: Record<string, string> = {
   braces: "{ }",
   binary: "01",
@@ -25,31 +24,49 @@ const ICON_MAP: Record<string, string> = {
   palette: "🎨",
   fingerprint: "🔑",
 };
+const allCats = ALL_CATEGORIES.filter((c) => byCategory(c).length > 0);
 ---
 
 <BaseLayout title={`${label} — UnQTools`} description={subtitle} activeCategory={category}>
-  <div style="display:flex;flex-direction:column;gap:24px;">
+  <div class="content-wrap" style="display:flex;flex-direction:column;gap:24px;padding-top:32px;">
     <header>
       <div class="section-head" style="margin-bottom:8px;">
         <div>
           <p class="eyebrow" style="margin:0 0 4px;">Category</p>
-          <h1 style="font-size:var(--text-h1);margin:0;">{label}</h1>
+          <h1 style="font-size:var(--text-h1);">{label}</h1>
         </div>
         <span
           style="font-size:var(--text-sm);color:var(--text-subtle);font-variant-numeric:tabular-nums;"
+          >{tools.length} tool{tools.length === 1 ? "" : "s"}</span
         >
-          {tools.length} tool{tools.length === 1 ? "" : "s"}
-        </span>
       </div>
       <p class="muted" style="font-size:var(--text-sm);max-width:580px;margin:0;">{subtitle}</p>
     </header>
+
+    {/* Filter chips */}
+    <div class="filter-chips">
+      <a href="/" class="filter-chip" aria-current={category === undefined ? "page" : undefined}
+        >All</a
+      >
+      {
+        allCats.map((c) => (
+          <a
+            href={`/category/${c}`}
+            class="filter-chip"
+            aria-current={c === category ? "page" : undefined}
+          >
+            {CATEGORY_LABELS[c].split(" ")[0]}
+          </a>
+        ))
+      }
+    </div>
 
     {
       tools.length === 0 ? (
         <div class="empty-state">
           <p class="empty-state__title">No tools in this category yet.</p>
           <p class="empty-state__hint">The catalog expands every week.</p>
-          <a href="/" class="btn" style="margin-top:8px;">
+          <a href="/" class="btn-primary" style="margin-top:8px;">
             Browse all tools
           </a>
         </div>
@@ -58,13 +75,15 @@ const ICON_MAP: Record<string, string> = {
           {tools.map((t) => {
             const glyph = ICON_MAP[t.icon] ?? t.icon.slice(0, 2).toUpperCase();
             return (
-              <a href={`/tools/${t.id}`} class="card">
+              <a href={`/tools/${t.id}`} class="glass-card glass-card-hover card">
                 <span class="card__icon" aria-hidden="true">
                   {glyph}
                 </span>
                 <h3 class="card__title">{t.name}</h3>
                 <p class="card__desc">{t.description}</p>
-                <p class="card__cat">{CATEGORY_LABELS[t.category].split(" ")[0]}</p>
+                <div class="card__tags">
+                  <span class="card__tag">{CATEGORY_LABELS[t.category].split(" ")[0]}</span>
+                </div>
               </a>
             );
           })}

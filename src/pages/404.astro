@@ -3,27 +3,30 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Not found — UnQTools">
-  <div style="min-height:50vh;display:flex;align-items:center;justify-content:center;">
+  <div
+    style="min-height:50vh;display:flex;align-items:center;justify-content:center;"
+    class="content-wrap"
+  >
     <div style="text-align:center;display:flex;flex-direction:column;gap:20px;max-width:420px;">
       <p
-        style="font-size:clamp(64px,14vw,128px);font-weight:600;line-height:1;letter-spacing:-0.04em;margin:0;color:var(--text-subtle);"
+        style="font-family:var(--font-heading);font-size:clamp(64px,14vw,128px);font-weight:700;line-height:1;letter-spacing:-0.04em;margin:0;"
+        class="gradient-text"
       >
         404
       </p>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <h1 style="font-size:var(--text-h2);margin:0;">Page not found</h1>
+        <h1 style="font-size:var(--text-h2);">Page not found</h1>
         <p class="muted" style="margin:0;">
           The tool or page you're looking for doesn't exist, or may have moved.
         </p>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
-        <a href="/" class="btn">Back to home</a>
+        <a href="/" class="btn-primary">Back to home</a>
         <button
-          class="btn btn--secondary"
+          class="btn-secondary"
           onclick="window.dispatchEvent(new CustomEvent('unq:open-command-bar'))"
+          >Search tools (⌘K)</button
         >
-          Search tools (⌘K)
-        </button>
       </div>
     </div>
   </div>

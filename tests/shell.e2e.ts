@@ -11,7 +11,7 @@ test("homepage loads and renders the hero + search", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle(/UnQTools/);
   await expect(page.getByRole("heading", { name: /Tools that respect/i })).toBeVisible();
-  await expect(page.getByLabel("Search tools")).toBeVisible();
+  await expect(page.getByLabel(/command palette/i)).toBeVisible();
 });
 
 test("theme toggle flips the data-theme attribute", async ({ page }) => {
