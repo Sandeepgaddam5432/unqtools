@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/pwa-install";
+import { CommandPaletteMount } from "@/components/command-palette";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +66,7 @@ export default function RootLayout({
           {children}
           <Toaster />
           <PWAInstallPrompt />
+          <CommandPaletteMount />
         </ThemeProvider>
       </body>
     </html>
