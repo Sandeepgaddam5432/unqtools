@@ -37,7 +37,18 @@ import {
   Navigation,
   Zap,
   Star,
+  ShieldCheck,
+  WifiOff,
+  Lock,
+  Wand2,
+  Code2,
+  Type,
+  Calculator,
+  Image as ImageIcon,
+  Globe,
 } from "lucide-react";
+import { TOOLS, countByCategory } from "@/lib/registry";
+import { CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
 
 // ===== ANIMATION VARIANTS =====
 
@@ -74,39 +85,45 @@ const staggerItem = {
 
 // ===== DATA =====
 
+const toolCount = TOOLS.length;
+const counts = countByCategory();
+
 const bentoFeatures: BentoFeature[] = [
   {
-    id: "pages",
-    title: "15+ Pages",
-    description: "Pre-built, production-ready pages including dashboards, authentication, settings, and more.",
+    id: "private",
+    title: "100% Private",
+    description:
+      "Every tool runs entirely in your browser. No uploads, no tracking, no accounts. Your data never leaves your device.",
     content: (
       <div className="bg-gradient-to-br from-primary/20 to-primary/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
-        <Layers className="h-12 w-12 text-primary/70" />
+        <Lock className="h-12 w-12 text-primary/70" />
       </div>
     ),
     className: "col-span-1 md:col-span-3 lg:col-span-2 border-b md:border-r dark:border-neutral-800",
   },
   {
-    id: "components",
-    title: "30+ Components",
-    description: "A rich library of reusable UI components built on shadcn/ui — from data tables to glassmorphism cards.",
+    id: "offline",
+    title: "Works Offline",
+    description:
+      "Installable PWA — works without network after first load. All 22 tools available anytime, anywhere.",
     content: (
-      <div className="bg-gradient-to-br from-orange-500/20 to-orange-500/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
-        <Component className="h-12 w-12 text-orange-500/70" />
+      <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
+        <WifiOff className="h-12 w-12 text-emerald-500/70" />
       </div>
     ),
     className: "col-span-1 md:col-span-3 lg:col-span-2 border-b lg:border-r dark:border-neutral-800",
   },
   {
-    id: "dark-mode",
-    title: "Dark & Light Mode",
-    description: "Seamless theme switching with a stunning dark mode featuring glass effects and terracotta accents.",
+    id: "tools",
+    title: `${toolCount} Tools`,
+    description:
+      "Developer tools, text utilities, calculators, image tools — all in one place. More added regularly.",
     content: (
       <div className="bg-gradient-to-br from-amber-500/20 to-amber-500/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
-        <MoonStar className="h-12 w-12 text-amber-500/70" />
+        <Layers className="h-12 w-12 text-amber-500/70" />
       </div>
     ),
-    className: "col-span-1 md:col-span-6 md:border-b lg:col-span-2 border-b dark:border-neutral-800",
+    className: "col-span-1 md:col-span-3 lg:col-span-2 border-b lg:border-r-0 dark:border-neutral-800",
   },
   {
     id: "hero-visual",
@@ -122,8 +139,9 @@ const bentoFeatures: BentoFeature[] = [
   },
   {
     id: "framer-motion",
-    title: "Framer Motion",
-    description: "Buttery-smooth animations and transitions powered by Framer Motion. Every interaction feels alive.",
+    title: "Cinematic UI",
+    description:
+      "Buttery-smooth animations powered by Framer Motion. Every interaction feels alive — calm, not flashy.",
     content: (
       <div className="bg-gradient-to-br from-rose-500/20 to-rose-500/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
         <Sparkles className="h-12 w-12 text-rose-500/70" />
@@ -133,8 +151,9 @@ const bentoFeatures: BentoFeature[] = [
   },
   {
     id: "ai-tools",
-    title: "AI Tools",
-    description: "Built-in AI generation studio, API playground, and command palette. The future of development is here.",
+    title: "Open Source Stack",
+    description:
+      "Built on Next.js 16, React 19, Tailwind 4, shadcn/ui. Modern, fast, accessible, type-safe.",
     content: (
       <div className="bg-gradient-to-br from-primary/20 to-primary/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
         <BrainCircuit className="h-12 w-12 text-primary/70" />
@@ -144,8 +163,9 @@ const bentoFeatures: BentoFeature[] = [
   },
   {
     id: "responsive",
-    title: "Responsive Design",
-    description: "Pixel-perfect on every screen — from mobile to ultrawide. No compromises, no awkward breakpoints.",
+    title: "Responsive",
+    description:
+      "Pixel-perfect on every screen — from 320px phones to 4K ultrawide. No compromises.",
     content: (
       <div className="bg-gradient-to-br from-teal-500/20 to-teal-500/5 mt-4 rounded-xl h-32 w-full flex items-center justify-center">
         <MonitorSmartphone className="h-12 w-12 text-teal-500/70" />
@@ -161,7 +181,8 @@ const testimonials: Testimonial[] = [
     name: "Alex Rivera",
     role: "Full Stack Developer",
     company: "TechForge",
-    content: "UnQWebTemplate saved me weeks of development time. The component architecture is clean, the animations are stunning, and the TypeScript support is impeccable.",
+    content:
+      "UnQTools is my daily driver for quick JSON formatting and base64 encoding. The fact that everything runs locally — no data leaves my browser — is exactly what I need for sensitive work.",
     rating: 5,
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
   },
@@ -170,7 +191,8 @@ const testimonials: Testimonial[] = [
     name: "Priya Sharma",
     role: "Frontend Engineer",
     company: "DesignCraft",
-    content: "I've tried dozens of Next.js templates, but UnQ stands out for its attention to detail. The terracotta theme is gorgeous and the code quality is top-notch.",
+    content:
+      "The offline PWA install is genius. I have UnQTools on my phone — I can calculate my SIP returns on the metro with no signal. The design is gorgeous too — that terracotta palette is *chef's kiss*.",
     rating: 5,
     avatar: "https://randomuser.me/api/portraits/women/44.jpg",
   },
@@ -179,7 +201,8 @@ const testimonials: Testimonial[] = [
     name: "Marcus Chen",
     role: "Product Manager",
     company: "InnovateLabs",
-    content: "Our team launched our MVP in record time thanks to UnQWebTemplate. The pre-built pages and AI tools worked right out of the box.",
+    content:
+      "Our team replaced 3 different online tools with UnQTools. The diff checker alone saved us from a costly security incident — we no longer paste code into random sites. 100% private, 100% useful.",
     rating: 5,
     avatar: "https://randomuser.me/api/portraits/men/46.jpg",
   },
@@ -188,7 +211,8 @@ const testimonials: Testimonial[] = [
     name: "Elena Vasquez",
     role: "UI/UX Designer",
     company: "PixelPerfect",
-    content: "The dark mode implementation is the best I've seen in any template. The glassmorphism, the animations, the color palette — everything feels intentional.",
+    content:
+      "The dark mode implementation is the best I've seen in any tool. The glassmorphism, the animations, the color palette — everything feels intentional. And it's all offline!",
     rating: 5,
     avatar: "https://randomuser.me/api/portraits/women/68.jpg",
   },
@@ -197,89 +221,77 @@ const testimonials: Testimonial[] = [
 const glassTestimonials: GlassTestimonial[] = [
   {
     id: 1,
-    initials: "AR",
-    name: "Alex Rivera",
-    role: "Full Stack Developer at TechForge",
-    quote: "UnQWebTemplate transformed my workflow. The component library is extensive, the animations are smooth, and the terracotta theme makes every page look premium.",
+    initials: "DP",
+    name: "Dev Patel",
+    role: "Backend Engineer · CloudNine",
+    quote: "The UUID generator and hash generator are staples in my workflow. Clean, fast, no ads, no signup. Everything runs locally — exactly what I need for sensitive work.",
     tags: [
-      { text: "FEATURED", type: "featured" },
-      { text: "Enterprise", type: "default" },
+      { text: "Daily driver", type: "featured" },
+      { text: "Backend", type: "default" },
     ],
     stats: [
-      { icon: () => <Layers className="h-3.5 w-3.5" />, text: "15+ pages" },
-      { icon: () => <Sparkles className="h-3.5 w-3.5" />, text: "Animations" },
+      { icon: Lock, text: "Private" },
+      { icon: WifiOff, text: "Offline" },
     ],
-    avatarGradient: "linear-gradient(135deg, #c96442, #d97757)",
+    avatarGradient: "linear-gradient(135deg, #f97316, #ef4444)",
   },
   {
     id: 2,
-    initials: "PS",
-    name: "Priya Sharma",
-    role: "Frontend Engineer at DesignCraft",
-    quote: "The code quality is exceptional. Every component is well-typed, well-documented, and easy to customize. This is how templates should be built.",
+    initials: "SK",
+    name: "Sarah Kim",
+    role: "Tech Lead · StartUp Inc",
+    quote: "I installed UnQTools as a PWA and forgot it wasn't a native app. The diff checker is better than paid tools I've used. The terracotta dark mode is gorgeous.",
     tags: [
-      { text: "TypeScript", type: "default" },
-      { text: "shadcn/ui", type: "default" },
+      { text: "PWA installed", type: "featured" },
+      { text: "Tech Lead", type: "default" },
     ],
     stats: [
-      { icon: () => <Component className="h-3.5 w-3.5" />, text: "30+ components" },
-      { icon: () => <MonitorSmartphone className="h-3.5 w-3.5" />, text: "Responsive" },
-    ],
-    avatarGradient: "linear-gradient(135deg, #10b981, #059669)",
-  },
-  {
-    id: 3,
-    initials: "EV",
-    name: "Elena Vasquez",
-    role: "UI/UX Designer at PixelPerfect",
-    quote: "As a designer, I'm incredibly picky about templates. UnQWebTemplate nails the details — the glassmorphism, the motion design, the color system.",
-    tags: [
-      { text: "Design", type: "featured" },
-      { text: "Glassmorphism", type: "default" },
-    ],
-    stats: [
-      { icon: () => <MoonStar className="h-3.5 w-3.5" />, text: "Dark mode" },
-      { icon: () => <BrainCircuit className="h-3.5 w-3.5" />, text: "AI tools" },
+      { icon: ShieldCheck, text: "Secure" },
+      { icon: Zap, text: "Fast" },
     ],
     avatarGradient: "linear-gradient(135deg, #ec4899, #d946ef)",
   },
 ];
 
-// ===== SHOWCASE PAGES DATA =====
-const showcasePages = [
+// ===== CATEGORY QUICK ACCESS =====
+const categoryCards: { href: string; title: string; description: string; icon: typeof Code2; gradient: string; count: number }[] = [
   {
-    href: "/components",
-    title: "Components",
-    description: "30+ interactive UI components with all variants, sizes, and states.",
-    icon: Component,
+    href: "/category/developer",
+    title: "Developer",
+    description: "JSON, Base64, hashes, UUIDs, URL encoding — all the dev essentials.",
+    icon: Code2,
     gradient: "from-primary/20 to-rose-500/20",
-    badge: "Interactive",
+    count: counts.developer ?? 0,
   },
   {
-    href: "/animations",
-    title: "Animations",
-    description: "Morphing cards, parallax scroll, spring physics, and stagger effects.",
-    icon: Sparkles,
+    href: "/category/text",
+    title: "Text",
+    description: "Case conversion, diff, big text, bold, bubble, CSV, ciphers, and more.",
+    icon: Type,
     gradient: "from-amber-500/20 to-orange-500/20",
-    badge: "Cinematic",
+    count: counts.text ?? 0,
   },
   {
-    href: "/cards",
-    title: "Cards",
-    description: "Bento grids, glassmorphism, gradient cards, stats, and post cards.",
-    icon: CreditCard,
+    href: "/category/calculators",
+    title: "Calculators",
+    description: "EMI, mortgage, SIP — full amortization schedules, CSV export.",
+    icon: Calculator,
     gradient: "from-emerald-500/20 to-teal-500/20",
-    badge: "Beautiful",
+    count: counts.calculators ?? 0,
   },
   {
-    href: "/navigation",
-    title: "Navigation",
-    description: "Expandable tabs, macOS dock, breadcrumbs, and floating navbars.",
-    icon: Navigation,
+    href: "/category/image",
+    title: "Image",
+    description: "Color picker + converter, image compressor with bulk ZIP download.",
+    icon: ImageIcon,
     gradient: "from-violet-500/20 to-purple-500/20",
-    badge: "Smooth",
+    count: counts.image ?? 0,
   },
 ];
+
+// ===== FEATURED TOOLS =====
+const featuredToolIds = ["json-formatter", "diff-checker", "uuid-generator", "color-picker", "base64", "word-character-counter"];
+const featuredTools = TOOLS.filter((t) => featuredToolIds.includes(t.id));
 
 // ===== PAGE COMPONENT =====
 
@@ -291,9 +303,9 @@ export default function Home() {
         {/* ===== SECTION 1: CINEMATIC HERO ===== */}
         <section className="relative">
           <HeroGeometric
-            badge="UnQWebTemplate"
-            title1="Craft Digital"
-            title2="Masterpieces"
+            badge="UnQTools"
+            title1="Private tools"
+            title2="that respect you"
           />
           {/* Custom CTA overlay */}
           <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col items-center pb-16 md:pb-24">
@@ -303,8 +315,9 @@ export default function Home() {
               transition={{ delay: 1.4, duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
               className="text-white/40 text-base sm:text-lg max-w-xl text-center mb-8 px-4"
             >
-              A premium Next.js 16 template with 15+ pages, 30+ components,
-              AI tools, and stunning animations. Built with{" "}
+              {toolCount} fast, free, offline-capable browser tools — converters,
+              calculators, generators, formatters. No uploads, no tracking, no
+              accounts. Built with{" "}
               <Heart className="inline h-4 w-4 text-primary fill-primary" /> by
               Sandeep Gaddam.
             </motion.p>
@@ -319,8 +332,8 @@ export default function Home() {
                 size="lg"
                 className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base cursor-pointer touch-target"
               >
-                <Link href="/components">
-                  Explore Showcase <ArrowRight className="h-4 w-4" />
+                <Link href="/tools">
+                  Browse {toolCount} Tools <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button
@@ -329,13 +342,13 @@ export default function Home() {
                 size="lg"
                 className="gap-2 border-white/20 text-white/70 hover:text-white hover:border-white/40 hover:bg-white/5 px-8 text-base cursor-pointer touch-target"
               >
-                <Link href="/animations">View Animations</Link>
+                <Link href="/search">⌘K Search</Link>
               </Button>
             </motion.div>
           </div>
         </section>
 
-        {/* ===== SECTION 2: SHOWCASE PAGES QUICK ACCESS ===== */}
+        {/* ===== SECTION 2: CATEGORY QUICK ACCESS ===== */}
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -352,14 +365,13 @@ export default function Home() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
             >
               <Zap className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-primary font-medium">Showcase Pages</span>
+              <span className="text-sm text-primary font-medium">Browse by Category</span>
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight text-balance">
-              Explore Every Detail
+              Find the right tool
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Dive deep into each aspect of UnQWebTemplate — from interactive components
-              to cinematic animations and stunning card layouts.
+              {toolCount} tools across 4 categories — all running 100% in your browser.
             </p>
           </div>
           <motion.div
@@ -369,27 +381,27 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
           >
-            {showcasePages.map((page) => {
-              const Icon = page.icon;
+            {categoryCards.map((cat) => {
+              const Icon = cat.icon;
               return (
-                <motion.div key={page.href} variants={staggerItem}>
-                  <Link href={page.href} className="block group">
+                <motion.div key={cat.href} variants={staggerItem}>
+                  <Link href={cat.href} className="block group">
                     <motion.div
                       whileHover={{ y: -6, transition: { duration: 0.25 } }}
                       className="card-hover rounded-2xl border bg-card p-6 h-full transition-colors hover:border-primary/30"
                     >
-                      <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${page.gradient} flex items-center justify-center mb-4`}>
+                      <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-4`}>
                         <Icon className="h-6 w-6 text-primary" />
                       </div>
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold">{page.title}</h3>
+                        <h3 className="font-semibold">{cat.title}</h3>
                         <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0">
-                          {page.badge}
+                          {cat.count}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{page.description}</p>
+                      <p className="text-sm text-muted-foreground">{cat.description}</p>
                       <div className="mt-4 flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span>Explore</span>
+                        <span>Browse</span>
                         <ArrowRight className="h-3.5 w-3.5 ml-1" />
                       </div>
                     </motion.div>
@@ -423,8 +435,8 @@ export default function Home() {
               Everything You Need
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              A complete toolkit with pre-built pages, rich components, AI
-              integration, and cinematic animations — all production-ready.
+              A complete toolkit with {toolCount} tools — all production-ready, all
+              private, all offline-capable.
             </p>
           </div>
           <BentoGridWithFeatures features={bentoFeatures} />
@@ -450,7 +462,7 @@ export default function Home() {
         >
           <AnimatedTestimonials
             title="Loved by Developers"
-            subtitle="Don't just take our word for it — hear from developers who've shipped production apps with UnQWebTemplate."
+            subtitle="Don't just take our word for it — hear from developers who use UnQTools daily for sensitive work."
             badgeText="Trusted by builders"
             testimonials={testimonials}
             trustedCompanies={["Vercel", "Stripe", "Figma", "Linear", "Notion"]}
@@ -458,34 +470,7 @@ export default function Home() {
           />
         </motion.section>
 
-        {/* ===== SECTION 6: GLASS TESTIMONIAL SWIPER ===== */}
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={sectionVariants}
-          className="relative w-full py-24 section-padding overflow-hidden bg-black"
-        >
-          <div className="max-w-lg mx-auto text-center mb-10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
-            >
-              <Heart className="h-3.5 w-3.5 text-primary fill-primary" />
-              <span className="text-sm text-primary font-medium">Community Voices</span>
-            </motion.div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 text-balance">What People Say</h2>
-            <p className="text-white/50 text-base text-pretty">Swipe through testimonials from our community</p>
-          </div>
-          <div className="max-w-lg mx-auto" style={{ minHeight: "350px" }}>
-            <TestimonialStack testimonials={glassTestimonials} />
-          </div>
-        </motion.section>
-
-        {/* ===== SECTION 7: PARTICLE TEXT EFFECT ===== */}
+        {/* ===== SECTION 6: FEATURED TOOLS ===== */}
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -493,7 +478,7 @@ export default function Home() {
           variants={sectionVariants}
           className="section-padding py-24"
         >
-          <div className="max-w-4xl mx-auto text-center mb-12">
+          <div className="mb-12 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -501,78 +486,71 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
             >
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-primary font-medium">Interactive Effects</span>
+              <Wand2 className="h-3.5 w-3.5 text-primary" />
+              <span className="text-sm text-primary font-medium">Featured Tools</span>
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight text-balance">
-              Mesmerizing Particle Effects
+              The everyday essentials
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Canvas-powered particle text that morphs between words in real
-              time. Right-click and hold to destroy particles — pure magic.
+              A few of the most-used tools. All run instantly in your browser — no
+              signup, no uploads, no waiting.
             </p>
           </div>
-          <div className="max-w-4xl mx-auto">
-            <ParticleTextEffect words={["UNQ", "WEB", "BUILD", "CREATE", "DESIGN"]} />
-          </div>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          >
+            {featuredTools.map((tool) => (
+              <motion.div key={tool.id} variants={staggerItem}>
+                <Link href={`/tools/${tool.id}`} className="block group">
+                  <motion.div
+                    whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                    className="card-hover rounded-2xl border bg-card p-6 h-full transition-colors hover:border-primary/30"
+                  >
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
+                      <Wand2 className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold mb-1">{tool.name}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{tool.description}</p>
+                    <div className="mt-4 flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span>Open tool</span>
+                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    </div>
+                  </motion.div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.section>
 
-        {/* ===== SECTION 8: CTA SECTION ===== */}
+        {/* ===== SECTION 7: GLASS TESTIMONIAL SWIPER ===== */}
         <motion.section
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={sectionVariants}
+          className="section-padding py-12"
+        >
+          <TestimonialStack testimonials={glassTestimonials} />
+        </motion.section>
+
+        {/* ===== SECTION 8: PARTICLE TEXT EFFECT ===== */}
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInVariants}
           className="section-padding py-24"
         >
-          <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-orange-500/10" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(201,100,66,0.15),transparent_70%)]" />
-            <div className="absolute inset-0 border border-primary/20 rounded-3xl" />
-            <div className="relative px-8 py-16 md:px-16 md:py-20 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 tracking-tight text-balance">
-                Ready to Build Something <span className="text-primary">UnQ</span>?
-              </h2>
-              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 text-pretty">
-                Stop building from scratch. Start with a template that&apos;s
-                production-ready, beautifully designed, and endlessly customizable.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base cursor-pointer touch-target"
-                >
-                  <Link href="/components">
-                    Explore Components <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="gap-2 px-8 text-base cursor-pointer touch-target"
-                >
-                  <Link href="/animations">View Animations</Link>
-                </Button>
-              </div>
-              <p className="mt-8 text-sm text-muted-foreground/60">
-                Built with Next.js 16, TypeScript, Tailwind CSS & shadcn/ui
-              </p>
-            </div>
-          </div>
+          <ParticleTextEffect text="PRIVATE" />
         </motion.section>
 
         {/* ===== SECTION 9: FOOTER ===== */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={fadeInVariants}
-          className="mt-auto"
-        >
-          <Footer />
-        </motion.div>
+        <Footer />
       </main>
     </div>
   );

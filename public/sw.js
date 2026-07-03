@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unq-web-template-v1';
+const CACHE_NAME = 'unqtools-v6-template-v1';
 const OFFLINE_URL = '/';
 
 const PRECACHE_ASSETS = [

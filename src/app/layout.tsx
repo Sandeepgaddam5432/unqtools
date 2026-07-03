@@ -16,20 +16,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UnQWebTemplate - Premium Next.js UI Template",
+  title: "UnQTools — Private, offline browser tools",
   description:
-    "UnQWebTemplate - A cinematic, modern Next.js web template with 15+ showcase pages, AI tools, glassmorphism UI, and stunning animations. Built with love by Sandeep Gaddam.",
+    "UnQTools is a 100% static, privacy-first, offline-capable PWA of fast browser-based tools — converters, calculators, generators, formatters. No uploads, no tracking, no accounts.",
   keywords: [
-    "Next.js",
-    "TypeScript",
-    "Tailwind CSS",
-    "shadcn/ui",
-    "Web Template",
-    "UI Components",
-    "Framer Motion",
-    "Glassmorphism",
+    "online tools",
+    "browser tools",
+    "privacy-first",
+    "offline tools",
     "PWA",
-    "UnQWebTemplate",
+    "converters",
+    "calculators",
+    "generators",
+    "formatters",
+    "developer tools",
+    "text tools",
+    "UnQTools",
   ],
   authors: [{ name: "Sandeep Gaddam" }],
   icons: {

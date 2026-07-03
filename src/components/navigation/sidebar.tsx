@@ -7,19 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Home,
-  LayoutDashboard,
   Wand2,
   Component,
-  Sparkles,
-  CreditCard,
-  Navigation,
-  FileText,
-  Table2,
-  MessageSquare,
-  Loader2,
-  Atom,
   Search,
-  CalendarClock,
   Info,
   ChevronLeft,
   ChevronRight,
@@ -28,11 +18,12 @@ import {
   Heart,
   Menu,
   X,
-  Layers,
-  Rocket,
-  Megaphone,
   LayoutGrid,
   Download,
+  Code2,
+  Type,
+  Calculator,
+  Image as ImageIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -41,34 +32,26 @@ const navSections = [
   {
     label: "Main",
     items: [
-      { href: "/", label: "Landing", icon: Home },
-      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/explorer", label: "Explorer", icon: Layers },
-      { href: "/tools", label: "AI Tools", icon: Wand2 },
+      { href: "/", label: "Home", icon: Home },
+      { href: "/tools", label: "All Tools", icon: LayoutGrid },
+      { href: "/search", label: "Search", icon: Search },
     ],
   },
   {
-    label: "Pages",
+    label: "Categories",
     items: [
-      { href: "/saas", label: "SaaS Landing", icon: Rocket },
-      { href: "/marketing", label: "Marketing", icon: Megaphone },
-      { href: "/blocks", label: "Blocks Gallery", icon: LayoutGrid },
+      { href: "/category/developer", label: "Developer", icon: Code2 },
+      { href: "/category/text", label: "Text", icon: Type },
+      { href: "/category/calculators", label: "Calculators", icon: Calculator },
+      { href: "/category/image", label: "Image", icon: ImageIcon },
     ],
   },
   {
     label: "Showcase",
     items: [
       { href: "/components", label: "Components", icon: Component },
-      { href: "/animations", label: "Animations", icon: Sparkles },
-      { href: "/cards", label: "Cards", icon: CreditCard },
-      { href: "/navigation", label: "Navigation", icon: Navigation },
-      { href: "/forms", label: "Forms", icon: FileText },
-      { href: "/data-display", label: "Data Display", icon: Table2 },
-      { href: "/feedback", label: "Feedback", icon: MessageSquare },
-      { href: "/loaders", label: "Loaders", icon: Loader2 },
-      { href: "/effects", label: "Effects", icon: Atom },
-      { href: "/search", label: "Search", icon: Search },
-      { href: "/calendar-clock", label: "Calendar & Clock", icon: CalendarClock },
+      { href: "/animations", label: "Animations", icon: Wand2 },
+      { href: "/cards", label: "Cards", icon: LayoutGrid },
     ],
   },
   {
@@ -105,10 +88,10 @@ export function SidebarNav() {
               className="overflow-hidden whitespace-nowrap"
             >
               <h1 className="text-base font-bold tracking-tight">
-                UnQ<span className="text-primary">Web</span>
+                UnQ<span className="text-primary">Tools</span>
               </h1>
               <p className="text-[10px] text-muted-foreground leading-tight">
-                Template
+                Private · Offline
               </p>
             </motion.div>
           )}
