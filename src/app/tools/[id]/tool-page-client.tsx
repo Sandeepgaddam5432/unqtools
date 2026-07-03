@@ -53,6 +53,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "hash-generator": () => import("@/tools/developer/hash-generator/ui"),
   "url-encoder": () => import("@/tools/developer/url-encoder/ui"),
   "uuid-generator": () => import("@/tools/developer/uuid-generator/ui"),
+  "emi-calculator": () => import("@/tools/calculators/emi-calculator/ui"),
+  "mortgage-calculator": () => import("@/tools/calculators/mortgage-calculator/ui"),
+  "sip-calculator": () => import("@/tools/calculators/sip-calculator/ui"),
+  "color-picker": () => import("@/tools/image/color-picker/ui"),
+  "image-compressor": () => import("@/tools/image/image-compressor/ui"),
 };
 
 interface ToolPageClientProps {
