@@ -61,7 +61,7 @@ self.addEventListener('fetch', (event) => {
 // Push notification support
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
-  const title = data.title || 'UnQWebTemplate';
+  const title = data.title || 'UnQTools';
   const options = {
     body: data.body || 'Check out the latest updates!',
     icon: '/logo.svg',
