@@ -14,7 +14,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Duplicate Lines Remover — keep first/last, sort, report | UnQTools",
     faq: [

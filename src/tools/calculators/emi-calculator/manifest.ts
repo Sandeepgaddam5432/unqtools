@@ -21,7 +21,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "calculator",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Loan / EMI Calculator — With Prepayment & Amortization | UnQTools",
     faq: [

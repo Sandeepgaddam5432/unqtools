@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "hash",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Caesar Cipher — encrypt, decrypt, brute-force solver | UnQTools",
     faq: [

@@ -45,19 +45,47 @@
 
 ---
 
-## 2. Locked tech stack (do NOT change without owner approval)
+## 2. Tech stack (v6.0 "UnQTemplate" — owner-authorized stack unlock)
+
+> **v6.0 stack unlock (2026-07-03):** The Astro + Preact + Workbox stack rule is REVOKED.
+> The new stack is the owner's personal template (`UnQWebTemplate`) stack, adopted verbatim.
+> Design source of truth = `UnQWebTemplate` repo. ZERO creative reinterpretation.
 
 | Layer         | Choice                                                                                                     |
 | ------------- | ---------------------------------------------------------------------------------------------------------- |
-| Framework     | **Astro** (static output) + **Preact islands**                                                             |
-| Language      | **TypeScript strict** (`strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`) |
-| Styling       | **Tailwind CSS** + design tokens (`--unq-*`)                                                               |
-| Heavy compute | **Web Workers** + **WASM** (`ffmpeg.wasm`, `pdf-lib`, `libarchive`, …) — lazy-loaded                       |
-| PWA           | **Workbox** service worker + web app manifest                                                              |
+| Framework     | **Next.js 16** (App Router, `output: 'export'` — 100% static) + **React 19**                               |
+| Language      | **TypeScript 5** (strict)                                                                                  |
+| Styling       | **Tailwind CSS 4** + shadcn/ui design tokens                                                               |
+| Components    | **shadcn/ui** (Radix primitives) + **Magic UI / 21st.dev** effects                                         |
+| Motion        | **Framer Motion 12** (with `useReducedMotion` / `MotionConfig` for a11y)                                   |
+| Icons         | **Lucide React**                                                                                            |
+| Theming       | **next-themes** (dark default, terracotta/copper palette)                                                  |
+| Toasts        | **Sonner**                                                                                                 |
+| Heavy effects | **Three.js** + **cobe** (globe) — lazy/dynamic imports only                                                |
+| PWA           | **next-pwa** + custom service worker (`public/sw.js`) + manifest (`public/manifest.json`)                  |
 | Unit tests    | **Vitest**                                                                                                 |
 | e2e tests     | **Playwright** (+ axe-core a11y assertions)                                                                |
-| Lint / format | **ESLint** + **Prettier**                                                                                  |
+| Lint / format | **ESLint** (eslint-config-next) + **Prettier**                                                             |
 | CI            | **GitHub Actions**                                                                                         |
+
+### Non-negotiable product principles (still apply)
+
+1. **100% static** — `output: 'export'`. No server runtime, no API routes, no SSR.
+2. **No Prisma/SQLite/DB** — UnQTools has no backend.
+3. **Privacy-first** — no tracking, no accounts, no external calls at runtime.
+4. **Offline PWA** — installable, works without network after first load.
+5. **Accessible** — WCAG 2.1 AA, keyboard-first, `prefers-reduced-motion` respected.
+6. **Deterministic builds** — `npm ci` reproducible.
+7. **Proprietary** — all rights reserved. See `LICENSE`. Not open source.
+
+### Design fidelity rule (the whole point)
+
+- The design must be EXACTLY the template's. Same colors, fonts, spacing, components,
+  effects, nav, sidebar, dark/light behavior, animations. ZERO creative reinterpretation.
+- Never restyle a template component. Never swap its palette. Never "simplify" an effect.
+- When building any UnQTools page, FIRST find the closest template page/section/block and
+  copy it as-is, then swap only the content.
+- If something is genuinely missing, compose from existing template components — do not invent new styles.
 
 ---
 
@@ -191,19 +219,13 @@ If it matters, it is committed to GitHub before the session ends.
 
 ---
 
-## 12. Phase map
+## 12. Phase map (v6.0 "UnQTemplate")
 
-- **Phase 0 — Scaffold** (no tools yet): Astro + Preact + Tailwind + TS strict;
-  ESLint + Prettier; pinned deps; GitHub Actions CI green; app shell
-  (header/footer/theme toggle/routing/global fuzzy search); shared component
-  library; Tool Module Contract interface + tool registry; Workbox PWA.
-  **Definition of done:** `npm ci && npm run lint && npm run test && npm run build`
-  all green; empty shell deployed; PWA installable + works offline;
-  Tool Module Contract ready.
-- **Phase 1 — Reference tool:** implement the **JSON Formatter** exactly per
-  doc #10 spec, end-to-end (UI + worker + tests + a11y + SEO).
-- **Phase 2+ — v1 core set:** ship the catalog from doc #3, one tool per PR,
-  following the contract.
+- **Phase 0 — Adopt template as base** ✅ DONE (2026-07-03): Cloned `UnQWebTemplate`, created `v6-template` branch, replaced app codebase with template's (preserved: 22 tool logic modules + 529 unit tests + lib + LICENSE + AGENTS.md + STATE.md + CI). Configured `output: 'export'`. Verified `next build` produces static `out/` (21 pages) + all routes serve 200 from plain static server. Lint 0 errors, 529/529 tests green.
+- **Phase 1 — UnQTools IA on template design**: Rebuild home (template Landing structure + UnQTools content), tools directory (template grid/card patterns + 22 tools), category pages, ⌘K search (template's ActionSearchBar/command.tsx wired to fuzzy tool search), navigation (template sidebar patterns + UnQTools IA). Commit + PUSH per page.
+- **Phase 2 — Port the 22 tools**: Rebuild each tool's UI as React client components using ONLY template components (shadcn inputs, buttons, cards, tabs, toasts). Layout: tool header → inputs → action bar (Run/Copy/Download/Reset) → output → collapsible advanced options. Batches of 3–5 tools; commit + PUSH per batch. Re-add `component` field to manifests.
+- **Phase 3 — PWA + performance sanity**: Verify manifest + SW on static export. Heavy libs (Three.js, particles) as lazy/dynamic imports. New budgets: tool pages ≤ 250 KB gz first-load; Lighthouse perf ≥ 85 mobile on tools, ≥ 75 on home.
+- **Phase 4 — Gates + proof**: lint 0 · tests green · build green · every route 200 · 404 works · zero-overflow (320/390/768/1440) · axe-core light+dark clean · reduced-motion respected · screenshots (home + tools dir + 2 tools × desktop + mobile × light + dark) · VLM verdict "looks EXACTLY like UnQWebTemplate — terracotta cinematic premium" · mirror v6.0 design note into `unqtools-docs/DESIGN-SYSTEM.md`. Do NOT merge to `main` — owner reviews first.
 
 ---
 

@@ -8,7 +8,6 @@ export const manifest: ToolManifest = {
   keywords: ["csv to list", "csv to text", "column to list", "csv flatten", "csv converter"],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "CSV to Text List — column extract, flatten, dedupe | UnQTools",
     faq: [

@@ -1,8 +1,14 @@
-User-agent: *
+User-agent: Googlebot
 Allow: /
 
-# Disallow the service worker and 404 page from indexing
-Disallow: /sw.js
-Disallow: /404.html
+User-agent: Bingbot
+Allow: /
 
-Sitemap: https://unqtools.pages.dev/sitemap-index.xml
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /

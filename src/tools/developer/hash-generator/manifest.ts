@@ -9,7 +9,6 @@ export const manifest: ToolManifest = {
   keywords: ["hash", "sha1", "sha256", "sha384", "sha512", "checksum", "digest", "web crypto"],
   icon: "hash",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Hash Generator — SHA-1 / SHA-256 / SHA-512 | UnQTools",
     faq: [

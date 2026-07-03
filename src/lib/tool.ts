@@ -1,8 +1,10 @@
 /**
  * Tool Module Contract — the single interface every UnQTools tool implements.
  * See: unqtools-docs / "8 Tool Module Contract & Architecture".
+ *
+ * v6.0: migrated from Preact to React (Next.js 16 App Router).
  */
-import type { ComponentType } from "preact";
+import type { ComponentType } from "react";
 
 export type ToolCategory =
   | "pdf"
@@ -66,8 +68,9 @@ export interface ToolManifest {
   icon: string;
   /** Does this tool need network? Default false (offline-capable) */
   requiresNetwork?: boolean;
-  /** Lazy-loaded interactive UI (Preact island) */
-  component: () => Promise<{ default: ComponentType }>;
+  /** Lazy-loaded interactive UI (React client component).
+   *  Optional in Phase 0 — added back in Phase 2 when UIs are rebuilt. */
+  component?: () => Promise<{ default: ComponentType<Record<string, unknown>> }>;
   /** Optional: SEO long description / FAQ for the tool page */
   seo?: { title?: string; faq?: { q: string; a: string }[] };
   /** Status for the build tracker */

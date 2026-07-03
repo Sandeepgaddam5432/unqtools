@@ -8,7 +8,6 @@ export const manifest: ToolManifest = {
   keywords: ["csv to markdown", "csv converter", "markdown table", "tsv to markdown"],
   icon: "hash",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "CSV to Markdown Table — GFM, HTML, Jira | UnQTools",
     faq: [

@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Big Text Generator — fullwidth & block letters, copy-paste | UnQTools",
     faq: [

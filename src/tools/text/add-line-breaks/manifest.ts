@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Add Line Breaks — word wrap, split on delimiter, every N chars/words | UnQTools",
     faq: [

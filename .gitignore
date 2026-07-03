@@ -1,7 +1,11 @@
 # Dependencies
 node_modules/
 
-# Build output
+# Next.js build output
+.next/
+out/
+
+# Astro (legacy)
 dist/
 .astro/
 
@@ -28,3 +32,4 @@ test-results/
 # Cache
 .cache/
 .eslintcache
+.next/cache/

@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Add Prefix/Suffix to Lines — bulk wrap, numbered, regex-conditional | UnQTools",
     faq: [

@@ -23,7 +23,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "home",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Mortgage Calculator — Full PITI, PMI & Payoff | UnQTools",
     faq: [

@@ -13,7 +13,6 @@ export const manifest: ToolManifest = {
   keywords: ["json", "format", "prettify", "validate", "minify", "beautify", "lint"],
   icon: "braces",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "JSON Formatter – Free Online JSON Beautifier & Validator | UnQTools",
     faq: [

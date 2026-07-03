@@ -29,7 +29,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "image",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Image Compressor – Bulk, Private, AVIF/WebP | UnQTools",
     faq: [

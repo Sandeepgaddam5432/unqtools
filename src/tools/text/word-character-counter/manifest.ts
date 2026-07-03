@@ -24,7 +24,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Word & Character Counter — Live, Unicode-Correct & Private | UnQTools",
     faq: [

@@ -9,7 +9,6 @@ export const manifest: ToolManifest = {
   keywords: ["uuid", "guid", "v4", "random uuid", "rfc 4122", "unique id", "identifier"],
   icon: "fingerprint",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "UUID Generator — RFC 4122 v4 UUIDs in Bulk | UnQTools",
     faq: [

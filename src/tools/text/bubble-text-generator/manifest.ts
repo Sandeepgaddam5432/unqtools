@@ -9,7 +9,6 @@ export const manifest: ToolManifest = {
   keywords: ["bubble text", "circled text", "bubble letters", "bubble font", "circled unicode"],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Bubble Text Generator — circled & squared Unicode | UnQTools",
     faq: [

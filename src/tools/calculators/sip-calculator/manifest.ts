@@ -25,7 +25,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "trending-up",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "SIP Calculator — Mutual Fund SIP Returns & Step-Up | UnQTools",
     faq: [

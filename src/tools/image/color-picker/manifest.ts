@@ -18,7 +18,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "palette",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Color Picker & Converter — HEX, RGB, HSL, HSV | UnQTools",
     faq: [

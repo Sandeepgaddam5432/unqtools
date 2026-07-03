@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, v6-template]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
   build:
     name: Lint + Test + Build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,10 +29,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
 
-      - name: Install (reproducible)
+      - name: Install
         run: npm ci
 
       - name: Lint
@@ -41,14 +41,14 @@ jobs:
       - name: Unit tests
         run: npm run test
 
-      - name: Build
+      - name: Build (static export)
         run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: out
+          path: out/
           retention-days: 7
 
   deploy:
@@ -67,7 +67,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
 
       - name: Install + Build
@@ -78,7 +78,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/
+          path: out/
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -1,0 +1,29 @@
+{
+  "name": "UnQWebTemplate - Premium Next.js UI Template",
+  "short_name": "UnQWeb",
+  "description": "A cinematic, modern Next.js web template with 15+ showcase pages, AI tools, glassmorphism UI, and stunning animations. Built with ❤️ by Sandeep Gaddam.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#262624",
+  "theme_color": "#d97757",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["development", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

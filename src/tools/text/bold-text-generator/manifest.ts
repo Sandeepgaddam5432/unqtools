@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Bold Text Generator — serif, sans, script, fraktur Unicode bold | UnQTools",
     faq: [

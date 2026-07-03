@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "link",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "URL Encoder / Decoder — Percent-Encoding | UnQTools",
     faq: [

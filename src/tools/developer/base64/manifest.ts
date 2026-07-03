@@ -12,7 +12,6 @@ export const manifest: ToolManifest = {
   keywords: ["base64", "encode", "decode", "url-safe", "atob", "btoa", "data url"],
   icon: "binary",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Base64 Encoder / Decoder — UTF-8 Safe, URL-Safe | UnQTools",
     faq: [

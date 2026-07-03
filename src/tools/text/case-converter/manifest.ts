@@ -18,7 +18,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "type",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Text Case Converter — UPPER / lower / Title / camel / snake / kebab | UnQTools",
     faq: [

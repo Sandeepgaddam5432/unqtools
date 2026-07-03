@@ -16,7 +16,6 @@ export const manifest: ToolManifest = {
   ],
   icon: "hash",
   requiresNetwork: false,
-  component: () => import("./ui"),
   seo: {
     title: "Diff Checker — side-by-side, unified, word/char diff | UnQTools",
     faq: [

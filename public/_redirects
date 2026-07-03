@@ -1,13 +1,3 @@
-# Cloudflare Pages redirects — https://developers.cloudflare.com/pages/configuration/redirects/
-#
-# IMPORTANT: UnQTools is a 100% static Astro site. Every route (homepage,
-# every tool page, every category page, the 404) is prerendered to its own
-# HTML file in dist/. We do NOT use a SPA catch-all (`/* /index.html 200`)
-# because that would defeat static SEO and hide 404s.
-#
-# This file exists only to host the few real permanent redirects we want.
-# Empty rules = no redirects = Cloudflare serves the file at the requested
-# path, falling back to /404.html for missing routes.
-
-# (No redirects configured. Cloudflare Pages will serve /404.html for any
-# path that doesn't exist as a static file in dist/.)
+# Cloudflare Pages _redirects
+# SPA fallback - redirect 404s to index for client-side routing
+/ /index.html 200
