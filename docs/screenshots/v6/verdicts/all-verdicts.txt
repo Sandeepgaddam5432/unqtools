@@ -1,0 +1,144 @@
+
+=== home-desktop-dark ===
+1. The design aligns with UnQWebTemplate’s terracotta/copper palette (#c96442/#d97757) and dark mode, with glassmorphism and cinematic styling.  
+2. Layout is balanced: adequate whitespace, no overflow, and all elements are properly contained.  
+3. Typography (Geist), color (copper accents), and contrast are appropriate—text is readable, and accents are used sparingly.  
+4. No specific defects: no overflowing text, misaligned elements, or contrast issues.  
+
+VERDICT: PASS
+
+
+=== home-desktop-light ===
+1. The design aligns with UnQWebTemplate’s terracotta/copper palette, glassmorphism, and dark mode, but lacks cinematic aurora effects and full sophistication.  
+2. Layout is balanced with adequate whitespace, no overflow, and no clipped elements.  
+3. Typography (Geist) and color (terracotta accent) are appropriate, with good contrast and sparing accent use.  
+4. No specific defects (overflowing text, misalignment, or dead regions) are visible.  
+
+VERDICT: PASS
+
+
+=== home-mobile-dark ===
+1. Yes, the design matches UnQWebTemplate’s terracotta/copper palette, glassmorphism, and cinematic dark mode.  
+2. Layout is balanced with adequate whitespace, no overflow or clipped elements.  
+3. Typography (Geist), terracotta accent, and contrast are appropriate (text readable, accent used effectively).  
+4. No specific defects (overflowing text, misalignment, or contrast issues).  
+
+VERDICT: PASS
+
+
+=== home-mobile-light ===
+1. No, the design lacks the terracotta/copper palette (#c96442/#d97757) and glassmorphism depth of UnQWebTemplate; the color scheme is darker with muted tones.  
+2. Yes, the layout is balanced with adequate whitespace, no overflow, and no clipped elements.  
+3. Typography (Geist) is present, but the copper accent is missing; contrast is readable but not aligned with the template’s warm copper theme.  
+4. No specific defects (overflowing text, misaligned elements, or dead regions), but the color palette deviates from the source.  
+
+VERDICT: FAIL
+
+
+=== tool-diff-checker-desktop-dark ===
+1. Yes, the design matches UnQWebTemplate with terracotta/copper palette, glassmorphism, and dark mode sophistication.  
+2. Layout is balanced with adequate whitespace, no overflow or clipped elements.  
+3. Typography (Geist), color (terracotta/copper accent), and contrast are appropriate and readable.  
+4. No specific defects (overflowing text, misalignment, or contrast issues).  
+
+VERDICT: PASS
+
+
+=== tool-diff-checker-desktop-light ===
+1. No, the design lacks the terracotta/copper palette, glassmorphism, and aurora effects of UnQWebTemplate, appearing overly minimal and flat.  
+2. Layout is balanced with adequate whitespace, no overflow or clipped elements.  
+3. Typography (Geist) and contrast are appropriate, but the terracotta/copper accent is missing, reducing the cinematic premium feel.  
+4. No specific defects (overflowing text, misalignment, or contrast issues) are present.  
+
+VERDICT: FAIL
+
+
+=== tool-diff-checker-mobile-dark ===
+1. Yes, the design matches UnQWebTemplate’s terracotta/copper palette, glassmorphism, and dark mode aesthetic.  
+2. Layout is balanced with adequate whitespace, no overflow, and no clipped elements.  
+3. Typography (Geist), copper accents, and contrast are appropriate—text is readable, accents are used sparingly.  
+4. No specific defects (overflowing text, misaligned elements, or contrast issues).  
+
+VERDICT: PASS
+
+
+=== tool-diff-checker-mobile-light ===
+1. The design aligns with UnQWebTemplate’s terracotta/copper palette (#c96442/#d97757) and glassmorphism, but lacks cinematic aurora effects and sophisticated dark/light mode integration.  
+2. Layout is balanced with adequate whitespace, no overflow, and no clipped elements.  
+3. Typography (Geist) and color (terracotta accent) are appropriate; contrast is readable, though accent use is minimal.  
+4. No specific defects (overflowing text, misalignment, or dead regions); a “Sample loaded” toast is present but not a defect.  
+
+VERDICT: PASS
+
+
+=== tool-json-formatter-desktop-dark ===
+1. Yes, the design matches UnQWebTemplate’s terracotta/copper palette, glassmorphism, and cinematic aesthetic.  
+2. Layout is balanced with adequate whitespace, no overflow, and no clipped elements.  
+3. Typography (Geist), color (terracotta/copper accents), and contrast are appropriate and readable.  
+4. No specific defects (overflowing text, misalignment, or contrast issues).  
+
+VERDICT: PASS
+
+
+=== tool-json-formatter-desktop-light ===
+1. No, the design lacks the terracotta/copper palette, glassmorphism, and aurora effects of UnQWebTemplate; it uses a plain light theme without cinematic sophistication.  
+2. Layout is balanced with adequate whitespace, no overflow, and no broken/clipped elements.  
+3. Typography (Geist) and color (terracotta accent) are appropriate, but contrast is weaker than the template’s premium dark/light mode.  
+4. No specific defects (overflowing text, misaligned elements, or dead regions) are visible.  
+
+VERDICT: FAIL
+
+
+=== tool-json-formatter-mobile-dark ===
+1. Yes, the design matches UnQWebTemplate’s terracotta/copper palette, glassmorphism, and cinematic aesthetic.  
+2. Yes, the layout is balanced with adequate whitespace and no overflow/clipped elements.  
+3. Yes, typography (Geist), color (terracotta accent), and contrast are appropriate and readable.  
+4. No specific defects (overflowing text, misalignment, or contrast issues) are present.  
+
+PASS
+
+
+=== tool-json-formatter-mobile-light ===
+1. No, the design lacks the terracotta/copper palette, glassmorphism depth, and cinematic premium feel of UnQWebTemplate.  
+2. Yes, the layout is balanced with adequate whitespace and no obvious overflow/clipped elements.  
+3. Typography (Geist) and contrast are appropriate, but the color scheme does not match the terracotta/copper accent.  
+4. No specific defects (overflowing text, misaligned elements, or contrast issues) are visible.  
+
+VERDICT: FAIL
+
+
+=== tools-directory-desktop-dark ===
+1. Yes, the design matches UnQWebTemplate’s terracotta/copper palette, glassmorphism, and cinematic aesthetic.  
+2. Layout is balanced with adequate whitespace, no overflow or clipped elements.  
+3. Typography (Geist), color (terracotta/copper accent), and contrast are appropriate and readable.  
+4. No specific defects (overflowing text, misalignment, or contrast issues).  
+
+VERDICT: PASS
+
+
+=== tools-directory-desktop-light ===
+1. No, the design lacks the terracotta/copper palette, glassmorphism, and aurora effects of UnQWebTemplate; it uses a plain light theme with orange accents instead.  
+2. Yes, the layout is balanced with adequate whitespace, no overflow, and no clipped elements.  
+3. Typography (Geist) and contrast are appropriate, but the color scheme deviates from the terracotta/copper palette.  
+4. No specific defects (overflowing text, misalignment, or dead regions), but the color scheme does not match the design source.  
+
+VERDICT: FAIL
+
+
+=== tools-directory-mobile-dark ===
+1. Yes, the design matches UnQWebTemplate’s terracotta/copper palette, glassmorphism, and cinematic dark mode.  
+2. Yes, layout is balanced with adequate whitespace, no overflow or clipped elements.  
+3. Yes, typography (Geist), color (terracotta/copper accent), and contrast are appropriate and readable.  
+4. No specific defects (overflowing text, misalignment, or contrast issues).  
+
+VERDICT: PASS
+
+
+=== tools-directory-mobile-light ===
+1. No, the design lacks the terracotta/copper palette, glassmorphism, and aurora effects of UnQWebTemplate.  
+2. Layout is balanced with adequate whitespace, no overflow or clipped elements.  
+3. Typography (Geist) and contrast are appropriate, but color palette deviates from the terracotta/copper accent.  
+4. No specific defects (overflowing text, misalignment, dead regions, or contrast issues).  
+
+VERDICT: FAIL
+
