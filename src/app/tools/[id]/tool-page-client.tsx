@@ -58,6 +58,18 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "sip-calculator": () => import("@/tools/calculators/sip-calculator/ui"),
   "color-picker": () => import("@/tools/image/color-picker/ui"),
   "image-compressor": () => import("@/tools/image/image-compressor/ui"),
+  "add-line-breaks": () => import("@/tools/text/add-line-breaks/ui"),
+  "add-prefix-suffix": () => import("@/tools/text/add-prefix-suffix/ui"),
+  "big-text-generator": () => import("@/tools/text/big-text-generator/ui"),
+  "bold-text-generator": () => import("@/tools/text/bold-text-generator/ui"),
+  "bubble-text-generator": () => import("@/tools/text/bubble-text-generator/ui"),
+  "caesar-cipher": () => import("@/tools/text/caesar-cipher/ui"),
+  "case-converter": () => import("@/tools/text/case-converter/ui"),
+  "csv-to-markdown": () => import("@/tools/text/csv-to-markdown/ui"),
+  "csv-to-text-list": () => import("@/tools/text/csv-to-text-list/ui"),
+  "diff-checker": () => import("@/tools/text/diff-checker/ui"),
+  "duplicate-lines-remover": () => import("@/tools/text/duplicate-lines-remover/ui"),
+  "word-character-counter": () => import("@/tools/text/word-character-counter/ui"),
 };
 
 interface ToolPageClientProps {
