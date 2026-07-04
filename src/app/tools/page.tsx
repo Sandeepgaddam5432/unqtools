@@ -108,7 +108,7 @@ export default function ToolsPage() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
             >
               <Layers className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-primary font-medium">{TOOLS.length} Tools Available</span>
+              <span className="text-sm text-foreground font-medium">{TOOLS.length} Tools Available</span>
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
@@ -139,7 +139,7 @@ export default function ToolsPage() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="flex flex-wrap items-center gap-3 mb-8"
             >
-              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1">
+              <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
                 <Lock className="h-3 w-3" /> 100% Private
               </Badge>
               <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1">
@@ -186,8 +186,8 @@ export default function ToolsPage() {
                 onClick={() => setActiveCategory("all")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                   activeCategory === "all"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                    ? "bg-primary text-primary-foreground dark:!bg-[#bb5435] dark:text-white"
+                    : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 All ({TOOLS.length})
@@ -202,8 +202,8 @@ export default function ToolsPage() {
                     onClick={() => setActiveCategory(cat)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                       activeCategory === cat
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                        ? "bg-primary text-primary-foreground dark:!bg-[#bb5435] dark:text-white"
+                        : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -255,7 +255,7 @@ export default function ToolsPage() {
                             {tool.description}
                           </p>
                           <div className="flex items-center justify-between">
-                            <Badge className="bg-muted text-muted-foreground border-border text-[10px] px-1.5 py-0">
+                            <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
                               {CATEGORY_LABELS[tool.category].split(" ")[0]}
                             </Badge>
                             <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">

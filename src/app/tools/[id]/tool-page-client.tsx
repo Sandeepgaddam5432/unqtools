@@ -131,7 +131,7 @@ export function ToolPageClient({
               <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                 <Icon className="h-6 w-6 text-primary" />
               </div>
-              <Badge className="bg-primary/10 text-primary border-primary/20">
+              <Badge className="bg-primary/15 text-foreground border-primary/20">
                 {categoryLabel.split(" ")[0]}
               </Badge>
               <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1">

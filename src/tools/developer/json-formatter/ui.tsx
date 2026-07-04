@@ -124,7 +124,7 @@ export default function JsonFormatter() {
                 value={String(indent)}
                 onValueChange={(v) => setIndent(v === "tab" ? -1 : Number(v))}
               >
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32" aria-label="Indent">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

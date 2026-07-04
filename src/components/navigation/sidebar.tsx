@@ -108,7 +108,7 @@ export function SidebarNav() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60"
+                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/80"
                 >
                   {section.label}
                 </motion.p>
@@ -126,7 +126,7 @@ export function SidebarNav() {
                     className={cn(
                       "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 group relative",
                       active
-                        ? "bg-primary/10 text-primary"
+                        ? "bg-primary/15 text-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >
@@ -204,7 +204,7 @@ export function SidebarNav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground/60"
+              className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground/80"
             >
               <span>Built with</span>
               <Heart className="h-3 w-3 text-red-500 fill-red-500" />

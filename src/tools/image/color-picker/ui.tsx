@@ -53,30 +53,36 @@ export default function ColorPicker() {
             />
             <div className="flex flex-col gap-1">
               <Label className="text-xs text-muted-foreground">HEX</Label>
-              <Input value={hex} onChange={(e) => updateFromHex(e.target.value)} className="font-mono w-32" />
+              <Input value={hex} onChange={(e) => updateFromHex(e.target.value)} className="font-mono w-32" aria-label="HEX color value" />
             </div>
             <div className="flex flex-col gap-1">
-              <Label className="text-xs text-muted-foreground">RGB</Label>
+              <Label className="text-xs text-muted-foreground" htmlFor="cp-rgb">RGB</Label>
               <Input
+                id="cp-rgb"
                 readOnly
                 value={`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`}
                 className="font-mono w-40"
+                aria-label="RGB color value"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <Label className="text-xs text-muted-foreground">HSL</Label>
+              <Label className="text-xs text-muted-foreground" htmlFor="cp-hsl">HSL</Label>
               <Input
+                id="cp-hsl"
                 readOnly
                 value={`hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%)`}
                 className="font-mono w-40"
+                aria-label="HSL color value"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <Label className="text-xs text-muted-foreground">HSV</Label>
+              <Label className="text-xs text-muted-foreground" htmlFor="cp-hsv">HSV</Label>
               <Input
+                id="cp-hsv"
                 readOnly
                 value={`hsv(${Math.round(hsv.h)}, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%)`}
                 className="font-mono w-40"
+                aria-label="HSV color value"
               />
             </div>
             <div className="ml-auto">
@@ -127,7 +133,7 @@ export default function ColorPicker() {
                   className="h-10 w-12 rounded border cursor-pointer"
                   aria-label="Foreground color"
                 />
-                <Input value={fgHex} onChange={(e) => setFgHex(e.target.value)} className="font-mono" />
+                <Input value={fgHex} onChange={(e) => setFgHex(e.target.value)} className="font-mono" aria-label="Foreground HEX color" />
               </div>
             </div>
             <div>
@@ -140,7 +146,7 @@ export default function ColorPicker() {
                   className="h-10 w-12 rounded border cursor-pointer"
                   aria-label="Background color"
                 />
-                <Input value={bgHex} onChange={(e) => setBgHex(e.target.value)} className="font-mono" />
+                <Input value={bgHex} onChange={(e) => setBgHex(e.target.value)} className="font-mono" aria-label="Background HEX color" />
               </div>
             </div>
           </div>
@@ -159,11 +165,11 @@ export default function ColorPicker() {
             ].map((c) => (
               <div
                 key={c.label}
-                className={`rounded-md border p-2 ${c.ok ? "border-emerald-500/50 text-emerald-600 dark:text-emerald-400" : "border-destructive/50 text-destructive"}`}
+                className={`rounded-md border p-2 ${c.ok ? "border-emerald-500/50" : "border-destructive/50"}`}
               >
-                <p className="font-bold">{contrast.ratio.toFixed(2)}:1</p>
+                <p className="font-bold text-foreground">{contrast.ratio.toFixed(2)}:1</p>
                 <p className="text-muted-foreground">{c.label}</p>
-                <p>{c.ok ? "Pass" : "Fail"}</p>
+                <p className={c.ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-400 dark:text-red-400"}>{c.ok ? "Pass" : "Fail"}</p>
               </div>
             ))}
           </div>

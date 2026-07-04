@@ -395,7 +395,7 @@ export default function Home() {
                       </div>
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold">{cat.title}</h3>
-                        <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0">
+                        <Badge className="bg-primary/15 text-foreground border-primary/20 text-[10px] px-1.5 py-0">
                           {cat.count}
                         </Badge>
                       </div>

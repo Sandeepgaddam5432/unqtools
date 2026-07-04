@@ -85,7 +85,7 @@ export default function FeatureSection() {
                         }}
                       >
                         {cfg.Icon && (
-                          <cfg.Icon className="w-8 h-8" style={{ color: cfg.color }} />
+                          <cfg.Icon className="w-8 h-8" style={{ color: cfg.color }} aria-hidden="true" focusable="false" />
                         )}
                       </div>
                     );

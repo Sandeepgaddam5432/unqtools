@@ -36,14 +36,16 @@ export default function UuidGenerator() {
         <CardContent className="p-4">
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs text-muted-foreground">Count</Label>
+              <Label className="text-xs text-muted-foreground" htmlFor="uuid-count">Count</Label>
               <Input
+                id="uuid-count"
                 type="number"
                 min={1}
                 max={1000}
                 value={count}
                 onChange={(e) => setCount(Math.max(1, Math.min(1000, Number(e.target.value) || 1)))}
                 className="w-24"
+                aria-label="Number of UUIDs to generate"
               />
             </div>
             <div className="flex items-center gap-2">
