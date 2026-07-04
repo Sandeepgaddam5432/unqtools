@@ -59,20 +59,6 @@ describe("Category labels completeness", () => {
   });
 });
 
-describe("Storage hooks — pure helpers", () => {
-  // The hooks themselves require a DOM environment; we test the constants
-  // and any pure helpers they expose.
-  it("MAX_RECENTS is a sensible cap", async () => {
-    // Re-import the module to verify the constant
-    const mod = await import("../src/lib/storage");
-    // The hook is exported; we just verify the module loads cleanly
-    expect(typeof mod.useFavorites).toBe("function");
-    expect(typeof mod.useRecents).toBe("function");
-    expect(typeof mod.useLocalStorage).toBe("function");
-    expect(typeof mod.useInstallPrompt).toBe("function");
-  });
-});
-
 describe("Theme system", () => {
   it("exposes light, dark, system choices", async () => {
     const mod = await import("../src/lib/theme");

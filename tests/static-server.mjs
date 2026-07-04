@@ -33,7 +33,7 @@ const server = http.createServer(async (req, res) => {
       st = await stat(filePath).catch(() => null);
     }
     if (!st || !st.isFile()) {
-      // Try /404.html
+      // Try /404.html — return with 404 status (production-identical to Cloudflare Pages)
       filePath = join(ROOT, "404.html");
       st = await stat(filePath).catch(() => null);
       if (!st) {
@@ -41,6 +41,11 @@ const server = http.createServer(async (req, res) => {
         res.end("Not found");
         return;
       }
+      const data = await readFile(filePath);
+      const mime = MIME[extname(filePath)] || "text/html";
+      res.writeHead(404, { "Content-Type": mime, "Content-Length": data.length });
+      res.end(data);
+      return;
     }
     const data = await readFile(filePath);
     const mime = MIME[extname(filePath)] || "application/octet-stream";

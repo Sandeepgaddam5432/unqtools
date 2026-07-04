@@ -1,3 +1,4 @@
 # Cloudflare Pages _redirects
-# SPA fallback - redirect 404s to index for client-side routing
-/ /index.html 200
+# Static export: no SPA fallback — let unknown routes hit the real 404.html.
+# Next.js generates out/404.html automatically; Cloudflare Pages serves it for
+# any path that doesn't match a static file.
