@@ -20,20 +20,40 @@ const MIME = {
   ".map": "application/json",
 };
 
+// Simple in-memory cache for repeated static assets (chunks, fonts)
+const cache = new Map();
+
 const server = http.createServer(async (req, res) => {
   try {
     let path = normalize(req.url || "/");
+    path = path.split("?")[0];
+    if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
+    if (path === "") path = "/";
     if (path === "/") path = "/index.html";
+
+    // Check cache first
+    const cacheKey = path;
+    if (cache.has(cacheKey)) {
+      const { data, mime, status } = cache.get(cacheKey);
+      res.writeHead(status, { "Content-Type": mime, "Content-Length": data.length });
+      res.end(data);
+      return;
+    }
+
     // Try exact file first
     let filePath = join(ROOT, path);
     let st = await stat(filePath).catch(() => null);
     if (!st || !st.isFile()) {
-      // Try .html fallback (Next.js static export: /tools → /tools.html)
-      filePath = join(ROOT, path + ".html");
+      filePath = join(ROOT, path, "index.html");
       st = await stat(filePath).catch(() => null);
     }
     if (!st || !st.isFile()) {
-      // Try /404.html — return with 404 status (production-identical to Cloudflare Pages)
+      filePath = join(ROOT, path + ".html");
+      st = await stat(filePath).catch(() => null);
+    }
+
+    if (!st || !st.isFile()) {
+      // 404 — serve 404.html with 404 status
       filePath = join(ROOT, "404.html");
       st = await stat(filePath).catch(() => null);
       if (!st) {
@@ -47,8 +67,15 @@ const server = http.createServer(async (req, res) => {
       res.end(data);
       return;
     }
+
     const data = await readFile(filePath);
     const mime = MIME[extname(filePath)] || "application/octet-stream";
+
+    // Cache static assets (not HTML pages — those have unique routes)
+    if (path.startsWith("/_next/") || path.match(/\.(js|css|woff2?|svg|png|jpg|ico)$/)) {
+      cache.set(cacheKey, { data, mime, status: 200 });
+    }
+
     res.writeHead(200, { "Content-Type": mime, "Content-Length": data.length });
     res.end(data);
   } catch (e) {
