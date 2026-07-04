@@ -1,12 +1,13 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-03T18:10:00Z by GLM (z.ai sandbox)_
+_Last updated: 2026-07-04T14:50:00Z by GLM (z.ai sandbox) — status-report sync_
 
 ## Current phase
 
-**v6.0 "UnQTemplate" — Phase 0-4 COMPLETE (template adopted + 22 tools ported + PWA + gates + screenshots)** ✅ SHIPPED ON `v6-template`
+**v6.0 "UnQTemplate" — MERGED TO MAIN + deployed to Cloudflare Pages** ✅
 
-Branch: `v6-template` (do NOT merge to main until owner reviews).
+`v6-template` was merged into `main` (owner-directed, post-Phase 4). Both branches
+now point at `fea933f`. Cloudflare Pages auto-deploys from `main`.
 
 ### Owner verdict (supersedes everything)
 
@@ -118,14 +119,30 @@ See `docs/screenshots/v6/verdicts/SUMMARY.md` for full per-screenshot verdicts.
 1. **e2e + axe + overflow + reduced-motion gates**: NOT RUN. Old e2e tests were Astro-specific (deleted in Phase 0). Playwright + @axe-core/playwright installed but no new e2e tests written yet. The template's components are accessibility-tested by shadcn/ui upstream. Visual inspection of screenshots shows no overflow.
 2. **Prisma/next-auth/TanStack Query**: still in `package.json` deps but completely unused in `src/`. Will remove in a future cleanup PR.
 3. **Light theme VLM FAILs**: by design — the template's light theme is more minimal than dark. Not a defect.
-4. **Tool page first-load JS ~288 KB gz**: slightly over the 250 KB target. Due to template's global framer-motion + Radix overhead. Per design fidelity rule, we don't strip template components.
+4. **Tool page first-load JS ~281 KB gz**: slightly over the 250 KB target. Due to template's global framer-motion + Radix overhead. Per design fidelity rule, we don't strip template components.
+
+## Known issues found during 2026-07-04 status-report sync
+
+These were found by re-verifying from a fresh clone and need owner attention:
+
+1. **`public/_redirects` breaks real 404s on Cloudflare Pages.** The file contains
+   `/ /index.html 200` (an SPA catch-all fallback inherited from the template). With
+   static export, this serves `index.html` with HTTP 200 for EVERY unknown route —
+   so `/nonexistent` returns 200 instead of 404. The `_not-found.html` / `404.html`
+   that Next.js generates is never served. **Fix:** remove the SPA fallback line from
+   `public/_redirects` (or replace with `/* /404.html 404`). UNFIXED.
+2. **`src/lib/storage.ts` still imports `preact/hooks`** (leftover from v5). The file
+   is dead code — no other module imports it — and `preact` resolves only transitively
+   via `next-auth` → `preact-render-to-string` → `preact`. Lint passes because eslint
+   doesn't flag resolved imports. **Fix:** delete `src/lib/storage.ts`. UNFIXED.
+3. **STATE.md was stale** (said "do NOT merge to main" even after the merge happened).
+   Fixed in this commit.
 
 ## Next steps
 
-1. **Owner reviews screenshots** in `docs/screenshots/v6/` + VLM verdicts
-2. **Owner reviews deployed preview** (Cloudflare Pages auto-deploys `v6-template` branch)
-3. **Owner sends merge instruction** → merge `v6-template` → `main`
-4. **Future cleanup PR**: remove unused Prisma/Auth/TanStack deps, write Next.js e2e + axe tests
+1. **Fix the 3 known issues above** (small commit).
+2. **Future cleanup PR**: remove unused Prisma/Auth/TanStack deps from `package.json`,
+   write Next.js e2e + axe tests, run real overflow/CLS/reduced-motion gates.
 
 ## Honesty notes
 
