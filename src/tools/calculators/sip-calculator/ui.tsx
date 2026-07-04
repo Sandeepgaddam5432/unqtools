@@ -70,7 +70,7 @@ export default function SipCalculator() {
 
       {error && <ErrorBanner message={error} />}
 
-      {result && !"error" in result && (
+      {result && !("error" in result) && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
@@ -129,10 +129,10 @@ export default function SipCalculator() {
                     {result.yearlyBreakdown.map((row) => (
                       <tr key={row.year} className="border-t border-border/50">
                         <td className="p-2">{row.year}</td>
-                        <td className="p-2 text-right font-mono">{formatCompact(row.cumulativeInvested)}</td>
-                        <td className="p-2 text-right font-mono">{formatCompact(row.yearlyInvestment)}</td>
-                        <td className="p-2 text-right font-mono text-emerald-500">{formatCompact(row.yearlyReturns)}</td>
-                        <td className="p-2 text-right font-mono font-bold">{formatCompact(row.endValue)}</td>
+                        <td className="p-2 text-right font-mono">{formatCompact(row.totalInvested)}</td>
+                        <td className="p-2 text-right font-mono">{formatCompact(row.investedThisYear)}</td>
+                        <td className="p-2 text-right font-mono text-emerald-500">{formatCompact(row.returns)}</td>
+                        <td className="p-2 text-right font-mono font-bold">{formatCompact(row.yearEndValue)}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -75,7 +75,7 @@ export default function EmiCalculator() {
 
       {error && <ErrorBanner message={error} />}
 
-      {result && !"error" in result && (
+      {result && !("error" in result) && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
@@ -131,7 +131,7 @@ export default function EmiCalculator() {
                     {result.schedule.map((row) => (
                       <tr key={row.month} className="border-t border-border/50">
                         <td className="p-2">{row.month}</td>
-                        <td className="p-2 text-right font-mono">{row.payment.toLocaleString()}</td>
+                        <td className="p-2 text-right font-mono">{row.emi.toLocaleString()}</td>
                         <td className="p-2 text-right font-mono">{row.interest.toLocaleString()}</td>
                         <td className="p-2 text-right font-mono">{row.principal.toLocaleString()}</td>
                         <td className="p-2 text-right font-mono">{row.balance.toLocaleString()}</td>

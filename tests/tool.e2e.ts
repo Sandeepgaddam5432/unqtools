@@ -54,9 +54,11 @@ const TOOLS = [
     sampleAction: "none",
     runAction: "click:Calculate",
     assert: async (page) => {
-      // Verify the Calculate button was clickable + no crash
-      // (full output verification covered by unit tests on logic.ts)
-      await expect(page.getByRole("button", { name: /Calculate/i })).toBeVisible({ timeout: 5000 });
+      // Strict assertion: result cards must render with real values
+      // Default inputs: principal=500000, rate=9.5%, tenure=60mo -> EMI ≈ ₹10,500.93
+      await expect(page.getByText("Monthly EMI").first()).toBeVisible({ timeout: 5000 });
+      // The EMI value appears in a <p class="text-xl font-bold text-primary"> element
+      await expect(page.locator("p.text-xl.font-bold.text-primary").first()).toContainText(/10,500/, { timeout: 5000 });
     },
   },
   {
@@ -64,7 +66,10 @@ const TOOLS = [
     sampleAction: "none",
     runAction: "click:Calculate",
     assert: async (page) => {
-      await expect(page.getByRole("button", { name: /Calculate/i })).toBeVisible({ timeout: 5000 });
+      // Strict assertion: result cards must render with real values
+      // Default inputs: home=400000, down=20%, rate=7.5%, 30yr -> P&I ≈ $2,237.49
+      await expect(page.getByText("Monthly P&I").first()).toBeVisible({ timeout: 5000 });
+      await expect(page.locator("p.text-xl.font-bold.text-primary").first()).toContainText(/\$2,237/, { timeout: 5000 });
     },
   },
   {
