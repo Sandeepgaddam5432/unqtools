@@ -58,19 +58,12 @@
     "react-hook-form": "^7.60.0",
     "react-icons": "^5.6.0",
     "react-resizable-panels": "^4",
-    "react-tooltip": "^6.0.8",
     "recharts": "^2.15.4",
     "sharp": "^0.34.3",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.184.0",
-    "tweakpane": "^4.0.5",
-    "usehooks-ts": "^3.1.1",
-    "uuid": "^11.1.0",
-    "vaul": "^1.1.2",
-    "zod": "^4.0.2",
-    "zustand": "^5.0.6"
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
