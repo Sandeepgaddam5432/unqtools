@@ -299,7 +299,7 @@ export default function Home() {
   return (
     <div className="flex min-h-dvh bg-background">
       <SidebarNav />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-16 md:pt-0">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
         {/* ===== SECTION 1: CINEMATIC HERO ===== */}
         <section className="relative">
           <HeroGeometric

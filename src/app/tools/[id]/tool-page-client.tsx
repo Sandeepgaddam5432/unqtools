@@ -90,8 +90,8 @@ export function ToolPageClient({
   return (
     <div className="flex min-h-dvh bg-background">
       <SidebarNav />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-16 md:pt-0">
-        <div className="section-padding py-8 md:py-12">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
+        <div className="section-padding pt-2 pb-8 md:py-12">
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
             {/* Breadcrumb */}
             <motion.nav

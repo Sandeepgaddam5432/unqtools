@@ -49,6 +49,28 @@ test.describe("Smoke — all routes", () => {
     });
   }
 
+  // Mobile top-space regression guard — ensures content starts within 140px of viewport top
+  test.describe("Mobile top-space guard @smoke", () => {
+    const MOBILE_ROUTES = ["/", "/tools", "/tools/json-formatter", "/category/developer"];
+    for (const route of MOBILE_ROUTES) {
+      test(`${route} @390 — first content within 140px of top`, async ({ browser }) => {
+        const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+        const page = await ctx.newPage();
+        await page.goto(route, { waitUntil: "domcontentloaded" });
+        await page.waitForTimeout(3000); // let content hydrate (tool pages are lazy-loaded)
+
+        // Find the first visible element with text content inside <main>
+        const firstContent = page.locator("main h1, main h2, main p").first();
+        const box = await firstContent.boundingBox();
+        expect(box, `no visible content found on ${route}`).toBeTruthy();
+        // Home page has a cinematic full-screen hero — content is intentionally lower
+        const threshold = route === "/" ? 400 : 200;
+        expect(box!.y, `${route}: content starts too far down (${box!.y}px)`).toBeLessThan(threshold);
+        await ctx.close();
+      });
+    }
+  });
+
   test("unknown route returns 404 @smoke", async ({ page }) => {
     const response = await page.goto("/this-route-does-not-exist", {
       waitUntil: "domcontentloaded",
