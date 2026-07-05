@@ -135,7 +135,7 @@ export function ToolPageClient({
               <Badge className="bg-primary/15 text-foreground border-primary/20">
                 {categoryLabel.split(" ")[0]}
               </Badge>
-              <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1">
+              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
                 <Lock className="h-3 w-3" /> Runs in your browser
               </Badge>
             </motion.div>

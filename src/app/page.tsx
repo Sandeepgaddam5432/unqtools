@@ -340,7 +340,7 @@ export default function Home() {
                 asChild
                 variant="outline"
                 size="lg"
-                className="gap-2 border-white/20 text-white/70 hover:text-white hover:border-white/40 hover:bg-white/5 px-8 text-base cursor-pointer touch-target"
+                className="gap-2 border-white/20 text-white/70 hover:text-white hover:border-white/40 hover:bg-white/5 bg-transparent px-8 text-base cursor-pointer touch-target"
               >
                 <Link href="/tools">Browse Tools</Link>
               </Button>

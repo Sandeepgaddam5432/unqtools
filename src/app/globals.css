@@ -5,7 +5,7 @@
 
 :root {
   --card: #faf9f5;
-  --ring: #c96442;
+  --ring: #b5562d;
   --input: #b4b2a7;
   --muted: #ede9de;
   --accent: #e9e6dc;
@@ -17,7 +17,7 @@
   --chart-4: #dbd3f0;
   --chart-5: #b4552d;
   --popover: #ffffff;
-  --primary: #c96442;
+  --primary: #b5562d;
   --sidebar: #f5f4ee;
   --secondary: #e9e6dc;
   --background: #faf9f5;
@@ -27,8 +27,8 @@
   --sidebar-accent: #e9e6dc;
   --sidebar-border: #ebebeb;
   --card-foreground: #141413;
-  --sidebar-primary: #c96442;
-  --muted-foreground: #83827d;
+  --sidebar-primary: #b5562d;
+  --muted-foreground: #6e6c66;
   --accent-foreground: #28261b;
   --popover-foreground: #28261b;
   --primary-foreground: #ffffff;

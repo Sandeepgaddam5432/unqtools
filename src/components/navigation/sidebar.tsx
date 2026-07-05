@@ -95,7 +95,7 @@ export function SidebarNav() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/80"
+                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
                 >
                   {section.label}
                 </motion.p>
@@ -191,7 +191,7 @@ export function SidebarNav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground/80"
+              className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground"
             >
               <span>Built with</span>
               <Heart className="h-3 w-3 text-red-500 fill-red-500" />

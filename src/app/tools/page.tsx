@@ -142,10 +142,10 @@ export default function ToolsPage() {
               <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
                 <Lock className="h-3 w-3" /> 100% Private
               </Badge>
-              <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1">
+              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
                 <WifiOff className="h-3 w-3" /> Works Offline
               </Badge>
-              <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 gap-1">
+              <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20 gap-1">
                 <Zap className="h-3 w-3" /> Instant
               </Badge>
             </motion.div>
