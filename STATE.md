@@ -1,71 +1,60 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05T02:30:00Z by GLM (z.ai sandbox) — v6.5 final_
+_Last updated: 2026-07-05T03:30:00Z by GLM (z.ai sandbox) — v6.6 final_
 
 ## Current phase
 
-**v6.5 "Hero Cleanup" — COMPLETE** ✅ ON `v6.5-hero-cleanup` (pending merge to main)
+**v6.6 "Mobile Header + Empty Categories" — COMPLETE** ✅ ON `v6.6-mobile-header`
 
-### Commits on v6.5-hero-cleanup (4 total)
+### Commits on v6.6-mobile-header (3 total)
 
 | Commit   | Description                                                              |
 | -------- | ------------------------------------------------------------------------ |
-| caf41f8  | Task A: hero fix — remove template placeholder copy + duplicate CTA       |
-| 45b9674  | Task B: template-leftover sweep — fake testimonials + company logos       |
-| bf569e3  | Task C: axe.e2e.ts route list — derive from routes.json                   |
-| (pending)| Task D+E: mobile Lighthouse + STATE.md                                    |
+| 9fa12d0  | Task A: mobile header bar — top gap eliminated, guard tightened to 90px   |
+| 0e3544e  | Task B: hide empty categories — registry-derived list, 39→30 pages       |
+| (pending)| CI trigger + STATE.md                                                     |
 
-## Task A — Home hero fix ✅
+## Task A — Mobile header bar ✅
 
-**BUG 1 (overlapping text):** HeroGeometric had hardcoded "Crafting exceptional digital
-experiences through innovative design and cutting-edge technology." + home page rendered
-a second overlay paragraph. Both in same visual area → overlap.
+**Why v6.4 padding tweak failed:** The floating hamburger button left a dead strip
+beside it. Padding micro-tweaks (pt-16→pt-14, section py-16→pt-4) reduced the gap
+but couldn't eliminate it — the hamburger floated in empty space with no bar.
 
-**BUG 2 (duplicate CTAs):** Two buttons both linked to /tools: "Browse 22 Tools →" (primary)
-+ "Browse Tools" (outline). Same action twice.
+**Fix:** New `MobileHeader` component (src/components/navigation/mobile-header.tsx) —
+compact fixed top bar (h-12 = 48px, md:hidden) with hamburger + wordmark. Replaces
+the floating hamburger. Mobile drawer starts at top-12 (below bar, no overlap).
+All 4 page files: pt-14→pt-12, first section pt-4→pt-2.
 
-**Fix:** Added `subtitle` prop to HeroGeometric (replaces hardcoded text). Home page passes
-real UnQTools copy. Removed duplicate overlay `<p>`. Replaced outline "Browse Tools" with
-"Browse Categories" linking to /category/developer.
+**Guard tightened:** 200→90px (home exception 350). Updated selector to include
+`[class*='badge']` and `[class*='font-medium']` to catch badge elements.
 
-**Template-leftover guard:** 16 phrases checked in smoke e2e on every route. 42/42 pass.
+**Proof:** Guard FAILED on unfixed build (y=126-172). After fix: y=56-61. PASS.
+Desktop unchanged. Smoke: 33/33 passed.
 
-## Task B — Template-leftover sweep ✅
+## Task B — Hide empty categories ✅
 
-Found on home page: 6 fake testimonials (Alex Rivera, Priya Sharma, Marcus Chen, Elena
-Vasquez, Dev Patel, Sarah Kim) with randomuser.me avatars + fake company names. Fake
-company endorsements (Vercel, Stripe, Figma, Linear, Notion). "production-ready" phrase.
+9 empty category pages eliminated (pdf, audio-video, seo, network-security, file,
+business, education, social, ai). Only 4 active categories built: developer (5 tools),
+text (12), calculators (3), image (2).
 
-**Fix:** Replaced with 4 honest feature cards (Privacy First, Works Offline, Developer
-Friendly, Accessible) + 2 feature-focused glass testimonials. Removed fake company logos.
-Changed "Loved by Developers" → "Why UnQTools". All other routes: clean (0 leftovers).
+**Approach:** `generateStaticParams` filters `ALL_CATEGORIES` to only those with
+≥1 tool in the registry. Self-healing — adding a tool with a new category auto-creates
+the page. Sidebar, command palette, and /tools filters all derive from the same
+registry-based filter.
 
-## Task C — axe route list fix ✅
+**Result:** Build 39→30 pages. Routes 38→29. Dead link check: 0 dead links.
+Smoke: 33/33 passed.
 
-**Root cause:** axe.e2e.ts had hardcoded routes including /about + /components (archived
-in v6.3). CI axe step failed on 404s.
-
-**Fix:** Derive AXE_ROUTES from generated tests/routes.json (single source of truth).
-Filter to home + /tools + tool pages + category pages.
-
-## Task D — Mobile Lighthouse ✅
-
-| Page | Form | v6.5 Perf | v6.3 Perf | Delta |
-|------|------|-----------|-----------|-------|
-| Tools | Mobile | 58 | 56 | +2 |
-| JSON Formatter | Mobile | 56 | 42 | +14 |
-| EMI Calculator | Mobile | 53 | 43 | +10 |
-
-## Full gate table (v6.5)
+## Full gate table (v6.6)
 
 | Gate | Result |
 |------|--------|
 | lint | ✅ 0 errors |
 | unit tests | ✅ 528/528 |
-| build | ✅ 39 pages |
-| smoke e2e | ✅ 42/42 (38 routes + 4 top-space + leftover guard) |
+| build | ✅ 30 pages (was 39) |
+| smoke e2e | ✅ 33/33 (29 routes + 4 top-space guards at 90px) |
 | tool e2e | ✅ 22/22 (strict assertions) |
 | axe (local) | ✅ 0 serious (light + dark) |
 | CLS | ✅ 0.0001-0.0002 |
-| Lighthouse | ✅ 70-79 desktop, 52-58 mobile |
-| 404 | ✅ Unknown routes return 404 |
+| 404 | ✅ Unknown routes return 404 (including empty categories) |
+| Dead links | ✅ 0 dead category links |
