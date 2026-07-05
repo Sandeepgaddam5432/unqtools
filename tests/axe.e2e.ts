@@ -3,19 +3,14 @@ import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
 
 const routes = JSON.parse(readFileSync("tests/routes.json", "utf-8"));
-// Test a representative subset for axe (all 55 would be slow)
-const AXE_ROUTES = [
-  "/",
-  "/tools",
-  "/tools/json-formatter",
-  "/tools/diff-checker",
-  "/tools/color-picker",
-  "/tools/word-character-counter",
-  "/category/developer",
-  "/category/text",
-  "/about",
-  "/components",
-];
+// Use the generated route list (single source of truth — never hardcode routes).
+// Filter to representative subset for speed (all 38 would be slow in CI).
+const AXE_ROUTES = routes.filter((r: string) =>
+  r === "/" ||
+  r === "/tools" ||
+  r.startsWith("/tools/") ||
+  r.startsWith("/category/")
+).slice(0, 15);
 
 /**
  * axe-core a11y gate — every representative page × light + dark theme.
