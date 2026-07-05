@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { MobileHeader } from "./mobile-header";
 
 const navSections = [
   {
@@ -205,18 +206,8 @@ export function SidebarNav() {
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-xl bg-background/80 backdrop-blur-lg border border-border shadow-lg"
-        aria-label="Toggle navigation"
-      >
-        {mobileOpen ? (
-          <X className="h-5 w-5" />
-        ) : (
-          <Menu className="h-5 w-5" />
-        )}
-      </button>
+      {/* Mobile Header Bar */}
+      <MobileHeader menuOpen={mobileOpen} onMenuClick={() => setMobileOpen(!mobileOpen)} />
 
       {/* Mobile Overlay */}
       <AnimatePresence>
@@ -239,7 +230,7 @@ export function SidebarNav() {
             animate={{ x: 0 }}
             exit={{ x: -300 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed left-0 top-0 z-50 h-full w-72 bg-background border-r border-border md:hidden"
+            className="fixed left-0 top-12 z-50 h-[calc(100%-3rem)] w-72 bg-background border-r border-border md:hidden"
           >
             {sidebarContent}
           </motion.aside>

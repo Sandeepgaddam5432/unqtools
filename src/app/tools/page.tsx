@@ -97,9 +97,9 @@ export default function ToolsPage() {
   return (
     <div className="flex min-h-dvh bg-background">
       <SidebarNav />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
         {/* ===== HERO ===== */}
-        <section className="relative section-padding pt-4 pb-16 md:py-24">
+        <section className="relative section-padding pt-2 pb-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

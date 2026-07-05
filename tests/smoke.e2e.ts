@@ -83,12 +83,12 @@ test.describe("Smoke — all routes", () => {
         await page.goto(route, { waitUntil: "domcontentloaded" });
         await page.waitForTimeout(3000); // let content hydrate (tool pages are lazy-loaded)
 
-        // Find the first visible element with text content inside <main>
-        const firstContent = page.locator("main h1, main h2, main p").first();
+        // Find the first visible content element inside <main>
+        const firstContent = page.locator("main h1, main h2, main [class*='badge'], main [class*='font-medium'], main p").first();
         const box = await firstContent.boundingBox();
         expect(box, `no visible content found on ${route}`).toBeTruthy();
         // Home page has a cinematic full-screen hero — content is intentionally lower
-        const threshold = route === "/" ? 400 : 200;
+        const threshold = route === "/" ? 350 : 90;
         expect(box!.y, `${route}: content starts too far down (${box!.y}px)`).toBeLessThan(threshold);
         await ctx.close();
       });
