@@ -115,9 +115,9 @@ export default function ImagesToPdf() {
         className="w-full rounded-xl border-2 border-dashed border-border p-8 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors">
         <FileImage className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
         <p className="text-sm font-medium">Drop images here or click to browse</p>
-        <p className="mt-1 text-xs text-muted-foreground">JPEG, PNG, WebP, GIF — one page per image</p>
+        <p className="mt-1 text-xs text-muted-foreground">JPEG or PNG — one page per image</p>
       </button>
-      <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple
+      <input ref={inputRef} type="file" accept="image/jpeg,image/png" multiple
         className="hidden" aria-label="Choose images"
         onChange={(e) => { if (e.target.files) addFiles(e.target.files); e.target.value = ""; }} />
 

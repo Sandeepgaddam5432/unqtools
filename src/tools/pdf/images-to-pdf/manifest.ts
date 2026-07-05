@@ -4,7 +4,7 @@ export const manifest: ToolManifest = {
   id: "images-to-pdf",
   name: "Images to PDF",
   description:
-    "Convert JPG, PNG, WebP, or GIF images into a single PDF. Control page size, orientation, and margins. Reorder images before converting. 100% private, runs in your browser.",
+    "Convert JPG or PNG images into a single PDF. Control page size, orientation, and margins. Reorder images before converting. 100% private, runs in your browser.",
   category: "pdf",
   keywords: [
     "images to pdf",
@@ -17,7 +17,7 @@ export const manifest: ToolManifest = {
   icon: "image",
   requiresNetwork: false,
   seo: {
-    title: "Images to PDF Online — JPG, PNG, WebP to PDF Converter | UnQTools",
+    title: "Images to PDF Online — JPG, PNG to PDF Converter | UnQTools",
     faq: [
       {
         q: "Are my images uploaded to a server?",
@@ -25,7 +25,7 @@ export const manifest: ToolManifest = {
       },
       {
         q: "Which image formats are supported?",
-        a: "JPEG, PNG, WebP, and GIF (first frame). For best quality use JPEG or PNG.",
+        a: "JPEG and PNG. For other formats like WebP or GIF, convert them to PNG first using any image editor.",
       },
       {
         q: "Can I control the page size and margins?",

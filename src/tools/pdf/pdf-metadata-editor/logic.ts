@@ -47,7 +47,13 @@ export async function writePdfMetadata(
   doc.setTitle(metadata.title);
   doc.setAuthor(metadata.author);
   doc.setSubject(metadata.subject);
-  doc.setKeywords([metadata.keywords]);
+  // pdf-lib's setKeywords expects a string[] (one keyword per element).
+  // Users type a comma-separated list like "kw1, kw2" — split it.
+  const keywords = metadata.keywords
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+  doc.setKeywords(keywords);
   doc.setCreator(metadata.creator);
   doc.setProducer(metadata.producer);
   return { ok: true, output: await doc.save() };

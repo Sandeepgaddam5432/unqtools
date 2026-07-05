@@ -56,6 +56,10 @@ describe("writePdfMetadata", () => {
         expect(readRes.output.metadata.author).toBe("New Author");
         expect(readRes.output.metadata.subject).toBe("New Subject");
         expect(readRes.output.metadata.creator).toBe("UnQTools");
+        // Keywords: pdf-lib joins the array with spaces when read back.
+        // Verify the user's comma-separated input was split into separate
+        // keywords, not stored as one literal "kw1, kw2" string.
+        expect(readRes.output.metadata.keywords).toBe("kw1 kw2");
       }
     }
   });
@@ -70,6 +74,25 @@ describe("writePdfMetadata", () => {
       const readRes = await readPdfMetadata(writeRes.output);
       expect(readRes.ok).toBe(true);
       if (readRes.ok) expect(readRes.output.metadata.title).toBe("");
+    }
+  });
+
+  it("splits a comma-separated keywords string into individual keywords", async () => {
+    const pdf = await makePdf();
+    const writeRes = await writePdfMetadata(pdf, {
+      title: "T", author: "A", subject: "S",
+      keywords: "  one, two , , three  ",
+      creator: "C", producer: "P",
+    });
+    expect(writeRes.ok).toBe(true);
+    if (writeRes.ok) {
+      const readRes = await readPdfMetadata(writeRes.output);
+      expect(readRes.ok).toBe(true);
+      if (readRes.ok) {
+        // Whitespace-only entries and empties are filtered; remaining
+        // keywords are joined with spaces by pdf-lib on read-back.
+        expect(readRes.output.metadata.keywords).toBe("one two three");
+      }
     }
   });
 

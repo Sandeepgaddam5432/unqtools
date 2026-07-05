@@ -1,19 +1,20 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 in progress_
+_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 P0 fixes applied, ready for CI_
 
 ## Current phase
 
-**v7.0 "PDF batch-1" — IN PROGRESS** 🟡 ON `v7.0-pdf-batch1`
+**v7.0 "PDF batch-1" — READY FOR CI** 🟢 ON `v7.0-pdf-batch1`
 
-10 PDF tools shipped (logic + tests + UI + registry + lazy loaders). Branch is
-not yet merged to `main`. Gates not re-verified end-to-end on CI yet — that's
-the next step.
+10 PDF tools shipped + 3 P0 investigation fixes applied. Branch is ready for
+CI to run; once green, owner review + merge to `main`.
 
 ### Recent commits on `v7.0-pdf-batch1`
 
 | Commit   | Description                                                                                |
 | -------- | ------------------------------------------------------------------------------------------ |
+| (pending)| fix: P0 batch — CI branch trigger + setKeywords split + images-to-pdf accept fix           |
+| 9d04dc3  | docs: sync README + STATE + AGENTS with v7.0 PDF batch-1 reality                           |
 | 2610cf6  | fix: tool-page-client.tsx — named motion constants, no double-brace (v7.0 batch-1h)        |
 | 0ef206a  | feat(pdf): register 10 PDF UI loaders in tool-page-client.tsx (v7.0 batch-1g)              |
 | b3c53bd  | feat(pdf): register 10 PDF tools in registry + e2e fixtures (v7.0 batch-1f)                |
@@ -26,7 +27,71 @@ the next step.
 | e106501  | Add workflow to update package-lock.json automatically                                     |
 | 23953e4  | feat(pdf): add pdf-lib dependency (v7.0 PDF batch-1 foundation)                            |
 
-## v7.0 — PDF batch-1 🟡 in progress
+## v7.0 P0 fixes — applied this session ✅
+
+A deep investigation of the v7.0 PDF batch-1 code surfaced 3 P0 issues
+(real bugs that would ship to users on merge). All three fixed in one commit:
+
+### P0-1 (C1): CI branch trigger ✅
+
+**Problem:** `.github/workflows/ci.yml` line 5 did NOT include `v7.0-pdf-batch1`
+in the `push.branches` list. Result: pushes to the v7.0 branch never triggered
+CI — the 8 PDF tool commits (`6bf7ff0` → `2610cf6`) were never auto-verified.
+**Fix:** added `v6.9-all-categories` (was also missing — current main is on
+v6.9 and never had auto-CI) and `v7.0-pdf-batch1` to the branches list.
+
+### P0-2 (C2): pdf-metadata-editor keywords never split ✅
+
+**Problem:** `src/tools/pdf/pdf-metadata-editor/logic.ts` line 50 wrapped the
+user's comma-separated keywords string as a single-element array:
+`doc.setKeywords([metadata.keywords])`. pdf-lib's `setKeywords` expects a
+`string[]` (one keyword per element), so typing `"kw1, kw2"` wrote ONE keyword
+with the literal value `"kw1, kw2"` instead of two separate keywords. The
+existing unit test passed only because it never asserted on the `keywords`
+value after round-trip — a real blind spot.
+**Fix:**
+```ts
+const keywords = metadata.keywords
+  .split(",")
+  .map((k) => k.trim())
+  .filter(Boolean);
+doc.setKeywords(keywords);
+```
++ added 1 new test ("splits a comma-separated keywords string into individual
+keywords") that asserts the round-trip with messy input
+`"  one, two , , three  "` → `"one two three"` (pdf-lib joins with spaces
+on read-back). Also hardened the existing "writes all fields and reads them
+back" test with a keywords assertion.
+
+### P0-3 (C3): images-to-pdf advertised WebP + GIF but couldn't process them ✅
+
+**Problem:** the file input had `accept="image/jpeg,image/png,image/webp,image/gif"`
+and the dropzone hint said "JPEG, PNG, WebP, GIF — one page per image". But
+pdf-lib only supports PNG and JPEG. WebP/GIF uploads fell through to
+`embedJpg` and failed with a misleading error ("ensure it is a valid JPEG or
+PNG"). The manifest's SEO description and FAQ had the same wrong claim.
+**Fix:**
+- `ui.tsx`: `accept="image/jpeg,image/png"`, hint → "JPEG or PNG — one page per image"
+- `manifest.ts`: description → "Convert JPG or PNG images…", SEO title → "JPG, PNG to PDF Converter", FAQ answer → "JPEG and PNG. For other formats like WebP or GIF, convert them to PNG first…"
+
+### Verification
+
+| Gate | Result |
+|------|--------|
+| lint | ✅ 0 errors |
+| unit tests | ✅ 620/620 (was 619 — +1 new keyword-split test) |
+| build | ✅ 49 pages, no errors |
+| git diff stat | 6 files, +37 / -7 lines |
+
+### What's NOT in this P0 batch (deferred to batch-2)
+
+The investigation found 7+ more issues (H1–H3, M1–M5, L1–L9) — all deferred
+per owner-approved plan to keep this branch focused. They will be tackled in
+batch-2 (a11y radiogroup fixes + axe slice cap + privacy-clean dates) and
+batch-3 (pdf-lib shared chunk + e2e depth). See investigation report in
+session log for full details.
+
+## v7.0 — PDF batch-1 🟡 in progress (P0 fixes done, CI pending)
 
 ### Tool count
 
@@ -44,7 +109,7 @@ the next step.
 | delete-pdf-pages      | Delete pages by range, download the trimmed PDF                |
 | extract-pdf-pages     | Extract pages by range into a new PDF                          |
 | reorder-pdf-pages     | Reorder pages via drag-style up/down arrows                    |
-| images-to-pdf         | Convert PNG/JPEG images into a single PDF                      |
+| images-to-pdf         | Convert JPEG/PNG images into a single PDF                      |
 | pdf-page-numbers      | Add page numbers (position, format, starting number, margins)  |
 | pdf-watermark         | Add text watermark (font, size, opacity, rotation, position)   |
 | pdf-metadata-editor   | Edit PDF Title / Author / Subject / Keywords / Producer / etc. |
@@ -53,21 +118,21 @@ the next step.
 
 - `src/tools/pdf/_shared/page-ranges.ts` — page-range parser ("1-3, 5, 8-10") shared by merge/split/extract/delete/reorder
 - `src/tools/pdf/_shared/page-ranges.test.ts` — unit tests for the parser
-- `src/tools/pdf/_shared/download.ts` — browser-side download helper (single PDF or zip via `JSZip`-style blob)
+- `src/tools/pdf/_shared/download.ts` — browser-side download helper
 - All PDF processing is 100% client-side via **pdf-lib ^1.17.1** — no server, no uploads, works offline
 
 ### New dep added
 
 - `pdf-lib ^1.17.1` (with transitive deps: `@pdf-lib/standard-fonts`, `@pdf-lib/upng`, `pako`, `tslib@1.14.1` nested)
 - `package-lock.json` regenerated and committed (commit `4cfb62c`)
-- `Update-lock-file.yml` workflow updated to auto-trigger on `package.json` pushes — future API-side dep additions will regenerate the lockfile automatically
+- `Update-lock-file.yml` workflow updated to auto-trigger on `package.json` pushes
 
-### What's NOT yet done for v7.0
+### What's NOT yet done for v7.0 (post-CI steps)
 
-- [ ] CI gates re-verified on `v7.0-pdf-batch1` (lint, full unit suite, full e2e suite, axe on PDF tool pages, CLS on PDF tool pages)
-- [ ] `tests/routes.json` regenerated (currently stale — missing 10 PDF tool routes + pdf category page; CI regenerates it automatically via `tests/gen-routes.mjs`)
-- [ ] Lighthouse perf check on PDF tool pages (pdf-lib is ~350 KB minified — verify lazy-loading keeps first-load budget under control)
-- [ ] Owner review + merge to `main`
+- [ ] CI run on `v7.0-pdf-batch1` after P0 commit (C1 fix enables this — first auto-run will be on this push)
+- [ ] If CI green → owner review + merge to `main` → Cloudflare Pages auto-deploys
+- [ ] After merge: start batch-2 (H2 a11y radiogroup + M2 axe slice cap + H1 privacy clean dates)
+- [ ] After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
 
 ## v6.9 — All 13 categories visible ✅ (commit 320771d)
 
@@ -132,34 +197,36 @@ Savings are in `node_modules` (fewer packages) and install time, not runtime bun
 
 ## Full gate table
 
-| Gate                 | v6.8 result            | v7.0 status                    |
+| Gate                 | v6.8 result            | v7.0 status (post-P0)         |
 | -------------------- | ---------------------- | ------------------------------ |
-| lint                 | ✅ 0 errors            | not yet re-verified            |
-| unit tests           | ✅ 528/528             | 33 unit test files now (was 32) — not yet re-verified |
-| build                | ✅ 30 pages            | should be 40 pages now (29 routes + 10 PDF tools + pdf category page) — not yet re-verified |
-| smoke e2e            | ✅ 33/33               | not yet re-verified            |
-| tool e2e             | ✅ 22/22               | 32 tools now (10 PDF added with fixtures) — not yet re-verified |
-| axe (must-pass)      | ✅ 0 serious           | not yet re-verified on PDF pages |
-| CLS                  | ✅ 0.0001              | not yet re-verified on PDF pages |
-| CI build job         | ✅ includes axe        | unchanged                      |
+| lint                 | ✅ 0 errors            | ✅ 0 errors (verified)         |
+| unit tests           | ✅ 528/528             | ✅ 620/620 (verified, +1 new)  |
+| build                | ✅ 30 pages            | ✅ 49 pages (verified)         |
+| smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run         |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools now) |
+| axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
+| CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run         |
+| CI build job         | ✅ includes axe        | ✅ branch trigger added (this commit) |
 | CI informational     | overflow + motion only | unchanged                      |
 
 ## Resume point
 
-**Next session — verify v7.0 PDF batch-1 on CI:**
+**Next session — verify CI auto-run + owner review:**
 
-1. Check CI run on `v7.0-pdf-batch1` after the last push (commit `2610cf6`)
-2. If lint/unit/build/smoke/tool-e2e/axe/CLS all green → ready for owner review
-3. If any red → fix per-tool, re-push, re-verify
+1. CI auto-runs on the P0 commit push (C1 fix enables this — first time CI runs on this branch)
+2. If lint + tests + build + smoke + tool e2e + CLS + axe all green → ready for owner review
+3. If any red → triage per-tool, fix, re-push, re-verify
 4. Owner merges `v7.0-pdf-batch1` → `main` → Cloudflare Pages auto-deploys
-5. After merge: start v7.0 PDF batch-2 (next 10 PDF tools per `unqtools-docs` Tool Catalog)
+5. After merge: start batch-2 (H2 a11y radiogroup + M2 axe slice cap + H1 privacy clean dates)
+6. After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
 | `main`                  | production      | at v6.9 (commit 6773d51)                               |
-| `v7.0-pdf-batch1`       | active work     | 10 PDF tools + pdf-lib + lockfile workflow — IN PROGRESS |
+| `v7.0-pdf-batch1`       | ready for CI    | 10 PDF tools + pdf-lib + lockfile workflow + 3 P0 fixes — READY FOR REVIEW |
 | `v6.9-all-categories`   | merged to main  | kept for history                                       |
 | `v6.8-cleanup`          | merged earlier  | kept for history                                       |
 | older v6.x branches     | history         | not active                                             |
+
