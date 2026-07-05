@@ -1,6 +1,6 @@
 {
   "name": "unqtools",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
@@ -51,6 +51,7 @@
     "next": "^16.1.1",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.4.6",
+    "pdf-lib": "^1.17.1",
     "radix-ui": "^1.6.0",
     "react": "^19.0.0",
     "react-day-picker": "^9.8.0",
