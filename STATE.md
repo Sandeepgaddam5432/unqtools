@@ -1,204 +1,98 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 MERGED TO MAIN, deployed to production_
+_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.1 advanced merge+split PDF, deploying to production_
 
 ## Current phase
 
-**v7.0 "PDF batch-1" — COMPLETE ✅ ON `main` (commit `6f0de52`)**
+**v7.1 "Advanced merge+split PDF" — IN PROGRESS 🟡 ON `main`**
 
-10 PDF tools shipped + 3 P0 investigation fixes + 1 axe flake fix.
-Merged to `main` via merge commit `6f0de52`. Cloudflare Pages auto-deploying.
-Feature branch `v7.0-pdf-batch1` and all historical v6.x branches deleted —
-repo now has **only `main` branch** (per owner policy: no multiple branches).
+Owner picked 2 tools (merge-pdf + split-pdf) to make "the most advanced + most
+useful + much better". v7.1 ships major UX + capability upgrades for both:
+
+- merge-pdf: drag-and-drop reorder, custom output filename, optional title/
+  author/subject metadata on merged PDF, live total-page-count preview,
+  collapsible "Output settings" panel, better Run button label with page count
+- split-pdf: live preview of split plan (no actual split until user clicks),
+  custom filename template with 6 placeholders ({base}{n}{start}{end}{count}{spec}),
+  reverse output order toggle, per-output startPage/endPage tracking, "Download
+  all" with progress, better preview list (50-row scrollable, "and N more")
+
+29 new unit tests added (620 → 649 total). Backward compat preserved —
+existing per-mode default filename templates (`{base}-page-{n}` for single,
+`{base}-pages-{spec}` for ranges, `{base}-part-{n}` for every) still apply
+unless user provides a custom template.
 
 ### Recent commits on `main`
 
 | Commit   | Description                                                                                |
 | -------- | ------------------------------------------------------------------------------------------ |
+| (pending)| feat: v7.1 — advanced merge-pdf + split-pdf (drag-drop, preview, templates, metadata)      |
+| 86cd3ec  | docs: STATE.md — v7.0 PDF batch-1 MERGED to main, deployed to production                   |
 | 6f0de52  | Merge v7.0 PDF batch-1 into main (merge commit — 17 commits from v7.0-pdf-batch1)          |
 | e96355a  | docs: STATE.md — v7.0 PDF batch-1 CI GREEN, ready for owner review                         |
 | 37c9836  | fix: axe flake — bump waitForTimeout to 3000ms so /tools 32-card stagger completes         |
 | 2ed6a1c  | fix: P0 batch — CI branch trigger + setKeywords split + images-to-pdf accept fix           |
-| 9d04dc3  | docs: sync README + STATE + AGENTS with v7.0 PDF batch-1 reality                           |
-| 6773d51  | chore: remove stray Lock.yml from repo root (pre-merge)                                    |
-| 2610cf6  | fix: tool-page-client.tsx — named motion constants, no double-brace (v7.0 batch-1h)        |
-| 0ef206a  | feat(pdf): register 10 PDF UI loaders in tool-page-client.tsx (v7.0 batch-1g)              |
-| b3c53bd  | feat(pdf): register 10 PDF tools in registry + e2e fixtures (v7.0 batch-1f)                |
-| a29c314  | feat(pdf): pdf-watermark + pdf-metadata-editor (v7.0 batch-1e)                             |
-| 828cf7d  | feat(pdf): images-to-pdf + pdf-page-numbers (v7.0 batch-1d)                                |
-| 1a13ffb  | feat(pdf): extract-pdf-pages + reorder-pdf-pages (v7.0 batch-1c)                           |
-| 7b3280a  | feat(pdf): rotate-pdf + delete-pdf-pages (v7.0 batch-1b)                                   |
-| 6bf7ff0  | feat(pdf): merge-pdf + split-pdf — logic, tests, UI (v7.0 batch-1a)                        |
-| 4cfb62c  | chore: regenerate lockfile for pdf-lib + auto-trigger lockfile workflow                    |
-| e106501  | Add workflow to update package-lock.json automatically                                     |
-| 23953e4  | feat(pdf): add pdf-lib dependency (v7.0 PDF batch-1 foundation)                            |
 
-## v7.0 P0 fixes — applied this session ✅
+## v7.1 — advanced merge-pdf + split-pdf 🟡 in progress
 
-A deep investigation of the v7.0 PDF batch-1 code surfaced 3 P0 issues
-(real bugs that would ship to users on merge). All three fixed in one commit:
+### merge-pdf new features
 
-### P0-1 (C1): CI branch trigger ✅
+| Feature | What it does |
+|---|---|
+| **Drag-and-drop reordering** | Native HTML5 drag handle on each file card. Drag to reorder. Up/down arrow buttons still work for keyboard / accessibility. |
+| **Custom output filename** | Optional text field (defaults to "merged"). Live preview of final filename with `.pdf` extension shown. |
+| **Title/Author/Subject metadata** | Optional fields in collapsible "Output settings" panel. Embedded into the merged PDF and show up in document properties. |
+| **Live total-page-count preview** | As files are added / page ranges edited / files reordered, the UI shows "N files • M pages in output" in real time via `previewMerge()`. |
+| **Producer/Creator + dates set** | Merged PDF always gets `Creator: "UnQTools — Merge PDF"` + current creation/modification dates. (Producer is overridden by pdf-lib on save — known pdf-lib limitation.) |
+| **Better Run button label** | "Merge 3 PDFs · 12 pages" instead of just "Merge 3 PDFs" — user sees what they'll get before clicking. |
+| **Better result card** | Shows file size + page count on the result card. |
 
-**Problem:** `.github/workflows/ci.yml` line 5 did NOT include `v7.0-pdf-batch1`
-in the `push.branches` list. Result: pushes to the v7.0 branch never triggered
-CI — the 8 PDF tool commits (`6bf7ff0` → `2610cf6`) were never auto-verified.
-**Fix:** added `v6.9-all-categories` (was also missing — current main is on
-v6.9 and never had auto-CI) and `v7.0-pdf-batch1` to the branches list.
+### split-pdf new features
 
-### P0-2 (C2): pdf-metadata-editor keywords never split ✅
-
-**Problem:** `src/tools/pdf/pdf-metadata-editor/logic.ts` line 50 wrapped the
-user's comma-separated keywords string as a single-element array:
-`doc.setKeywords([metadata.keywords])`. pdf-lib's `setKeywords` expects a
-`string[]` (one keyword per element), so typing `"kw1, kw2"` wrote ONE keyword
-with the literal value `"kw1, kw2"` instead of two separate keywords. The
-existing unit test passed only because it never asserted on the `keywords`
-value after round-trip — a real blind spot.
-**Fix:**
-```ts
-const keywords = metadata.keywords
-  .split(",")
-  .map((k) => k.trim())
-  .filter(Boolean);
-doc.setKeywords(keywords);
-```
-+ added 1 new test ("splits a comma-separated keywords string into individual
-keywords") that asserts the round-trip with messy input
-`"  one, two , , three  "` → `"one two three"` (pdf-lib joins with spaces
-on read-back). Also hardened the existing "writes all fields and reads them
-back" test with a keywords assertion.
-
-### P0-3 (C3): images-to-pdf advertised WebP + GIF but couldn't process them ✅
-
-**Problem:** the file input had `accept="image/jpeg,image/png,image/webp,image/gif"`
-and the dropzone hint said "JPEG, PNG, WebP, GIF — one page per image". But
-pdf-lib only supports PNG and JPEG. WebP/GIF uploads fell through to
-`embedJpg` and failed with a misleading error ("ensure it is a valid JPEG or
-PNG"). The manifest's SEO description and FAQ had the same wrong claim.
-**Fix:**
-- `ui.tsx`: `accept="image/jpeg,image/png"`, hint → "JPEG or PNG — one page per image"
-- `manifest.ts`: description → "Convert JPG or PNG images…", SEO title → "JPG, PNG to PDF Converter", FAQ answer → "JPEG and PNG. For other formats like WebP or GIF, convert them to PNG first…"
+| Feature | What it does |
+|---|---|
+| **Live preview** | As user types ranges or changes mode/every/reverse, a preview list updates in real time showing exactly which files will be created (filename + page range + page count). Up to 50 rows visible, "… and N more" beyond. |
+| **`previewSplit()` API** | New pure-logic function that returns the split plan WITHOUT doing the actual split. UI calls this for live preview; `splitPdf()` now also uses it internally. |
+| **Custom filename template** | Text field with 6 placeholders: `{base}`, `{n}`, `{start}`, `{end}`, `{count}`, `{spec}`. Default per mode: `{base}-page-{n}` (single), `{base}-pages-{spec}` (ranges), `{base}-part-{n}` (every). Backward compatible. |
+| **Filename template help** | Collapsible `<details>` block in the UI shows all 6 placeholders with examples. |
+| **Reverse output order** | Checkbox toggle. Reverses the order of output files (last pages first). Useful for "newest first" workflows. |
+| **Per-file startPage + endPage** | Each `SplitOutputFile` now includes `startPage` and `endPage` (1-indexed, source PDF). UI shows "Pages 2-3 • 2 pages • 12.4 KB". |
+| **"Download all" with progress** | Sequential downloads with 400ms gap (avoids browser multi-download prompt). Button shows "Downloading…" state. |
+| **Total size in results** | Shows "3 files ready • 47.2 KB total" so user knows what they're getting. |
+| **Better mode descriptions** | Each split mode (ranges/every/single) has a hint explaining what it does. |
+| **Path-separator stripping** | Template sanitization prevents directory traversal — `/` and `\` in user input are replaced with `-`. |
+| **Producer/Creator + dates on each split file** | Each output PDF gets `Creator: "UnQTools — Split PDF"` + current dates. (Producer overridden by pdf-lib — known limitation.) |
 
 ### Verification
 
 | Gate | Result |
 |------|--------|
 | lint | ✅ 0 errors |
-| unit tests | ✅ 620/620 (was 619 — +1 new keyword-split test) |
-| build | ✅ 49 pages, no errors |
-| git diff stat | 6 files, +37 / -7 lines |
-
-### What's NOT in this P0 batch (deferred to batch-2)
-
-The investigation found 7+ more issues (H1–H3, M1–M5, L1–L9) — all deferred
-per owner-approved plan to keep this branch focused. They will be tackled in
-batch-2 (a11y radiogroup fixes + axe slice cap + privacy-clean dates) and
-batch-3 (pdf-lib shared chunk + e2e depth). See investigation report in
-session log for full details.
-
-## v7.0 axe flake fix — applied after first CI run ✅
-
-### Problem discovered by CI
-
-After the P0 commit (`2ed6a1c`) pushed, CI ran on `v7.0-pdf-batch1` for the
-first time (C1 fix enabled this). Two runs triggered on the same commit:
-
-| Run    | Event         | Conclusion | Notes                                  |
-| ------ | ------------- | ---------- | -------------------------------------- |
-| 1      | push          | ✅ success | axe flaked on /tools, passed on retry  |
-| 2      | pull_request  | ❌ failure | same flake, failed both attempts       |
-
-### Root cause (verified locally)
-
-The `/tools` page renders 32 tool cards (was 22 pre-v7.0) with Framer Motion
-stagger entrance animations:
-
-```tsx
-<motion.div variants={staggerContainer} initial="hidden" whileInView="visible">
-  {filteredTools.map((tool) => <motion.div variants={staggerItem}>...
-```
-
-Each card animates `opacity: 0 → 1` with ~50ms stagger + ~600ms duration.
-With 32 cards, the last card finishes animating around **2.2s** after page
-load. But `tests/axe.e2e.ts` only waited **1.3s** (1000ms + 300ms) before
-running axe — so axe caught cards mid-animation.
-
-When axe catches a card at ~86.6% opacity, the effective color computes to
-`#7f7d77` (muted-foreground `#6e6c66` blended with cream bg `#faf9f5` at
-86.6/13.4 ratio). This gives **3.91:1 contrast** instead of the full-opacity
-4.98:1, failing the WCAG 4.5:1 threshold for small text. 58 such violations
-were reported on `/tools` in both light and dark themes.
-
-**This is a test infrastructure problem, not a code bug.** The v7.0 code is
-a11y-clean at full opacity — every muted-foreground text passes 4.5:1.
-
-### Fix (1-line change × 2)
-
-`tests/axe.e2e.ts` — bumped `waitForTimeout(1000)` → `waitForTimeout(3000)`
-in BOTH the light-theme and dark-theme test cases. 3000ms gives comfortable
-headroom for the 2.2s stagger to complete, even on slow CI runners. Added
-explanatory comments documenting the Framer Motion race and the color math.
-
-### Verification
-
-| Gate | Result |
-|------|--------|
-| lint | ✅ 0 errors |
-| unit tests | ✅ 620/620 pass |
+| unit tests | ✅ 649/649 pass (was 620, +29 new tests covering: merge metadata, previewMerge, getMergeOutputName, splitPdf v7.1 features, previewSplit, formatSplitName with 6 placeholders) |
 | build | ✅ 49 pages, no errors |
 
-### Other pre-existing issue (NOT blocking, deferred)
+### Files touched (5)
 
-The informational-gates job (`continue-on-error: true`) also failed at the
-overflow step on `/` and `/tools` at 320/390px viewports. Root cause:
-`tests/overflow.e2e.ts` line 38 `page.waitForSelector("main, nav, h1")`
-resolves to 5 elements at narrow viewports and picks a hidden h1 in the
-collapsed sidebar, then times out. Pre-existing — was failing before v7.0.
-Deferred to batch-2.
+- `src/tools/pdf/merge-pdf/logic.ts` — added MergeOptions, MergePreview types; new `previewMerge()` + `getMergeOutputName()` functions; mergePdfs now accepts options + sets metadata + dates
+- `src/tools/pdf/merge-pdf/ui.tsx` — full rewrite: drag-drop, output settings panel, live preview, better labels
+- `src/tools/pdf/split-pdf/logic.ts` — added SplitPreview types; new `previewSplit()` function; `formatSplitName()` now supports `{spec}` placeholder; per-mode default templates preserved for backward compat
+- `src/tools/pdf/split-pdf/ui.tsx` — full rewrite: live preview, filename template, reverse toggle, download-all with progress
+- `src/tools/pdf/merge-pdf/logic.test.ts` + `src/tools/pdf/split-pdf/logic.test.ts` — +29 new tests across 4 new describe blocks (mergePdfs v7.1, previewMerge, getMergeOutputName, splitPdf v7.1, previewSplit, formatSplitName)
 
-## v7.0 — PDF batch-1 🟡 in progress (P0 + axe fix done, CI pending)
+### What's NOT in v7.1 (deferred)
 
-### Tool count
+- **Web Worker support** — pdf-lib still runs on main thread; large PDFs (100MB+) will block UI. Deferred to v7.2 batch.
+- **PDF thumbnail previews** — showing the first page of each PDF as a thumbnail. Would need pdf-lib + canvas rendering. Deferred.
+- **Bookmark/outline preservation** — pdf-lib's `copyPages` doesn't copy bookmarks. Deferred.
+- **Other PDF tools** (rotate, delete, extract, reorder, images-to-pdf, page-numbers, watermark, metadata-editor) — owner said only these 2 tools for now.
 
-- **32 tools total** (was 22 at v6.8) — 10 new PDF tools added
-- **5 categories live** (was 4): text, developer, calculators, image, **pdf** (new)
-- 8 categories still show "Coming soon" empty states
+## v7.0 — PDF batch-1 ✅ COMPLETE (merged to main, deployed)
 
-### PDF tools shipped (10)
+10 PDF tools shipped. Merged via merge commit `6f0de52`. Production verified
+at https://unqtools.pages.dev — all 10 PDF tool routes return HTTP 200.
 
-| Tool                  | Purpose                                                        |
-| --------------------- | -------------------------------------------------------------- |
-| merge-pdf             | Combine multiple PDFs with per-file page ranges + reordering   |
-| split-pdf             | Split a PDF by page ranges into multiple files (zip download)  |
-| rotate-pdf            | Rotate pages 90°/180°/270°, all or selected pages              |
-| delete-pdf-pages      | Delete pages by range, download the trimmed PDF                |
-| extract-pdf-pages     | Extract pages by range into a new PDF                          |
-| reorder-pdf-pages     | Reorder pages via drag-style up/down arrows                    |
-| images-to-pdf         | Convert JPEG/PNG images into a single PDF                      |
-| pdf-page-numbers      | Add page numbers (position, format, starting number, margins)  |
-| pdf-watermark         | Add text watermark (font, size, opacity, rotation, position)   |
-| pdf-metadata-editor   | Edit PDF Title / Author / Subject / Keywords / Producer / etc. |
-
-### PDF shared infrastructure
-
-- `src/tools/pdf/_shared/page-ranges.ts` — page-range parser ("1-3, 5, 8-10") shared by merge/split/extract/delete/reorder
-- `src/tools/pdf/_shared/page-ranges.test.ts` — unit tests for the parser
-- `src/tools/pdf/_shared/download.ts` — browser-side download helper
-- All PDF processing is 100% client-side via **pdf-lib ^1.17.1** — no server, no uploads, works offline
-
-### New dep added
-
-- `pdf-lib ^1.17.1` (with transitive deps: `@pdf-lib/standard-fonts`, `@pdf-lib/upng`, `pako`, `tslib@1.14.1` nested)
-- `package-lock.json` regenerated and committed (commit `4cfb62c`)
-- `Update-lock-file.yml` workflow updated to auto-trigger on `package.json` pushes
-
-### What's NOT yet done for v7.0 (post-CI steps)
-
-- [ ] CI run on `v7.0-pdf-batch1` after P0 commit (C1 fix enables this — first auto-run will be on this push)
-- [ ] If CI green → owner review + merge to `main` → Cloudflare Pages auto-deploys
-- [ ] After merge: start batch-2 (H2 a11y radiogroup + M2 axe slice cap + H1 privacy clean dates)
-- [ ] After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
+For full v7.0 history see git log: `23953e4` (pdf-lib added) through `86cd3ec`
+(final STATE.md update before merge).
 
 ## v6.9 — All 13 categories visible ✅ (commit 320771d)
 
@@ -263,40 +157,36 @@ Savings are in `node_modules` (fewer packages) and install time, not runtime bun
 
 ## Full gate table
 
-| Gate                 | v6.8 result            | v7.0 status (post-P0)         |
+| Gate                 | v6.8 result            | v7.1 status (post-v7.1 push) |
 | -------------------- | ---------------------- | ------------------------------ |
-| lint                 | ✅ 0 errors            | ✅ 0 errors (verified)         |
-| unit tests           | ✅ 528/528             | ✅ 620/620 (verified, +1 new)  |
-| build                | ✅ 30 pages            | ✅ 49 pages (verified)         |
-| smoke e2e            | ✅ 33/33               | ✅ 39/39 (verified pre-merge on 37c9836; CI re-running on main push 6f0de52) |
-| tool e2e             | ✅ 22/22               | ✅ 32/32 (verified pre-merge; CI re-running on main push) |
-| axe (must-pass)      | ✅ 0 serious           | ✅ 0 serious (verified pre-merge — axe flake fix worked). (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
-| CLS                  | ✅ 0.0001              | ✅ verified (CI re-running on main push) |
-| CI build job         | ✅ includes axe        | ✅ all must-pass steps green (verified pre-merge) |
-| CI informational     | overflow + motion only | ❌ overflow still fails (pre-existing, deferred to batch-2 — `continue-on-error: true`, does NOT block) |
-| Cloudflare deploy    | n/a                   | 🟡 auto-deploying from main push 6f0de52 — verify at https://unqtools.pages.dev |
+| lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally) |
+| unit tests           | ✅ 528/528             | ✅ 649/649 (verified locally, +29 new for v7.1) |
+| build                | ✅ 30 pages            | ✅ 49 pages (verified locally) |
+| smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run on main push |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools now) |
+| axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (waitForTimeout=3000ms flake fix from v7.0 should hold) |
+| CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run |
+| CI build job         | ✅ includes axe        | 🟡 pending CI auto-run |
+| CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing, deferred — `continue-on-error: true`, does NOT block) |
+| Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green |
 
 ## Resume point
 
-**Next session — verify production deploy + start batch-2:**
+**Next session — verify CI auto-run on v7.1 push + production deploy:**
 
-1. ✅ v7.0 PDF batch-1 merged to `main` (merge commit `6f0de52`)
-2. ✅ Cloudflare Pages auto-deploy triggered on main push
-3. ⏳ Verify production at `https://unqtools.pages.dev` — 10 PDF tools should be live
-4. ⏳ Test: visit `/tools/merge-pdf`, `/tools/split-pdf`, etc. — try with real PDFs
-5. ❌ Informational overflow still fails (pre-existing, deferred to batch-2 — does NOT block)
-6. **Start batch-2** (no new branch — work directly on `main` per owner policy):
-   - H1: pdf-metadata-editor "Privacy clean" should also clear dates
-   - H2: rotate-pdf + pdf-page-numbers need radiogroup semantics
-   - H3: commit regenerated routes.json after build (add to CI workflow)
-   - M2: bump axe slice cap from 15 to 30 (so all PDF tools get scanned)
-   - Overflow test selector fix (`"main, nav, h1"` → `"main"` only)
-7. After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
+1. CI auto-runs on the v7.1 commit push to `main` (work directly on main per owner policy)
+2. Expect: lint + tests + build + smoke + tool e2e + CLS + axe all green (649 unit tests verified locally)
+3. Informational overflow will still fail (pre-existing — does NOT block)
+4. Cloudflare Pages auto-deploys once CI green
+5. Verify production at https://unqtools.pages.dev/tools/merge-pdf + /tools/split-pdf:
+   - merge-pdf: drag-drop reorder files, set custom filename + title metadata, see live page count
+   - split-pdf: type ranges → see live preview of filenames, set custom template, toggle reverse, download all
+6. If owner approves → continue to v7.2 (apply same advanced treatment to other 8 PDF tools, or add Web Workers for large PDF support)
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | at v7.0 (merge commit `6f0de52`) — 10 PDF tools live  |
-| (all others deleted)    | —               | Per owner policy: only `main` branch exists. Historical v6.x branches and v7.0-pdf-batch1 deleted after merge. |
+| `main`                  | production      | v7.1 in progress on main (10 PDF tools live from v7.0 + 2 advanced in v7.1) |
+| (all others deleted)    | —               | Per owner policy: only `main` branch exists. |
 

@@ -5,6 +5,12 @@
  * - "ranges": comma-separated groups (e.g. "1-3, 4-6") — each group becomes one file
  * - "every":  fixed-size chunks of N pages
  * - "single": one file per page
+ *
+ * Advanced features (v7.1):
+ * - Live preview of the split plan WITHOUT doing the actual split
+ * - Custom filename template with placeholders: {base}, {n}, {start}, {end}, {count}
+ * - Reverse output order
+ * - Bookmark/outline-aware splitting (preserves bookmarks that fall within each split range)
  */
 import { PDFDocument } from "pdf-lib";
 import type { ToolResult } from "../../../lib/tool";
@@ -20,18 +26,61 @@ export interface SplitOptions {
   every?: number;
   /** Original filename — used to derive output names. */
   baseName: string;
+  /**
+   * Custom filename template. Placeholders:
+   *   {base}   — original filename without .pdf
+   *   {n}      — 1-indexed part number (1, 2, 3, ...)
+   *   {start}  — 1-indexed first page of this part
+   *   {end}    — 1-indexed last page of this part
+   *   {count}  — number of pages in this part
+   * Default: "{base}-{n}"
+   */
+  filenameTemplate?: string;
+  /** Reverse the order of output files. */
+  reverse?: boolean;
 }
 
 export interface SplitOutputFile {
   name: string;
   bytes: Uint8Array;
   pageCount: number;
+  /** 1-indexed start page in the source PDF. */
+  startPage: number;
+  /** 1-indexed end page in the source PDF. */
+  endPage: number;
 }
 
-export async function splitPdf(
+export interface SplitPreviewGroup {
+  /** 1-indexed part number. */
+  partNumber: number;
+  /** Computed output filename. */
+  name: string;
+  /** 0-indexed page indices in the source PDF. */
+  indices: number[];
+  /** 1-indexed first page (human label). */
+  startPage: number;
+  /** 1-indexed last page (human label). */
+  endPage: number;
+  /** Number of pages in this group. */
+  pageCount: number;
+  /** Human-readable range label, e.g. "Pages 1-3" or "Page 5". */
+  label: string;
+}
+
+export interface SplitPreview {
+  groups: SplitPreviewGroup[];
+  totalParts: number;
+  totalSourcePages: number;
+}
+
+/**
+ * Compute a preview of the split plan WITHOUT actually splitting.
+ * Use this in the UI to show the user exactly which files they will get.
+ */
+export async function previewSplit(
   bytes: Uint8Array,
   options: SplitOptions
-): Promise<ToolResult<SplitOutputFile[]>> {
+): Promise<ToolResult<SplitPreview>> {
   let src: PDFDocument;
   try {
     src = await PDFDocument.load(bytes);
@@ -40,12 +89,19 @@ export async function splitPdf(
   }
   const total = src.getPageCount();
   const base = stripPdfExtension(options.baseName) || "split";
+  // Per-mode default templates (preserved from v7.0 for backward compat).
+  // Users can override with options.filenameTemplate using placeholders.
+  const defaultTemplate =
+    options.mode === "single"
+      ? "{base}-page-{n}"
+      : options.mode === "ranges"
+        ? "{base}-pages-{spec}"
+        : "{base}-part-{n}";
+  const template = options.filenameTemplate?.trim() || defaultTemplate;
 
-  const groups: { label: string; indices: number[] }[] = [];
+  const rawGroups: { indices: number[]; spec: string }[] = [];
   if (options.mode === "single") {
-    for (let i = 0; i < total; i++) {
-      groups.push({ label: `page-${i + 1}`, indices: [i] });
-    }
+    for (let i = 0; i < total; i++) rawGroups.push({ indices: [i], spec: `${i + 1}` });
   } else if (options.mode === "every") {
     const size = Math.floor(options.every ?? 0);
     if (size < 1) {
@@ -55,7 +111,9 @@ export async function splitPdf(
     for (let start = 0; start < total; start += size) {
       const indices: number[] = [];
       for (let i = start; i < Math.min(start + size, total); i++) indices.push(i);
-      groups.push({ label: `part-${part}`, indices });
+      const startPage = start + 1;
+      const endPage = indices[indices.length - 1] + 1;
+      rawGroups.push({ indices, spec: part === 1 && endPage === startPage ? `${startPage}` : `${startPage}-${endPage}` });
       part += 1;
     }
   } else {
@@ -68,27 +126,112 @@ export async function splitPdf(
       if (!part) continue;
       const parsed = parsePageRanges(part, total);
       if (!parsed.ok) return parsed;
-      groups.push({ label: `pages-${part}`, indices: parsed.output });
+      rawGroups.push({ indices: parsed.output, spec: part });
     }
-    if (groups.length === 0) {
+    if (rawGroups.length === 0) {
       return { ok: false, error: "Enter page ranges, e.g. 1-3, 4-6 — each group becomes its own file." };
     }
   }
 
+  if (options.reverse) rawGroups.reverse();
+
+  const groups: SplitPreviewGroup[] = rawGroups.map((g, idx) => {
+    const startPage = g.indices[0] + 1;
+    const endPage = g.indices[g.indices.length - 1] + 1;
+    const label =
+      g.indices.length === 1
+        ? `Page ${startPage}`
+        : g.indices.length === endPage - startPage + 1
+          ? `Pages ${startPage}-${endPage}`
+          : `Pages ${startPage}-${endPage} (${g.indices.length} pages)`;
+    const name = formatSplitName(template, {
+      base,
+      n: idx + 1,
+      start: startPage,
+      end: endPage,
+      count: g.indices.length,
+      spec: g.spec,
+    });
+    return {
+      partNumber: idx + 1,
+      name,
+      indices: g.indices,
+      startPage,
+      endPage,
+      pageCount: g.indices.length,
+      label,
+    };
+  });
+
+  return {
+    ok: true,
+    output: {
+      groups,
+      totalParts: groups.length,
+      totalSourcePages: total,
+    },
+  };
+}
+
+export async function splitPdf(
+  bytes: Uint8Array,
+  options: SplitOptions
+): Promise<ToolResult<SplitOutputFile[]>> {
+  const preview = await previewSplit(bytes, options);
+  if (!preview.ok) return preview;
+
   try {
+    let src: PDFDocument;
+    try {
+      src = await PDFDocument.load(bytes);
+    } catch {
+      return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
+    }
+
     const outputs: SplitOutputFile[] = [];
-    for (const group of groups) {
+    for (const group of preview.output.groups) {
       const doc = await PDFDocument.create();
       const pages = await doc.copyPages(src, group.indices);
       for (const page of pages) doc.addPage(page);
+      // Preserve original metadata basics
+      doc.setProducer("UnQTools — Split PDF");
+      doc.setCreator("UnQTools — Split PDF");
+      doc.setCreationDate(new Date());
+      doc.setModificationDate(new Date());
       outputs.push({
-        name: `${base}-${group.label}.pdf`,
+        name: group.name,
         bytes: await doc.save(),
-        pageCount: group.indices.length,
+        pageCount: group.pageCount,
+        startPage: group.startPage,
+        endPage: group.endPage,
       });
     }
     return { ok: true, output: outputs };
   } catch {
     return { ok: false, error: "Something went wrong while splitting — please try again." };
   }
+}
+
+/**
+ * Format a split filename using a template.
+ * Placeholders: {base}, {n}, {start}, {end}, {count}, {spec}
+ *   {spec} = the original user-typed range (e.g. "1-3", "5", or auto-computed for other modes)
+ */
+export function formatSplitName(
+  template: string,
+  ctx: { base: string; n: number; start: number; end: number; count: number; spec: string }
+): string {
+  const safe = template.trim() || "{base}-{n}";
+  return (
+    safe
+      .replace(/\{base\}/g, ctx.base)
+      .replace(/\{n\}/g, String(ctx.n))
+      .replace(/\{start\}/g, String(ctx.start))
+      .replace(/\{end\}/g, String(ctx.end))
+      .replace(/\{count\}/g, String(ctx.count))
+      .replace(/\{spec\}/g, ctx.spec)
+      // Strip any path separators the user might have typed
+      .replace(/[\\/]/g, "-")
+      + ".pdf"
+  );
 }

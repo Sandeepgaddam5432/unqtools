@@ -3,6 +3,12 @@
  *
  * Combines multiple PDFs into one, honoring an optional per-file page-range
  * spec (e.g. "1-3, 5"). Order of inputs = order of pages in the output.
+ *
+ * Advanced features (v7.1):
+ * - Custom output filename
+ * - Optional title/author metadata on the merged PDF
+ * - Per-file selected-page-count preview (without doing the merge)
+ * - Total output page count preview
  */
 import { PDFDocument } from "pdf-lib";
 import type { ToolResult } from "../../../lib/tool";
@@ -17,12 +23,113 @@ export interface MergeInput {
   pages?: string;
 }
 
-export async function mergePdfs(inputs: MergeInput[]): Promise<ToolResult<Uint8Array>> {
+export interface MergeOptions {
+  /** Custom output filename (without extension). Falls back to "merged". */
+  outputName?: string;
+  /** Optional metadata to set on the merged PDF. */
+  metadata?: {
+    title?: string;
+    author?: string;
+    subject?: string;
+  };
+}
+
+export interface MergePreviewFile {
+  /** 1-indexed position in the merge queue. */
+  position: number;
+  /** Original filename. */
+  name: string;
+  /** Total pages in the source PDF. */
+  totalSourcePages: number;
+  /** Pages that will be included (0-indexed). */
+  selectedIndices: number[];
+  /** Human-readable selected range, e.g. "All 5 pages" or "Pages 1-3, 5 (4 pages)". */
+  selectedLabel: string;
+}
+
+export interface MergePreview {
+  files: MergePreviewFile[];
+  totalSelectedPages: number;
+  /** Final output filename (without extension). */
+  outputName: string;
+}
+
+/**
+ * Compute a preview of the merge plan WITHOUT doing the actual merge.
+ * Use this in the UI to show the user exactly what will happen before they
+ * click "Merge".
+ */
+export async function previewMerge(
+  inputs: MergeInput[],
+  options: MergeOptions = {}
+): Promise<ToolResult<MergePreview>> {
+  if (inputs.length === 0) {
+    return { ok: false, error: "Add at least one PDF file to merge." };
+  }
+  const files: MergePreviewFile[] = [];
+  let totalSelectedPages = 0;
+  for (let i = 0; i < inputs.length; i++) {
+    const input = inputs[i];
+    let src: PDFDocument;
+    try {
+      src = await PDFDocument.load(input.bytes);
+    } catch {
+      return {
+        ok: false,
+        error: `Could not read "${input.name}" — the file may be corrupted or password-protected.`,
+      };
+    }
+    const totalSourcePages = src.getPageCount();
+    const spec = input.pages?.trim() ?? "";
+    let selectedIndices: number[];
+    if (spec) {
+      const parsed = parsePageRanges(spec, totalSourcePages);
+      if (!parsed.ok) {
+        return { ok: false, error: `${input.name}: ${parsed.error}` };
+      }
+      selectedIndices = parsed.output;
+    } else {
+      selectedIndices = src.getPageIndices();
+    }
+    const selectedLabel = spec
+      ? `Pages ${spec} (${selectedIndices.length} page${selectedIndices.length === 1 ? "" : "s"})`
+      : `All ${totalSourcePages} page${totalSourcePages === 1 ? "" : "s"}`;
+    files.push({
+      position: i + 1,
+      name: input.name,
+      totalSourcePages,
+      selectedIndices,
+      selectedLabel,
+    });
+    totalSelectedPages += selectedIndices.length;
+  }
+  return {
+    ok: true,
+    output: {
+      files,
+      totalSelectedPages,
+      outputName: (options.outputName?.trim() || "merged").replace(/\.pdf$/i, ""),
+    },
+  };
+}
+
+export async function mergePdfs(
+  inputs: MergeInput[],
+  options: MergeOptions = {}
+): Promise<ToolResult<Uint8Array>> {
   if (inputs.length === 0) {
     return { ok: false, error: "Add at least one PDF file to merge." };
   }
   try {
     const out = await PDFDocument.create();
+    if (options.metadata?.title) out.setTitle(options.metadata.title);
+    if (options.metadata?.author) out.setAuthor(options.metadata.author);
+    if (options.metadata?.subject) out.setSubject(options.metadata.subject);
+    out.setProducer("UnQTools — Merge PDF");
+    out.setCreator("UnQTools — Merge PDF");
+    out.setCreationDate(new Date());
+    out.setModificationDate(new Date());
+
     for (const input of inputs) {
       let src: PDFDocument;
       try {
@@ -58,4 +165,12 @@ export async function mergePdfs(inputs: MergeInput[]): Promise<ToolResult<Uint8A
       error: "Something went wrong while merging — please check your files and try again.",
     };
   }
+}
+
+/**
+ * Compute the final output filename for a merge (without extension).
+ * Exported so the UI can show the user what the download will be called.
+ */
+export function getMergeOutputName(options: MergeOptions): string {
+  return (options.outputName?.trim() || "merged").replace(/\.pdf$/i, "");
 }
