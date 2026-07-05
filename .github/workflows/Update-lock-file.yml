@@ -4,6 +4,10 @@ name: Update lockfile
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - package.json
+      - .github/workflows/Update-lock-file.yml
 
 permissions:
   contents: write
