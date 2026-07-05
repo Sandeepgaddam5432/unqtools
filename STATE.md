@@ -1,19 +1,20 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 P0 fixes applied, ready for CI_
+_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 P0 + axe flake fix applied, ready for CI_
 
 ## Current phase
 
 **v7.0 "PDF batch-1" — READY FOR CI** 🟢 ON `v7.0-pdf-batch1`
 
-10 PDF tools shipped + 3 P0 investigation fixes applied. Branch is ready for
-CI to run; once green, owner review + merge to `main`.
+10 PDF tools shipped + 3 P0 investigation fixes + 1 axe flake fix applied.
+Branch is ready for CI to run; once green, owner review + merge to `main`.
 
 ### Recent commits on `v7.0-pdf-batch1`
 
 | Commit   | Description                                                                                |
 | -------- | ------------------------------------------------------------------------------------------ |
-| (pending)| fix: P0 batch — CI branch trigger + setKeywords split + images-to-pdf accept fix           |
+| (pending)| fix: axe flake — bump waitForTimeout to 3000ms so /tools 32-card stagger animation completes before scan |
+| 2ed6a1c  | fix: P0 batch — CI branch trigger + setKeywords split + images-to-pdf accept fix           |
 | 9d04dc3  | docs: sync README + STATE + AGENTS with v7.0 PDF batch-1 reality                           |
 | 2610cf6  | fix: tool-page-client.tsx — named motion constants, no double-brace (v7.0 batch-1h)        |
 | 0ef206a  | feat(pdf): register 10 PDF UI loaders in tool-page-client.tsx (v7.0 batch-1g)              |
@@ -91,7 +92,67 @@ batch-2 (a11y radiogroup fixes + axe slice cap + privacy-clean dates) and
 batch-3 (pdf-lib shared chunk + e2e depth). See investigation report in
 session log for full details.
 
-## v7.0 — PDF batch-1 🟡 in progress (P0 fixes done, CI pending)
+## v7.0 axe flake fix — applied after first CI run ✅
+
+### Problem discovered by CI
+
+After the P0 commit (`2ed6a1c`) pushed, CI ran on `v7.0-pdf-batch1` for the
+first time (C1 fix enabled this). Two runs triggered on the same commit:
+
+| Run    | Event         | Conclusion | Notes                                  |
+| ------ | ------------- | ---------- | -------------------------------------- |
+| 1      | push          | ✅ success | axe flaked on /tools, passed on retry  |
+| 2      | pull_request  | ❌ failure | same flake, failed both attempts       |
+
+### Root cause (verified locally)
+
+The `/tools` page renders 32 tool cards (was 22 pre-v7.0) with Framer Motion
+stagger entrance animations:
+
+```tsx
+<motion.div variants={staggerContainer} initial="hidden" whileInView="visible">
+  {filteredTools.map((tool) => <motion.div variants={staggerItem}>...
+```
+
+Each card animates `opacity: 0 → 1` with ~50ms stagger + ~600ms duration.
+With 32 cards, the last card finishes animating around **2.2s** after page
+load. But `tests/axe.e2e.ts` only waited **1.3s** (1000ms + 300ms) before
+running axe — so axe caught cards mid-animation.
+
+When axe catches a card at ~86.6% opacity, the effective color computes to
+`#7f7d77` (muted-foreground `#6e6c66` blended with cream bg `#faf9f5` at
+86.6/13.4 ratio). This gives **3.91:1 contrast** instead of the full-opacity
+4.98:1, failing the WCAG 4.5:1 threshold for small text. 58 such violations
+were reported on `/tools` in both light and dark themes.
+
+**This is a test infrastructure problem, not a code bug.** The v7.0 code is
+a11y-clean at full opacity — every muted-foreground text passes 4.5:1.
+
+### Fix (1-line change × 2)
+
+`tests/axe.e2e.ts` — bumped `waitForTimeout(1000)` → `waitForTimeout(3000)`
+in BOTH the light-theme and dark-theme test cases. 3000ms gives comfortable
+headroom for the 2.2s stagger to complete, even on slow CI runners. Added
+explanatory comments documenting the Framer Motion race and the color math.
+
+### Verification
+
+| Gate | Result |
+|------|--------|
+| lint | ✅ 0 errors |
+| unit tests | ✅ 620/620 pass |
+| build | ✅ 49 pages, no errors |
+
+### Other pre-existing issue (NOT blocking, deferred)
+
+The informational-gates job (`continue-on-error: true`) also failed at the
+overflow step on `/` and `/tools` at 320/390px viewports. Root cause:
+`tests/overflow.e2e.ts` line 38 `page.waitForSelector("main, nav, h1")`
+resolves to 5 elements at narrow viewports and picks a hidden h1 in the
+collapsed sidebar, then times out. Pre-existing — was failing before v7.0.
+Deferred to batch-2.
+
+## v7.0 — PDF batch-1 🟡 in progress (P0 + axe fix done, CI pending)
 
 ### Tool count
 
@@ -202,23 +263,24 @@ Savings are in `node_modules` (fewer packages) and install time, not runtime bun
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified)         |
 | unit tests           | ✅ 528/528             | ✅ 620/620 (verified, +1 new)  |
 | build                | ✅ 30 pages            | ✅ 49 pages (verified)         |
-| smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools now) |
-| axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
-| CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run         |
+| smoke e2e            | ✅ 33/33               | ✅ 39/39 (CI verified on push run, was 29 routes in stale routes.json) |
+| tool e2e             | ✅ 22/22               | ✅ 32/32 (CI verified on push run) |
+| axe (must-pass)      | ✅ 0 serious           | 🟡 first CI run flaked on /tools — fixed via axe waitForTimeout bump (3000ms). Pending re-verify on next push. (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
+| CLS                  | ✅ 0.0001              | ✅ verified (CI passed on push run) |
 | CI build job         | ✅ includes axe        | ✅ branch trigger added (this commit) |
 | CI informational     | overflow + motion only | unchanged                      |
 
 ## Resume point
 
-**Next session — verify CI auto-run + owner review:**
+**Next session — verify CI auto-run on the axe fix commit + owner review:**
 
-1. CI auto-runs on the P0 commit push (C1 fix enables this — first time CI runs on this branch)
-2. If lint + tests + build + smoke + tool e2e + CLS + axe all green → ready for owner review
-3. If any red → triage per-tool, fix, re-push, re-verify
-4. Owner merges `v7.0-pdf-batch1` → `main` → Cloudflare Pages auto-deploys
-5. After merge: start batch-2 (H2 a11y radiogroup + M2 axe slice cap + H1 privacy clean dates)
-6. After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
+1. CI auto-runs on the axe fix push (next commit after `2ed6a1c`)
+2. Expect: lint + tests + build + smoke + tool e2e + CLS + axe all green (axe should now pass on /tools — 3000ms wait exceeds the 2.2s stagger)
+3. Informational overflow will still fail (pre-existing, deferred to batch-2 — does NOT block)
+4. If axe still flakes → bump waitForTimeout further (5000ms) or implement proper Fix B (`initial={false}` after hydration)
+5. Owner reviews + merges `v7.0-pdf-batch1` → `main` → Cloudflare Pages auto-deploys
+6. After merge: start batch-2 (H1 privacy clean dates + H2 a11y radiogroup + H3 routes.json commit + M2 axe slice cap + overflow test selector fix)
+7. After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
 
 ## Branch map (current)
 
