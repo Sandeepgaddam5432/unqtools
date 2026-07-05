@@ -17,6 +17,16 @@ import { manifest as urlEncoder } from "@/tools/developer/url-encoder/manifest";
 import { manifest as uuidGenerator } from "@/tools/developer/uuid-generator/manifest";
 import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
+import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifest";
+import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
+import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
+import { manifest as mergePdf } from "@/tools/pdf/merge-pdf/manifest";
+import { manifest as pdfMetadataEditor } from "@/tools/pdf/pdf-metadata-editor/manifest";
+import { manifest as pdfPageNumbers } from "@/tools/pdf/pdf-page-numbers/manifest";
+import { manifest as pdfWatermark } from "@/tools/pdf/pdf-watermark/manifest";
+import { manifest as reorderPdfPages } from "@/tools/pdf/reorder-pdf-pages/manifest";
+import { manifest as rotatePdf } from "@/tools/pdf/rotate-pdf/manifest";
+import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
 import { manifest as addLineBreaks } from "@/tools/text/add-line-breaks/manifest";
 import { manifest as addPrefixSuffix } from "@/tools/text/add-prefix-suffix/manifest";
 import { manifest as bigTextGenerator } from "@/tools/text/big-text-generator/manifest";
@@ -41,6 +51,16 @@ export const TOOLS: readonly ToolManifest[] = [
   uuidGenerator,
   colorPicker,
   imageCompressor,
+  deletePdfPages,
+  extractPdfPages,
+  imagesToPdf,
+  mergePdf,
+  pdfMetadataEditor,
+  pdfPageNumbers,
+  pdfWatermark,
+  reorderPdfPages,
+  rotatePdf,
+  splitPdf,
   addLineBreaks,
   addPrefixSuffix,
   bigTextGenerator,
