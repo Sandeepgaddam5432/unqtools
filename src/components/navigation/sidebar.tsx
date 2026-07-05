@@ -1,23 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Transition } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Home,
-  Search,
-  Info,
   ChevronLeft,
   ChevronRight,
   Sun,
   Moon,
   Heart,
-  Menu,
-  X,
   LayoutGrid,
-  Download,
   Code2,
   Type,
   Calculator,
@@ -27,6 +22,20 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MobileHeader } from "./mobile-header";
 import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
+
+// Animation values as named module-level constants so JSX props stay
+// single-brace (initial={HIDDEN_W}) — keeps the JSX simple and consistent.
+const HIDDEN_W = { opacity: 0, width: 0 };
+const VISIBLE_W = { opacity: 1, width: "auto" };
+const HIDDEN = { opacity: 0 };
+const VISIBLE = { opacity: 1 };
+const FAST: Transition = { duration: 0.2 };
+const SPRING: Transition = { type: "spring", stiffness: 300, damping: 30 };
+const SPRING_ACTIVE: Transition = { type: "spring", stiffness: 350, damping: 30 };
+const SLIDE_OUT = { x: -300 };
+const SLIDE_IN = { x: 0 };
+const W_EXPANDED = { width: 260 };
+const W_COLLAPSED = { width: 68 };
 
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
@@ -86,10 +95,10 @@ export function SidebarNav() {
         <AnimatePresence>
           {!collapsed && (
             <motion.div
-              initial= opacity: 0, width: 0 
-              animate= opacity: 1, width: "auto" 
-              exit= opacity: 0, width: 0 
-              transition= duration: 0.2 
+              initial={HIDDEN_W}
+              animate={VISIBLE_W}
+              exit={HIDDEN_W}
+              transition={FAST}
               className="overflow-hidden whitespace-nowrap"
             >
               <h1 className="text-base font-bold tracking-tight">
@@ -110,9 +119,9 @@ export function SidebarNav() {
             <AnimatePresence>
               {!collapsed && (
                 <motion.p
-                  initial= opacity: 0 
-                  animate= opacity: 1 
-                  exit= opacity: 0 
+                  initial={HIDDEN}
+                  animate={VISIBLE}
+                  exit={HIDDEN}
                   className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
                 >
                   {section.label}
@@ -139,11 +148,7 @@ export function SidebarNav() {
                       <motion.div
                         layoutId="sidebar-active"
                         className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full"
-                        transition=
-                          type: "spring",
-                          stiffness: 350,
-                          damping: 30,
-                        
+                        transition={SPRING_ACTIVE}
                       />
                     )}
                     <Icon
@@ -157,10 +162,10 @@ export function SidebarNav() {
                     <AnimatePresence>
                       {!collapsed && (
                         <motion.span
-                          initial= opacity: 0, width: 0 
-                          animate= opacity: 1, width: "auto" 
-                          exit= opacity: 0, width: 0 
-                          transition= duration: 0.2 
+                          initial={HIDDEN_W}
+                          animate={VISIBLE_W}
+                          exit={HIDDEN_W}
+                          transition={FAST}
                           className="overflow-hidden whitespace-nowrap"
                         >
                           {item.label}
@@ -180,9 +185,7 @@ export function SidebarNav() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() =>
-            setTheme(theme === "dark" ? "light" : "dark")
-          }
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
         >
           {theme === "dark" ? (
@@ -193,9 +196,9 @@ export function SidebarNav() {
           <AnimatePresence>
             {!collapsed && (
               <motion.span
-                initial= opacity: 0 
-                animate= opacity: 1 
-                exit= opacity: 0 
+                initial={HIDDEN}
+                animate={VISIBLE}
+                exit={HIDDEN}
                 className="text-sm"
               >
                 {theme === "dark" ? "Light Mode" : "Dark Mode"}
@@ -206,9 +209,9 @@ export function SidebarNav() {
         <AnimatePresence>
           {!collapsed && (
             <motion.div
-              initial= opacity: 0 
-              animate= opacity: 1 
-              exit= opacity: 0 
+              initial={HIDDEN}
+              animate={VISIBLE}
+              exit={HIDDEN}
               className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground"
             >
               <span>Built with</span>
@@ -230,9 +233,9 @@ export function SidebarNav() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial= opacity: 0 
-            animate= opacity: 1 
-            exit= opacity: 0 
+            initial={HIDDEN}
+            animate={VISIBLE}
+            exit={HIDDEN}
             className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
             onClick={() => setMobileOpen(false)}
           />
@@ -243,10 +246,10 @@ export function SidebarNav() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.aside
-            initial= x: -300 
-            animate= x: 0 
-            exit= x: -300 
-            transition= type: "spring", stiffness: 300, damping: 30 
+            initial={SLIDE_OUT}
+            animate={SLIDE_IN}
+            exit={SLIDE_OUT}
+            transition={SPRING}
             className="fixed left-0 top-12 z-50 h-[calc(100%-3rem)] w-72 bg-background border-r border-border md:hidden"
           >
             {sidebarContent}
@@ -256,8 +259,8 @@ export function SidebarNav() {
 
       {/* Desktop Sidebar */}
       <motion.aside
-        animate= width: collapsed ? 68 : 260 
-        transition= type: "spring", stiffness: 300, damping: 30 
+        animate={collapsed ? W_COLLAPSED : W_EXPANDED}
+        transition={SPRING}
         className="hidden md:flex flex-col fixed left-0 top-0 h-full bg-background/80 backdrop-blur-xl border-r border-border/50 z-30"
       >
         {sidebarContent}
@@ -278,9 +281,9 @@ export function SidebarNav() {
 
       {/* Spacer */}
       <motion.div
-        initial= width: 260 
-        animate= width: collapsed ? 68 : 260 
-        transition= type: "spring", stiffness: 300, damping: 30 
+        initial={W_EXPANDED}
+        animate={collapsed ? W_COLLAPSED : W_EXPANDED}
+        transition={SPRING}
         className="hidden md:block flex-shrink-0"
       />
     </>

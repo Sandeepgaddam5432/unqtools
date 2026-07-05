@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Command,
@@ -29,11 +29,9 @@ import {
   Sun,
   Moon,
   Star,
-  ArrowRight,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { TOOLS } from "@/lib/registry";
-import { searchTools } from "@/lib/search";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 
 const RECENTS_KEY = "unq-cmdk-recents";
@@ -92,7 +90,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const recentTools = recents
     .map((id) => TOOLS.find((t) => t.id === id))
-    .filter(Boolean) as typeof TOOLS[number][];
+    .filter(Boolean) as Array<(typeof TOOLS)[number]>;
 
   function go(url: string, toolId?: string) {
     if (toolId) saveRecent(toolId);
@@ -122,10 +120,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
             {/* Quick actions */}
             <CommandGroup heading="Quick Actions">
-              <CommandItem
-                onSelect={() => toggleTheme()}
-                className="cursor-pointer"
-              >
+              <CommandItem onSelect={() => toggleTheme()} className="cursor-pointer">
                 {theme === "dark" ? (
                   <Sun className="mr-2 h-4 w-4" />
                 ) : (
@@ -133,17 +128,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 )}
                 <span>Switch to {theme === "dark" ? "light" : "dark"} theme</span>
               </CommandItem>
-              <CommandItem
-                onSelect={() => go("/")}
-                className="cursor-pointer"
-              >
+              <CommandItem onSelect={() => go("/")} className="cursor-pointer">
                 <Home className="mr-2 h-4 w-4" />
                 <span>Go home</span>
               </CommandItem>
-              <CommandItem
-                onSelect={() => go("/tools")}
-                className="cursor-pointer"
-              >
+              <CommandItem onSelect={() => go("/tools")} className="cursor-pointer">
                 <Layers className="mr-2 h-4 w-4" />
                 <span>Browse all tools ({TOOLS.length})</span>
               </CommandItem>
