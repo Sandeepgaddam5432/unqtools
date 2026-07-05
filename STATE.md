@@ -1,19 +1,20 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 P0 + axe flake fix applied, ready for CI_
+_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 CI GREEN, ready for owner review_
 
 ## Current phase
 
-**v7.0 "PDF batch-1" — READY FOR CI** 🟢 ON `v7.0-pdf-batch1`
+**v7.0 "PDF batch-1" — CI ALL GREEN, READY FOR OWNER REVIEW** ✅ ON `v7.0-pdf-batch1`
 
 10 PDF tools shipped + 3 P0 investigation fixes + 1 axe flake fix applied.
-Branch is ready for CI to run; once green, owner review + merge to `main`.
+Both push and PR CI runs on commit `37c9836` passed all must-pass gates.
+Ready for owner review + merge to `main`.
 
 ### Recent commits on `v7.0-pdf-batch1`
 
 | Commit   | Description                                                                                |
 | -------- | ------------------------------------------------------------------------------------------ |
-| (pending)| fix: axe flake — bump waitForTimeout to 3000ms so /tools 32-card stagger animation completes before scan |
+| 37c9836  | fix: axe flake — bump waitForTimeout to 3000ms so /tools 32-card stagger animation completes before scan |
 | 2ed6a1c  | fix: P0 batch — CI branch trigger + setKeywords split + images-to-pdf accept fix           |
 | 9d04dc3  | docs: sync README + STATE + AGENTS with v7.0 PDF batch-1 reality                           |
 | 2610cf6  | fix: tool-page-client.tsx — named motion constants, no double-brace (v7.0 batch-1h)        |
@@ -263,22 +264,22 @@ Savings are in `node_modules` (fewer packages) and install time, not runtime bun
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified)         |
 | unit tests           | ✅ 528/528             | ✅ 620/620 (verified, +1 new)  |
 | build                | ✅ 30 pages            | ✅ 49 pages (verified)         |
-| smoke e2e            | ✅ 33/33               | ✅ 39/39 (CI verified on push run, was 29 routes in stale routes.json) |
-| tool e2e             | ✅ 22/22               | ✅ 32/32 (CI verified on push run) |
-| axe (must-pass)      | ✅ 0 serious           | 🟡 first CI run flaked on /tools — fixed via axe waitForTimeout bump (3000ms). Pending re-verify on next push. (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
-| CLS                  | ✅ 0.0001              | ✅ verified (CI passed on push run) |
-| CI build job         | ✅ includes axe        | ✅ branch trigger added (this commit) |
-| CI informational     | overflow + motion only | unchanged                      |
+| smoke e2e            | ✅ 33/33               | ✅ 39/39 (CI verified on commit 37c9836) |
+| tool e2e             | ✅ 22/22               | ✅ 32/32 (CI verified on commit 37c9836) |
+| axe (must-pass)      | ✅ 0 serious           | ✅ 0 serious (CI verified on commit 37c9836 — axe flake fix worked). (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
+| CLS                  | ✅ 0.0001              | ✅ verified (CI passed on commit 37c9836) |
+| CI build job         | ✅ includes axe        | ✅ all must-pass steps green |
+| CI informational     | overflow + motion only | ❌ overflow still fails (pre-existing, deferred to batch-2 — `continue-on-error: true`, does NOT block) |
 
 ## Resume point
 
-**Next session — verify CI auto-run on the axe fix commit + owner review:**
+**Next session — owner review + merge:**
 
-1. CI auto-runs on the axe fix push (next commit after `2ed6a1c`)
-2. Expect: lint + tests + build + smoke + tool e2e + CLS + axe all green (axe should now pass on /tools — 3000ms wait exceeds the 2.2s stagger)
-3. Informational overflow will still fail (pre-existing, deferred to batch-2 — does NOT block)
-4. If axe still flakes → bump waitForTimeout further (5000ms) or implement proper Fix B (`initial={false}` after hydration)
-5. Owner reviews + merges `v7.0-pdf-batch1` → `main` → Cloudflare Pages auto-deploys
+1. ✅ CI ran on commit `37c9836` (both push + PR events) — all must-pass gates GREEN
+2. ✅ Lint + unit tests + build + smoke + tool e2e + CLS + axe all passed
+3. ❌ Informational overflow still fails (pre-existing, deferred to batch-2 — does NOT block)
+4. **Owner reviews the v7.0-pdf-batch1 diff** (16 commits ahead of main: 13 PDF batch-1 + 1 lockfile chore + 1 docs sync + 1 P0 fixes + 1 axe flake fix)
+5. Owner merges `v7.0-pdf-batch1` → `main` → Cloudflare Pages auto-deploys
 6. After merge: start batch-2 (H1 privacy clean dates + H2 a11y radiogroup + H3 routes.json commit + M2 axe slice cap + overflow test selector fix)
 7. After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
 
@@ -287,7 +288,7 @@ Savings are in `node_modules` (fewer packages) and install time, not runtime bun
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
 | `main`                  | production      | at v6.9 (commit 6773d51)                               |
-| `v7.0-pdf-batch1`       | ready for CI    | 10 PDF tools + pdf-lib + lockfile workflow + 3 P0 fixes — READY FOR REVIEW |
+| `v7.0-pdf-batch1`       | CI GREEN, ready to merge | 10 PDF tools + pdf-lib + lockfile workflow + 3 P0 fixes + axe flake fix — READY FOR MERGE |
 | `v6.9-all-categories`   | merged to main  | kept for history                                       |
 | `v6.8-cleanup`          | merged earlier  | kept for history                                       |
 | older v6.x branches     | history         | not active                                             |
