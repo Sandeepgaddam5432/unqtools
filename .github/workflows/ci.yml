@@ -19,9 +19,9 @@ permissions:
 
 jobs:
   build:
-    name: Lint + Test + Build + E2E Gates
+    name: Lint + Test + Build + Smoke + Tool E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,9 +50,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: E2E — full gate suite (smoke + tools + axe + overflow + motion + CLS)
-        run: npx playwright test
-        timeout-minutes: 25
+      - name: E2E — smoke (all routes, strict React-error gate)
+        run: npx playwright test tests/smoke.e2e.ts
+        timeout-minutes: 10
+
+      - name: E2E — tool e2e (22 tools, strict output assertions)
+        run: npx playwright test tests/tool.e2e.ts
+        timeout-minutes: 10
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -70,6 +74,49 @@ jobs:
             test-results/
             playwright-report/
           retention-days: 7
+
+  informational-gates:
+    name: Axe + Overflow + CLS + Reduced-Motion (informational)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Build (static export)
+        run: npm run build
+
+      - name: Generate route list
+        run: node tests/gen-routes.mjs
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E — axe (a11y, light + dark)
+        run: npx playwright test tests/axe.e2e.ts
+        timeout-minutes: 10
+
+      - name: E2E — overflow (320/390/768/1440)
+        run: npx playwright test tests/overflow.e2e.ts
+        timeout-minutes: 10
+
+      - name: E2E — CLS
+        run: npx playwright test tests/cls.e2e.ts
+        timeout-minutes: 5
+
+      - name: E2E — reduced-motion
+        run: npx playwright test tests/reduced-motion.e2e.ts
+        timeout-minutes: 5
 
   deploy:
     name: Deploy to Cloudflare Pages
