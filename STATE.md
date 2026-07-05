@@ -1,102 +1,81 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05T00:00:00Z by GLM (z.ai sandbox) — v6.3 final_
+_Last updated: 2026-07-05T01:30:00Z by GLM (z.ai sandbox) — v6.4 final_
 
 ## Current phase
 
-**v6.3 "Showcase Removal + Hydration Fix" — COMPLETE** ✅ ON `v6.3-showcase-hydration`
+**v6.4 "Polish" — COMPLETE** ✅ ON `v6.4-polish` (pending merge to main)
 
-Branch: `v6.3-showcase-hydration` → merge to `main` after CI verified.
-
-### Commits on v6.3-showcase-hydration (4 total)
+### Commits on v6.4-polish (5 total)
 
 | Commit   | Description                                                              |
 | -------- | ------------------------------------------------------------------------ |
-| e70fd89  | Task A: archive 17 showcase pages (56→39 pages)                           |
-| 7720e6f  | Task B: #418 hydration fix — next-themes ThemeProvider mount-gate         |
-| bfd10c1  | CI: add v6.3-showcase-hydration to push triggers                          |
-| (pending)| CI split + Lighthouse + STATE.md                                          |
+| 772487f  | Task A: mobile top dead-space fix + regression guard                      |
+| a5116be  | Task B: CLS fix — sidebar spacer initial width + tool skeleton           |
+| 6471ab4  | CI: promote CLS to must-pass build job                                    |
+| bfe74fe  | Task C: axe CI fix — light theme contrast (0 serious on ALL pages)        |
+| (pending)| Task D+E: Lighthouse + STATE.md                                           |
 
-## Task A — Archive showcase pages ✅
+## Task A — Mobile top dead-space ✅
 
-17 template showcase pages moved to `archive/showcase-pages/` (preserved for future reuse):
-about, animations, blocks, calendar-clock, cards, components, dashboard, data-display,
-effects, explorer, feedback, forms, loaders, marketing, navigation, saas, search.
+**Root cause:** All 4 page files had `<main className="... pt-16 md:pt-0">` (64px) PLUS `<section className="... py-16 md:py-24">` (64px) = 128px before content on mobile.
 
-Kept routes: home (/), /tools, /tools/[id] (22), /category/[category] (13), 404.
-Page count: 56 → 39. All 90 components in src/components/ui/ stay available.
-Sidebar + command palette + home page links cleaned of removed routes.
+**Fix:** `pt-16` → `pt-14` on `<main>`, first section `py-16` → `pt-4 pb-16` (mobile only, desktop unchanged).
 
-## Task B — #418 hydration fix ✅
+**Before:** badge at y=133, gap from hamburger = 79px
+**After:** badge at y=77, gap = 23px (normal)
+**Regression guard:** 4 mobile top-space tests in smoke e2e (390×844, content < 200px from top)
 
-**Root cause (isolated via binary search):**
-1. Removed all providers from layout → NO #418
-2. Added MotionProvider only → NO #418
-3. Added ThemeProvider (next-themes 0.4.6) → HAS #418
+## Task B — CLS fix ✅
 
-next-themes 0.4.6's `useState` initializer reads `localStorage` on the client but returns
-`undefined` on the server. This causes the `<script>` element's `dangerouslySetInnerHTML`
-content to differ between SSG and client render → React #418.
+**Root cause:** Sidebar spacer `motion.div` had `animate={{ width: 260 }}` but NO `initial` prop. SSG rendered width:0, then animated to 260 on hydration → 0.17 CLS on every page. Tool pages had additional shift from empty Suspense fallback.
 
-**Fix:** Mount-gate the `ThemeProvider` in `src/components/theme-provider.tsx` — renders
-children without the provider on SSG + first client render, then mounts after `useEffect`.
-Also added `className="dark"` + `style={{colorScheme:"dark"}}` to `<html>` in layout.tsx
-so SSG matches the client's post-script state. Removed manual `<head>` tag.
+**Fix:** Added `initial={{ width: 260 }}` to spacer + created `ToolSkeleton` with dimension-reserved placeholder.
 
-**Proof:**
-- 7 routes tested: ZERO #418 hydration errors on ALL
-- Smoke e2e: 38/38 PASSED (was FAILING in v6.2 — strict React-error assertion now GREEN)
-- Tool e2e: 22/22 PASSED (strict assertions: EMI ₹10,500, Mortgage $2,237)
+| Page | Before | After |
+|------|--------|-------|
+| Home | 0.1726 | 0.0001 |
+| Tools | 0.1720 | 0.0001 |
+| JSON Formatter | 0.1748 | 0.0001 |
+| Diff Checker | 0.4463 | 0.0001 |
+| Color Picker | 0.5565 | 0.0001 |
+| EMI Calculator | 0.2717 | 0.0002 |
+| Category | 0.1708 | 0.0001 |
 
-## Task C — CLS ✅ (real numbers, all over 0.1 target)
+CLS e2e: 5/5 PASSED. CLS promoted to must-pass CI job.
 
-| Page | CLS | Target |
-|------|-----|--------|
-| Home | 0.1726 | < 0.1 |
-| Tools directory | 0.1719 | < 0.1 |
-| JSON Formatter | 0.1748 | < 0.1 |
-| Diff Checker | 0.4463 | < 0.1 |
-| EMI Calculator | 0.1722 | < 0.1 |
-| Category Developer | 0.1708 | < 0.1 |
+## Task C — axe CI fix ✅
 
-Root cause: Framer Motion `whileInView` animations cause layout shift. Per Rule #2, assertion
-NOT weakened. Tests correctly FAIL. Fix requires animation strategy refactor (deferred).
+**Root cause:** CI runs axe in BOTH light + dark. v6.3 only tested dark locally. Light theme had 6 color-contrast violations (primary #c96442 at 3.7, muted-foreground at 3.65, etc.).
 
-## Task D — CI ✅
+**Fix:** Darkened light theme `--primary` to #b5562d (4.60), `--muted-foreground` to #6e6c66 (4.98), removed /80 opacity, emerald-600→700, amber-600→800, added bg-transparent to hero CTA.
 
-CI split into 2 jobs:
-- `build` (must-pass): lint + unit + build + smoke + tool e2e — blocks deploy
-- `informational-gates` (continue-on-error): axe + overflow + CLS + reduced-motion — reports but doesn't block
+**Result:** 0 serious violations on ALL 7 pages × light + dark = 14 checks ✓
 
-v6.2 CI: all runs FAILED (smoke #418). v6.3 CI: `build` job should PASS (smoke GREEN).
+## Task D — Lighthouse ✅ (3-run medians)
 
-## Task E — Lighthouse ✅ (3-run medians)
+| Page | Form | v6.4 Perf | v6.3 Perf | Delta |
+|------|------|-----------|-----------|-------|
+| Home | Desktop | 70 | 54 | +16 |
+| Home | Mobile | 52 | 47 | +5 |
+| Tools | Desktop | 76 | 68 | +8 |
+| JSON Formatter | Desktop | 77 | 57 | +20 |
+| EMI Calculator | Desktop | 79 | 65 | +14 |
 
-See `docs/lighthouse/RESULTS.md` for full table. Key numbers:
-- Home desktop: 54 perf (v6.2: 56, delta -2)
-- Home mobile: 47 perf (v6.2: 44, delta +3)
-- BP improved 96→100 across all pages (showcase removal)
-- A11y: 96-100 across all pages
+Massive perf improvement from CLS fix (stable layout from first paint).
 
-## Full gate table (v6.3)
+## Full gate table (v6.4)
 
 | Gate | Result |
 |------|--------|
 | lint | ✅ 0 errors |
 | unit tests | ✅ 528/528 |
-| build | ✅ 39 pages (was 56) |
-| smoke e2e | ✅ 38/38 PASSED (ZERO #418 — strict React-error assertion GREEN) |
-| tool e2e | ✅ 22/22 PASSED (strict: EMI ₹10,500, Mortgage $2,237) |
-| axe (main pages) | ✅ 0 serious (showcase pages removed — 26 violations gone) |
-| overflow | ✅ 0 overflow (direct measurement) |
-| reduced-motion | ✅ MotionProvider `reducedMotion="user"` |
-| CLS | ⚠️ 0.17-0.45 (over 0.1 target — Framer Motion whileInView, deferred) |
-| Lighthouse | ✅ 8 runs (3-run medians, see RESULTS.md) |
+| build | ✅ 39 pages |
+| smoke e2e | ✅ 42/42 (38 routes + 4 top-space guards) |
+| tool e2e | ✅ 22/22 (strict assertions) |
+| axe (14 checks) | ✅ 0 serious (light + dark) |
+| CLS | ✅ 0.0001-0.0002 (5/5 e2e pass) |
+| overflow | ✅ 0 overflow |
+| Lighthouse | ✅ 70-79 desktop (was 54-68) |
 | 404 | ✅ Unknown routes return 404 |
-| CI | ✅ `build` job GREEN (smoke + tool e2e pass) |
-
-## Known issues
-
-1. **CLS over 0.1** — Framer Motion `whileInView` animations. Deferred to future PR.
-2. **Lighthouse perf 42-68** — impacted by Framer Motion JS payload + CLS. Deferred.
-3. **CI `informational-gates` job fails** (CLS + some axe on showcase archive pages) — `continue-on-error: true`, doesn't block deploy.
+| CI build job | ✅ GREEN (smoke + tool e2e + CLS) |

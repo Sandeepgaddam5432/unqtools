@@ -50,3 +50,20 @@ All raw Lighthouse JSON reports are in this directory: `*.json`
   the theme isn't applied. Net effect is roughly neutral — the real perf improvement will come
   from fixing Framer Motion whileInView CLS (deferred).
 - 3-run medians reduce variance vs v6.2's single-run numbers
+
+## v6.4 Results (3-run medians, after CLS fix + axe fix + mobile top-space fix)
+
+| Page | Form | v6.4 Perf (median) | v6.3 Perf | Delta |
+|------|------|---------------------|-----------|-------|
+| Home | Desktop | 70 | 54 | +16 |
+| Home | Mobile | 52 | 47 | +5 |
+| Tools | Desktop | 76 | 68 | +8 |
+| JSON Formatter | Desktop | 77 | 57 | +20 |
+| EMI Calculator | Desktop | 79 | 65 | +14 |
+
+### Notes
+- Massive perf improvement from CLS fix (sidebar spacer initial width + tool skeleton).
+  CLS went from 0.17-0.56 to 0.0001-0.0002 — React no longer re-renders from
+  hydration mismatch + layout is stable from first paint.
+- Mobile runs for non-home pages not completed (sandbox timeout) — desktop medians
+  show the improvement pattern clearly.
