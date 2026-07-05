@@ -1,15 +1,16 @@
 import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
-import { TOOLS, byCategory } from "@/lib/registry";
+import { byCategory } from "@/lib/registry";
 import { CategoryPageClient } from "./category-page-client";
 
 /**
- * Only generate static pages for categories that have at least 1 tool.
- * Empty categories get NO route (real 404) — consistent with our no-fake-pages rule.
- * Self-healing: when a new tool is added with a new category, the category page
- * reappears automatically.
+ * v6.9: generate static pages for ALL 13 categories. Categories without tools
+ * render a real "Coming soon" empty state (owner decision, 2026-07-05) so
+ * visitors can see the full breadth of UnQTools.
+ * Self-healing preserved: when a tool is added to a category, the coming-soon
+ * state is automatically replaced by the tools grid (registry-driven).
  */
 export function generateStaticParams() {
-  return ALL_CATEGORIES.filter((c) => TOOLS.some((t) => t.category === c)).map((c) => ({
+  return ALL_CATEGORIES.map((c) => ({
     category: c,
   }));
 }

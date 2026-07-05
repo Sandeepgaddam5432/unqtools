@@ -26,7 +26,6 @@ import {
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MobileHeader } from "./mobile-header";
-import { TOOLS } from "@/lib/registry";
 import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
 
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
@@ -55,9 +54,10 @@ const navSections = [
   },
   {
     label: "Categories",
-    items: ALL_CATEGORIES.filter((c) => TOOLS.some((t) => t.category === c)).map((c) => ({
+    // v6.9: all 13 categories are always shown — empty ones render a Coming soon page.
+    items: ALL_CATEGORIES.map((c) => ({
       href: `/category/${c}`,
-      label: CATEGORY_LABELS[c].split(" ")[0],
+      label: CATEGORY_LABELS[c].split(" ")[0].replace(/,$/, ""),
       icon: CATEGORY_ICONS[c] ?? LayoutGrid,
     })),
   },
@@ -86,10 +86,10 @@ export function SidebarNav() {
         <AnimatePresence>
           {!collapsed && (
             <motion.div
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: "auto" }}
-              exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.2 }}
+              initial= opacity: 0, width: 0 
+              animate= opacity: 1, width: "auto" 
+              exit= opacity: 0, width: 0 
+              transition= duration: 0.2 
               className="overflow-hidden whitespace-nowrap"
             >
               <h1 className="text-base font-bold tracking-tight">
@@ -110,9 +110,9 @@ export function SidebarNav() {
             <AnimatePresence>
               {!collapsed && (
                 <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  initial= opacity: 0 
+                  animate= opacity: 1 
+                  exit= opacity: 0 
                   className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
                 >
                   {section.label}
@@ -139,11 +139,11 @@ export function SidebarNav() {
                       <motion.div
                         layoutId="sidebar-active"
                         className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full"
-                        transition={{
+                        transition=
                           type: "spring",
                           stiffness: 350,
                           damping: 30,
-                        }}
+                        
                       />
                     )}
                     <Icon
@@ -157,10 +157,10 @@ export function SidebarNav() {
                     <AnimatePresence>
                       {!collapsed && (
                         <motion.span
-                          initial={{ opacity: 0, width: 0 }}
-                          animate={{ opacity: 1, width: "auto" }}
-                          exit={{ opacity: 0, width: 0 }}
-                          transition={{ duration: 0.2 }}
+                          initial= opacity: 0, width: 0 
+                          animate= opacity: 1, width: "auto" 
+                          exit= opacity: 0, width: 0 
+                          transition= duration: 0.2 
                           className="overflow-hidden whitespace-nowrap"
                         >
                           {item.label}
@@ -193,9 +193,9 @@ export function SidebarNav() {
           <AnimatePresence>
             {!collapsed && (
               <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial= opacity: 0 
+                animate= opacity: 1 
+                exit= opacity: 0 
                 className="text-sm"
               >
                 {theme === "dark" ? "Light Mode" : "Dark Mode"}
@@ -206,9 +206,9 @@ export function SidebarNav() {
         <AnimatePresence>
           {!collapsed && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial= opacity: 0 
+              animate= opacity: 1 
+              exit= opacity: 0 
               className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground"
             >
               <span>Built with</span>
@@ -230,9 +230,9 @@ export function SidebarNav() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial= opacity: 0 
+            animate= opacity: 1 
+            exit= opacity: 0 
             className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
             onClick={() => setMobileOpen(false)}
           />
@@ -243,10 +243,10 @@ export function SidebarNav() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.aside
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            exit={{ x: -300 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            initial= x: -300 
+            animate= x: 0 
+            exit= x: -300 
+            transition= type: "spring", stiffness: 300, damping: 30 
             className="fixed left-0 top-12 z-50 h-[calc(100%-3rem)] w-72 bg-background border-r border-border md:hidden"
           >
             {sidebarContent}
@@ -256,8 +256,8 @@ export function SidebarNav() {
 
       {/* Desktop Sidebar */}
       <motion.aside
-        animate={{ width: collapsed ? 68 : 260 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        animate= width: collapsed ? 68 : 260 
+        transition= type: "spring", stiffness: 300, damping: 30 
         className="hidden md:flex flex-col fixed left-0 top-0 h-full bg-background/80 backdrop-blur-xl border-r border-border/50 z-30"
       >
         {sidebarContent}
@@ -278,9 +278,9 @@ export function SidebarNav() {
 
       {/* Spacer */}
       <motion.div
-        initial={{ width: 260 }}
-        animate={{ width: collapsed ? 68 : 260 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        initial= width: 260 
+        animate= width: collapsed ? 68 : 260 
+        transition= type: "spring", stiffness: 300, damping: 30 
         className="hidden md:block flex-shrink-0"
       />
     </>

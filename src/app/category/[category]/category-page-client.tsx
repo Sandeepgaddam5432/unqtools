@@ -74,37 +74,40 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
         <section className="relative section-padding pt-2 pb-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.6 
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
             >
               <Icon className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-foreground font-medium">{tools.length} tools</span>
+              <span className="text-sm text-foreground font-medium">
+                {tools.length > 0 ? `${tools.length} tools` : "Coming soon"}
+              </span>
             </motion.div>
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+              initial= opacity: 0, y: 30 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.8, ease: [0.25, 0.4, 0.25, 1] 
               className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance"
             >
               {label}
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.8, delay: 0.2 
               className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
             >
-              {tools.length} tool{tools.length === 1 ? "" : "s"} in this category — all
-              running 100% in your browser. No uploads, no tracking, no accounts.
+              {tools.length > 0
+                ? `${tools.length} tool${tools.length === 1 ? "" : "s"} in this category — all running 100% in your browser. No uploads, no tracking, no accounts.`
+                : `${label} tools are coming soon — and like every UnQTools tool, they will run 100% in your browser. No uploads, no tracking, no accounts.`}
             </motion.p>
 
             {/* Trust badges */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.8, delay: 0.3 
               className="flex flex-wrap items-center gap-3 mb-8"
             >
               <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
@@ -131,22 +134,30 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
           <div className="container mx-auto px-4 md:px-6">
             {tools.length === 0 ? (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial= opacity: 0 
+                animate= opacity: 1 
                 className="text-center py-24"
               >
-                <Layers className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-                <p className="text-lg font-medium text-foreground mb-1">No tools yet</p>
-                <p className="text-sm text-muted-foreground">
-                  This category doesn&apos;t have any tools yet. Check back soon.
+                <div className="h-16 w-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+                  <Icon className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-2xl font-bold text-foreground mb-2">Coming soon</p>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto mb-8">
+                  We&apos;re building {label} tools right now — private, offline-capable,
+                  and free, like everything else on UnQTools.
                 </p>
+                <Button asChild size="sm" className="gap-2">
+                  <Link href="/tools">
+                    Browse available tools <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
               </motion.div>
             ) : (
               <motion.div
                 variants={staggerContainer}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
+                viewport= once: true, margin: "-50px" 
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               >
                 {tools.map((tool) => {
