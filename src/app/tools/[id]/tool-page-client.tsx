@@ -71,6 +71,17 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "diff-checker": () => import("@/tools/text/diff-checker/ui"),
   "duplicate-lines-remover": () => import("@/tools/text/duplicate-lines-remover/ui"),
   "word-character-counter": () => import("@/tools/text/word-character-counter/ui"),
+  // PDF tools
+  "delete-pdf-pages": () => import("@/tools/pdf/delete-pdf-pages/ui"),
+  "extract-pdf-pages": () => import("@/tools/pdf/extract-pdf-pages/ui"),
+  "images-to-pdf": () => import("@/tools/pdf/images-to-pdf/ui"),
+  "merge-pdf": () => import("@/tools/pdf/merge-pdf/ui"),
+  "pdf-metadata-editor": () => import("@/tools/pdf/pdf-metadata-editor/ui"),
+  "pdf-page-numbers": () => import("@/tools/pdf/pdf-page-numbers/ui"),
+  "pdf-watermark": () => import("@/tools/pdf/pdf-watermark/ui"),
+  "reorder-pdf-pages": () => import("@/tools/pdf/reorder-pdf-pages/ui"),
+  "rotate-pdf": () => import("@/tools/pdf/rotate-pdf/ui"),
+  "split-pdf": () => import("@/tools/pdf/split-pdf/ui"),
 };
 
 interface ToolPageClientProps {
@@ -96,9 +107,9 @@ export function ToolPageClient({
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
             {/* Breadcrumb */}
             <motion.nav
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
+              initial= opacity: 0, y: 10 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.4 
               className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6"
             >
               <Link href="/" className="hover:text-foreground transition-colors">
@@ -124,9 +135,9 @@ export function ToolPageClient({
 
             {/* Tool header */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.6, ease: [0.25, 0.4, 0.25, 1] 
               className="flex flex-wrap items-center gap-3 mb-4"
             >
               <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -141,17 +152,17 @@ export function ToolPageClient({
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.6, delay: 0.1 
               className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight text-balance"
             >
               {tool.name}
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.6, delay: 0.2 
               className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl text-pretty"
             >
               {tool.description}
@@ -159,9 +170,9 @@ export function ToolPageClient({
 
             {/* Trust badges */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              initial= opacity: 0, y: 20 
+              animate= opacity: 1, y: 0 
+              transition= duration: 0.6, delay: 0.3 
               className="flex flex-wrap items-center gap-3 mb-8"
             >
               <Badge variant="outline" className="gap-1">
@@ -201,10 +212,10 @@ export function ToolPageClient({
 
             {/* About / How to use */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6 }}
+              initial= opacity: 0, y: 20 
+              whileInView= opacity: 1, y: 0 
+              viewport= once: true, margin: "-50px" 
+              transition= duration: 0.6 
               className="mb-8"
             >
               <h2 className="text-xl font-semibold text-foreground mb-3">
@@ -228,10 +239,10 @@ export function ToolPageClient({
             {/* FAQ */}
             {tool.seo?.faq && tool.seo.faq.length > 0 && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6 }}
+                initial= opacity: 0, y: 20 
+                whileInView= opacity: 1, y: 0 
+                viewport= once: true, margin: "-50px" 
+                transition= duration: 0.6 
                 className="mb-8"
               >
                 <h2 className="text-xl font-semibold text-foreground mb-4">FAQ</h2>
@@ -255,10 +266,10 @@ export function ToolPageClient({
             {/* Related tools */}
             {related.length > 0 && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6 }}
+                initial= opacity: 0, y: 20 
+                whileInView= opacity: 1, y: 0 
+                viewport= once: true, margin: "-50px" 
+                transition= duration: 0.6 
               >
                 <h2 className="text-xl font-semibold text-foreground mb-4">
                   Related tools
