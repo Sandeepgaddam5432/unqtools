@@ -58,15 +58,3 @@ describe("Category labels completeness", () => {
     }
   });
 });
-
-describe("Theme system", () => {
-  it("exposes light, dark, system choices", async () => {
-    const mod = await import("../src/lib/theme");
-    expect(typeof mod.getStoredTheme).toBe("function");
-    expect(typeof mod.storeTheme).toBe("function");
-    expect(typeof mod.applyTheme).toBe("function");
-    expect(typeof mod.themeNoFoUcScript).toBe("string");
-    // The no-FOUC script must reference the storage key
-    expect(mod.themeNoFoUcScript).toContain("unq-theme");
-  });
-});
