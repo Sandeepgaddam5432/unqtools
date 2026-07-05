@@ -56,6 +56,15 @@ test.describe("Smoke — all routes", () => {
         "Design Collective",
         "Elevate Your Digital Vision",
         "Crafting Exceptional Websites",
+        "Alex Rivera",
+        "Priya Sharma",
+        "Marcus Chen",
+        "Elena Vasquez",
+        "Dev Patel",
+        "Sarah Kim",
+        "randomuser.me",
+        "production-ready",
+        "Trusted by developers from leading companies",
       ];
       const body = await page.locator("body").innerText();
       for (const phrase of TEMPLATE_LEFTOVERS) {

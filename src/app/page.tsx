@@ -178,56 +178,56 @@ const bentoFeatures: BentoFeature[] = [
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Alex Rivera",
-    role: "Full Stack Developer",
-    company: "TechForge",
+    name: "Privacy First",
+    role: "100% Client-Side",
+    company: "UnQTools",
     content:
-      "UnQTools is my daily driver for quick JSON formatting and base64 encoding. The fact that everything runs locally — no data leaves my browser — is exactly what I need for sensitive work.",
+      "Every tool runs entirely in your browser. No uploads, no tracking, no accounts. Your data never leaves your device — not even for a moment.",
     rating: 5,
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=privacy",
   },
   {
     id: 2,
-    name: "Priya Sharma",
-    role: "Frontend Engineer",
-    company: "DesignCraft",
+    name: "Works Offline",
+    role: "Installable PWA",
+    company: "UnQTools",
     content:
-      "The offline PWA install is genius. I have UnQTools on my phone — I can calculate my SIP returns on the metro with no signal. The design is gorgeous too — that terracotta palette is *chef's kiss*.",
+      "Install UnQTools as a PWA and use all 22 tools without network access. The service worker caches everything after first load — metro, airplane, anywhere.",
     rating: 5,
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=offline",
   },
   {
     id: 3,
-    name: "Marcus Chen",
-    role: "Product Manager",
-    company: "InnovateLabs",
+    name: "Developer Friendly",
+    role: "Open Source Stack",
+    company: "UnQTools",
     content:
-      "Our team replaced 3 different online tools with UnQTools. The diff checker alone saved us from a costly security incident — we no longer paste code into random sites. 100% private, 100% useful.",
+      "Built on Next.js 16, React 19, Tailwind CSS 4, and shadcn/ui. Every tool has unit-tested logic, strict TypeScript, and zero runtime dependencies on external APIs.",
     rating: 5,
-    avatar: "https://randomuser.me/api/portraits/men/46.jpg",
+    avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=dev",
   },
   {
     id: 4,
-    name: "Elena Vasquez",
-    role: "UI/UX Designer",
-    company: "PixelPerfect",
+    name: "Accessible",
+    role: "WCAG 2.1 AA",
+    company: "UnQTools",
     content:
-      "The dark mode implementation is the best I've seen in any tool. The glassmorphism, the animations, the color palette — everything feels intentional. And it's all offline!",
+      "Full keyboard navigation, screen-reader support, AA contrast in both light and dark themes, and prefers-reduced-motion respected throughout.",
     rating: 5,
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=a11y",
   },
 ];
 
 const glassTestimonials: GlassTestimonial[] = [
   {
     id: 1,
-    initials: "DP",
-    name: "Dev Patel",
-    role: "Backend Engineer · CloudNine",
-    quote: "The UUID generator and hash generator are staples in my workflow. Clean, fast, no ads, no signup. Everything runs locally — exactly what I need for sensitive work.",
+    initials: "🔒",
+    name: "Privacy",
+    role: "Your data stays local",
+    quote: "The UUID generator and hash generator run entirely in your browser. No ads, no signup, no data collection. Everything stays private — exactly what you need for sensitive work.",
     tags: [
-      { text: "Daily driver", type: "featured" },
-      { text: "Backend", type: "default" },
+      { text: "100% Private", type: "featured" },
+      { text: "No tracking", type: "default" },
     ],
     stats: [
       { icon: Lock, text: "Private" },
@@ -237,13 +237,13 @@ const glassTestimonials: GlassTestimonial[] = [
   },
   {
     id: 2,
-    initials: "SK",
-    name: "Sarah Kim",
-    role: "Tech Lead · StartUp Inc",
-    quote: "I installed UnQTools as a PWA and forgot it wasn't a native app. The diff checker is better than paid tools I've used. The terracotta dark mode is gorgeous.",
+    initials: "📱",
+    name: "Offline PWA",
+    role: "Install once, use anywhere",
+    quote: "Install UnQTools as a PWA and use all 22 tools without network access. The diff checker works as well offline as it does online — no compromise.",
     tags: [
-      { text: "PWA installed", type: "featured" },
-      { text: "Tech Lead", type: "default" },
+      { text: "Installable", type: "featured" },
+      { text: "Service Worker", type: "default" },
     ],
     stats: [
       { icon: ShieldCheck, text: "Secure" },
@@ -424,8 +424,8 @@ export default function Home() {
               Everything You Need
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              A complete toolkit with {toolCount} tools — all production-ready, all
-              private, all offline-capable.
+              A complete toolkit with {toolCount} tools — all private, all
+              offline-capable.
             </p>
           </div>
           <BentoGridWithFeatures features={bentoFeatures} />
@@ -450,12 +450,12 @@ export default function Home() {
           variants={sectionVariants}
         >
           <AnimatedTestimonials
-            title="Loved by Developers"
-            subtitle="Don't just take our word for it — hear from developers who use UnQTools daily for sensitive work."
-            badgeText="Trusted by builders"
+            title="Why UnQTools"
+            subtitle="Privacy, offline access, developer-friendly architecture, and accessibility — the principles that make UnQTools different from every other online tool site."
+            badgeText="Built different"
             testimonials={testimonials}
-            trustedCompanies={["Vercel", "Stripe", "Figma", "Linear", "Notion"]}
-            trustedCompaniesTitle="Trusted by developers from leading companies"
+            trustedCompanies={[]}
+            trustedCompaniesTitle=""
           />
         </motion.section>
 
