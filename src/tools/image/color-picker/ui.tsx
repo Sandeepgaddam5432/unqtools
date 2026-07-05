@@ -49,7 +49,6 @@ export default function ColorPicker() {
               value={hex.slice(0, 7)}
               onChange={(e) => updateFromHex(e.target.value)}
               className="h-12 w-16 rounded-md border cursor-pointer"
-              aria-label="Color picker"
             />
             <div className="flex flex-col gap-1">
               <Label className="text-xs text-muted-foreground">HEX</Label>
@@ -131,7 +130,6 @@ export default function ColorPicker() {
                   value={fgHex.slice(0, 7)}
                   onChange={(e) => setFgHex(e.target.value)}
                   className="h-10 w-12 rounded border cursor-pointer"
-                  aria-label="Foreground color"
                 />
                 <Input value={fgHex} onChange={(e) => setFgHex(e.target.value)} className="font-mono" aria-label="Foreground HEX color" />
               </div>
@@ -144,7 +142,6 @@ export default function ColorPicker() {
                   value={bgHex.slice(0, 7)}
                   onChange={(e) => setBgHex(e.target.value)}
                   className="h-10 w-12 rounded border cursor-pointer"
-                  aria-label="Background color"
                 />
                 <Input value={bgHex} onChange={(e) => setBgHex(e.target.value)} className="font-mono" aria-label="Background HEX color" />
               </div>
