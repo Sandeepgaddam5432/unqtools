@@ -3,7 +3,6 @@
 import React, { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { ToolSkeleton } from "@/components/tool-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -11,9 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import {
   ArrowLeft,
@@ -30,6 +26,19 @@ import {
   ChevronRight,
 } from "lucide-react";
 import type { ToolManifest, ToolCategory } from "@/lib/tool";
+
+// ---- Named motion constants (avoids double-brace push hazard) ----
+const MO_HIDDEN = { opacity: 0, y: 10 };
+const MO_HERO = { opacity: 0, y: 20 };
+const MO_VISIBLE = { opacity: 1, y: 0 };
+const MO_NAV_TRANS = { duration: 0.4 };
+const MO_HERO_TRANS = { duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as number[] };
+const MO_H1_TRANS = { duration: 0.6, delay: 0.1 };
+const MO_P_TRANS = { duration: 0.6, delay: 0.2 };
+const MO_BADGES_TRANS = { duration: 0.6, delay: 0.3 };
+const MO_SCROLL_TRANS = { duration: 0.6 };
+const MO_VIEWPORT = { once: true, margin: "-50px" };
+const MO_HOVER = { y: -4, transition: { duration: 0.2 } };
 
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
@@ -105,28 +114,19 @@ export function ToolPageClient({
       <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
         <div className="section-padding pt-2 pb-8 md:py-12">
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
+
             {/* Breadcrumb */}
             <motion.nav
-              initial= opacity: 0, y: 10 
-              animate= opacity: 1, y: 0 
-              transition= duration: 0.4 
+              initial={MO_HIDDEN}
+              animate={MO_VISIBLE}
+              transition={MO_NAV_TRANS}
               className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6"
             >
-              <Link href="/" className="hover:text-foreground transition-colors">
-                Home
-              </Link>
+              <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
               <ChevronRight className="h-3.5 w-3.5" />
-              <Link
-                href="/tools"
-                className="hover:text-foreground transition-colors"
-              >
-                Tools
-              </Link>
+              <Link href="/tools" className="hover:text-foreground transition-colors">Tools</Link>
               <ChevronRight className="h-3.5 w-3.5" />
-              <Link
-                href={`/category/${tool.category}`}
-                className="hover:text-foreground transition-colors"
-              >
+              <Link href={`/category/${tool.category}`} className="hover:text-foreground transition-colors">
                 {categoryLabel.split(" ")[0]}
               </Link>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -135,9 +135,9 @@ export function ToolPageClient({
 
             {/* Tool header */}
             <motion.div
-              initial= opacity: 0, y: 20 
-              animate= opacity: 1, y: 0 
-              transition= duration: 0.6, ease: [0.25, 0.4, 0.25, 1] 
+              initial={MO_HERO}
+              animate={MO_VISIBLE}
+              transition={MO_HERO_TRANS}
               className="flex flex-wrap items-center gap-3 mb-4"
             >
               <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -152,17 +152,18 @@ export function ToolPageClient({
             </motion.div>
 
             <motion.h1
-              initial= opacity: 0, y: 20 
-              animate= opacity: 1, y: 0 
-              transition= duration: 0.6, delay: 0.1 
+              initial={MO_HERO}
+              animate={MO_VISIBLE}
+              transition={MO_H1_TRANS}
               className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight text-balance"
             >
               {tool.name}
             </motion.h1>
+
             <motion.p
-              initial= opacity: 0, y: 20 
-              animate= opacity: 1, y: 0 
-              transition= duration: 0.6, delay: 0.2 
+              initial={MO_HERO}
+              animate={MO_VISIBLE}
+              transition={MO_P_TRANS}
               className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl text-pretty"
             >
               {tool.description}
@@ -170,9 +171,9 @@ export function ToolPageClient({
 
             {/* Trust badges */}
             <motion.div
-              initial= opacity: 0, y: 20 
-              animate= opacity: 1, y: 0 
-              transition= duration: 0.6, delay: 0.3 
+              initial={MO_HERO}
+              animate={MO_VISIBLE}
+              transition={MO_BADGES_TRANS}
               className="flex flex-wrap items-center gap-3 mb-8"
             >
               <Badge variant="outline" className="gap-1">
@@ -198,9 +199,7 @@ export function ToolPageClient({
                     <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center mb-4">
                       <Layers className="h-6 w-6 text-muted-foreground" />
                     </div>
-                    <p className="text-lg font-medium text-foreground mb-1">
-                      UI coming soon
-                    </p>
+                    <p className="text-lg font-medium text-foreground mb-1">UI coming soon</p>
                     <p className="text-sm text-muted-foreground max-w-sm">
                       The {tool.name} logic is implemented and tested — the UI is
                       being rebuilt in Phase 2 of the v6.0 migration. Check back shortly.
@@ -212,22 +211,17 @@ export function ToolPageClient({
 
             {/* About / How to use */}
             <motion.div
-              initial= opacity: 0, y: 20 
-              whileInView= opacity: 1, y: 0 
-              viewport= once: true, margin: "-50px" 
-              transition= duration: 0.6 
+              initial={MO_HERO}
+              whileInView={MO_VISIBLE}
+              viewport={MO_VIEWPORT}
+              transition={MO_SCROLL_TRANS}
               className="mb-8"
             >
-              <h2 className="text-xl font-semibold text-foreground mb-3">
-                About {tool.name}
-              </h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">About {tool.name}</h2>
               <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                {tool.description} Everything runs locally in your browser — your
-                data never leaves your device.
+                {tool.description} Everything runs locally in your browser — your data never leaves your device.
               </p>
-              <h3 className="text-sm font-semibold text-foreground mb-2">
-                How to use
-              </h3>
+              <h3 className="text-sm font-semibold text-foreground mb-2">How to use</h3>
               <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside mb-4">
                 <li>Enter your input in the tool above.</li>
                 <li>Adjust any options to your preference.</li>
@@ -239,10 +233,10 @@ export function ToolPageClient({
             {/* FAQ */}
             {tool.seo?.faq && tool.seo.faq.length > 0 && (
               <motion.div
-                initial= opacity: 0, y: 20 
-                whileInView= opacity: 1, y: 0 
-                viewport= once: true, margin: "-50px" 
-                transition= duration: 0.6 
+                initial={MO_HERO}
+                whileInView={MO_VISIBLE}
+                viewport={MO_VIEWPORT}
+                transition={MO_SCROLL_TRANS}
                 className="mb-8"
               >
                 <h2 className="text-xl font-semibold text-foreground mb-4">FAQ</h2>
@@ -250,12 +244,8 @@ export function ToolPageClient({
                   {tool.seo.faq.map((faq, i) => (
                     <Card key={i}>
                       <CardContent className="p-4">
-                        <h3 className="text-sm font-semibold text-foreground mb-1">
-                          {faq.q}
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {faq.a}
-                        </p>
+                        <h3 className="text-sm font-semibold text-foreground mb-1">{faq.q}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -266,30 +256,26 @@ export function ToolPageClient({
             {/* Related tools */}
             {related.length > 0 && (
               <motion.div
-                initial= opacity: 0, y: 20 
-                whileInView= opacity: 1, y: 0 
-                viewport= once: true, margin: "-50px" 
-                transition= duration: 0.6 
+                initial={MO_HERO}
+                whileInView={MO_VISIBLE}
+                viewport={MO_VIEWPORT}
+                transition={MO_SCROLL_TRANS}
               >
-                <h2 className="text-xl font-semibold text-foreground mb-4">
-                  Related tools
-                </h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">Related tools</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {related.map((rt) => {
                     const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
                     return (
                       <Link key={rt.id} href={`/tools/${rt.id}`} className="block group">
                         <motion.div
-                          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                          whileHover={MO_HOVER}
                           className="card-hover rounded-xl border bg-card p-4 h-full transition-colors hover:border-primary/30"
                         >
                           <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
                             <RIcon className="h-4 w-4 text-primary" />
                           </div>
                           <h3 className="font-medium text-sm mb-1">{rt.name}</h3>
-                          <p className="text-xs text-muted-foreground line-clamp-2">
-                            {rt.description}
-                          </p>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{rt.description}</p>
                           <div className="mt-2 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                             <span>Open</span>
                             <ArrowRight className="h-3 w-3 ml-1" />
@@ -310,6 +296,7 @@ export function ToolPageClient({
                 </Link>
               </Button>
             </div>
+
           </div>
         </div>
       </main>
