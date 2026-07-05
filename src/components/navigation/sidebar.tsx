@@ -270,6 +270,7 @@ export function SidebarNav() {
 
       {/* Spacer */}
       <motion.div
+        initial={{ width: 260 }}
         animate={{ width: collapsed ? 68 : 260 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="hidden md:block flex-shrink-0"

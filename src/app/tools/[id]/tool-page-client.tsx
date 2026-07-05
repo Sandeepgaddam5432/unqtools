@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { SidebarNav } from "@/components/navigation/sidebar";
+import { ToolSkeleton } from "@/components/tool-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -178,14 +179,7 @@ export function ToolPageClient({
             <Card className="mb-8">
               <CardContent className="p-6">
                 {ToolUI ? (
-                  <Suspense
-                    fallback={
-                      <div className="flex items-center justify-center py-12 text-muted-foreground">
-                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mr-2" />
-                        Loading {tool.name}…
-                      </div>
-                    }
-                  >
+                  <Suspense fallback={<ToolSkeleton />}>
                     <ToolUI />
                   </Suspense>
                 ) : (
