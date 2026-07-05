@@ -7,8 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Home,
-  Wand2,
-  Component,
   Search,
   Info,
   ChevronLeft,
@@ -34,7 +32,6 @@ const navSections = [
     items: [
       { href: "/", label: "Home", icon: Home },
       { href: "/tools", label: "All Tools", icon: LayoutGrid },
-      { href: "/search", label: "Search", icon: Search },
     ],
   },
   {
@@ -45,18 +42,6 @@ const navSections = [
       { href: "/category/calculators", label: "Calculators", icon: Calculator },
       { href: "/category/image", label: "Image", icon: ImageIcon },
     ],
-  },
-  {
-    label: "Showcase",
-    items: [
-      { href: "/components", label: "Components", icon: Component },
-      { href: "/animations", label: "Animations", icon: Wand2 },
-      { href: "/cards", label: "Cards", icon: LayoutGrid },
-    ],
-  },
-  {
-    label: "Info",
-    items: [{ href: "/about", label: "About", icon: Info }],
   },
 ];
 
