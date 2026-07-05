@@ -67,3 +67,15 @@ All raw Lighthouse JSON reports are in this directory: `*.json`
   hydration mismatch + layout is stable from first paint.
 - Mobile runs for non-home pages not completed (sandbox timeout) — desktop medians
   show the improvement pattern clearly.
+
+## v6.5 Mobile Lighthouse Medians (3-run)
+
+| Page | Form | v6.5 Perf (median) | v6.3 Perf | Delta |
+|------|------|---------------------|-----------|-------|
+| Tools | Mobile | 58 | 56 | +2 |
+| JSON Formatter | Mobile | 56 | 42 | +14 |
+| EMI Calculator | Mobile | 53 | 43 | +10 |
+
+Mobile perf improved significantly from CLS fix (v6.4) + hero cleanup (v6.5).
+JSON Formatter +14, EMI Calculator +10 — the tool skeleton (dimension-reserved
+Suspense fallback) eliminated the massive layout shift on mobile.

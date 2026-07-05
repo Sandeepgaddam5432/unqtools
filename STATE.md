@@ -1,81 +1,71 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05T01:30:00Z by GLM (z.ai sandbox) — v6.4 final_
+_Last updated: 2026-07-05T02:30:00Z by GLM (z.ai sandbox) — v6.5 final_
 
 ## Current phase
 
-**v6.4 "Polish" — COMPLETE** ✅ ON `v6.4-polish` (pending merge to main)
+**v6.5 "Hero Cleanup" — COMPLETE** ✅ ON `v6.5-hero-cleanup` (pending merge to main)
 
-### Commits on v6.4-polish (5 total)
+### Commits on v6.5-hero-cleanup (4 total)
 
 | Commit   | Description                                                              |
 | -------- | ------------------------------------------------------------------------ |
-| 772487f  | Task A: mobile top dead-space fix + regression guard                      |
-| a5116be  | Task B: CLS fix — sidebar spacer initial width + tool skeleton           |
-| 6471ab4  | CI: promote CLS to must-pass build job                                    |
-| bfe74fe  | Task C: axe CI fix — light theme contrast (0 serious on ALL pages)        |
-| (pending)| Task D+E: Lighthouse + STATE.md                                           |
+| caf41f8  | Task A: hero fix — remove template placeholder copy + duplicate CTA       |
+| 45b9674  | Task B: template-leftover sweep — fake testimonials + company logos       |
+| bf569e3  | Task C: axe.e2e.ts route list — derive from routes.json                   |
+| (pending)| Task D+E: mobile Lighthouse + STATE.md                                    |
 
-## Task A — Mobile top dead-space ✅
+## Task A — Home hero fix ✅
 
-**Root cause:** All 4 page files had `<main className="... pt-16 md:pt-0">` (64px) PLUS `<section className="... py-16 md:py-24">` (64px) = 128px before content on mobile.
+**BUG 1 (overlapping text):** HeroGeometric had hardcoded "Crafting exceptional digital
+experiences through innovative design and cutting-edge technology." + home page rendered
+a second overlay paragraph. Both in same visual area → overlap.
 
-**Fix:** `pt-16` → `pt-14` on `<main>`, first section `py-16` → `pt-4 pb-16` (mobile only, desktop unchanged).
+**BUG 2 (duplicate CTAs):** Two buttons both linked to /tools: "Browse 22 Tools →" (primary)
++ "Browse Tools" (outline). Same action twice.
 
-**Before:** badge at y=133, gap from hamburger = 79px
-**After:** badge at y=77, gap = 23px (normal)
-**Regression guard:** 4 mobile top-space tests in smoke e2e (390×844, content < 200px from top)
+**Fix:** Added `subtitle` prop to HeroGeometric (replaces hardcoded text). Home page passes
+real UnQTools copy. Removed duplicate overlay `<p>`. Replaced outline "Browse Tools" with
+"Browse Categories" linking to /category/developer.
 
-## Task B — CLS fix ✅
+**Template-leftover guard:** 16 phrases checked in smoke e2e on every route. 42/42 pass.
 
-**Root cause:** Sidebar spacer `motion.div` had `animate={{ width: 260 }}` but NO `initial` prop. SSG rendered width:0, then animated to 260 on hydration → 0.17 CLS on every page. Tool pages had additional shift from empty Suspense fallback.
+## Task B — Template-leftover sweep ✅
 
-**Fix:** Added `initial={{ width: 260 }}` to spacer + created `ToolSkeleton` with dimension-reserved placeholder.
+Found on home page: 6 fake testimonials (Alex Rivera, Priya Sharma, Marcus Chen, Elena
+Vasquez, Dev Patel, Sarah Kim) with randomuser.me avatars + fake company names. Fake
+company endorsements (Vercel, Stripe, Figma, Linear, Notion). "production-ready" phrase.
 
-| Page | Before | After |
-|------|--------|-------|
-| Home | 0.1726 | 0.0001 |
-| Tools | 0.1720 | 0.0001 |
-| JSON Formatter | 0.1748 | 0.0001 |
-| Diff Checker | 0.4463 | 0.0001 |
-| Color Picker | 0.5565 | 0.0001 |
-| EMI Calculator | 0.2717 | 0.0002 |
-| Category | 0.1708 | 0.0001 |
+**Fix:** Replaced with 4 honest feature cards (Privacy First, Works Offline, Developer
+Friendly, Accessible) + 2 feature-focused glass testimonials. Removed fake company logos.
+Changed "Loved by Developers" → "Why UnQTools". All other routes: clean (0 leftovers).
 
-CLS e2e: 5/5 PASSED. CLS promoted to must-pass CI job.
+## Task C — axe route list fix ✅
 
-## Task C — axe CI fix ✅
+**Root cause:** axe.e2e.ts had hardcoded routes including /about + /components (archived
+in v6.3). CI axe step failed on 404s.
 
-**Root cause:** CI runs axe in BOTH light + dark. v6.3 only tested dark locally. Light theme had 6 color-contrast violations (primary #c96442 at 3.7, muted-foreground at 3.65, etc.).
+**Fix:** Derive AXE_ROUTES from generated tests/routes.json (single source of truth).
+Filter to home + /tools + tool pages + category pages.
 
-**Fix:** Darkened light theme `--primary` to #b5562d (4.60), `--muted-foreground` to #6e6c66 (4.98), removed /80 opacity, emerald-600→700, amber-600→800, added bg-transparent to hero CTA.
+## Task D — Mobile Lighthouse ✅
 
-**Result:** 0 serious violations on ALL 7 pages × light + dark = 14 checks ✓
-
-## Task D — Lighthouse ✅ (3-run medians)
-
-| Page | Form | v6.4 Perf | v6.3 Perf | Delta |
+| Page | Form | v6.5 Perf | v6.3 Perf | Delta |
 |------|------|-----------|-----------|-------|
-| Home | Desktop | 70 | 54 | +16 |
-| Home | Mobile | 52 | 47 | +5 |
-| Tools | Desktop | 76 | 68 | +8 |
-| JSON Formatter | Desktop | 77 | 57 | +20 |
-| EMI Calculator | Desktop | 79 | 65 | +14 |
+| Tools | Mobile | 58 | 56 | +2 |
+| JSON Formatter | Mobile | 56 | 42 | +14 |
+| EMI Calculator | Mobile | 53 | 43 | +10 |
 
-Massive perf improvement from CLS fix (stable layout from first paint).
-
-## Full gate table (v6.4)
+## Full gate table (v6.5)
 
 | Gate | Result |
 |------|--------|
 | lint | ✅ 0 errors |
 | unit tests | ✅ 528/528 |
 | build | ✅ 39 pages |
-| smoke e2e | ✅ 42/42 (38 routes + 4 top-space guards) |
+| smoke e2e | ✅ 42/42 (38 routes + 4 top-space + leftover guard) |
 | tool e2e | ✅ 22/22 (strict assertions) |
-| axe (14 checks) | ✅ 0 serious (light + dark) |
-| CLS | ✅ 0.0001-0.0002 (5/5 e2e pass) |
-| overflow | ✅ 0 overflow |
-| Lighthouse | ✅ 70-79 desktop (was 54-68) |
+| axe (local) | ✅ 0 serious (light + dark) |
+| CLS | ✅ 0.0001-0.0002 |
+| Lighthouse | ✅ 70-79 desktop, 52-58 mobile |
 | 404 | ✅ Unknown routes return 404 |
-| CI build job | ✅ GREEN (smoke + tool e2e + CLS) |
