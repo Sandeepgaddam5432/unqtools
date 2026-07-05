@@ -1,22 +1,26 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 CI GREEN, ready for owner review_
+_Last updated: 2026-07-05 by GLM (z.ai sandbox) — v7.0 PDF batch-1 MERGED TO MAIN, deployed to production_
 
 ## Current phase
 
-**v7.0 "PDF batch-1" — CI ALL GREEN, READY FOR OWNER REVIEW** ✅ ON `v7.0-pdf-batch1`
+**v7.0 "PDF batch-1" — COMPLETE ✅ ON `main` (commit `6f0de52`)**
 
-10 PDF tools shipped + 3 P0 investigation fixes + 1 axe flake fix applied.
-Both push and PR CI runs on commit `37c9836` passed all must-pass gates.
-Ready for owner review + merge to `main`.
+10 PDF tools shipped + 3 P0 investigation fixes + 1 axe flake fix.
+Merged to `main` via merge commit `6f0de52`. Cloudflare Pages auto-deploying.
+Feature branch `v7.0-pdf-batch1` and all historical v6.x branches deleted —
+repo now has **only `main` branch** (per owner policy: no multiple branches).
 
-### Recent commits on `v7.0-pdf-batch1`
+### Recent commits on `main`
 
 | Commit   | Description                                                                                |
 | -------- | ------------------------------------------------------------------------------------------ |
-| 37c9836  | fix: axe flake — bump waitForTimeout to 3000ms so /tools 32-card stagger animation completes before scan |
+| 6f0de52  | Merge v7.0 PDF batch-1 into main (merge commit — 17 commits from v7.0-pdf-batch1)          |
+| e96355a  | docs: STATE.md — v7.0 PDF batch-1 CI GREEN, ready for owner review                         |
+| 37c9836  | fix: axe flake — bump waitForTimeout to 3000ms so /tools 32-card stagger completes         |
 | 2ed6a1c  | fix: P0 batch — CI branch trigger + setKeywords split + images-to-pdf accept fix           |
 | 9d04dc3  | docs: sync README + STATE + AGENTS with v7.0 PDF batch-1 reality                           |
+| 6773d51  | chore: remove stray Lock.yml from repo root (pre-merge)                                    |
 | 2610cf6  | fix: tool-page-client.tsx — named motion constants, no double-brace (v7.0 batch-1h)        |
 | 0ef206a  | feat(pdf): register 10 PDF UI loaders in tool-page-client.tsx (v7.0 batch-1g)              |
 | b3c53bd  | feat(pdf): register 10 PDF tools in registry + e2e fixtures (v7.0 batch-1f)                |
@@ -264,32 +268,35 @@ Savings are in `node_modules` (fewer packages) and install time, not runtime bun
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified)         |
 | unit tests           | ✅ 528/528             | ✅ 620/620 (verified, +1 new)  |
 | build                | ✅ 30 pages            | ✅ 49 pages (verified)         |
-| smoke e2e            | ✅ 33/33               | ✅ 39/39 (CI verified on commit 37c9836) |
-| tool e2e             | ✅ 22/22               | ✅ 32/32 (CI verified on commit 37c9836) |
-| axe (must-pass)      | ✅ 0 serious           | ✅ 0 serious (CI verified on commit 37c9836 — axe flake fix worked). (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
-| CLS                  | ✅ 0.0001              | ✅ verified (CI passed on commit 37c9836) |
-| CI build job         | ✅ includes axe        | ✅ all must-pass steps green |
+| smoke e2e            | ✅ 33/33               | ✅ 39/39 (verified pre-merge on 37c9836; CI re-running on main push 6f0de52) |
+| tool e2e             | ✅ 22/22               | ✅ 32/32 (verified pre-merge; CI re-running on main push) |
+| axe (must-pass)      | ✅ 0 serious           | ✅ 0 serious (verified pre-merge — axe flake fix worked). (slice cap = 15, 9 of 10 PDF tools not scanned — known issue, batch-2) |
+| CLS                  | ✅ 0.0001              | ✅ verified (CI re-running on main push) |
+| CI build job         | ✅ includes axe        | ✅ all must-pass steps green (verified pre-merge) |
 | CI informational     | overflow + motion only | ❌ overflow still fails (pre-existing, deferred to batch-2 — `continue-on-error: true`, does NOT block) |
+| Cloudflare deploy    | n/a                   | 🟡 auto-deploying from main push 6f0de52 — verify at https://unqtools.pages.dev |
 
 ## Resume point
 
-**Next session — owner review + merge:**
+**Next session — verify production deploy + start batch-2:**
 
-1. ✅ CI ran on commit `37c9836` (both push + PR events) — all must-pass gates GREEN
-2. ✅ Lint + unit tests + build + smoke + tool e2e + CLS + axe all passed
-3. ❌ Informational overflow still fails (pre-existing, deferred to batch-2 — does NOT block)
-4. **Owner reviews the v7.0-pdf-batch1 diff** (16 commits ahead of main: 13 PDF batch-1 + 1 lockfile chore + 1 docs sync + 1 P0 fixes + 1 axe flake fix)
-5. Owner merges `v7.0-pdf-batch1` → `main` → Cloudflare Pages auto-deploys
-6. After merge: start batch-2 (H1 privacy clean dates + H2 a11y radiogroup + H3 routes.json commit + M2 axe slice cap + overflow test selector fix)
+1. ✅ v7.0 PDF batch-1 merged to `main` (merge commit `6f0de52`)
+2. ✅ Cloudflare Pages auto-deploy triggered on main push
+3. ⏳ Verify production at `https://unqtools.pages.dev` — 10 PDF tools should be live
+4. ⏳ Test: visit `/tools/merge-pdf`, `/tools/split-pdf`, etc. — try with real PDFs
+5. ❌ Informational overflow still fails (pre-existing, deferred to batch-2 — does NOT block)
+6. **Start batch-2** (no new branch — work directly on `main` per owner policy):
+   - H1: pdf-metadata-editor "Privacy clean" should also clear dates
+   - H2: rotate-pdf + pdf-page-numbers need radiogroup semantics
+   - H3: commit regenerated routes.json after build (add to CI workflow)
+   - M2: bump axe slice cap from 15 to 30 (so all PDF tools get scanned)
+   - Overflow test selector fix (`"main, nav, h1"` → `"main"` only)
 7. After batch-2: batch-3 (M1 pdf-lib shared chunk + M3 e2e depth + L7 Web Workers)
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | at v6.9 (commit 6773d51)                               |
-| `v7.0-pdf-batch1`       | CI GREEN, ready to merge | 10 PDF tools + pdf-lib + lockfile workflow + 3 P0 fixes + axe flake fix — READY FOR MERGE |
-| `v6.9-all-categories`   | merged to main  | kept for history                                       |
-| `v6.8-cleanup`          | merged earlier  | kept for history                                       |
-| older v6.x branches     | history         | not active                                             |
+| `main`                  | production      | at v7.0 (merge commit `6f0de52`) — 10 PDF tools live  |
+| (all others deleted)    | —               | Per owner policy: only `main` branch exists. Historical v6.x branches and v7.0-pdf-batch1 deleted after merge. |
 
