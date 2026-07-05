@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, v6-template, v6.1-cleanup-gates, v6.2-fixes]
+    branches: [main, v6-template, v6.1-cleanup-gates, v6.2-fixes, v6.3-showcase-hydration]
   pull_request:
     branches: [main]
   workflow_dispatch:
