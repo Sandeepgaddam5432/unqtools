@@ -306,25 +306,14 @@ export default function Home() {
             badge="UnQTools"
             title1="Private tools"
             title2="that respect you"
+            subtitle={`${toolCount} fast, free, offline-capable browser tools — converters, calculators, generators, formatters. No uploads, no tracking, no accounts. Built with ❤ by Sandeep Gaddam.`}
           />
           {/* Custom CTA overlay */}
           <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col items-center pb-16 md:pb-24">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.4, duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-              className="text-white/40 text-base sm:text-lg max-w-xl text-center mb-8 px-4"
-            >
-              {toolCount} fast, free, offline-capable browser tools — converters,
-              calculators, generators, formatters. No uploads, no tracking, no
-              accounts. Built with{" "}
-              <Heart className="inline h-4 w-4 text-primary fill-primary" /> by
-              Sandeep Gaddam.
-            </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.6, duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+              transition={{ delay: 1.4, duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
               className="flex flex-col sm:flex-row items-center gap-4"
             >
               <Button
@@ -342,7 +331,7 @@ export default function Home() {
                 size="lg"
                 className="gap-2 border-white/20 text-white/70 hover:text-white hover:border-white/40 hover:bg-white/5 bg-transparent px-8 text-base cursor-pointer touch-target"
               >
-                <Link href="/tools">Browse Tools</Link>
+                <Link href="/category/developer">Browse Categories</Link>
               </Button>
             </motion.div>
           </div>

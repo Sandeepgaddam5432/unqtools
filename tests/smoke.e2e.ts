@@ -46,6 +46,21 @@ test.describe("Smoke — all routes", () => {
         /Minified React error|hydrat/i.test(e),
       );
       expect(reactErrors, `React hydration errors on ${route}: ${reactErrors.join("; ")}`).toEqual([]);
+
+      // No template placeholder copy on any production route
+      const TEMPLATE_LEFTOVERS = [
+        "Crafting exceptional digital experiences",
+        "UnQWebTemplate",
+        "cutting-edge technology",
+        "Lorem ipsum",
+        "Design Collective",
+        "Elevate Your Digital Vision",
+        "Crafting Exceptional Websites",
+      ];
+      const body = await page.locator("body").innerText();
+      for (const phrase of TEMPLATE_LEFTOVERS) {
+        expect(body, `${route} contains template placeholder: "${phrase}"`).not.toContain(phrase);
+      }
     });
   }
 
