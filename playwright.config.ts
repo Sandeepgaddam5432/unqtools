@@ -1,13 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
+import { existsSync } from "node:fs";
 
-const EXECUTABLE =
+// Use locally cached Chromium in sandbox; in CI, Playwright finds it automatically
+const SANDBOX_EXECUTABLE =
   "/home/z/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome";
+const EXECUTABLE = existsSync(SANDBOX_EXECUTABLE) ? SANDBOX_EXECUTABLE : undefined;
 
 export default defineConfig({
   testDir: "./tests",
   testMatch: /.*\.e2e\.ts/,
-  fullyParallel: false, // sequential — static server can't handle parallel well
-  workers: 1, // single worker — Node static server is single-threaded
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
@@ -15,7 +18,6 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:4322",
     trace: "on-first-retry",
-    // Use the locally cached Chromium binary (avoids needing `npx playwright install`)
     launchOptions: EXECUTABLE
       ? { executablePath: EXECUTABLE, args: ["--no-sandbox"] }
       : { args: ["--no-sandbox"] },
