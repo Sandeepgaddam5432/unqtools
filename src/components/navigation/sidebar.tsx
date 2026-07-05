@@ -26,6 +26,24 @@ import {
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MobileHeader } from "./mobile-header";
+import { TOOLS } from "@/lib/registry";
+import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
+
+const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
+  developer: Code2,
+  text: Type,
+  calculators: Calculator,
+  image: ImageIcon,
+  pdf: LayoutGrid,
+  "audio-video": LayoutGrid,
+  seo: LayoutGrid,
+  "network-security": LayoutGrid,
+  file: LayoutGrid,
+  business: LayoutGrid,
+  education: LayoutGrid,
+  social: LayoutGrid,
+  ai: LayoutGrid,
+};
 
 const navSections = [
   {
@@ -37,12 +55,11 @@ const navSections = [
   },
   {
     label: "Categories",
-    items: [
-      { href: "/category/developer", label: "Developer", icon: Code2 },
-      { href: "/category/text", label: "Text", icon: Type },
-      { href: "/category/calculators", label: "Calculators", icon: Calculator },
-      { href: "/category/image", label: "Image", icon: ImageIcon },
-    ],
+    items: ALL_CATEGORIES.filter((c) => TOOLS.some((t) => t.category === c)).map((c) => ({
+      href: `/category/${c}`,
+      label: CATEGORY_LABELS[c].split(" ")[0],
+      icon: CATEGORY_ICONS[c] ?? LayoutGrid,
+    })),
   },
 ];
 

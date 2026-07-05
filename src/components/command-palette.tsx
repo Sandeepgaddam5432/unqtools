@@ -36,6 +36,11 @@ import { TOOLS } from "@/lib/registry";
 import { searchTools } from "@/lib/search";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 
+// Only show categories that have at least 1 tool
+const ACTIVE_CATEGORIES = ALL_CATEGORIES.filter((c) =>
+  TOOLS.some((t) => t.category === c),
+);
+
 const RECENTS_KEY = "unq-cmdk-recents";
 const MAX_RECENTS = 5;
 
@@ -178,7 +183,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
             {/* Categories */}
             <CommandGroup heading="Categories">
-              {ALL_CATEGORIES.map((cat) => {
+              {ACTIVE_CATEGORIES.map((cat) => {
                 const Icon = CATEGORY_ICONS[cat] ?? Layers;
                 return (
                   <CommandItem
