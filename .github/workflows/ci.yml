@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, v6-template, v6.1-cleanup-gates, v6.2-fixes, v6.3-showcase-hydration, v6.4-polish, v6.5-hero-cleanup, v6.6-mobile-header]
+    branches: [main, v6-template, v6.1-cleanup-gates, v6.2-fixes, v6.3-showcase-hydration, v6.4-polish, v6.5-hero-cleanup, v6.6-mobile-header, v6.8-cleanup]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -62,6 +62,10 @@ jobs:
         run: npx playwright test tests/cls.e2e.ts
         timeout-minutes: 5
 
+      - name: E2E — axe (a11y, light + dark, must pass)
+        run: npx playwright test tests/axe.e2e.ts
+        timeout-minutes: 10
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -105,10 +109,6 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-
-      - name: E2E — axe (a11y, light + dark)
-        run: npx playwright test tests/axe.e2e.ts
-        timeout-minutes: 10
 
       - name: E2E — overflow (320/390/768/1440)
         run: npx playwright test tests/overflow.e2e.ts
