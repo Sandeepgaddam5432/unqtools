@@ -30,7 +30,7 @@ export default function AddPrefixSuffix() {
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Counter start</Label>
-              <Input type="number" value={opts.counterStart ?? 1} onChange={(e) => setOpts({ ...opts, counterStart: Number(e.target.value) })} className="w-24" />
+              <Input type="number" aria-label="Counter start" value={opts.counterStart ?? 1} onChange={(e) => setOpts({ ...opts, counterStart: Number(e.target.value) })} className="w-24" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Counter token</Label>

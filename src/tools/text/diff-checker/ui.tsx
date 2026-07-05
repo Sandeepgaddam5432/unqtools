@@ -83,7 +83,7 @@ export default function DiffChecker() {
             </Button>
             <input
               ref={oldFileRef}
-              type="file"
+              type="file" aria-label="Load original file"
               accept=".txt,.md,.json,.csv,.js,.ts,.html,.css,.xml,.yaml,.yml"
               className="hidden"
               onChange={(e) => handleFileInput(e, setOldText)}
@@ -105,7 +105,7 @@ export default function DiffChecker() {
             </Button>
             <input
               ref={newFileRef}
-              type="file"
+              type="file" aria-label="Load modified file"
               accept=".txt,.md,.json,.csv,.js,.ts,.html,.css,.xml,.yaml,.yml"
               className="hidden"
               onChange={(e) => handleFileInput(e, setNewText)}

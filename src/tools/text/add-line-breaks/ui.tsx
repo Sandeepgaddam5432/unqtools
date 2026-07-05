@@ -23,7 +23,7 @@ export default function AddLineBreaks() {
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Strategy</Label>
-              <select
+              <select aria-label="Line break strategy"
                 value={opts.strategy}
                 onChange={(e) => setOpts({ ...opts, strategy: e.target.value as BreakStrategy })}
                 className="h-9 rounded-md border bg-background px-3 text-sm"
@@ -41,7 +41,7 @@ export default function AddLineBreaks() {
                   {opts.strategy === "wrap" ? "Column width" : opts.strategy === "chars" ? "Chars per break" : "Items per break"}
                 </Label>
                 <Input
-                  type="number"
+                  type="number" aria-label="Column width or count"
                   value={opts.strategy === "wrap" ? opts.width ?? 80 : opts.count ?? 1}
                   onChange={(e) => {
                     const v = Number(e.target.value);

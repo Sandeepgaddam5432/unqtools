@@ -45,7 +45,7 @@ export default function ColorPicker() {
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
             <input
-              type="color"
+              type="color" aria-label="Color picker"
               value={hex.slice(0, 7)}
               onChange={(e) => updateFromHex(e.target.value)}
               className="h-12 w-16 rounded-md border cursor-pointer"
@@ -127,7 +127,7 @@ export default function ColorPicker() {
               <Label className="text-xs text-muted-foreground">Foreground</Label>
               <div className="flex gap-2">
                 <input
-                  type="color"
+                  type="color" aria-label="Foreground color"
                   value={fgHex.slice(0, 7)}
                   onChange={(e) => setFgHex(e.target.value)}
                   className="h-10 w-12 rounded border cursor-pointer"
@@ -140,7 +140,7 @@ export default function ColorPicker() {
               <Label className="text-xs text-muted-foreground">Background</Label>
               <div className="flex gap-2">
                 <input
-                  type="color"
+                  type="color" aria-label="Background color"
                   value={bgHex.slice(0, 7)}
                   onChange={(e) => setBgHex(e.target.value)}
                   className="h-10 w-12 rounded border cursor-pointer"
@@ -169,7 +169,7 @@ export default function ColorPicker() {
               >
                 <p className="font-bold text-foreground">{contrast.ratio.toFixed(2)}:1</p>
                 <p className="text-muted-foreground">{c.label}</p>
-                <p className={c.ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-400 dark:text-red-400"}>{c.ok ? "Pass" : "Fail"}</p>
+                <p className={c.ok ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}>{c.ok ? "Pass" : "Fail"}</p>
               </div>
             ))}
           </div>

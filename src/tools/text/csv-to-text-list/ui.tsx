@@ -31,7 +31,7 @@ export default function CsvToTextList() {
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Column</Label>
-              <Input type="number" min={1} value={opts.column ?? 1} onChange={(e) => setOpts({ ...opts, column: Number(e.target.value) })} className="w-20" />
+              <Input type="number" min={1} aria-label="Column number" value={opts.column ?? 1} onChange={(e) => setOpts({ ...opts, column: Number(e.target.value) })} className="w-20" />
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={!!opts.dedupe} onCheckedChange={(c) => setOpts({ ...opts, dedupe: c })} id="ctl-dedupe" />

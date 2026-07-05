@@ -42,23 +42,23 @@ export default function SipCalculator() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Monthly investment (₹)</Label>
-              <Input type="number" value={monthlyInvestment} onChange={(e) => setMonthlyInvestment(e.target.value)} />
+              <Input type="number" aria-label="Monthly investment" value={monthlyInvestment} onChange={(e) => setMonthlyInvestment(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Expected return (%)</Label>
-              <Input type="number" step="0.1" value={annualReturnPct} onChange={(e) => setAnnualReturnPct(e.target.value)} />
+              <Input type="number" step="0.1" aria-label="Expected annual return" value={annualReturnPct} onChange={(e) => setAnnualReturnPct(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Duration (years)</Label>
-              <Input type="number" value={years} onChange={(e) => setYears(e.target.value)} />
+              <Input type="number" aria-label="Duration in years" value={years} onChange={(e) => setYears(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Annual step-up (%)</Label>
-              <Input type="number" step="0.1" value={stepUpPct} onChange={(e) => setStepUpPct(e.target.value)} />
+              <Input type="number" step="0.1" aria-label="Annual step-up" value={stepUpPct} onChange={(e) => setStepUpPct(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Inflation (%)</Label>
-              <Input type="number" step="0.1" value={inflationPct} onChange={(e) => setInflationPct(e.target.value)} />
+              <Input type="number" step="0.1" aria-label="Inflation rate" value={inflationPct} onChange={(e) => setInflationPct(e.target.value)} />
             </div>
           </div>
           <div className="mt-4 flex gap-2">

@@ -51,39 +51,39 @@ export default function MortgageCalculator() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Home price ($)</Label>
-              <Input type="number" value={homePrice} onChange={(e) => setHomePrice(e.target.value)} />
+              <Input type="number" aria-label="Home price" value={homePrice} onChange={(e) => setHomePrice(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Down payment (%)</Label>
-              <Input type="number" value={downPaymentPct} onChange={(e) => setDownPaymentPct(e.target.value)} />
+              <Input type="number" aria-label="Down payment percentage" value={downPaymentPct} onChange={(e) => setDownPaymentPct(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Interest rate (%)</Label>
-              <Input type="number" step="0.1" value={annualInterestRatePct} onChange={(e) => setAnnualInterestRatePct(e.target.value)} />
+              <Input type="number" step="0.1" aria-label="Interest rate" value={annualInterestRatePct} onChange={(e) => setAnnualInterestRatePct(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Term (years)</Label>
-              <Input type="number" value={termYears} onChange={(e) => setTermYears(e.target.value)} />
+              <Input type="number" aria-label="Term in years" value={termYears} onChange={(e) => setTermYears(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Property tax / yr ($)</Label>
-              <Input type="number" value={propertyTaxAnnual} onChange={(e) => setPropertyTaxAnnual(e.target.value)} />
+              <Input type="number" aria-label="Annual property tax" value={propertyTaxAnnual} onChange={(e) => setPropertyTaxAnnual(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Insurance / yr ($)</Label>
-              <Input type="number" value={homeInsuranceAnnual} onChange={(e) => setHomeInsuranceAnnual(e.target.value)} />
+              <Input type="number" aria-label="Annual home insurance" value={homeInsuranceAnnual} onChange={(e) => setHomeInsuranceAnnual(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">HOA / yr ($)</Label>
-              <Input type="number" value={hoaAnnual} onChange={(e) => setHoaAnnual(e.target.value)} />
+              <Input type="number" aria-label="Annual HOA" value={hoaAnnual} onChange={(e) => setHoaAnnual(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">PMI rate (%)</Label>
-              <Input type="number" step="0.1" value={pmiRatePct} onChange={(e) => setPmiRatePct(e.target.value)} />
+              <Input type="number" step="0.1" aria-label="PMI rate" value={pmiRatePct} onChange={(e) => setPmiRatePct(e.target.value)} />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Extra / month ($)</Label>
-              <Input type="number" value={extraMonthly} onChange={(e) => setExtraMonthly(e.target.value)} />
+              <Input type="number" aria-label="Extra monthly payment" value={extraMonthly} onChange={(e) => setExtraMonthly(e.target.value)} />
             </div>
           </div>
           <div className="mt-4 flex gap-2">

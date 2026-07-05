@@ -129,7 +129,7 @@ export default function ImageCompressor() {
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Format</Label>
-              <select
+              <select aria-label="Output format"
                 value={format}
                 onChange={(e) => setFormat(e.target.value as OutputFormat)}
                 className="h-9 rounded-md border bg-background px-3 text-sm"
@@ -142,7 +142,7 @@ export default function ImageCompressor() {
             {format !== "image/png" && (
               <div className="flex flex-col gap-1.5 min-w-[180px]">
                 <Label className="text-xs text-muted-foreground">Quality: {Math.round(quality * 100)}%</Label>
-                <Slider
+                <Slider aria-label="Quality"
                   value={[quality * 100]}
                   onValueChange={(v) => setQuality(v[0]! / 100)}
                   min={10}
@@ -154,7 +154,7 @@ export default function ImageCompressor() {
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Max dimension (px)</Label>
               <Input
-                type="number"
+                type="number" aria-label="Max dimension in pixels"
                 value={maxDimension}
                 onChange={(e) => setMaxDimension(e.target.value)}
                 placeholder="No resize"
@@ -181,7 +181,7 @@ export default function ImageCompressor() {
           >
             <input
               ref={fileInputRef}
-              type="file"
+              type="file" aria-label="Choose image files"
               accept="image/*"
               multiple
               className="hidden"

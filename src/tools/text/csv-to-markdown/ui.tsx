@@ -22,11 +22,11 @@ export default function CsvToMarkdown() {
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Delimiter</Label>
-              <Input value={opts.delimiter} onChange={(e) => setOpts({ ...opts, delimiter: e.target.value })} className="w-20" />
+              <Input aria-label="Delimiter" value={opts.delimiter} onChange={(e) => setOpts({ ...opts, delimiter: e.target.value })} className="w-20" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Header alignment</Label>
-              <select
+              <select aria-label="Delimiter"
                 value={opts.alignment}
                 onChange={(e) => setOpts({ ...opts, alignment: e.target.value as "left" | "center" | "right" })}
                 className="h-9 rounded-md border bg-background px-3 text-sm"

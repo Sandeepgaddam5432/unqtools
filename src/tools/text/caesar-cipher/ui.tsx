@@ -36,7 +36,7 @@ export default function CaesarCipher() {
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Shift (1-25)</Label>
-              <Input type="number" min={1} max={25} value={shift} onChange={(e) => setShift(Math.max(1, Math.min(25, Number(e.target.value) || 1)))} className="w-24" />
+              <Input type="number" min={1} max={25} aria-label="Shift amount" value={shift} onChange={(e) => setShift(Math.max(1, Math.min(25, Number(e.target.value) || 1)))} className="w-24" />
             </div>
             <Button variant="outline" size="sm" onClick={() => { setShift(13); toast.info("ROT13 applied"); }}>
               ROT13

@@ -50,19 +50,19 @@ export default function EmiCalculator() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Principal (₹)</Label>
-              <Input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)} placeholder="500000" />
+              <Input type="number" aria-label="Principal" value={principal} onChange={(e) => setPrincipal(e.target.value)} placeholder="500000" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Annual rate (%)</Label>
-              <Input type="number" step="0.1" value={annualRatePct} onChange={(e) => setAnnualRatePct(e.target.value)} placeholder="9.5" />
+              <Input type="number" step="0.1" aria-label="Annual rate" value={annualRatePct} onChange={(e) => setAnnualRatePct(e.target.value)} placeholder="9.5" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Tenure (months)</Label>
-              <Input type="number" value={tenureMonths} onChange={(e) => setTenureMonths(e.target.value)} placeholder="60" />
+              <Input type="number" aria-label="Tenure in months" value={tenureMonths} onChange={(e) => setTenureMonths(e.target.value)} placeholder="60" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Extra / month (₹)</Label>
-              <Input type="number" value={recurringExtra} onChange={(e) => setRecurringExtra(e.target.value)} placeholder="0" />
+              <Input type="number" aria-label="Extra per month" value={recurringExtra} onChange={(e) => setRecurringExtra(e.target.value)} placeholder="0" />
             </div>
           </div>
           <div className="mt-4 flex gap-2">
