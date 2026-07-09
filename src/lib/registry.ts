@@ -17,14 +17,19 @@ import { manifest as urlEncoder } from "@/tools/developer/url-encoder/manifest";
 import { manifest as uuidGenerator } from "@/tools/developer/uuid-generator/manifest";
 import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
+import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifest";
+import { manifest as duplicatePdfPages } from "@/tools/pdf/duplicate-pdf-pages/manifest";
 import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
 import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
+import { manifest as insertPdfPages } from "@/tools/pdf/insert-pdf-pages/manifest";
+import { manifest as interleavePdf } from "@/tools/pdf/interleave-pdf/manifest";
 import { manifest as mergePdf } from "@/tools/pdf/merge-pdf/manifest";
 import { manifest as pdfMetadataEditor } from "@/tools/pdf/pdf-metadata-editor/manifest";
 import { manifest as pdfPageNumbers } from "@/tools/pdf/pdf-page-numbers/manifest";
 import { manifest as pdfWatermark } from "@/tools/pdf/pdf-watermark/manifest";
 import { manifest as reorderPdfPages } from "@/tools/pdf/reorder-pdf-pages/manifest";
+import { manifest as reversePdf } from "@/tools/pdf/reverse-pdf/manifest";
 import { manifest as rotatePdf } from "@/tools/pdf/rotate-pdf/manifest";
 import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
 import { manifest as addLineBreaks } from "@/tools/text/add-line-breaks/manifest";
@@ -51,14 +56,19 @@ export const TOOLS: readonly ToolManifest[] = [
   uuidGenerator,
   colorPicker,
   imageCompressor,
+  compressPdf,
   deletePdfPages,
+  duplicatePdfPages,
   extractPdfPages,
   imagesToPdf,
+  insertPdfPages,
+  interleavePdf,
   mergePdf,
   pdfMetadataEditor,
   pdfPageNumbers,
   pdfWatermark,
   reorderPdfPages,
+  reversePdf,
   rotatePdf,
   splitPdf,
   addLineBreaks,

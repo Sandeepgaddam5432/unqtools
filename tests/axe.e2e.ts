@@ -10,7 +10,7 @@ const AXE_ROUTES = routes.filter((r: string) =>
   r === "/tools" ||
   r.startsWith("/tools/") ||
   r.startsWith("/category/")
-).slice(0, 15);
+).slice(0, 30);
 
 /**
  * axe-core a11y gate — every representative page × light + dark theme.

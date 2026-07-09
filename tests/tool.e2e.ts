@@ -269,6 +269,41 @@ const TOOLS = [
       await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 });
     },
   },
+  {
+    id: "compress-pdf",
+    sampleAction: "none",
+    assert: async (page) => {
+      await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 });
+    },
+  },
+  {
+    id: "reverse-pdf",
+    sampleAction: "none",
+    assert: async (page) => {
+      await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 });
+    },
+  },
+  {
+    id: "duplicate-pdf-pages",
+    sampleAction: "none",
+    assert: async (page) => {
+      await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 });
+    },
+  },
+  {
+    id: "insert-pdf-pages",
+    sampleAction: "none",
+    assert: async (page) => {
+      await expect(page.getByText(/Drop the main PDF/i).first()).toBeVisible({ timeout: 5000 });
+    },
+  },
+  {
+    id: "interleave-pdf",
+    sampleAction: "none",
+    assert: async (page) => {
+      await expect(page.getByText(/Drop PDF A/i).first()).toBeVisible({ timeout: 5000 });
+    },
+  },
 ];
 
 async function doAction(page, action) {
