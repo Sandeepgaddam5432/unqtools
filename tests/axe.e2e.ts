@@ -26,12 +26,13 @@ for (const route of AXE_ROUTES) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForSelector("main, nav, h1", { timeout: 10_000 });
       // Wait long enough for Framer Motion stagger entrance animations to finish.
-      // /tools page has 32 tool cards animating opacity 0→1 with ~50ms stagger + ~600ms duration,
-      // so the last card finishes around 2.2s after load. Catching a card mid-animation
-      // produces an effective color with reduced contrast (e.g. muted-foreground #6e6c66
-      // at 86.6% opacity blends with the cream background to #7f7d77, which fails the
-      // 4.5:1 threshold at 3.91:1). 3000ms gives comfortable headroom.
-      await page.waitForTimeout(3000);
+      // /tools page has 37 tool cards animating opacity 0→1 with ~50ms stagger + ~600ms duration,
+      // so the last card finishes around 2.5s after load. Individual tool pages also have
+      // entrance animations (~600ms). Catching a card mid-animation produces an effective
+      // color with reduced contrast (e.g. muted-foreground #6e6c66 at 86.6% opacity blends
+      // with the cream background to #7f7d77, which fails the 4.5:1 threshold at 3.91:1).
+      // 5000ms gives comfortable headroom for 37+ cards even on slow CI runners.
+      await page.waitForTimeout(5000);
       // Force light theme
       await page.evaluate(() => document.documentElement.classList.remove("dark"));
       await page.waitForTimeout(300);
@@ -54,7 +55,7 @@ for (const route of AXE_ROUTES) {
       await page.waitForSelector("main, nav, h1", { timeout: 10_000 });
       // See light-theme test above for why this wait must be long enough for
       // Framer Motion stagger entrance animations to fully complete.
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(5000);
       // Force dark theme
       await page.evaluate(() => document.documentElement.classList.add("dark"));
       await page.waitForTimeout(300);
