@@ -18,19 +18,29 @@ import { manifest as uuidGenerator } from "@/tools/developer/uuid-generator/mani
 import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
+import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
+import { manifest as cropPdf } from "@/tools/pdf/crop-pdf/manifest";
 import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifest";
 import { manifest as duplicatePdfPages } from "@/tools/pdf/duplicate-pdf-pages/manifest";
 import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
+import { manifest as flattenPdf } from "@/tools/pdf/flatten-pdf/manifest";
 import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
 import { manifest as insertPdfPages } from "@/tools/pdf/insert-pdf-pages/manifest";
 import { manifest as interleavePdf } from "@/tools/pdf/interleave-pdf/manifest";
 import { manifest as mergePdf } from "@/tools/pdf/merge-pdf/manifest";
+import { manifest as nUpPdf } from "@/tools/pdf/n-up-pdf/manifest";
+import { manifest as pdfBookmarksEditor } from "@/tools/pdf/pdf-bookmarks-editor/manifest";
 import { manifest as pdfMetadataEditor } from "@/tools/pdf/pdf-metadata-editor/manifest";
 import { manifest as pdfPageNumbers } from "@/tools/pdf/pdf-page-numbers/manifest";
+import { manifest as pdfSignDraw } from "@/tools/pdf/pdf-sign-draw/manifest";
+import { manifest as pdfStamp } from "@/tools/pdf/pdf-stamp/manifest";
 import { manifest as pdfWatermark } from "@/tools/pdf/pdf-watermark/manifest";
+import { manifest as removeBlankPages } from "@/tools/pdf/remove-blank-pages/manifest";
 import { manifest as reorderPdfPages } from "@/tools/pdf/reorder-pdf-pages/manifest";
+import { manifest as resizePdfPages } from "@/tools/pdf/resize-pdf-pages/manifest";
 import { manifest as reversePdf } from "@/tools/pdf/reverse-pdf/manifest";
 import { manifest as rotatePdf } from "@/tools/pdf/rotate-pdf/manifest";
+import { manifest as scalePdf } from "@/tools/pdf/scale-pdf/manifest";
 import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
 import { manifest as addLineBreaks } from "@/tools/text/add-line-breaks/manifest";
 import { manifest as addPrefixSuffix } from "@/tools/text/add-prefix-suffix/manifest";
@@ -57,19 +67,29 @@ export const TOOLS: readonly ToolManifest[] = [
   colorPicker,
   imageCompressor,
   compressPdf,
+  contactSheetPdf,
+  cropPdf,
   deletePdfPages,
   duplicatePdfPages,
   extractPdfPages,
+  flattenPdf,
   imagesToPdf,
   insertPdfPages,
   interleavePdf,
   mergePdf,
+  nUpPdf,
+  pdfBookmarksEditor,
   pdfMetadataEditor,
   pdfPageNumbers,
+  pdfSignDraw,
+  pdfStamp,
   pdfWatermark,
+  removeBlankPages,
   reorderPdfPages,
+  resizePdfPages,
   reversePdf,
   rotatePdf,
+  scalePdf,
   splitPdf,
   addLineBreaks,
   addPrefixSuffix,

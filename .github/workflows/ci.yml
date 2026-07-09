@@ -2,12 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [main, v6-template, v6.1-cleanup-gates, v6.2-fixes, v6.3-showcase-hydration, v6.4-polish, v6.5-hero-cleanup, v6.6-mobile-header, v6.8-cleanup, v6.9-all-categories, v7.0-pdf-batch1]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
-# Cancel in-progress runs on the same ref when a new push lands.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -18,10 +17,14 @@ permissions:
   id-token: write
 
 jobs:
+  # ───────────────────────────────────────────────────────────────────────────
+  # BUILD JOB — lint + unit tests + build + upload artifact
+  # All other jobs depend on this and run in parallel after it completes.
+  # ───────────────────────────────────────────────────────────────────────────
   build:
-    name: Lint + Test + Build + Smoke + Tool E2E
+    name: Lint + Test + Build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,98 +50,197 @@ jobs:
       - name: Generate route list
         run: node tests/gen-routes.mjs
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: E2E — smoke (all routes, strict React-error gate)
-        run: npx playwright test tests/smoke.e2e.ts
-        timeout-minutes: 10
-
-      - name: E2E — tool e2e (22 tools, strict output assertions)
-        run: npx playwright test tests/tool.e2e.ts
-        timeout-minutes: 10
-
-      - name: E2E — CLS (must pass, < 0.1 on all pages)
-        run: npx playwright test tests/cls.e2e.ts
-        timeout-minutes: 5
-
-      - name: E2E — axe (a11y, light + dark, must pass)
-        run: npx playwright test tests/axe.e2e.ts
-        timeout-minutes: 10
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: out
-          path: out/
-          retention-days: 7
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-results
+          name: build-output
           path: |
-            test-results/
-            playwright-report/
-          retention-days: 7
+            out/
+            tests/routes.json
+            package.json
+            package-lock.json
+            tests/
+            playwright.config.ts
+            src/
+          retention-days: 1
 
-  informational-gates:
-    name: Axe + Overflow + CLS + Reduced-Motion (informational)
+  # ───────────────────────────────────────────────────────────────────────────
+  # PARALLEL E2E JOBS — each downloads the build artifact + runs one test file
+  # These all start simultaneously after build completes.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  smoke:
+    name: Smoke E2E
+    needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    continue-on-error: true
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: "npm"
-
       - name: Install
         run: npm ci
-
-      - name: Build (static export)
-        run: npm run build
-
-      - name: Generate route list
-        run: node tests/gen-routes.mjs
-
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+      - name: E2E — smoke (all routes)
+        run: npx playwright test tests/smoke.e2e.ts
 
-      - name: E2E — overflow (320/390/768/1440)
+  tool-e2e:
+    name: Tool E2E
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      - name: Install
+        run: npm ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E — tool e2e
+        run: npx playwright test tests/tool.e2e.ts
+
+  cls:
+    name: CLS
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      - name: Install
+        run: npm ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E — CLS (must pass, < 0.1)
+        run: npx playwright test tests/cls.e2e.ts
+
+  axe:
+    name: Axe A11y
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      - name: Install
+        run: npm ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E — axe (must pass, 0 serious)
+        run: npx playwright test tests/axe.e2e.ts
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # INFORMATIONAL JOB — continue-on-error, does NOT block deploy
+  # ───────────────────────────────────────────────────────────────────────────
+  informational:
+    name: Overflow + Motion (informational)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      - name: Install
+        run: npm ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E — overflow
         run: npx playwright test tests/overflow.e2e.ts
-        timeout-minutes: 10
-
       - name: E2E — reduced-motion
         run: npx playwright test tests/reduced-motion.e2e.ts
-        timeout-minutes: 5
 
+  # ───────────────────────────────────────────────────────────────────────────
+  # DEPLOY JOB — only on main push, after all must-pass jobs succeed
+  # ───────────────────────────────────────────────────────────────────────────
   deploy:
     name: Deploy to Cloudflare Pages
-    needs: build
+    needs: [smoke, tool-e2e, cls, axe]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: "npm"
-
       - name: Install + Build
         run: |
           npm ci
           npm run build
-
       # Cloudflare Pages auto-deploys from main on push.
       # The wrangler.toml at repo root tells CF Pages to use out/ as the build output.
       # No explicit deploy step needed — CF Pages watches the repo.

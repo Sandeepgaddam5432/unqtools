@@ -304,6 +304,56 @@ const TOOLS = [
       await expect(page.getByText(/Drop PDF A/i).first()).toBeVisible({ timeout: 5000 });
     },
   },
+  {
+    id: "crop-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "resize-pdf-pages",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "scale-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "n-up-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "remove-blank-pages",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "flatten-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "pdf-stamp",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "pdf-sign-draw",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop PDF here/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "pdf-bookmarks-editor",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "pdf-contact-sheet",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
 ];
 
 async function doAction(page, action) {
