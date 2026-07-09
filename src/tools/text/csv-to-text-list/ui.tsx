@@ -22,12 +22,12 @@ export default function CsvToTextList() {
         <CardContent className="p-4">
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs text-muted-foreground">Delimiter</Label>
-              <Input value={opts.delimiter} onChange={(e) => setOpts({ ...opts, delimiter: e.target.value })} className="w-20" />
+              <Label htmlFor="ctl-delimiter" className="text-xs text-muted-foreground">Delimiter</Label>
+              <Input id="ctl-delimiter" aria-label="CSV delimiter" value={opts.delimiter} onChange={(e) => setOpts({ ...opts, delimiter: e.target.value })} className="w-20" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs text-muted-foreground">Output separator</Label>
-              <Input value={opts.separator} onChange={(e) => setOpts({ ...opts, separator: e.target.value })} className="w-24" />
+              <Label htmlFor="ctl-separator" className="text-xs text-muted-foreground">Output separator</Label>
+              <Input id="ctl-separator" aria-label="Output separator" value={opts.separator} onChange={(e) => setOpts({ ...opts, separator: e.target.value })} className="w-24" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Column</Label>
