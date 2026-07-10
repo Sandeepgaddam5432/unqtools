@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unqtools-v6-template-v1';
+const CACHE_NAME = 'unqtools-v7-2-v2';
 const OFFLINE_URL = '/';
 
 const PRECACHE_ASSETS = [
@@ -30,6 +30,12 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests — skip HEAD, POST, etc.
+  if (event.request.method !== 'GET') return;
+
+  // Skip chrome-extension and other non-http(s) requests
+  if (!event.request.url.startsWith('http')) return;
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -45,14 +51,19 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       return fetch(event.request).then((response) => {
+        // Only cache successful, basic (same-origin) GET responses
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
         const responseToCache = response.clone();
         caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+          cache.put(event.request, responseToCache).catch(() => {
+            // Silently ignore cache errors (e.g., unsupported request types)
+          });
         });
         return response;
+      }).catch(() => {
+        return cachedResponse || new Response('Network error', { status: 503 });
       });
     })
   );
