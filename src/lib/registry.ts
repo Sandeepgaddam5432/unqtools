@@ -24,9 +24,11 @@ import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifes
 import { manifest as duplicatePdfPages } from "@/tools/pdf/duplicate-pdf-pages/manifest";
 import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
 import { manifest as flattenPdf } from "@/tools/pdf/flatten-pdf/manifest";
+import { manifest as htmlToPdf } from "@/tools/pdf/html-to-pdf/manifest";
 import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
 import { manifest as insertPdfPages } from "@/tools/pdf/insert-pdf-pages/manifest";
 import { manifest as interleavePdf } from "@/tools/pdf/interleave-pdf/manifest";
+import { manifest as markdownToPdf } from "@/tools/pdf/markdown-to-pdf/manifest";
 import { manifest as mergePdf } from "@/tools/pdf/merge-pdf/manifest";
 import { manifest as nUpPdf } from "@/tools/pdf/n-up-pdf/manifest";
 import { manifest as pdfBookmarksEditor } from "@/tools/pdf/pdf-bookmarks-editor/manifest";
@@ -38,10 +40,13 @@ import { manifest as pdfWatermark } from "@/tools/pdf/pdf-watermark/manifest";
 import { manifest as removeBlankPages } from "@/tools/pdf/remove-blank-pages/manifest";
 import { manifest as reorderPdfPages } from "@/tools/pdf/reorder-pdf-pages/manifest";
 import { manifest as resizePdfPages } from "@/tools/pdf/resize-pdf-pages/manifest";
+import { manifest as rtfToPdf } from "@/tools/pdf/rtf-to-pdf/manifest";
 import { manifest as reversePdf } from "@/tools/pdf/reverse-pdf/manifest";
 import { manifest as rotatePdf } from "@/tools/pdf/rotate-pdf/manifest";
 import { manifest as scalePdf } from "@/tools/pdf/scale-pdf/manifest";
 import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
+import { manifest as svgToPdf } from "@/tools/pdf/svg-to-pdf/manifest";
+import { manifest as textToPdf } from "@/tools/pdf/text-to-pdf/manifest";
 import { manifest as addLineBreaks } from "@/tools/text/add-line-breaks/manifest";
 import { manifest as addPrefixSuffix } from "@/tools/text/add-prefix-suffix/manifest";
 import { manifest as bigTextGenerator } from "@/tools/text/big-text-generator/manifest";
@@ -73,9 +78,11 @@ export const TOOLS: readonly ToolManifest[] = [
   duplicatePdfPages,
   extractPdfPages,
   flattenPdf,
+  htmlToPdf,
   imagesToPdf,
   insertPdfPages,
   interleavePdf,
+  markdownToPdf,
   mergePdf,
   nUpPdf,
   pdfBookmarksEditor,
@@ -87,10 +94,13 @@ export const TOOLS: readonly ToolManifest[] = [
   removeBlankPages,
   reorderPdfPages,
   resizePdfPages,
+  rtfToPdf,
   reversePdf,
   rotatePdf,
   scalePdf,
   splitPdf,
+  svgToPdf,
+  textToPdf,
   addLineBreaks,
   addPrefixSuffix,
   bigTextGenerator,

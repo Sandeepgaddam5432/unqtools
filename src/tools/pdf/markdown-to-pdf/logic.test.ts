@@ -1,0 +1,20 @@
+import { describe, expect, it } from "vitest";
+import { PDFDocument } from "pdf-lib";
+import { markdownToPdf } from "./logic";
+const baseOpts = { pageSize: "a4" as const, orientation: "portrait" as const, margin: 50 };
+describe("markdownToPdf", () => {
+  it("converts simple markdown", async () => { const r = await markdownToPdf("# Hello\n\nWorld", baseOpts); expect(r.ok).toBe(true); if (r.ok) expect((await PDFDocument.load(r.output)).getPageCount()).toBe(1); });
+  it("handles headings H1-H6", async () => { const r = await markdownToPdf("# H1\n## H2\n### H3\n#### H4\n##### H5\n###### H6", baseOpts); expect(r.ok).toBe(true); });
+  it("handles bold and italic", async () => { const r = await markdownToPdf("**bold** and *italic*", baseOpts); expect(r.ok).toBe(true); });
+  it("handles unordered lists", async () => { const r = await markdownToPdf("- item 1\n- item 2\n- item 3", baseOpts); expect(r.ok).toBe(true); });
+  it("handles ordered lists", async () => { const r = await markdownToPdf("1. first\n2. second\n3. third", baseOpts); expect(r.ok).toBe(true); });
+  it("handles code blocks", async () => { const r = await markdownToPdf("```\ncode block\n```", baseOpts); expect(r.ok).toBe(true); });
+  it("handles blockquotes", async () => { const r = await markdownToPdf("> quoted text", baseOpts); expect(r.ok).toBe(true); });
+  it("handles horizontal rules", async () => { const r = await markdownToPdf("---", baseOpts); expect(r.ok).toBe(true); });
+  it("handles links", async () => { const r = await markdownToPdf("[text](https://example.com)", baseOpts); expect(r.ok).toBe(true); if (r.ok) { /* link text should be "text" */ } });
+  it("errors on empty markdown", async () => { const r = await markdownToPdf("", baseOpts); expect(r.ok).toBe(false); });
+  it("errors on whitespace only", async () => { const r = await markdownToPdf("   ", baseOpts); expect(r.ok).toBe(false); });
+  it("creates multiple pages for long content", async () => { const long = Array.from({ length: 100 }, (_, i) => `Line ${i + 1}`).join("\n"); const r = await markdownToPdf(long, baseOpts); expect(r.ok).toBe(true); if (r.ok) expect((await PDFDocument.load(r.output)).getPageCount()).toBeGreaterThan(1); });
+  it("sets creator metadata", async () => { const r = await markdownToPdf("# Test", baseOpts); expect(r.ok).toBe(true); if (r.ok) { const doc = await PDFDocument.load(r.output); expect(doc.getCreator()).toContain("UnQTools"); } });
+  it("handles letter page + landscape", async () => { const r = await markdownToPdf("# Test", { pageSize: "letter", orientation: "landscape", margin: 50 }); expect(r.ok).toBe(true); });
+});

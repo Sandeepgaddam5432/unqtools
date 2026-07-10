@@ -354,6 +354,31 @@ const TOOLS = [
     sampleAction: "none",
     assert: async (page) => { await expect(page.getByText(/Drop a PDF/i).first()).toBeVisible({ timeout: 5000 }); },
   },
+  {
+    id: "text-to-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Text content/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "markdown-to-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/Markdown content/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "html-to-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/HTML content/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "rtf-to-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/RTF content|Drop an .rtf/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
+  {
+    id: "svg-to-pdf",
+    sampleAction: "none",
+    assert: async (page) => { await expect(page.getByText(/SVG content|Drop an .svg/i).first()).toBeVisible({ timeout: 5000 }); },
+  },
 ];
 
 async function doAction(page, action) {

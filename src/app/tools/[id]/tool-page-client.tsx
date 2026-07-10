@@ -87,9 +87,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "duplicate-pdf-pages": () => import("@/tools/pdf/duplicate-pdf-pages/ui"),
   "extract-pdf-pages": () => import("@/tools/pdf/extract-pdf-pages/ui"),
   "flatten-pdf": () => import("@/tools/pdf/flatten-pdf/ui"),
+  "html-to-pdf": () => import("@/tools/pdf/html-to-pdf/ui"),
   "images-to-pdf": () => import("@/tools/pdf/images-to-pdf/ui"),
   "insert-pdf-pages": () => import("@/tools/pdf/insert-pdf-pages/ui"),
   "interleave-pdf": () => import("@/tools/pdf/interleave-pdf/ui"),
+  "markdown-to-pdf": () => import("@/tools/pdf/markdown-to-pdf/ui"),
   "merge-pdf": () => import("@/tools/pdf/merge-pdf/ui"),
   "n-up-pdf": () => import("@/tools/pdf/n-up-pdf/ui"),
   "pdf-bookmarks-editor": () => import("@/tools/pdf/pdf-bookmarks-editor/ui"),
@@ -102,10 +104,13 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "remove-blank-pages": () => import("@/tools/pdf/remove-blank-pages/ui"),
   "reorder-pdf-pages": () => import("@/tools/pdf/reorder-pdf-pages/ui"),
   "resize-pdf-pages": () => import("@/tools/pdf/resize-pdf-pages/ui"),
+  "rtf-to-pdf": () => import("@/tools/pdf/rtf-to-pdf/ui"),
   "reverse-pdf": () => import("@/tools/pdf/reverse-pdf/ui"),
   "rotate-pdf": () => import("@/tools/pdf/rotate-pdf/ui"),
   "scale-pdf": () => import("@/tools/pdf/scale-pdf/ui"),
   "split-pdf": () => import("@/tools/pdf/split-pdf/ui"),
+  "svg-to-pdf": () => import("@/tools/pdf/svg-to-pdf/ui"),
+  "text-to-pdf": () => import("@/tools/pdf/text-to-pdf/ui"),
 };
 
 interface ToolPageClientProps {
