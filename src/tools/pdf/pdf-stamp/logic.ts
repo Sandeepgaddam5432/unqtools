@@ -41,13 +41,15 @@ export async function addStamp(bytes: Uint8Array, opts: StampOptions): Promise<T
       const y = vPos === "top" ? height - fs - margin : vPos === "bottom" ? margin : (height - fs) / 2;
       // Draw border rectangle (white fill with colored border)
       const padX = 8, padY = 4;
-      page.drawRectangle({
+      const rectOpts: Parameters<typeof page.drawRectangle>[1] = {
         x: x - padX, y: y - padY,
         width: textW + padX * 2, height: fs + padY * 2,
         borderColor: color, borderWidth: 2,
         color: rgb(1, 1, 1),
-      });
-      // Draw stamp text — only pass rotate if non-zero (degrees(0) can cause issues in some pdf-lib versions)
+      };
+      if (opts.rotation !== 0) rectOpts.rotate = degrees(opts.rotation);
+      page.drawRectangle(rectOpts);
+      // Draw stamp text
       const drawOpts: Parameters<typeof page.drawText>[1] = { x, y, size: fs, font, color };
       if (opts.rotation !== 0) drawOpts.rotate = degrees(opts.rotation);
       page.drawText(fullText, drawOpts);
