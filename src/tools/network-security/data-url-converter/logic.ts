@@ -211,3 +211,361 @@ export function suggestExtension(mimeType: string): string {
   };
   return map[mimeType] ?? "bin";
 }
+
+// ===== v8.1 upgrade — blueprint features + 10 extras =====
+
+// ===== Size warning (blueprint feature) =====
+
+export interface SizeWarning {
+  severity: "info" | "warning" | "error";
+  message: string;
+  recommendation: string;
+}
+
+/** Check if a data URL is too large for safe use. */
+export function checkDataUrlSize(url: string): SizeWarning | null {
+  const len = url.length;
+  if (len > 2 * 1024 * 1024) {
+    return {
+      severity: "error",
+      message: `Data URL is ${formatBytes(len)} — exceeds the 2MB browser limit.`,
+      recommendation: "Use object URLs (URL.createObjectURL) instead, or split the file.",
+    };
+  }
+  if (len > 100 * 1024) {
+    return {
+      severity: "warning",
+      message: `Data URL is ${formatBytes(len)} — bloats HTML/CSS and can't be cached separately.`,
+      recommendation: "Consider serving as a separate file for better caching and performance.",
+    };
+  }
+  if (len > 10 * 1024) {
+    return {
+      severity: "info",
+      message: `Data URL is ${formatBytes(len)} — acceptable for inlining but monitor size.`,
+      recommendation: "Fine for small assets. Avoid for large files.",
+    };
+  }
+  return null;
+}
+
+// ===== SVG optimization (blueprint feature) =====
+
+/** Optimize a data URL for SVGs — use plain encoding when smaller than base64. */
+export function optimizeSvgDataUrl(svgText: string): { url: string; encoding: "base64" | "plain"; savings: number } {
+  // Try both encodings and pick the smaller one
+  const bytes = new TextEncoder().encode(svgText);
+  const base64Url = encodeBytes(bytes, "image/svg+xml");
+  const plainUrl = encodeBytesPlain(bytes, "image/svg+xml");
+  if (plainUrl.length < base64Url.length) {
+    return {
+      url: plainUrl,
+      encoding: "plain",
+      savings: base64Url.length - plainUrl.length,
+    };
+  }
+  return {
+    url: base64Url,
+    encoding: "base64",
+    savings: 0,
+  };
+}
+
+// ===== Copy-as-img-tag (blueprint feature) =====
+
+/** Generate an <img> tag with the data URL embedded. */
+export function toImgTag(url: string, alt: string = "", width?: number, height?: number): string {
+  const attrs: string[] = [`src="${url}"`];
+  if (alt) attrs.push(`alt="${alt.replace(/"/g, "&quot;")}"`);
+  if (width) attrs.push(`width="${width}"`);
+  if (height) attrs.push(`height="${height}"`);
+  return `<img ${attrs.join(" ")} />`;
+}
+
+/** Generate a CSS background-image rule with the data URL. */
+export function toCssBackground(url: string, selector: string = ".element"): string {
+  return `${selector} {\n  background-image: url("${url}");\n}`;
+}
+
+/** Generate a <link> tag for favicon use. */
+export function toFaviconLink(url: string): string {
+  return `<link rel="icon" type="${getMimeType(url) || "image/x-icon"}" href="${url}" />`;
+}
+
+// ===== Extra #1: History =====
+
+const DATAURL_HISTORY_KEY = "unqtools-dataurl-history";
+const MAX_DATAURL_HISTORY = 20;
+
+export interface DataUrlHistoryEntry {
+  url: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+}
+
+export function loadDataUrlHistory(): DataUrlHistoryEntry[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(DATAURL_HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.slice(0, MAX_DATAURL_HISTORY);
+  } catch {
+    return [];
+  }
+}
+
+export function saveDataUrlToHistory(url: string): DataUrlHistoryEntry[] {
+  if (typeof localStorage === "undefined") return [];
+  const mimeType = getMimeType(url) ?? "unknown";
+  const size = getDataUrlSize(url);
+  const entry: DataUrlHistoryEntry = { url, mimeType, size, createdAt: new Date().toISOString() };
+  // Don't store the full URL if it's huge — just metadata
+  if (url.length > 10000) {
+    entry.url = url.slice(0, 100) + "...(truncated)";
+  }
+  const current = loadDataUrlHistory().filter((e) => e.url !== entry.url);
+  const updated = [entry, ...current].slice(0, MAX_DATAURL_HISTORY);
+  try { localStorage.setItem(DATAURL_HISTORY_KEY, JSON.stringify(updated)); } catch {}
+  return updated;
+}
+
+export function clearDataUrlHistory(): void {
+  if (typeof localStorage === "undefined") return;
+  try { localStorage.removeItem(DATAURL_HISTORY_KEY); } catch {}
+}
+
+// ===== Extra #2: Batch encode (multiple files → JSON) =====
+
+export interface BatchEncodeResult {
+  filename: string;
+  mimeType: string;
+  dataUrl: string;
+  size: number;
+}
+
+/** Encode multiple files into data URLs and return as a batch result. */
+export async function batchEncodeFiles(files: File[]): Promise<BatchEncodeResult[]> {
+  const results: BatchEncodeResult[] = [];
+  for (const file of files) {
+    try {
+      const buf = await file.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      const url = encodeBytes(bytes, file.type || "application/octet-stream");
+      results.push({
+        filename: file.name,
+        mimeType: file.type || "application/octet-stream",
+        dataUrl: url,
+        size: bytes.length,
+      });
+    } catch {
+      // skip invalid
+    }
+  }
+  return results;
+}
+
+/** Convert batch results to a JSON file for download. */
+export function batchToJson(results: BatchEncodeResult[]): string {
+  return JSON.stringify({
+    exportedAt: new Date().toISOString(),
+    count: results.length,
+    files: results,
+  }, null, 2);
+}
+
+// ===== Extra #3: Decode to blob (for download) =====
+
+/** Convert a data URL to a Blob object (for downloading the decoded file). */
+export function dataUrlToBlob(url: string): Blob | null {
+  const parsed = parseDataUrl(url);
+  if (!parsed.isValid) return null;
+  const bytes = new TextEncoder().encode(parsed.data);
+  return new Blob([bytes as BlobPart], { type: parsed.mimeType || "application/octet-stream" });
+}
+
+// ===== Extra #4: Data URL comparison =====
+
+export interface DataUrlDiff {
+  field: string;
+  left: string;
+  right: string;
+  same: boolean;
+}
+
+/** Compare two data URLs field-by-field. */
+export function compareDataUrls(left: string, right: string): DataUrlDiff[] {
+  const lp = parseDataUrl(left);
+  const rp = parseDataUrl(right);
+  if (!lp.isValid || !rp.isValid) {
+    return [{ field: "raw", left, right, same: left === right }];
+  }
+  return [
+    { field: "mimeType", left: lp.mimeType, right: rp.mimeType, same: lp.mimeType === rp.mimeType },
+    { field: "isBase64", left: String(lp.isBase64), right: String(rp.isBase64), same: lp.isBase64 === rp.isBase64 },
+    { field: "data", left: lp.data.slice(0, 100), right: rp.data.slice(0, 100), same: lp.data === rp.data },
+    { field: "size", left: String(lp.data.length), right: String(rp.data.length), same: lp.data.length === rp.data.length },
+  ];
+}
+
+// ===== Extra #5: Embed in HTML/CSS/JSON templates =====
+
+export interface EmbedTemplate {
+  name: string;
+  language: string;
+  code: string;
+}
+
+/** Generate code snippets for embedding a data URL in different contexts. */
+export function generateEmbedTemplates(url: string, filename: string = "file"): EmbedTemplate[] {
+  const mime = getMimeType(url) ?? "application/octet-stream";
+  const isImage = mime.startsWith("image/");
+  const isSvg = mime === "image/svg+xml";
+  return [
+    {
+      name: "HTML <img>",
+      language: "html",
+      code: toImgTag(url, filename),
+    },
+    {
+      name: "CSS background",
+      language: "css",
+      code: toCssBackground(url),
+    },
+    {
+      name: "HTML <link> favicon",
+      language: "html",
+      code: toFaviconLink(url),
+    },
+    {
+      name: "JS string",
+      language: "javascript",
+      code: `const dataUrl = "${url}";`,
+    },
+    {
+      name: "JSON value",
+      language: "json",
+      code: JSON.stringify({ dataUrl: url }, null, 2),
+    },
+    ...(isSvg ? [{
+      name: "HTML inline SVG",
+      language: "html",
+      code: parseDataUrl(url).data,
+    }] : []),
+    ...(isImage ? [{
+      name: "Markdown image",
+      language: "markdown",
+      code: `![${filename}](${url})`,
+    }] : []),
+  ];
+}
+
+// ===== Extra #6: Validate data URL =====
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+/** Thoroughly validate a data URL. */
+export function validateDataUrlDeep(url: string): ValidationResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const parsed = parseDataUrl(url);
+  if (!parsed.isValid) {
+    errors.push(parsed.error ?? "Invalid data URL");
+    return { isValid: false, errors, warnings };
+  }
+  // Size check
+  const sizeWarn = checkDataUrlSize(url);
+  if (sizeWarn) {
+    if (sizeWarn.severity === "error") errors.push(sizeWarn.message);
+    else warnings.push(sizeWarn.message);
+  }
+  // MIME type check
+  if (!parsed.mimeType) {
+    warnings.push("No MIME type specified — defaults to text/plain.");
+  }
+  // Sniffing risk
+  const sniff = checkSniffingRisk(parsed.mimeType);
+  if (sniff) warnings.push(sniff.message);
+  return { isValid: errors.length === 0, errors, warnings };
+}
+
+// ===== Extra #7: Sniffing risk (re-use from logic) =====
+// (already defined as checkSniffingRisk — wait, that's in mime-type-lookup)
+// Let me define a simple version here:
+
+export function checkSniffingRisk(mimeType: string): { severity: "medium"; message: string; recommendation: string } | null {
+  if (mimeType === "application/octet-stream") {
+    return {
+      severity: "medium",
+      message: "Generic binary type — browsers may sniff the actual type.",
+      recommendation: "Use a specific MIME type if known. Send X-Content-Type-Options: nosniff.",
+    };
+  }
+  return null;
+}
+
+// ===== Extra #8: Size calculator (before encoding) =====
+
+export interface SizeEstimate {
+  inputBytes: number;
+  base64UrlBytes: number;
+  plainUrlBytes: number;
+  overhead: number;        // base64 overhead percentage
+  recommendation: "base64" | "plain";
+}
+
+/** Estimate the size of a data URL before encoding. */
+export function estimateDataUrlSize(inputBytes: number, mimeType: string): SizeEstimate {
+  const base64Bytes = Math.ceil(inputBytes * 4 / 3) + mimeType.length + 20; // overhead for "data:...;base64,"
+  const plainBytes = inputBytes * 3 + mimeType.length + 10; // worst case URL-encoding (3x for non-ASCII)
+  const overhead = Math.round((base64Bytes / inputBytes - 1) * 100);
+  return {
+    inputBytes,
+    base64UrlBytes: base64Bytes,
+    plainUrlBytes: plainBytes,
+    overhead,
+    recommendation: base64Bytes < plainBytes ? "base64" : "plain",
+  };
+}
+
+// ===== Extra #9: Drag-drop file detection =====
+
+export interface FileInfo {
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+}
+
+/** Extract file info from a dropped File object. */
+export function getFileInfo(file: File): FileInfo {
+  return {
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    lastModified: file.lastModified,
+  };
+}
+
+// ===== Extra #10: Shareable URL =====
+
+export function buildDataUrlShareUrl(url: string): string {
+  if (typeof window === "undefined") return "";
+  // Data URLs can be very long — only share if small enough
+  if (url.length > 2000) return "";
+  return `${window.location.origin}${window.location.pathname}#dataurl=${encodeURIComponent(url)}`;
+}
+
+export function extractDataUrlFromFragment(): string | null {
+  if (typeof window === "undefined") return null;
+  const hash = window.location.hash;
+  if (!hash) return null;
+  const match = hash.match(/[#&]dataurl=([^&]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   parseCsp,
   validateCsp,
@@ -224,5 +224,221 @@ describe("csp-evaluator scoreLabel", () => {
     expect(scoreLabel(25)).toBe("Weak");
     expect(scoreLabel(24)).toBe("Critical");
     expect(scoreLabel(0)).toBe("Critical");
+  });
+});
+
+// ===== v8.1 upgrade tests =====
+
+import {
+  detectBypassGadgets,
+  suggestStrictCsp,
+  suggestHashOrNonce,
+  checkReportEndpoint,
+  checkDeprecatedHeaders,
+  compareCsps,
+  loadCspHistory,
+  saveCspToHistory,
+  clearCspHistory,
+  buildCsp,
+  CSP_PRESETS,
+  explainSource,
+  getScoreBreakdown,
+  cspToNginx,
+  cspToApache,
+  cspToMetaTag,
+  DIRECTIVE_REFERENCE,
+  generateNonce,
+  buildCspShareUrl,
+  extractCspFromFragment,
+  type CspBuilderDirective,
+} from "./logic";
+
+describe("csp detectBypassGadgets", () => {
+  it("detects Angular CDN gadget", () => {
+    const directives = { "script-src": ["ajax.googleapis.com"] };
+    const gadgets = detectBypassGadgets(directives);
+    expect(gadgets.some((g) => g.type === "angular")).toBe(true);
+  });
+  it("detects data: URI gadget", () => {
+    const directives = { "script-src": ["data:"] };
+    const gadgets = detectBypassGadgets(directives);
+    expect(gadgets.some((g) => g.type === "script-inject")).toBe(true);
+  });
+  it("returns empty for clean CSP", () => {
+    const directives = { "script-src": ["'self'"] };
+    expect(detectBypassGadgets(directives)).toHaveLength(0);
+  });
+});
+
+describe("csp suggestStrictCsp", () => {
+  it("generates SPA preset", () => {
+    const r = suggestStrictCsp("spa");
+    expect(r.csp).toContain("nonce-{NONCE}");
+    expect(r.csp).toContain("default-src 'none'");
+  });
+  it("generates static preset", () => {
+    const r = suggestStrictCsp("static");
+    expect(r.csp).toContain("default-src 'none'");
+  });
+});
+
+describe("csp suggestHashOrNonce", () => {
+  it("suggests nonce for unsafe-inline", () => {
+    const directives = { "script-src": ["'self'", "'unsafe-inline'"] };
+    const r = suggestHashOrNonce(directives);
+    expect(r.some((x) => x.type === "inline")).toBe(true);
+  });
+  it("suggests removing eval", () => {
+    const directives = { "script-src": ["'self'", "'unsafe-eval'"] };
+    const r = suggestHashOrNonce(directives);
+    expect(r.some((x) => x.type === "eval")).toBe(true);
+  });
+});
+
+describe("csp checkReportEndpoint", () => {
+  it("flags missing report-uri", () => {
+    const r = checkReportEndpoint({});
+    expect(r.hasReportUri).toBe(false);
+  });
+  it("detects report-uri", () => {
+    const r = checkReportEndpoint({ "report-uri": ["/csp-report"] });
+    expect(r.hasReportUri).toBe(true);
+    expect(r.endpoint).toBe("/csp-report");
+  });
+});
+
+describe("csp checkDeprecatedHeaders", () => {
+  it("returns X-Frame-Options warning", () => {
+    const r = checkDeprecatedHeaders();
+    expect(r.some((h) => h.header === "X-Frame-Options")).toBe(true);
+  });
+});
+
+describe("csp compareCsps", () => {
+  it("finds differences", () => {
+    const diffs = compareCsps(
+      "default-src 'self'; script-src 'self'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline'",
+    );
+    const scriptDiff = diffs.find((d) => d.directive === "script-src");
+    expect(scriptDiff?.onlyInRight).toContain("'unsafe-inline'");
+    expect(scriptDiff?.same).toBe(false);
+  });
+});
+
+describe("csp history", () => {
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+  });
+  it("saves and loads", () => {
+    saveCspToHistory("default-src 'self'", 90);
+    const h = loadCspHistory();
+    expect(h).toHaveLength(1);
+    expect(h[0].score).toBe(90);
+  });
+  it("clears", () => {
+    saveCspToHistory("test", 80);
+    clearCspHistory();
+    expect(loadCspHistory()).toEqual([]);
+  });
+});
+
+describe("csp buildCsp", () => {
+  it("builds CSP from directives", () => {
+    const directives: CspBuilderDirective[] = [
+      { name: "default-src", sources: ["'self'"], enabled: true },
+      { name: "script-src", sources: ["'self'", "'nonce-abc'"], enabled: true },
+      { name: "img-src", sources: [], enabled: true }, // should be skipped
+    ];
+    const csp = buildCsp(directives);
+    expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("script-src 'self' 'nonce-abc'");
+    expect(csp).not.toContain("img-src");
+  });
+});
+
+describe("csp CSP_PRESETS", () => {
+  it("has at least 3 presets", () => {
+    expect(CSP_PRESETS.length).toBeGreaterThanOrEqual(3);
+  });
+  it("includes Strict preset", () => {
+    expect(CSP_PRESETS.some((p) => p.name === "Strict (recommended)")).toBe(true);
+  });
+});
+
+describe("csp explainSource", () => {
+  it("explains 'self'", () => {
+    const e = explainSource("'self'");
+    expect(e.meaning).toContain("Same origin");
+    expect(e.risk).toBe("safe");
+  });
+  it("explains unsafe-inline as high risk", () => {
+    expect(explainSource("'unsafe-inline'").risk).toBe("high");
+  });
+});
+
+describe("csp getScoreBreakdown", () => {
+  it("computes points per finding", () => {
+    const findings = [
+      { severity: "high" as const, directive: "x", message: "test", recommendation: "" },
+      { severity: "medium" as const, directive: "y", message: "test", recommendation: "" },
+    ];
+    const breakdown = getScoreBreakdown(findings);
+    expect(breakdown[0].points).toBe(-25);
+    expect(breakdown[1].points).toBe(-10);
+  });
+});
+
+describe("csp format exports", () => {
+  it("formats as Nginx", () => {
+    const nginx = cspToNginx("default-src 'self'");
+    expect(nginx).toContain("add_header Content-Security-Policy");
+  });
+  it("formats as Apache", () => {
+    const apache = cspToApache("default-src 'self'");
+    expect(apache).toContain("Header always set Content-Security-Policy");
+  });
+  it("formats as meta tag", () => {
+    const meta = cspToMetaTag("default-src 'self'");
+    expect(meta).toContain("<meta http-equiv");
+  });
+});
+
+describe("csp DIRECTIVE_REFERENCE", () => {
+  it("includes common directives", () => {
+    const names = DIRECTIVE_REFERENCE.map((d) => d.name);
+    expect(names).toContain("default-src");
+    expect(names).toContain("script-src");
+    expect(names).toContain("frame-ancestors");
+  });
+});
+
+describe("csp generateNonce", () => {
+  it("generates a base64 nonce", () => {
+    const nonce = generateNonce(16);
+    expect(nonce).toBeTruthy();
+    expect(nonce.length).toBeGreaterThan(10);
+  });
+  it("generates unique nonces", () => {
+    const n1 = generateNonce(16);
+    const n2 = generateNonce(16);
+    expect(n1).not.toBe(n2);
+  });
+});
+
+describe("csp buildCspShareUrl", () => {
+  it("builds share URL", () => {
+    const origWindow = globalThis.window;
+    (globalThis as any).window = {
+      location: { origin: "https://x.com", pathname: "/tools/csp-evaluator" },
+    };
+    const url = buildCspShareUrl("default-src 'self'");
+    expect(url).toContain("#csp=");
+    (globalThis as any).window = origWindow;
   });
 });

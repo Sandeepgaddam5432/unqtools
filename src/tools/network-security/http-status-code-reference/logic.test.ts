@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   STATUS_CODES,
   lookup,
@@ -171,5 +171,185 @@ describe("http-status CATEGORY_COLORS", () => {
       expect(CATEGORY_COLORS[cat]).toBeTruthy();
       expect(CATEGORY_COLORS[cat]).toContain("text-");
     }
+  });
+});
+
+// ===== v8.1 upgrade tests =====
+
+import {
+  getCodeDetails,
+  toCurlCommand,
+  buildDeepLink,
+  extractCodeFromFragment,
+  loadHttpHistory,
+  saveHttpToHistory,
+  clearHttpHistory,
+  loadFavorites,
+  toggleFavorite,
+  filterByServer,
+  SUPPORTED_SERVERS,
+  exportAsCsv,
+  exportAsMarkdown,
+  getHttpVersionDiff,
+  generateQuizQuestion,
+  getRelatedCodes,
+  codeToJson,
+  CHEAT_SHEET_CODES,
+  getCheatSheet,
+} from "./logic";
+
+describe("http getCodeDetails", () => {
+  it("returns details for 404", () => {
+    const d = getCodeDetails(404);
+    expect(d).toBeDefined();
+    expect(d?.commonCauses.length).toBeGreaterThan(0);
+    expect(d?.howToFix.length).toBeGreaterThan(0);
+  });
+  it("returns undefined for unknown code", () => {
+    expect(getCodeDetails(999)).toBeUndefined();
+  });
+});
+
+describe("http toCurlCommand", () => {
+  it("generates a curl command", () => {
+    const cmd = toCurlCommand(404);
+    expect(cmd).toContain("curl");
+    expect(cmd).toContain("404");
+  });
+});
+
+describe("http buildDeepLink", () => {
+  it("builds a deep link", () => {
+    const origWindow = globalThis.window;
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/http-status-code-reference" } };
+    const url = buildDeepLink(418);
+    expect(url).toContain("#code=418");
+    (globalThis as any).window = origWindow;
+  });
+});
+
+describe("http extractCodeFromFragment", () => {
+  it("extracts code from fragment", () => {
+    const origWindow = globalThis.window;
+    (globalThis as any).window = { location: { hash: "#code=418" } };
+    expect(extractCodeFromFragment()).toBe(418);
+    (globalThis as any).window = origWindow;
+  });
+});
+
+describe("http history", () => {
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+  });
+  it("saves and loads", () => {
+    saveHttpToHistory(404);
+    const h = loadHttpHistory();
+    expect(h).toHaveLength(1);
+    expect(h[0].code).toBe(404);
+  });
+  it("clears", () => {
+    saveHttpToHistory(200);
+    clearHttpHistory();
+    expect(loadHttpHistory()).toEqual([]);
+  });
+});
+
+describe("http favorites", () => {
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+  });
+  it("toggles favorites", () => {
+    expect(loadFavorites()).toEqual([]);
+    toggleFavorite(404);
+    expect(loadFavorites()).toContain(404);
+    toggleFavorite(404);
+    expect(loadFavorites()).toEqual([]);
+  });
+});
+
+describe("http filterByServer", () => {
+  it("filters by Cloudflare", () => {
+    const cf = filterByServer("Cloudflare");
+    expect(cf.length).toBeGreaterThan(0);
+    expect(cf.some((c) => c.code === 502)).toBe(true);
+  });
+});
+
+describe("http SUPPORTED_SERVERS", () => {
+  it("includes common servers", () => {
+    expect(SUPPORTED_SERVERS).toContain("nginx");
+    expect(SUPPORTED_SERVERS).toContain("Cloudflare");
+  });
+});
+
+describe("http exportAsCsv", () => {
+  it("generates CSV with header", () => {
+    const csv = exportAsCsv();
+    expect(csv).toContain("code,name,category");
+    expect(csv.split("\n").length).toBeGreaterThan(10);
+  });
+});
+
+describe("http exportAsMarkdown", () => {
+  it("generates Markdown table", () => {
+    const md = exportAsMarkdown();
+    expect(md).toContain("| Code | Name |");
+  });
+});
+
+describe("http getHttpVersionDiff", () => {
+  it("returns diff for 421", () => {
+    const diff = getHttpVersionDiff(421);
+    expect(diff).toBeDefined();
+    expect(diff?.http2Behavior).toContain("HTTP/2");
+  });
+  it("returns undefined for codes with no diff", () => {
+    expect(getHttpVersionDiff(200)).toBeUndefined();
+  });
+});
+
+describe("http generateQuizQuestion", () => {
+  it("generates a question with 4 choices", () => {
+    const q = generateQuizQuestion();
+    expect(q.choices).toHaveLength(4);
+    expect(q.correctIndex).toBeGreaterThanOrEqual(0);
+    expect(q.correctIndex).toBeLessThan(4);
+  });
+});
+
+describe("http getRelatedCodes", () => {
+  it("returns codes in same category", () => {
+    const related = getRelatedCodes(404);
+    expect(related.length).toBeGreaterThan(0);
+    expect(related.every((c) => c.category === "4xx")).toBe(true);
+    expect(related.every((c) => c.code !== 404)).toBe(true);
+  });
+});
+
+describe("http codeToJson", () => {
+  it("formats code as JSON", () => {
+    const json = codeToJson(404);
+    const parsed = JSON.parse(json);
+    expect(parsed.code).toBe(404);
+    expect(parsed.details).toBeDefined();
+  });
+});
+
+describe("http getCheatSheet", () => {
+  it("returns common codes", () => {
+    const cs = getCheatSheet();
+    expect(cs.length).toBeGreaterThan(10);
+    expect(cs.some((c) => c.code === 200)).toBe(true);
+    expect(cs.some((c) => c.code === 404)).toBe(true);
   });
 });

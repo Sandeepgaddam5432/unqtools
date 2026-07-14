@@ -150,3 +150,363 @@ export const CATEGORY_COLORS: Record<StatusCodeCategory, string> = {
   "4xx": "text-orange-600 dark:text-orange-400 border-orange-500/30 bg-orange-500/10",
   "5xx": "text-red-600 dark:text-red-400 border-red-500/30 bg-red-500/10",
 };
+
+// ===== v8.1 upgrade — blueprint features + 10 extras =====
+
+// ===== Common causes + how to fix (blueprint feature) =====
+
+export interface CodeDetails {
+  code: number;
+  commonCauses: string[];
+  howToFix: string[];
+  ianaUrl: string;
+  serverSoftware?: string[];   // which servers/proxies emit this code
+  http2Diff?: string;          // differences in HTTP/2
+}
+
+const CODE_DETAILS: Record<number, CodeDetails> = {
+  200: {
+    code: 200,
+    commonCauses: ["Successful GET/POST/PUT request", "Resource fetched normally"],
+    howToFix: ["Nothing to fix — this is the expected success response"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["all"],
+  },
+  201: {
+    code: 201,
+    commonCauses: ["POST created a new resource", "PUT created a new resource at a new URI"],
+    howToFix: ["Include a Location header pointing to the new resource URL", "Return the created resource in the body (or just its URL)"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  204: {
+    code: 204,
+    commonCauses: ["PUT/PATCH updated a resource without returning content", "DELETE succeeded"],
+    howToFix: ["Don't include a body in the response", "Content-Length must be 0"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  301: {
+    code: 301,
+    commonCauses: ["Site migrated to a new domain", "URL structure changed permanently", "HTTP → HTTPS redirect"],
+    howToFix: ["Use 301 for permanent moves — search engines update their index", "Use 308 if you need to preserve the HTTP method (POST stays POST)", "Don't use 301 for temporary redirects"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["nginx", "Apache", "Cloudflare"],
+    http2Diff: "Same in HTTP/2 — no behavioral difference.",
+  },
+  302: {
+    code: 302,
+    commonCauses: ["Post-redirect-GET pattern (form POST → success page)", "Temporary A/B test redirect"],
+    howToFix: ["Use 303 for post-redirect-GET (more semantic)", "Use 307 to preserve the HTTP method", "302 may change POST to GET in some clients — don't rely on it"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  304: {
+    code: 304,
+    commonCauses: ["Client sent If-Modified-Since/If-None-Match and resource hasn't changed"],
+    howToFix: ["Set proper Last-Modified or ETag headers on responses", "Compare the conditional header against the current resource", "Return 304 with no body to save bandwidth"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    http2Diff: "HTTP/2 uses the same 304 but with HPACK-compressed headers.",
+  },
+  400: {
+    code: 400,
+    commonCauses: ["Malformed JSON in request body", "Missing required query params", "Invalid URL encoding", "Content-Type mismatch"],
+    howToFix: ["Validate input before processing — return field-level errors", "Use 422 for semantic errors (valid JSON but missing fields)", "Include an error message in the response body explaining what's wrong"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  401: {
+    code: 401,
+    commonCauses: ["No Authorization header sent", "Expired or invalid JWT/token", "Missing API key"],
+    howToFix: ["Include WWW-Authenticate header describing the auth scheme", "Return 401 for missing/invalid auth, 403 for authenticated-but-unauthorized", "Don't reveal whether the username exists (use same error for bad user vs bad password)"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  403: {
+    code: 403,
+    commonCauses: ["User authenticated but lacks permission", "IP blocked by firewall/WAF", "Directory listing disabled", "File permissions wrong (server-side)"],
+    howToFix: ["Check user roles/permissions before the action", "Don't use 401 (that's for missing auth) — 403 means auth succeeded but access denied", "Log the denial for audit"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  404: {
+    code: 404,
+    commonCauses: ["URL doesn't match any route", "Resource ID doesn't exist", "Typo in URL", "Resource was deleted"],
+    howToFix: ["Return a helpful 404 page with suggestions for similar URLs", "Log 404s to find broken links", "For APIs, return JSON error: {\"error\": \"Resource not found\"}", "Don't use 404 for 'unauthorized' — that's 403"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  405: {
+    code: 405,
+    commonCauses: ["POST to a GET-only endpoint", "DELETE on a read-only resource", "PUT on a collection (should be POST)"],
+    howToFix: ["Include Allow header listing valid methods: Allow: GET, POST", "Make sure your router handles the method", "For CORS preflight, return 200 with Access-Control-Allow-Methods"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  408: {
+    code: 408,
+    commonCauses: ["Client took too long to send the full request", "Slow upload (large file, poor connection)", "Server's timeout setting is too low"],
+    howToFix: ["Increase server timeout (e.g. nginx proxy_read_timeout)", "Use chunked transfer encoding for large uploads", "Show a retry option to the user"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  409: {
+    code: 409,
+    commonCauses: ["Concurrent edits to the same resource (version conflict)", "Duplicate unique key in database", "Trying to create a resource that already exists"],
+    howToFix: ["Use If-Match/ETag for optimistic locking", "Return the current resource state so the client can merge", "For duplicates, return 409 (not 400) with a clear message"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  413: {
+    code: 413,
+    commonCauses: ["File upload exceeds server's max body size", "JSON payload too large", "nginx client_max_body_size too low"],
+    howToFix: ["Increase nginx: client_max_body_size 50M;", "Increase Apache: LimitRequestBody 52428800", "Use chunked upload for large files", "Validate size client-side before upload"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["nginx", "Apache", "Cloudflare"],
+  },
+  429: {
+    code: 429,
+    commonCauses: ["Client hit the rate limit", "Too many requests in a short window", "API quota exceeded"],
+    howToFix: ["Include Retry-After header (seconds to wait)", "Include X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset headers", "Use exponential backoff on the client side", "Return 429 (not 503) for rate limits"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+  },
+  500: {
+    code: 500,
+    commonCauses: ["Unhandled exception in code", "Database connection failed", "Null pointer / undefined access", "Out of memory", "Syntax error in server config"],
+    howToFix: ["Log the full stack trace server-side", "Return a generic error to the client (don't leak internals)", "Use a global error handler / middleware", "Set up monitoring/alerting for 500s", "Check server logs immediately"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["all"],
+  },
+  502: {
+    code: 502,
+    commonCauses: ["Backend server crashed", "Backend returned an invalid response", "Reverse proxy can't reach upstream", "Backend too slow (proxy timeout but connection established)"],
+    howToFix: ["Check if the backend process is running (pm2, systemd)", "Check backend logs for crashes", "Verify the proxy's upstream config (nginx upstream block)", "Check firewall rules between proxy and backend"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["nginx", "Cloudflare", "Apache", "HAProxy"],
+  },
+  503: {
+    code: 503,
+    commonCauses: ["Server is restarting/deploying", "Server overloaded (too many requests)", "Maintenance mode", "Dependency (DB, cache) is down"],
+    howToFix: ["Include Retry-After header", "Use a queue for incoming requests", "Scale horizontally (add more servers)", "Implement circuit breakers for dependencies", "Return a maintenance page"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["nginx", "Apache", "Cloudflare"],
+  },
+  504: {
+    code: 504,
+    commonCauses: ["Backend took too long to respond", "Database query timeout", "External API call timed out", "Proxy's timeout setting too low"],
+    howToFix: ["Increase proxy timeout (nginx: proxy_read_timeout 60s;)", "Optimize the slow query/request", "Add caching for slow operations", "Use async processing for long-running tasks", "Set up alerts for 504s"],
+    ianaUrl: "https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml",
+    serverSoftware: ["nginx", "Cloudflare", "Apache", "HAProxy"],
+  },
+};
+
+/** Get detailed info for a status code. */
+export function getCodeDetails(code: number): CodeDetails | undefined {
+  return CODE_DETAILS[code];
+}
+
+// ===== Copy-as-curl (blueprint feature) =====
+
+/** Generate a curl command that would trigger this status code (for testing). */
+export function toCurlCommand(code: number, url: string = "https://httpbin.org/status/{CODE}"): string {
+  const realUrl = url.replace("{CODE}", String(code));
+  return `curl -i -X GET "${realUrl}"`;
+}
+
+// ===== Deep-link support (blueprint feature) =====
+
+/** Build a deep-link URL to a specific status code. */
+export function buildDeepLink(code: number): string {
+  if (typeof window === "undefined") return `#code=${code}`;
+  return `${window.location.origin}${window.location.pathname}#code=${code}`;
+}
+
+/** Extract a code from the URL fragment (e.g. #code=418). */
+export function extractCodeFromFragment(): number | null {
+  if (typeof window === "undefined") return null;
+  const hash = window.location.hash;
+  if (!hash) return null;
+  const match = hash.match(/[#&]code=(\d+)/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+// ===== Extra #1: History =====
+
+const HTTP_HISTORY_KEY = "unqtools-http-history";
+const MAX_HTTP_HISTORY = 30;
+
+export interface HttpHistoryEntry {
+  code: number;
+  viewedAt: string;
+}
+
+export function loadHttpHistory(): HttpHistoryEntry[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(HTTP_HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.slice(0, MAX_HTTP_HISTORY);
+  } catch {
+    return [];
+  }
+}
+
+export function saveHttpToHistory(code: number): HttpHistoryEntry[] {
+  if (typeof localStorage === "undefined") return [];
+  const entry: HttpHistoryEntry = { code, viewedAt: new Date().toISOString() };
+  const current = loadHttpHistory().filter((e) => e.code !== code);
+  const updated = [entry, ...current].slice(0, MAX_HTTP_HISTORY);
+  try { localStorage.setItem(HTTP_HISTORY_KEY, JSON.stringify(updated)); } catch {}
+  return updated;
+}
+
+export function clearHttpHistory(): void {
+  if (typeof localStorage === "undefined") return;
+  try { localStorage.removeItem(HTTP_HISTORY_KEY); } catch {}
+}
+
+// ===== Extra #2: Favorites =====
+
+const FAVORITES_KEY = "unqtools-http-favorites";
+
+export function loadFavorites(): number[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed;
+  } catch {
+    return [];
+  }
+}
+
+export function toggleFavorite(code: number): number[] {
+  const current = loadFavorites();
+  const updated = current.includes(code) ? current.filter((c) => c !== code) : [...current, code];
+  if (typeof localStorage === "undefined") return updated;
+  try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated)); } catch {}
+  return updated;
+}
+
+// ===== Extra #3: Filter by server software =====
+
+/** Filter status codes by server software (e.g. show only Cloudflare codes). */
+export function filterByServer(server: string): StatusCodeInfo[] {
+  return STATUS_CODES.filter((s) => {
+    const details = CODE_DETAILS[s.code];
+    return details?.serverSoftware?.includes(server) || details?.serverSoftware?.includes("all");
+  });
+}
+
+export const SUPPORTED_SERVERS = ["nginx", "Apache", "Cloudflare", "HAProxy"];
+
+// ===== Extra #4: Export as reference sheet =====
+
+/** Format all status codes as a CSV reference sheet. */
+export function exportAsCsv(): string {
+  const header = "code,name,category,description,is_official";
+  const lines = STATUS_CODES.map((s) =>
+    `${s.code},"${s.name.replace(/"/g, '""')}","${s.categoryLabel}","${s.description.replace(/"/g, '""')}",${s.isOfficial}`,
+  );
+  return [header, ...lines].join("\n");
+}
+
+/** Format all status codes as a Markdown reference table. */
+export function exportAsMarkdown(): string {
+  const header = "| Code | Name | Category | Official | Description |\n|------|------|----------|----------|-------------|\n";
+  const rows = STATUS_CODES.map((s) =>
+    `| ${s.code} | ${s.name} | ${s.categoryLabel} | ${s.isOfficial ? "✅" : "❌"} | ${s.description.replace(/\|/g, "\\|")} |`,
+  ).join("\n");
+  return header + rows;
+}
+
+// ===== Extra #5: HTTP/2 vs HTTP/1.1 differences =====
+
+export interface HttpVersionDiff {
+  code: number;
+  http1Behavior: string;
+  http2Behavior: string;
+  http3Behavior: string;
+}
+
+const HTTP_VERSION_DIFFS: Record<number, HttpVersionDiff> = {
+  304: {
+    code: 304,
+    http1Behavior: "Headers sent as plain text.",
+    http2Behavior: "Headers HPACK-compressed. 304 still works the same way.",
+    http3Behavior: "Headers QPACK-compressed. Same semantics.",
+  },
+  421: {
+    code: 421,
+    http1Behavior: "Not used in HTTP/1.1.",
+    http2Behavior: "Returned when HTTP/2 connection coalescing fails (server doesn't have a cert for the requested host).",
+    http3Behavior: "Same as HTTP/2.",
+  },
+  425: {
+    code: 425,
+    http1Behavior: "Not used in HTTP/1.1.",
+    http2Behavior: "Returned for TLS 1.3 0-RTT data to prevent replay attacks.",
+    http3Behavior: "Same — used for 0-RTT replay protection.",
+  },
+};
+
+export function getHttpVersionDiff(code: number): HttpVersionDiff | undefined {
+  return HTTP_VERSION_DIFFS[code];
+}
+
+// ===== Extra #6: Status code quiz mode =====
+
+export interface QuizQuestion {
+  code: number;
+  choices: number[];
+  correctIndex: number;
+}
+
+/** Generate a quiz question: given a description, pick the right code. */
+export function generateQuizQuestion(): QuizQuestion {
+  const correct = STATUS_CODES[Math.floor(Math.random() * STATUS_CODES.length)];
+  const wrongChoices = STATUS_CODES
+    .filter((s) => s.category === correct.category && s.code !== correct.code)
+    .slice(0, 3)
+    .map((s) => s.code);
+  const choices = [...wrongChoices, correct.code];
+  // Shuffle
+  for (let i = choices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choices[i], choices[j]] = [choices[j], choices[i]];
+  }
+  return {
+    code: correct.code,
+    choices,
+    correctIndex: choices.indexOf(correct.code),
+  };
+}
+
+// ===== Extra #7: Related codes =====
+
+/** Get codes related to the given one (same category). */
+export function getRelatedCodes(code: number): StatusCodeInfo[] {
+  const target = lookup(code);
+  if (!target) return [];
+  return byCategory(target.category).filter((s) => s.code !== code);
+}
+
+// ===== Extra #8: Copy as JSON =====
+
+/** Format a status code as JSON. */
+export function codeToJson(code: number): string {
+  const info = lookup(code);
+  const details = getCodeDetails(code);
+  return JSON.stringify({
+    ...info,
+    details: details ?? null,
+  }, null, 2);
+}
+
+// ===== Extra #9: Cheat sheet (common codes only) =====
+
+export const CHEAT_SHEET_CODES = [200, 201, 204, 301, 302, 304, 400, 401, 403, 404, 405, 429, 500, 502, 503, 504];
+
+export function getCheatSheet(): StatusCodeInfo[] {
+  return CHEAT_SHEET_CODES.map((c) => lookup(c)).filter(Boolean) as StatusCodeInfo[];
+}
+
+// ===== Extra #10: Shareable URL =====
+
+export function buildHttpShareUrl(code: number): string {
+  return buildDeepLink(code);
+}

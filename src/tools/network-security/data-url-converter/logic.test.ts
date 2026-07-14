@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   encodeText,
   encodeBytes,
@@ -251,5 +251,200 @@ describe("data-url formatBytes", () => {
   it("handles invalid input", () => {
     expect(formatBytes(-1)).toBe("—");
     expect(formatBytes(NaN)).toBe("—");
+  });
+});
+
+// ===== v8.1 upgrade tests =====
+
+import {
+  checkDataUrlSize,
+  optimizeSvgDataUrl,
+  toImgTag,
+  toCssBackground,
+  toFaviconLink,
+  loadDataUrlHistory,
+  saveDataUrlToHistory,
+  clearDataUrlHistory,
+  batchEncodeFiles,
+  batchToJson,
+  dataUrlToBlob,
+  compareDataUrls,
+  generateEmbedTemplates,
+  validateDataUrlDeep,
+  estimateDataUrlSize,
+  getFileInfo,
+  buildDataUrlShareUrl,
+  extractDataUrlFromFragment,
+} from "./logic";
+
+describe("dataurl checkDataUrlSize", () => {
+  it("returns null for small URLs", () => {
+    const url = encodeText("hello");
+    expect(checkDataUrlSize(url)).toBeNull();
+  });
+  it("returns warning for large URLs", () => {
+    const big = "data:text/plain;base64," + "A".repeat(200000);
+    const w = checkDataUrlSize(big);
+    expect(w).not.toBeNull();
+    expect(w?.severity).toBe("warning");
+  });
+  it("returns error for >2MB URLs", () => {
+    const huge = "data:text/plain;base64," + "A".repeat(3 * 1024 * 1024);
+    const w = checkDataUrlSize(huge);
+    expect(w?.severity).toBe("error");
+  });
+});
+
+describe("dataurl optimizeSvgDataUrl", () => {
+  it("optimizes SVG data URL", () => {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg>';
+    const result = optimizeSvgDataUrl(svg);
+    expect(result.url).toMatch(/^data:image\/svg\+xml/);
+    expect(result.encoding).toBeTruthy();
+  });
+});
+
+describe("dataurl toImgTag", () => {
+  it("generates img tag", () => {
+    const url = "data:image/png;base64,abc";
+    const tag = toImgTag(url, "test image", 100, 50);
+    expect(tag).toContain("<img");
+    expect(tag).toContain('src="data:image/png;base64,abc"');
+    expect(tag).toContain('alt="test image"');
+    expect(tag).toContain('width="100"');
+    expect(tag).toContain('height="50"');
+  });
+});
+
+describe("dataurl toCssBackground", () => {
+  it("generates CSS rule", () => {
+    const css = toCssBackground("data:image/png;base64,abc", ".hero");
+    expect(css).toContain(".hero");
+    expect(css).toContain("background-image: url");
+  });
+});
+
+describe("dataurl toFaviconLink", () => {
+  it("generates favicon link tag", () => {
+    const link = toFaviconLink("data:image/x-icon;base64,abc");
+    expect(link).toContain('<link rel="icon"');
+    expect(link).toContain('href="data:image');
+  });
+});
+
+describe("dataurl history", () => {
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+  });
+  it("saves and loads", () => {
+    saveDataUrlToHistory(encodeText("test"));
+    expect(loadDataUrlHistory()).toHaveLength(1);
+  });
+  it("clears", () => {
+    saveDataUrlToHistory(encodeText("test"));
+    clearDataUrlHistory();
+    expect(loadDataUrlHistory()).toEqual([]);
+  });
+});
+
+describe("dataurl batchEncodeFiles", () => {
+  it("encodes multiple files", async () => {
+    const file1 = new File(["hello"], "test1.txt", { type: "text/plain" });
+    const file2 = new File(["world"], "test2.txt", { type: "text/plain" });
+    const results = await batchEncodeFiles([file1, file2]);
+    expect(results).toHaveLength(2);
+    expect(results[0].filename).toBe("test1.txt");
+    expect(results[0].dataUrl).toMatch(/^data:text\/plain;base64,/);
+  });
+});
+
+describe("dataurl batchToJson", () => {
+  it("formats batch as JSON", () => {
+    const results = [{ filename: "test.txt", mimeType: "text/plain", dataUrl: "data:...", size: 5 }];
+    const json = JSON.parse(batchToJson(results));
+    expect(json.count).toBe(1);
+    expect(json.files[0].filename).toBe("test.txt");
+  });
+});
+
+describe("dataurl dataUrlToBlob", () => {
+  it("converts data URL to Blob", () => {
+    const url = encodeText("hello");
+    const blob = dataUrlToBlob(url);
+    expect(blob).not.toBeNull();
+    expect(blob?.type).toBe("text/plain");
+  });
+  it("returns null for invalid URL", () => {
+    expect(dataUrlToBlob("not-a-url")).toBeNull();
+  });
+});
+
+describe("dataurl compareDataUrls", () => {
+  it("finds differences", () => {
+    const u1 = encodeText("hello");
+    const u2 = encodeText("world");
+    const diffs = compareDataUrls(u1, u2);
+    const dataDiff = diffs.find((d) => d.field === "data");
+    expect(dataDiff?.same).toBe(false);
+  });
+});
+
+describe("dataurl generateEmbedTemplates", () => {
+  it("generates multiple templates", () => {
+    const url = encodeText("hello", "image/png");
+    const templates = generateEmbedTemplates(url, "test.png");
+    expect(templates.length).toBeGreaterThan(3);
+    expect(templates.some((t) => t.name === "HTML <img>")).toBe(true);
+    expect(templates.some((t) => t.name === "CSS background")).toBe(true);
+  });
+});
+
+describe("dataurl validateDataUrlDeep", () => {
+  it("validates a good URL", () => {
+    const r = validateDataUrlDeep(encodeText("hello"));
+    expect(r.isValid).toBe(true);
+    expect(r.errors).toHaveLength(0);
+  });
+  it("rejects invalid URL", () => {
+    const r = validateDataUrlDeep("not-a-url");
+    expect(r.isValid).toBe(false);
+  });
+});
+
+describe("dataurl estimateDataUrlSize", () => {
+  it("estimates sizes", () => {
+    const est = estimateDataUrlSize(1000, "image/png");
+    expect(est.inputBytes).toBe(1000);
+    expect(est.base64UrlBytes).toBeGreaterThan(1000);
+    expect(est.overhead).toBeGreaterThan(0);
+  });
+});
+
+describe("dataurl getFileInfo", () => {
+  it("extracts file info", () => {
+    const file = new File(["test"], "example.txt", { type: "text/plain", lastModified: 1700000000000 });
+    const info = getFileInfo(file);
+    expect(info.name).toBe("example.txt");
+    expect(info.size).toBe(4);
+    expect(info.type).toBe("text/plain");
+  });
+});
+
+describe("dataurl buildDataUrlShareUrl", () => {
+  it("returns empty for huge URLs", () => {
+    const huge = "data:text/plain;base64," + "A".repeat(3000);
+    expect(buildDataUrlShareUrl(huge)).toBe("");
+  });
+  it("builds URL for small data URLs", () => {
+    const origWindow = globalThis.window;
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/data-url-converter" } };
+    const url = buildDataUrlShareUrl(encodeText("hi"));
+    expect(url).toContain("#dataurl=");
+    (globalThis as any).window = origWindow;
   });
 });
