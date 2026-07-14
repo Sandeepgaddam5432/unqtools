@@ -18,9 +18,14 @@ import { manifest as uuidGenerator } from "@/tools/developer/uuid-generator/mani
 import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
+import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
+import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
+import { manifest as httpStatusCodeReference } from "@/tools/network-security/http-status-code-reference/manifest";
 import { manifest as ipSubnetCalculator } from "@/tools/network-security/ip-subnet-calculator/manifest";
 import { manifest as jwtDecoder } from "@/tools/network-security/jwt-decoder/manifest";
+import { manifest as mimeTypeLookup } from "@/tools/network-security/mime-type-lookup/manifest";
 import { manifest as passwordGenerator } from "@/tools/network-security/password-generator/manifest";
+import { manifest as totpGenerator } from "@/tools/network-security/totp-generator/manifest";
 import { manifest as urlParser } from "@/tools/network-security/url-parser/manifest";
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
@@ -77,9 +82,14 @@ export const TOOLS: readonly ToolManifest[] = [
   colorPicker,
   imageCompressor,
   bcryptHashGenerator,
+  cspEvaluator,
+  dataUrlConverter,
+  httpStatusCodeReference,
   ipSubnetCalculator,
   jwtDecoder,
+  mimeTypeLookup,
   passwordGenerator,
+  totpGenerator,
   urlParser,
   compressPdf,
   contactSheetPdf,
