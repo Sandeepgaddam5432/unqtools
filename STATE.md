@@ -96,35 +96,40 @@ Code, file contents, identifiers, commit messages, and technical terms
 stay in standard English. Only the conversational chat surface uses
 Telugu-English.
 
-### Owner directive: 100% blueprint feature compliance (MANDATORY)
+### Owner directive: 100% blueprint feature compliance + 10 extras (MANDATORY)
 
-Per owner directive 2026-07-14 (see `AGENTS.md` § 1b), every tool built
-after this date MUST implement 100% of its blueprint's feature set
-(sections 5, 7, 10 from `unqtools-docs` repo). No more ~40-50% versions.
+Per owner directive 2026-07-14 (see `AGENTS.md` § 1b and § 1c), every
+tool built or upgraded after this date MUST:
+1. Implement 100% of its blueprint's feature set (sections 5, 7, 10 from
+   `unqtools-docs` repo).
+2. Ship with at least **10 extra useful features** beyond the blueprint.
 
-**Existing 10 Network/Security tools shipped at 40-50% compliance.**
-The following backlog tracks what's missing per tool. When upgrading
-a tool, clear its backlog row. New tools (Batch 3+) must hit 100% on
-first ship — no backlog entry allowed.
+**Existing 10 Network/Security tools shipped at 40-50% compliance with
+zero extras.** The following backlog tracks what's missing per tool.
+When upgrading a tool, implement all missing blueprint features + 10
+extras, then clear the backlog row. New tools (Batch 3+) must hit
+100% + 10 extras on first ship — no backlog entry allowed.
 
-## Blueprint compliance backlog (existing tools, ~40-50% complete)
+## Blueprint compliance backlog (existing tools, ~40-50% complete, 0 extras)
 
-| Tool | Missing blueprint features |
-|------|----------------------------|
-| `password-generator` | EFF passphrase mode (long/short wordlist), zxcvbn cross-check, per-class minimums (e.g. "at least 2 symbols"), pronounceable mode, batch + CSV export, shareable rule preset via URL (NOT the password), auto-clear clipboard option, optional HIBP k-anon breach check (network — document as offline-skip), keyboard shortcuts |
-| `jwt-decoder` | Signature verification for HS256 (with user-supplied secret), RS256/ES256 (with user-supplied public key), JWE (encrypted JWT) decode, JWK input, alg=none warning banner, exp/nbf/iat timeline visualization, copy individual claims |
-| `url-parser` | Punycode IDN decode, mailto:/tel:/file:/ftp: scheme support, URL builder/editor mode, "normalize URL" (lowercase host, default port strip, percent-encoding canonicalization), QR code of URL, copy individual components |
-| `ip-subnet-calculator` | IPv6 (BigInt 128-bit math), VLSM subnetting (split a network into smaller CIDRs), wildcard mask in ACL format (Cisco/Juniper), reverse DNS lookup, ASN whois link, copy as CSV |
-| `bcrypt-hash-generator` | Argon2id + scrypt + PBKDF2 modes, salt-only generation, hash-from-salt re-hash, batch verify (paste N hashes + 1 password, see which match), constant-time compare disclosure |
-| `totp-generator` | QR code render of otpauth:// URI (currently just shows the URI text), HOTP mode (counter-based), steam codes (Steam Guard), multi-account list with add/remove (localStorage), backup code reveal, time-skew warning if device clock drifts |
-| `csp-evaluator` | Bypass gadget detection (known JSONP endpoints, angular callbacks, etc.), auto-suggest strict CSP, hash/nonce injection suggestion, report-endpoint test, deprecated header warnings (X-Content-Type-Options, X-Frame-Options superseded by CSP), comparison mode (paste 2 CSPs) |
-| `http-status-code-reference` | Per-code "common causes" + "how to fix" sections, IANA registration link, copy-as-curl with status override, deep-link to code (e.g. /tools/http-status-code-reference#418), server-software mapping (nginx/Cloudflare/IIS specific codes), HTTP/2 vs HTTP/1.1 differences |
-| `mime-type-lookup` | IANA registration URL per type, charset detection (text/* only), magic-bytes detection for binary types (verify actual file content), sniffing attack warning for octet-stream, copy as .htaccess AddType directives, custom MIME type registration form |
-| `data-url-converter` | File size warning (>2MB browser limit), optimize base64 → data URL for SVGs (use plain encoding when smaller), drag-drop file directly, paste image (clipboard API), batch convert directory (File System Access API), copy-as-img-tag (auto-detect image MIME and produce `<img src="data:…">`) |
+| Tool | Missing blueprint features | 10 extras (to brainstorm) |
+|------|----------------------------|---------------------------|
+| `password-generator` ⬅️ START HERE | EFF passphrase mode (long/short wordlist), zxcvbn cross-check, per-class minimums (e.g. "at least 2 symbols"), pronounceable mode, batch + CSV export, shareable rule preset via URL (NOT the password), auto-clear clipboard option, optional HIBP k-anon breach check (network — document as offline-skip), keyboard shortcuts | See AGENTS.md § 1c example list (history, pattern detection, PIN mode, WiFi password, Diceware, auto-clear, CSV/JSON export, entropy meter, keyboard shortcuts, pronounceable-strong) |
+| `jwt-decoder` | Signature verification for HS256 (with user-supplied secret), RS256/ES256 (with user-supplied public key), JWE (encrypted JWT) decode, JWK input, alg=none warning banner, exp/nbf/iat timeline visualization, copy individual claims | TBD on upgrade |
+| `url-parser` | Punycode IDN decode, mailto:/tel:/file:/ftp: scheme support, URL builder/editor mode, "normalize URL" (lowercase host, default port strip, percent-encoding canonicalization), QR code of URL, copy individual components | TBD on upgrade |
+| `ip-subnet-calculator` | IPv6 (BigInt 128-bit math), VLSM subnetting (split a network into smaller CIDRs), wildcard mask in ACL format (Cisco/Juniper), reverse DNS lookup, ASN whois link, copy as CSV | TBD on upgrade |
+| `bcrypt-hash-generator` | Argon2id + scrypt + PBKDF2 modes, salt-only generation, hash-from-salt re-hash, batch verify (paste N hashes + 1 password, see which match), constant-time compare disclosure | TBD on upgrade |
+| `totp-generator` | QR code render of otpauth:// URI (currently just shows the URI text), HOTP mode (counter-based), steam codes (Steam Guard), multi-account list with add/remove (localStorage), backup code reveal, time-skew warning if device clock drifts | TBD on upgrade |
+| `csp-evaluator` | Bypass gadget detection (known JSONP endpoints, angular callbacks, etc.), auto-suggest strict CSP, hash/nonce injection suggestion, report-endpoint test, deprecated header warnings (X-Content-Type-Options, X-Frame-Options superseded by CSP), comparison mode (paste 2 CSPs) | TBD on upgrade |
+| `http-status-code-reference` | Per-code "common causes" + "how to fix" sections, IANA registration link, copy-as-curl with status override, deep-link to code (e.g. /tools/http-status-code-reference#418), server-software mapping (nginx/Cloudflare/IIS specific codes), HTTP/2 vs HTTP/1.1 differences | TBD on upgrade |
+| `mime-type-lookup` | IANA registration URL per type, charset detection (text/* only), magic-bytes detection for binary types (verify actual file content), sniffing attack warning for octet-stream, copy as .htaccess AddType directives, custom MIME type registration form | TBD on upgrade |
+| `data-url-converter` | File size warning (>2MB browser limit), optimize base64 → data URL for SVGs (use plain encoding when smaller), drag-drop file directly, paste image (clipboard API), batch convert directory (File System Access API), copy-as-img-tag (auto-detect image MIME and produce `<img src="data:…">`) | TBD on upgrade |
 
 **Upgrade path:** When picking up an existing tool for upgrade, read its
 backlog row above, read the matching blueprint, implement every missing
-feature, then delete the row from this table.
+feature + brainstorm/implement 10 extras, then delete the row from this
+table. Replace the row with a one-line "✅ upgraded to 100% + 10 extras"
+note for traceability.
 
 ## v8.0 Batch 2 — Network, Security & Privacy ✅ COMPLETE
 

@@ -109,19 +109,68 @@ blueprint compliance. They are NOT being rebuilt today, but each tool's
 missing features are tracked in `STATE.md` under "Blueprint compliance
 backlog". When upgrading a tool, the backlog entry must be cleared.
 
-Example correct commit message for a future tool:
-> feat: v8.1 Batch 1 — File Management tool 'zip-extractor'
-> Implements 100% of blueprint §5/§7/§10:
->  - ZIP/Zip64/AES-256 support (libarchive.js WASM, lazy-loaded)
->  - Selective extract with file tree
->  - CP437/Shift-JIS filename fix
->  - Zip-bomb guard (ratio + size limit)
->  - Drag-drop + batch
-> Honesty clause: AES hides contents not metadata; ZipCrypto flagged weak.
+### 1c. 10 extra useful features beyond blueprint (MANDATORY, owner directive 2026-07-14)
 
-Example WRONG commit message:
-> feat: zip-extractor (basic version)
-> Note: advanced features deferred — will add in v9.0
+In addition to 100% blueprint compliance (§ 1b), every tool built or
+upgraded after 2026-07-14 MUST ship with **at least 10 extra useful
+features** that are NOT in the blueprint. The owner's standard is
+"10x better than competitors" — and competitors don't stop at the
+blueprint either.
+
+**How to brainstorm extras:**
+1. Read the blueprint's §2 (Market leaders) and §3 (Their weaknesses).
+2. For each weakness, ask: "What else could we do that no one else does?"
+3. Look at adjacent tools — features from related categories that
+   would be useful here (e.g., password generator → password history
+   with localStorage, breach-check toggle, CSV export for password
+   manager import).
+4. Look at power-user workflows — what would a sysadmin, developer,
+   or security researcher want that casual users don't?
+5. Each extra feature must be genuinely useful, not padding. Skip
+   "dark mode toggle" or "share to social" type fluff.
+
+**Where to document the 10 extras:**
+- `manifest.ts` `seo.faq` — add an FAQ entry: "What extra features does
+  this tool have compared to others?" with a list.
+- `STATE.md` — when clearing a backlog row, list the 10 extras shipped.
+- Commit message — list every extra feature with a one-line description.
+
+**NOT allowed:**
+- Counting bug fixes or refactors as "extra features".
+- Counting UI polish (animations, hover states) as "extra features".
+- Counting basic accessibility (aria-labels, keyboard nav) as "extra
+  features" — those are baseline expectations.
+- Padding with low-value extras (e.g., "share to Twitter button").
+- Skipping the 10-extras rule for "simple" tools — every tool ships 10.
+
+**If you genuinely can't think of 10 useful extras:**
+- Re-read the blueprint — you missed something.
+- Look at 3 competitor tools — what do they do that the blueprint
+  doesn't cover? Implement that.
+- Ask: "What would make me switch from my current tool to this one?"
+- Still stuck? Ship the tool with the extras you have, but add a
+  `TODO: 10-extras-not-met` comment in `manifest.ts` so the next
+  upgrade pass picks it up. Do NOT mark `status: "done"`.
+
+**Example — password-generator extras (10):**
+1. Password history (localStorage, last 10, with clear button)
+2. Common pattern detection (sequential "1234", repeated "aaaa",
+   keyboard "qwerty") — warn user with badge
+3. Mobile PIN generator mode (4-8 digit numeric, optimized for phones)
+4. WPA2/WPA3 WiFi password generator (63-char ASCII for max entropy)
+5. Diceware mode with virtual dice (5 rolls → 1 EFF word)
+6. Auto-clear clipboard after 30s with countdown timer
+7. CSV/JSON export of batch generation (with metadata, never presets)
+8. Visual entropy meter (animated bar + bit count + crack-time estimate)
+9. Keyboard shortcuts (Space=regenerate, C=copy, 1-5=preset)
+10. Pronounceable-but-strong mode (consonant-vowel-consonant patterns)
+
+Example WRONG extras:
+- "Nice gradient background" (UI polish, not a feature)
+- "Copy button" (basic expectation, not an extra)
+- "Dark mode" (baseline, not an extra)
+
+---
 
 ---
 
