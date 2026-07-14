@@ -65,6 +65,64 @@ Example WRONG reply (pure English or pure Telugu):
 > "Repositories are ready. The bug has been fixed. Lint, tests, and
 > build all pass. Should I start Batch 3?"
 
+### 1b. 100% blueprint feature compliance (MANDATORY, owner directive 2026-07-14)
+
+Every tool built after 2026-07-14 MUST implement **100% of the blueprint's
+feature set** — not 40%, not "the must-haves only". The blueprints in the
+private `unqtools-docs` repo (`12 10x Tool Blueprints (Web-Researched)/`)
+are the single source of truth for what a tool does.
+
+**Pre-flight (before writing any code):**
+1. Read the matching blueprint file from `unqtools-docs`.
+2. List every feature from sections **5 (Feature set)**, **7 (UX details)**,
+   and **10 (Acceptance criteria)**.
+3. Implement each one. No skipping. No "I'll do that later".
+
+**Allowed exceptions (must be documented in code comment + tool FAQ):**
+- Features that violate the no-network rule (e.g., HIBP k-anonymity check
+  needs network). Skip but document in FAQ as "intentionally omitted to
+  preserve offline-first guarantee".
+- Features that are technically impossible in a browser (e.g., opening raw
+  TCP sockets). Skip but document with self-host recipe in FAQ.
+- Features that need a WASM dependency >5MB (bundle bloat). Skip if a
+  lighter alternative exists; otherwise ship the WASM and lazy-load it.
+
+**NOT allowed:**
+- Skipping "Advanced" features because they're hard (e.g., EFF passphrase
+  mode, zxcvbn cross-check, per-class minimums, pronounceable mode).
+- Skipping "Optional" features silently. Either implement or document.
+- Marking a tool as `status: "done"` without checking every box in
+  section 10 (Acceptance criteria).
+
+**Post-build checklist (before commit):**
+- [ ] Every feature in blueprint §5 (Feature set) is implemented
+- [ ] Every UX detail in blueprint §7 is respected
+- [ ] Every acceptance criterion in blueprint §10 passes
+- [ ] Every honesty clause from the blueprint is reflected in the UI
+      (privacy note, "honesty clause" disclaimers, network-feature flags)
+- [ ] Test coverage includes the advanced features, not just happy path
+- [ ] Commit message lists any deferred features with reasons
+
+**Existing tools grandfathered but tracked:**
+Tools built before 2026-07-14 (v6.0–v8.0 Batch 2) were shipped at ~40-50%
+blueprint compliance. They are NOT being rebuilt today, but each tool's
+missing features are tracked in `STATE.md` under "Blueprint compliance
+backlog". When upgrading a tool, the backlog entry must be cleared.
+
+Example correct commit message for a future tool:
+> feat: v8.1 Batch 1 — File Management tool 'zip-extractor'
+> Implements 100% of blueprint §5/§7/§10:
+>  - ZIP/Zip64/AES-256 support (libarchive.js WASM, lazy-loaded)
+>  - Selective extract with file tree
+>  - CP437/Shift-JIS filename fix
+>  - Zip-bomb guard (ratio + size limit)
+>  - Drag-drop + batch
+> Honesty clause: AES hides contents not metadata; ZipCrypto flagged weak.
+
+Example WRONG commit message:
+> feat: zip-extractor (basic version)
+> Note: advanced features deferred — will add in v9.0
+
 ---
 
 ## 2. Tech stack (v6.0 "UnQTemplate" — owner-authorized stack unlock)
