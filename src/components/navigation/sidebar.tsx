@@ -66,7 +66,7 @@ const navSections = [
     // v6.9: all 13 categories are always shown — empty ones render a Coming soon page.
     items: ALL_CATEGORIES.map((c) => ({
       href: `/category/${c}`,
-      label: CATEGORY_LABELS[c].split(" ")[0].replace(/,$/, ""),
+      label: CATEGORY_LABELS[c].split(" ")[0].replace(/[,.;:]$/, ""),
       icon: CATEGORY_ICONS[c] ?? LayoutGrid,
     })),
   },

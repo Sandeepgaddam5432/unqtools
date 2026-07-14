@@ -185,7 +185,7 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                           </p>
                           <div className="flex items-center justify-between">
                             <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
-                              {CATEGORY_LABELS[tool.category].split(" ")[0]}
+                              {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
                             </Badge>
                             <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                               <span>Open</span>

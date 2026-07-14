@@ -194,7 +194,8 @@ export default function ToolsPage() {
               </motion.button>
               {activeCats.map((cat) => {
                 const Icon = CATEGORY_ICONS[cat] ?? Layers;
-                const label = CATEGORY_LABELS[cat].split(" ")[0];
+                // Strip trailing comma/punctuation for short label (e.g. "Network," → "Network")
+                const label = CATEGORY_LABELS[cat].split(" ")[0].replace(/[,.;:]$/, "");
                 return (
                   <motion.button
                     key={cat}
@@ -231,11 +232,16 @@ export default function ToolsPage() {
                 </p>
               </motion.div>
             ) : (
+              // key forces remount when filter changes — this re-triggers the
+              // framer-motion stagger entrance animation for the new tool cards.
+              // Without this, new cards mount with opacity:0 (from "hidden"
+              // variant) and stay invisible because the parent's whileInView
+              // already fired once and won't re-trigger (viewport.once=true).
               <motion.div
+                key={`${activeCategory}-${query}`}
                 variants={staggerContainer}
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
+                animate="visible"
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               >
                 {filteredTools.map((tool) => {
@@ -256,7 +262,7 @@ export default function ToolsPage() {
                           </p>
                           <div className="flex items-center justify-between">
                             <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
-                              {CATEGORY_LABELS[tool.category].split(" ")[0]}
+                              {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
                             </Badge>
                             <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                               <span>Open</span>

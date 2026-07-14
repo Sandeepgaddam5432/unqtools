@@ -155,7 +155,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         <Icon className="mr-2 h-4 w-4 text-primary" />
                         <span>{tool.name}</span>
                         <span className="ml-auto text-xs text-muted-foreground">
-                          {CATEGORY_LABELS[tool.category].split(" ")[0]}
+                          {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
                         </span>
                       </CommandItem>
                     );
@@ -198,7 +198,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     <Icon className="mr-2 h-4 w-4 text-primary" />
                     <span>{tool.name}</span>
                     <span className="ml-auto text-xs text-muted-foreground">
-                      {CATEGORY_LABELS[tool.category].split(" ")[0]}
+                      {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
                     </span>
                   </CommandItem>
                 );
