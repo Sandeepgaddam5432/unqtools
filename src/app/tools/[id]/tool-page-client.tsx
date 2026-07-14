@@ -70,10 +70,15 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "image-compressor": () => import("@/tools/image/image-compressor/ui"),
   // File tools
   "csv-file-joiner": () => import("@/tools/file/csv-file-joiner/ui"),
+  "csv-file-splitter": () => import("@/tools/file/csv-file-splitter/ui"),
+  "csv-to-tsv-converter": () => import("@/tools/file/csv-to-tsv-converter/ui"),
+  "duplicate-file-finder": () => import("@/tools/file/duplicate-file-finder/ui"),
   "file-hash-checker": () => import("@/tools/file/file-hash-checker/ui"),
   "file-metadata-viewer": () => import("@/tools/file/file-metadata-viewer/ui"),
+  "file-rename-utility": () => import("@/tools/file/file-rename-utility/ui"),
   "json-to-xml-converter": () => import("@/tools/file/json-to-xml-converter/ui"),
   "text-file-joiner": () => import("@/tools/file/text-file-joiner/ui"),
+  "tsv-to-csv-converter": () => import("@/tools/file/tsv-to-csv-converter/ui"),
   // Network, Security & Privacy tools
   "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
   "csp-evaluator": () => import("@/tools/network-security/csp-evaluator/ui"),

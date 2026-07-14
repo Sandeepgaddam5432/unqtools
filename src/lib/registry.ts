@@ -33,9 +33,13 @@ import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
 import { manifest as cropPdf } from "@/tools/pdf/crop-pdf/manifest";
 import { manifest as csvFileJoiner } from "@/tools/file/csv-file-joiner/manifest";
+import { manifest as csvFileSplitter } from "@/tools/file/csv-file-splitter/manifest";
+import { manifest as csvToTsvConverter } from "@/tools/file/csv-to-tsv-converter/manifest";
 import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifest";
 import { manifest as duplicatePdfPages } from "@/tools/pdf/duplicate-pdf-pages/manifest";
+import { manifest as duplicateFileFinder } from "@/tools/file/duplicate-file-finder/manifest";
 import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
+import { manifest as fileRenameUtility } from "@/tools/file/file-rename-utility/manifest";
 import { manifest as flattenPdf } from "@/tools/pdf/flatten-pdf/manifest";
 import { manifest as htmlToPdf } from "@/tools/pdf/html-to-pdf/manifest";
 import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
@@ -62,6 +66,7 @@ import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
 import { manifest as svgToPdf } from "@/tools/pdf/svg-to-pdf/manifest";
 import { manifest as textFileJoiner } from "@/tools/file/text-file-joiner/manifest";
 import { manifest as textToPdf } from "@/tools/pdf/text-to-pdf/manifest";
+import { manifest as tsvToCsvConverter } from "@/tools/file/tsv-to-csv-converter/manifest";
 import { manifest as addLineBreaks } from "@/tools/text/add-line-breaks/manifest";
 import { manifest as addPrefixSuffix } from "@/tools/text/add-prefix-suffix/manifest";
 import { manifest as bigTextGenerator } from "@/tools/text/big-text-generator/manifest";
@@ -97,10 +102,15 @@ export const TOOLS: readonly ToolManifest[] = [
   totpGenerator,
   urlParser,
   csvFileJoiner,
+  csvFileSplitter,
+  csvToTsvConverter,
   fileHashChecker,
   fileMetadataViewer,
+  fileRenameUtility,
   jsonToXmlConverter,
   textFileJoiner,
+  tsvToCsvConverter,
+  duplicateFileFinder,
   compressPdf,
   contactSheetPdf,
   cropPdf,
