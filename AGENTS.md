@@ -117,6 +117,16 @@ features** that are NOT in the blueprint. The owner's standard is
 "10x better than competitors" — and competitors don't stop at the
 blueprint either.
 
+### 1d. 5 tools per session (MANDATORY, owner directive 2026-07-14)
+
+Every work session MUST complete **at least 5 tools** at 100% blueprint
+compliance + 10 extras. This applies to both upgrades (existing tools)
+and new builds. Do not stop at 1 or 2 — push through to 5.
+
+If a session is running long, prioritize finishing the 5th tool over
+adding more extras to the first 4. "5 done at 10 extras" beats
+"4 done at 15 extras".
+
 **How to brainstorm extras:**
 1. Read the blueprint's §2 (Market leaders) and §3 (Their weaknesses).
 2. For each weakness, ask: "What else could we do that no one else does?"

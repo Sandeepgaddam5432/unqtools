@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   parseUrl,
   getEffectivePort,
@@ -7,6 +7,26 @@ import {
   encodeUrlComponent,
   buildQueryString,
   DEFAULT_PORTS,
+  hasPunycode,
+  decodePunycode,
+  getScheme,
+  isSpecialScheme,
+  normalizeUrl,
+  DEFAULT_NORMALIZE,
+  buildQrDataUrl,
+  buildUrl,
+  loadUrlHistory,
+  saveUrlToHistory,
+  clearUrlHistory,
+  checkUrlSafety,
+  detectRedirectHints,
+  findEncodedChars,
+  getSchemeInfo,
+  SCHEME_REFERENCE,
+  parseMailto,
+  parseTel,
+  diffUrls,
+  type UrlBuilderParts,
 } from "./logic";
 
 describe("url-parser parseUrl", () => {
@@ -179,5 +199,245 @@ describe("url-parser DEFAULT_PORTS", () => {
     expect(DEFAULT_PORTS["ftp:"]).toBe(21);
     expect(DEFAULT_PORTS["ws:"]).toBe(80);
     expect(DEFAULT_PORTS["wss:"]).toBe(443);
+  });
+});
+
+// ===== New feature tests (v8.1 upgrade) =====
+
+describe("url-parser hasPunycode", () => {
+  it("detects xn-- prefix", () => {
+    expect(hasPunycode("xn--mnchen-3ya.de")).toBe(true);
+    expect(hasPunycode("example.com")).toBe(false);
+  });
+});
+
+describe("url-parser decodePunycode", () => {
+  it("returns as-is if no punycode", () => {
+    expect(decodePunycode("example.com")).toBe("example.com");
+  });
+  it("returns punycode as-is (no full decode impl)", () => {
+    expect(decodePunycode("xn--mnchen-3ya.de")).toBe("xn--mnchen-3ya.de");
+  });
+});
+
+describe("url-parser getScheme", () => {
+  it("returns typed scheme for known protocols", () => {
+    expect(getScheme("https:")).toBe("https");
+    expect(getScheme("http:")).toBe("http");
+    expect(getScheme("mailto:")).toBe("mailto");
+    expect(getScheme("tel:")).toBe("tel");
+  });
+  it("returns 'other' for unknown", () => {
+    expect(getScheme("ftp://")).toBe("other"); // has :// not :
+    expect(getScheme("custom:")).toBe("other");
+  });
+});
+
+describe("url-parser isSpecialScheme", () => {
+  it("returns true for http/https/ftp/ws/wss/file", () => {
+    expect(isSpecialScheme("http:")).toBe(true);
+    expect(isSpecialScheme("https:")).toBe(true);
+    expect(isSpecialScheme("ftp:")).toBe(true);
+    expect(isSpecialScheme("file:")).toBe(true);
+  });
+  it("returns false for mailto/tel/data", () => {
+    expect(isSpecialScheme("mailto:")).toBe(false);
+    expect(isSpecialScheme("tel:")).toBe(false);
+  });
+});
+
+describe("url-parser normalizeUrl", () => {
+  it("lowercases host", () => {
+    const n = normalizeUrl("HTTPS://EXAMPLE.COM/path");
+    expect(n).toMatch(/example\.com/);
+    expect(n).not.toMatch(/EXAMPLE\.COM/);
+  });
+  it("strips default port", () => {
+    expect(normalizeUrl("https://example.com:443/")).toMatch(/example\.com\//);
+    expect(normalizeUrl("http://example.com:80/")).toMatch(/example\.com\//);
+  });
+  it("sorts query params", () => {
+    const n = normalizeUrl("https://example.com/?b=2&a=1");
+    expect(n).toContain("a=1&b=2");
+  });
+  it("removes duplicate slashes", () => {
+    const n = normalizeUrl("https://example.com//path///to");
+    expect(n).toContain("/path/to");
+    // Should not contain 3+ slashes in the path (only the // after https: is allowed)
+    expect(n).not.toMatch(/\/{3,}/);
+  });
+  it("removes trailing slash when requested", () => {
+    const n = normalizeUrl("https://example.com/path/", { ...DEFAULT_NORMALIZE, removeTrailingSlash: true });
+    expect(n).not.toMatch(/\/$/);
+  });
+});
+
+describe("url-parser buildUrl", () => {
+  it("builds a simple URL", () => {
+    const parts: UrlBuilderParts = {
+      protocol: "https:",
+      hostname: "example.com",
+      pathname: "/path",
+      searchParams: [],
+      hash: "",
+    };
+    expect(buildUrl(parts)).toBe("https://example.com/path");
+  });
+  it("builds with auth and query", () => {
+    const parts: UrlBuilderParts = {
+      protocol: "https:",
+      username: "user",
+      password: "pass",
+      hostname: "example.com",
+      port: "8443",
+      pathname: "api",
+      searchParams: [{ key: "q", value: "1" }],
+      hash: "section",
+    };
+    expect(buildUrl(parts)).toBe("https://user:pass@example.com:8443/api?q=1#section");
+  });
+});
+
+describe("url-parser history (localStorage mock)", () => {
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+  });
+  it("starts empty", () => {
+    expect(loadUrlHistory()).toEqual([]);
+  });
+  it("saves and loads", () => {
+    saveUrlToHistory("https://example.com");
+    const h = loadUrlHistory();
+    expect(h).toHaveLength(1);
+    expect(h[0].url).toBe("https://example.com/");
+  });
+  it("deduplicates", () => {
+    saveUrlToHistory("https://example.com");
+    saveUrlToHistory("https://example.com");
+    expect(loadUrlHistory()).toHaveLength(1);
+  });
+  it("clears", () => {
+    saveUrlToHistory("https://example.com");
+    clearUrlHistory();
+    expect(loadUrlHistory()).toEqual([]);
+  });
+});
+
+describe("url-parser checkUrlSafety", () => {
+  it("flags IP hostnames", () => {
+    const p = parseUrl("http://192.168.1.1/path");
+    const f = checkUrlSafety(p);
+    expect(f.some((x) => x.code === "ip-host")).toBe(true);
+  });
+  it("flags insecure HTTP", () => {
+    const p = parseUrl("http://example.com");
+    const f = checkUrlSafety(p);
+    expect(f.some((x) => x.code === "insecure-http")).toBe(true);
+  });
+  it("flags URL shorteners", () => {
+    const p = parseUrl("https://bit.ly/abc");
+    const f = checkUrlSafety(p);
+    expect(f.some((x) => x.code === "url-shortener")).toBe(true);
+  });
+  it("flags non-ASCII hostnames", () => {
+    const p = parseUrl("https://пример.рф");
+    const f = checkUrlSafety(p);
+    expect(f.some((x) => x.code === "non-ascii-host" || x.code === "punycode")).toBe(true);
+  });
+  it("returns no findings for clean HTTPS URL", () => {
+    const p = parseUrl("https://example.com/path");
+    const f = checkUrlSafety(p);
+    expect(f.filter((x) => x.severity === "high" || x.severity === "medium")).toHaveLength(0);
+  });
+});
+
+describe("url-parser detectRedirectHints", () => {
+  it("detects shortener", () => {
+    const p = parseUrl("https://bit.ly/abc");
+    expect(detectRedirectHints(p).some((h) => h.type === "shortener")).toBe(true);
+  });
+  it("detects redirect params", () => {
+    const p = parseUrl("https://example.com/?redirect=https://evil.com");
+    expect(detectRedirectHints(p).some((h) => h.type === "location-header")).toBe(true);
+  });
+  it("returns empty for clean URL", () => {
+    const p = parseUrl("https://example.com/path");
+    expect(detectRedirectHints(p)).toHaveLength(0);
+  });
+});
+
+describe("url-parser findEncodedChars", () => {
+  it("finds encoded chars in pathname", () => {
+    const p = parseUrl("https://example.com/hello%20world");
+    const e = findEncodedChars(p);
+    expect(e.some((x) => x.encoded === "%20" && x.decoded === " ")).toBe(true);
+  });
+  it("finds encoded chars in search", () => {
+    const p = parseUrl("https://example.com/?q=%2Fpath");
+    const e = findEncodedChars(p);
+    expect(e.some((x) => x.decoded === "/")).toBe(true);
+  });
+});
+
+describe("url-parser getSchemeInfo", () => {
+  it("returns info for known schemes", () => {
+    const info = getSchemeInfo("https:");
+    expect(info?.name).toMatch(/HTTP Secure/i);
+    expect(info?.defaultPort).toBe(443);
+  });
+  it("returns undefined for unknown", () => {
+    expect(getSchemeInfo("custom:")).toBeUndefined();
+  });
+});
+
+describe("url-parser parseMailto", () => {
+  it("parses simple mailto", () => {
+    const m = parseMailto("mailto:user@example.com");
+    expect(m?.to).toEqual(["user@example.com"]);
+  });
+  it("parses mailto with subject and body", () => {
+    const m = parseMailto("mailto:user@example.com?subject=Hello&body=World");
+    expect(m?.to).toEqual(["user@example.com"]);
+    expect(m?.subject).toBe("Hello");
+    expect(m?.body).toBe("World");
+  });
+  it("parses multiple recipients", () => {
+    const m = parseMailto("mailto:a@x.com,b@y.com");
+    expect(m?.to).toEqual(["a@x.com", "b@y.com"]);
+  });
+  it("returns null for non-mailto", () => {
+    expect(parseMailto("https://example.com")).toBeNull();
+  });
+});
+
+describe("url-parser parseTel", () => {
+  it("parses simple tel", () => {
+    const t = parseTel("tel:+15551234567");
+    expect(t?.number).toBe("+15551234567");
+  });
+  it("parses tel with comment", () => {
+    const t = parseTel("tel:+15551234567#office");
+    expect(t?.number).toBe("+15551234567");
+    expect(t?.comment).toBe("office");
+  });
+  it("returns null for non-tel", () => {
+    expect(parseTel("https://example.com")).toBeNull();
+  });
+});
+
+describe("url-parser diffUrls", () => {
+  it("finds differences", () => {
+    const left = parseUrl("https://example.com/path?a=1");
+    const right = parseUrl("https://example.com/path?a=2");
+    const d = diffUrls(left, right);
+    const searchDiff = d.find((x) => x.field === "search");
+    expect(searchDiff?.same).toBe(false);
+    const hostDiff = d.find((x) => x.field === "hostname");
+    expect(hostDiff?.same).toBe(true);
   });
 });
