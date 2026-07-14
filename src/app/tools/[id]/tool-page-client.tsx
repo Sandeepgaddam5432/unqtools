@@ -241,13 +241,7 @@ export function ToolPageClient({
             </Card>
 
             {/* About / How to use */}
-            <motion.div
-              initial={MO_HERO}
-              whileInView={MO_VISIBLE}
-              viewport={MO_VIEWPORT}
-              transition={MO_SCROLL_TRANS}
-              className="mb-8"
-            >
+            <div className="unq-animate-fade-in-up mb-8">
               <h2 className="text-xl font-semibold text-foreground mb-3">About {tool.name}</h2>
               <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                 {tool.description} Everything runs locally in your browser — your data never leaves your device.
@@ -259,17 +253,11 @@ export function ToolPageClient({
                 <li>Use the Copy or Download buttons to save the result.</li>
                 <li>Everything happens locally — your data never leaves your browser.</li>
               </ol>
-            </motion.div>
+            </div>
 
             {/* FAQ */}
             {tool.seo?.faq && tool.seo.faq.length > 0 && (
-              <motion.div
-                initial={MO_HERO}
-                whileInView={MO_VISIBLE}
-                viewport={MO_VIEWPORT}
-                transition={MO_SCROLL_TRANS}
-                className="mb-8"
-              >
+              <div className="unq-animate-fade-in-up mb-8" style={{ animationDelay: "100ms" }}>
                 <h2 className="text-xl font-semibold text-foreground mb-4">FAQ</h2>
                 <div className="space-y-4">
                   {tool.seo.faq.map((faq, i) => (
@@ -281,26 +269,20 @@ export function ToolPageClient({
                     </Card>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Related tools */}
             {related.length > 0 && (
-              <motion.div
-                initial={MO_HERO}
-                whileInView={MO_VISIBLE}
-                viewport={MO_VIEWPORT}
-                transition={MO_SCROLL_TRANS}
-              >
+              <div className="unq-animate-fade-in-up" style={{ animationDelay: "200ms" }}>
                 <h2 className="text-xl font-semibold text-foreground mb-4">Related tools</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {related.map((rt) => {
                     const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
                     return (
                       <Link key={rt.id} href={`/tools/${rt.id}`} className="block group">
-                        <motion.div
-                          whileHover={MO_HOVER}
-                          className="card-hover rounded-xl border bg-card p-4 h-full transition-colors hover:border-primary/30"
+                        <div
+                          className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1"
                         >
                           <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
                             <RIcon className="h-4 w-4 text-primary" />
@@ -311,12 +293,12 @@ export function ToolPageClient({
                             <span>Open</span>
                             <ArrowRight className="h-3 w-3 ml-1" />
                           </div>
-                        </motion.div>
+                        </div>
                       </Link>
                     );
                   })}
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Back to tools */}

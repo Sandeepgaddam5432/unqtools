@@ -160,21 +160,20 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                 </Button>
               </motion.div>
             ) : (
-              <motion.div
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={GRID_VIEWPORT}
+              <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               >
-                {tools.map((tool) => {
+                {tools.map((tool, index) => {
                   const ToolIcon = CATEGORY_ICONS[tool.category] ?? Layers;
                   return (
-                    <motion.div key={tool.id} variants={staggerItem}>
+                    <div
+                      key={tool.id}
+                      className="unq-animate-fade-in-up"
+                      style={{ animationDelay: `${Math.min(index * 30, 600)}ms` }}
+                    >
                       <Link href={`/tools/${tool.id}`} className="block group">
-                        <motion.div
-                          whileHover={HOVER_LIFT}
-                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-colors hover:border-primary/30"
+                        <div
+                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1"
                         >
                           <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
                             <ToolIcon className="h-5 w-5 text-primary" />
@@ -192,12 +191,12 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                               <ArrowRight className="h-3.5 w-3.5 ml-1" />
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       </Link>
-                    </motion.div>
+                    </div>
                   );
                 })}
-              </motion.div>
+              </div>
             )}
           </div>
         </section>

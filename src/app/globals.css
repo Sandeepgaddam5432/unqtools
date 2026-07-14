@@ -198,3 +198,42 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* ===== Bulletproof CSS animations for tool cards (replaces framer-motion) ===== */
+/* These work without JavaScript, can't fail due to hydration issues, and
+   re-trigger automatically when DOM elements are added/removed (unlike
+   framer-motion's whileInView which only fires once with viewport.once=true). */
+
+@keyframes unq-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes unq-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.unq-animate-fade-in-up {
+  animation: unq-fade-in-up 0.35s ease-out both;
+}
+
+.unq-animate-fade-in {
+  animation: unq-fade-in 0.3s ease-out both;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .unq-animate-fade-in-up,
+  .unq-animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

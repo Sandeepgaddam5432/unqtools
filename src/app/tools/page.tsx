@@ -232,26 +232,25 @@ export default function ToolsPage() {
                 </p>
               </motion.div>
             ) : (
-              // key forces remount when filter changes — this re-triggers the
-              // framer-motion stagger entrance animation for the new tool cards.
-              // Without this, new cards mount with opacity:0 (from "hidden"
-              // variant) and stay invisible because the parent's whileInView
-              // already fired once and won't re-trigger (viewport.once=true).
-              <motion.div
+              // CSS-based animation — bulletproof, no JS dependency, no hydration
+              // issues. Each card gets a staggered animation-delay via inline style.
+              // This replaces the old framer-motion whileInView pattern which
+              // failed when switching category tabs (new cards stayed invisible).
+              <div
                 key={`${activeCategory}-${query}`}
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               >
-                {filteredTools.map((tool) => {
+                {filteredTools.map((tool, index) => {
                   const Icon = CATEGORY_ICONS[tool.category] ?? Wand2;
                   return (
-                    <motion.div key={tool.id} variants={staggerItem}>
+                    <div
+                      key={tool.id}
+                      className="unq-animate-fade-in-up"
+                      style={{ animationDelay: `${Math.min(index * 30, 600)}ms` }}
+                    >
                       <Link href={`/tools/${tool.id}`} className="block group">
-                        <motion.div
-                          whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-colors hover:border-primary/30"
+                        <div
+                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1"
                         >
                           <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
                             <Icon className="h-5 w-5 text-primary" />
@@ -269,12 +268,12 @@ export default function ToolsPage() {
                               <ArrowRight className="h-3.5 w-3.5 ml-1" />
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       </Link>
-                    </motion.div>
+                    </div>
                   );
                 })}
-              </motion.div>
+              </div>
             )}
           </div>
         </section>
