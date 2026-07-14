@@ -5,7 +5,7 @@ import { parsePageRanges } from "../_shared/page-ranges";
 export interface StampOptions {
   text: string; includeDate: boolean; fontSize: number; color: string;
   position: "top-left" | "top-center" | "top-right" | "center" | "bottom-left" | "bottom-center" | "bottom-right";
-  pages?: string; rotation: 0 | -45 | 45;
+  pages?: string; rotation?: 0 | -45 | 45;
 }
 
 const PRESET_COLORS: Record<string, { r: number; g: number; b: number }> = {
@@ -27,6 +27,11 @@ export async function addStamp(bytes: Uint8Array, opts: StampOptions): Promise<T
   const fullText = `${opts.text}${dateStr}`;
   const c = PRESET_COLORS[opts.color] ?? PRESET_COLORS.red;
   const color = rgb(c.r, c.g, c.b);
+  // Defensive: rotation defaults to 0 if not provided by the UI.
+  // Previously the UI didn't pass `rotation` at all, so opts.rotation was
+  // undefined → `undefined !== 0` was true → `degrees(undefined)` was called
+  // → pdf-lib threw "degreeAngle must be of type number".
+  const rotation = opts.rotation ?? 0;
   try {
     for (const i of indices) {
       const page = doc.getPages()[i];
@@ -47,11 +52,11 @@ export async function addStamp(bytes: Uint8Array, opts: StampOptions): Promise<T
         borderColor: color, borderWidth: 2,
         color: rgb(1, 1, 1),
       };
-      if (opts.rotation !== 0) rectOpts.rotate = degrees(opts.rotation);
+      if (rotation !== 0) rectOpts.rotate = degrees(rotation);
       page.drawRectangle(rectOpts);
       // Draw stamp text
       const drawOpts: Parameters<typeof page.drawText>[1] = { x, y, size: fs, font, color };
-      if (opts.rotation !== 0) drawOpts.rotate = degrees(opts.rotation);
+      if (rotation !== 0) drawOpts.rotate = degrees(rotation);
       page.drawText(fullText, drawOpts);
     }
     return { ok: true, output: await doc.save() };

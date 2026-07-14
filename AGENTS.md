@@ -43,6 +43,28 @@
 - **Deterministic builds** — pinned dependency versions, `npm ci` reproducible.
 - **Proprietary** — all rights reserved. See `LICENSE`. Not open source.
 
+### 1a. Conversation language — Telugu-English mix (MANDATORY, owner directive 2026-07-14)
+
+The owner (Sandeep Gaddam) is a Telugu speaker. All conversational replies,
+summaries, status updates, and explanations MUST use a **Telugu-English mix**:
+- English text + Telugu words mixed in the same sentences.
+- Format: "Next batch chestanu, 5 tools implement cheyali" (English grammar
+  with Telugu action words / casual fillers).
+- Code, identifiers, commit messages, file contents, technical terms (API
+  names, library names, file paths, error messages) stay in English.
+- This applies to ALL chat replies — including bug reports, fix summaries,
+  status updates, next-step suggestions, and clarifying questions.
+- File contents (STATE.md, source code, comments inside code) stay in
+  standard English — only the conversational chat surface uses Telugu-English.
+
+Example correct reply:
+> "Repos ready! Bug fix aipoyindi. Lint + tests + build pass. Next
+> cheppana — Batch 3 start cheyana?"
+
+Example WRONG reply (pure English or pure Telugu):
+> "Repositories are ready. The bug has been fixed. Lint, tests, and
+> build all pass. Should I start Batch 3?"
+
 ---
 
 ## 2. Tech stack (v6.0 "UnQTemplate" — owner-authorized stack unlock)
