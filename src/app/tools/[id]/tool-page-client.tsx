@@ -79,6 +79,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "json-to-xml-converter": () => import("@/tools/file/json-to-xml-converter/ui"),
   "text-file-joiner": () => import("@/tools/file/text-file-joiner/ui"),
   "tsv-to-csv-converter": () => import("@/tools/file/tsv-to-csv-converter/ui"),
+  "xml-to-json-converter": () => import("@/tools/file/xml-to-json-converter/ui"),
+  "base64-file-encoder": () => import("@/tools/file/base64-file-encoder/ui"),
+  "base64-file-decoder": () => import("@/tools/file/base64-file-decoder/ui"),
+  "hex-viewer": () => import("@/tools/file/hex-viewer/ui"),
+  "empty-file-creator": () => import("@/tools/file/empty-file-creator/ui"),
   // Network, Security & Privacy tools
   "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
   "csp-evaluator": () => import("@/tools/network-security/csp-evaluator/ui"),

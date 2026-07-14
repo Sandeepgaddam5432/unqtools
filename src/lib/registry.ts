@@ -79,6 +79,11 @@ import { manifest as csvToTextList } from "@/tools/text/csv-to-text-list/manifes
 import { manifest as diffChecker } from "@/tools/text/diff-checker/manifest";
 import { manifest as duplicateLinesRemover } from "@/tools/text/duplicate-lines-remover/manifest";
 import { manifest as wordCharacterCounter } from "@/tools/text/word-character-counter/manifest";
+import { manifest as base64FileDecoder } from "@/tools/file/base64-file-decoder/manifest";
+import { manifest as base64FileEncoder } from "@/tools/file/base64-file-encoder/manifest";
+import { manifest as emptyFileCreator } from "@/tools/file/empty-file-creator/manifest";
+import { manifest as hexViewer } from "@/tools/file/hex-viewer/manifest";
+import { manifest as xmlToJsonConverter } from "@/tools/file/xml-to-json-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -153,6 +158,11 @@ export const TOOLS: readonly ToolManifest[] = [
   diffChecker,
   duplicateLinesRemover,
   wordCharacterCounter,
+  base64FileDecoder,
+  base64FileEncoder,
+  emptyFileCreator,
+  hexViewer,
+  xmlToJsonConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
