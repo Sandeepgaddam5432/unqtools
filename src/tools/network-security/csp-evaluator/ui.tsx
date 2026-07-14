@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton, ErrorBanner, EmptyState } from "../../_shared";
-import { analyze, scoreLabel, type Severity } from "./logic";
-import { ShieldCheck, ShieldAlert, ShieldX } from "lucide-react";
+import { analyze, scoreLabel, detectBypassGadgets, suggestStrictCsp, generateNonce, cspToNginx, cspToApache, cspToMetaTag, CSP_PRESETS, explainSource, type Severity } from "./logic";
+import { ShieldCheck, ShieldAlert, ShieldX, AlertTriangle, Wand2, Download } from "lucide-react";
+import { toast } from "sonner";
 
 const SEVERITY_STYLES: Record<Severity, string> = {
   high: "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400",
@@ -157,8 +158,96 @@ export default function CspEvaluator() {
               </CardContent>
             </Card>
           )}
+
+          {/* Bypass gadgets (blueprint feature) */}
+          {(() => {
+            const gadgets = detectBypassGadgets(analysis.directives);
+            return gadgets.length > 0 ? (
+              <Card>
+                <CardContent className="p-4 space-y-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                    Bypass gadgets ({gadgets.length})
+                  </Label>
+                  <div className="space-y-1.5">
+                    {gadgets.map((g, i) => (
+                      <div key={i} className={`rounded-md border p-2 text-xs ${g.severity === "high" ? SEVERITY_STYLES.high : g.severity === "medium" ? SEVERITY_STYLES.medium : SEVERITY_STYLES.low}`}>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <Badge variant="outline" className="text-[9px] uppercase bg-background/50">{g.severity}</Badge>
+                          <Badge variant="outline" className="text-[9px] uppercase bg-background/50">{g.type}</Badge>
+                          <code className="font-mono">{g.source}</code>
+                        </div>
+                        <p>{g.message}</p>
+                        <p className="text-[10px] opacity-80 mt-0.5"><strong>Fix:</strong> {g.recommendation}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null;
+          })()}
+
+          {/* Export buttons + nonce generator (extras) */}
+          <Card>
+            <CardContent className="p-4 space-y-3">
+              <Label className="text-sm font-semibold">Export & tools</Label>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={() => { navigator.clipboard.writeText(cspToNginx(input)); toast.success("Nginx directive copied"); }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+                  <Download className="h-3 w-3" /> Nginx
+                </button>
+                <button type="button" onClick={() => { navigator.clipboard.writeText(cspToApache(input)); toast.success("Apache directive copied"); }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+                  <Download className="h-3 w-3" /> Apache
+                </button>
+                <button type="button" onClick={() => { navigator.clipboard.writeText(cspToMetaTag(input)); toast.success("Meta tag copied"); }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+                  <Download className="h-3 w-3" /> Meta tag
+                </button>
+                <button type="button" onClick={() => { const n = generateNonce(16); navigator.clipboard.writeText(n); toast.success(`Nonce copied: ${n.slice(0, 8)}...`); }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-primary text-primary-foreground hover:opacity-90 cursor-pointer">
+                  <Wand2 className="h-3 w-3" /> Generate nonce
+                </button>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
+
+      {/* Preset templates (always visible) */}
+      <Card>
+        <CardContent className="p-4 space-y-2">
+          <Label className="text-sm font-semibold flex items-center gap-2">
+            <Wand2 className="h-4 w-4 text-primary" />
+            CSP preset templates
+          </Label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {CSP_PRESETS.map((p) => (
+              <button key={p.name} type="button" onClick={() => setInput(p.csp)}
+                className="text-left rounded-md border bg-muted/20 p-2 hover:bg-muted/40 transition-colors cursor-pointer">
+                <p className="text-xs font-semibold">{p.name}</p>
+                <p className="text-[10px] text-muted-foreground">{p.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Strict CSP suggestion (extra) */}
+      <Card>
+        <CardContent className="p-4 space-y-2">
+          <Label className="text-sm font-semibold">Suggested strict CSP</Label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {(["spa", "ssr", "static", "api"] as const).map((t) => (
+              <button key={t} type="button" onClick={() => { const s = suggestStrictCsp(t); setInput(s.csp); toast.success(`${t.toUpperCase()} CSP loaded`); }}
+                className="px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer uppercase">
+                {t}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground">Click an app type to generate a strict CSP template with nonces, proper fallbacks, and reporting.</p>
+        </CardContent>
+      </Card>
 
       {!input.trim() && (
         <EmptyState

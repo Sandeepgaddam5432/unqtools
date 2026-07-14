@@ -5,20 +5,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { search, byCategory, CATEGORY_LABELS, CATEGORY_COLORS, type StatusCodeCategory, type StatusCodeInfo } from "./logic";
-import { Search } from "lucide-react";
+import { search, byCategory, CATEGORY_LABELS, CATEGORY_COLORS, getCodeDetails, toCurlCommand, filterByServer, SUPPORTED_SERVERS, exportAsCsv, exportAsMarkdown, type StatusCodeCategory, type StatusCodeInfo } from "./logic";
+import { Search, Star, Download, Server } from "lucide-react";
+import { toast } from "sonner";
 
 const CATEGORIES: StatusCodeCategory[] = ["1xx", "2xx", "3xx", "4xx", "5xx"];
 
 export default function HttpStatusCodeReference() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<StatusCodeCategory | "all">("all");
+  const [serverFilter, setServerFilter] = useState<string>("all");
+  const [expandedCode, setExpandedCode] = useState<number | null>(null);
 
   const results = useMemo(() => {
     let list = search(query);
     if (filter !== "all") list = list.filter((s) => s.category === filter);
+    if (serverFilter !== "all") {
+      const serverCodes = new Set(filterByServer(serverFilter).map((s) => s.code));
+      list = list.filter((s) => serverCodes.has(s.code));
+    }
     return list;
-  }, [query, filter]);
+  }, [query, filter, serverFilter]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: 0 };
@@ -77,6 +84,30 @@ export default function HttpStatusCodeReference() {
               </button>
             ))}
           </div>
+
+          {/* Server filter + export (extras) */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/40">
+            <div className="flex items-center gap-1.5">
+              <Server className="h-3 w-3 text-muted-foreground" />
+              <select
+                value={serverFilter}
+                onChange={(e) => setServerFilter(e.target.value)}
+                className="h-7 rounded-md border border-input bg-background px-2 text-xs cursor-pointer"
+                aria-label="Filter by server software"
+              >
+                <option value="all">All servers</option>
+                {SUPPORTED_SERVERS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <button type="button" onClick={() => { navigator.clipboard.writeText(exportAsCsv()); toast.success("CSV copied"); }}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium border bg-background hover:bg-muted cursor-pointer">
+              <Download className="h-2.5 w-2.5" /> CSV
+            </button>
+            <button type="button" onClick={() => { navigator.clipboard.writeText(exportAsMarkdown()); toast.success("Markdown copied"); }}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium border bg-background hover:bg-muted cursor-pointer">
+              <Download className="h-2.5 w-2.5" /> Markdown
+            </button>
+          </div>
         </CardContent>
       </Card>
 
@@ -89,7 +120,7 @@ export default function HttpStatusCodeReference() {
           </div>
           <div className="space-y-2">
             {results.map((s) => (
-              <StatusCodeRow key={s.code} info={s} />
+              <StatusCodeRow key={s.code} info={s} expanded={expandedCode === s.code} onToggle={() => setExpandedCode(expandedCode === s.code ? null : s.code)} />
             ))}
             {results.length === 0 && (
               <div className="text-center py-8 text-sm text-muted-foreground">
@@ -112,9 +143,10 @@ export default function HttpStatusCodeReference() {
   );
 }
 
-function StatusCodeRow({ info }: { info: StatusCodeInfo }) {
+function StatusCodeRow({ info, expanded, onToggle }: { info: StatusCodeInfo; expanded: boolean; onToggle: () => void }) {
+  const details = getCodeDetails(info.code);
   return (
-    <div className="rounded-md border p-3 hover:bg-muted/30 transition-colors">
+    <div className="rounded-md border p-3 hover:bg-muted/30 transition-colors cursor-pointer" onClick={onToggle}>
       <div className="flex items-center gap-3 mb-1.5">
         <Badge variant="outline" className={`font-mono font-bold text-sm ${CATEGORY_COLORS[info.category]}`}>
           {info.code}
@@ -125,11 +157,41 @@ function StatusCodeRow({ info }: { info: StatusCodeInfo }) {
             unofficial
           </Badge>
         )}
+        {details?.serverSoftware && details.serverSoftware.length > 0 && details.serverSoftware[0] !== "all" && (
+          <Badge variant="outline" className="text-[9px] px-1 py-0">{details.serverSoftware.join(", ")}</Badge>
+        )}
+        <span className="ml-auto text-[10px] text-muted-foreground">{expanded ? "▲" : "▼"}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-1.5">{info.description}</p>
       <p className="text-[11px] text-muted-foreground/80">
         <strong className="text-foreground/80">Use case:</strong> {info.useCase}
       </p>
+      {expanded && details && (
+        <div className="mt-3 pt-3 border-t border-border/40 space-y-2">
+          {details.commonCauses.length > 0 && (
+            <div>
+              <p className="text-[10px] font-semibold text-foreground mb-1">Common causes:</p>
+              <ul className="text-[10px] text-muted-foreground space-y-0.5 ml-3 list-disc">
+                {details.commonCauses.map((c, i) => <li key={i}>{c}</li>)}
+              </ul>
+            </div>
+          )}
+          {details.howToFix.length > 0 && (
+            <div>
+              <p className="text-[10px] font-semibold text-foreground mb-1">How to fix:</p>
+              <ul className="text-[10px] text-muted-foreground space-y-0.5 ml-3 list-disc">
+                {details.howToFix.map((f, i) => <li key={i}>{f}</li>)}
+              </ul>
+            </div>
+          )}
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(toCurlCommand(info.code)); toast.success("curl command copied"); }}
+              className="text-[10px] text-primary hover:underline cursor-pointer">Copy as curl</button>
+            <a href={details.ianaUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+              className="text-[10px] text-primary hover:underline cursor-pointer">IANA registry ↗</a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

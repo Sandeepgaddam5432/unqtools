@@ -5,13 +5,38 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { search, detectFromFilename, CATEGORY_COLORS, type MimeCategory, type MimeEntry } from "./logic";
-import { Search, FileText } from "lucide-react";
+import { search, detectFromFilename, detectFromMagicBytes, findConflicts, getIanaUrl, toHtaccess, toNginxMimeTypes, CATEGORY_COLORS, type MimeCategory, type MimeEntry } from "./logic";
+import { Search, FileText, Upload, AlertTriangle, Download } from "lucide-react";
+import { toast } from "sonner";
 
 export default function MimeTypeLookup() {
   const [query, setQuery] = useState("");
+  const [showConflicts, setShowConflicts] = useState(false);
 
   const results = useMemo(() => search(query), [query]);
+  const conflicts = useMemo(() => findConflicts(), []);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const buf = await file.arrayBuffer();
+    const bytes = new Uint8Array(buf.slice(0, 32));
+    const match = detectFromMagicBytes(bytes);
+    if (match) {
+      setQuery(match.mimeType);
+      toast.success(`Detected: ${match.mimeType} (magic bytes: ${match.pattern})`);
+    } else {
+      // Fall back to filename
+      const detected = detectFromFilename(file.name);
+      if (detected) {
+        setQuery(detected.mimeType);
+        toast.info(`No magic bytes match — using filename: ${detected.mimeType}`);
+      } else {
+        toast.error("Could not detect MIME type from file content or name");
+      }
+    }
+    e.target.value = "";
+  };
 
   const detected = useMemo(() => {
     if (!query.trim() || !query.includes(".")) return null;
@@ -35,6 +60,26 @@ export default function MimeTypeLookup() {
               className="pl-9 font-mono text-sm"
               aria-label="Search MIME types"
             />
+          </div>
+
+          {/* Magic bytes upload + conflict finder + export (extras) */}
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            <label className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+              <Upload className="h-3 w-3" /> Detect from file
+              <input type="file" className="hidden" onChange={handleFileUpload} aria-label="Upload file for magic bytes detection" />
+            </label>
+            <button type="button" onClick={() => setShowConflicts(!showConflicts)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+              <AlertTriangle className="h-3 w-3" /> Conflicts ({conflicts.length})
+            </button>
+            <button type="button" onClick={() => { navigator.clipboard.writeText(toHtaccess(results)); toast.success(".htaccess copied"); }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+              <Download className="h-3 w-3" /> .htaccess
+            </button>
+            <button type="button" onClick={() => { navigator.clipboard.writeText(toNginxMimeTypes(results)); toast.success("nginx types copied"); }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border bg-background hover:bg-muted cursor-pointer">
+              <Download className="h-3 w-3" /> nginx
+            </button>
           </div>
         </CardContent>
       </Card>
@@ -81,11 +126,35 @@ export default function MimeTypeLookup() {
         </CardContent>
       </Card>
 
+      {/* Conflicts panel (extra) */}
+      {showConflicts && conflicts.length > 0 && (
+        <Card>
+          <CardContent className="p-4 space-y-2">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              Extension conflicts ({conflicts.length})
+            </Label>
+            <p className="text-[10px] text-muted-foreground">Extensions claimed by multiple MIME types — may cause type-detection ambiguity.</p>
+            <div className="space-y-1 max-h-[300px] overflow-y-auto">
+              {conflicts.map((c) => (
+                <div key={c.extension} className="grid grid-cols-[80px_1fr] gap-2 items-center text-xs py-1 border-b border-border/40 last:border-0">
+                  <code className="font-mono font-semibold">.{c.extension}</code>
+                  <div className="flex flex-wrap gap-1">
+                    {c.mimeTypes.map((m) => <Badge key={m} variant="outline" className="text-[9px] font-mono">{m}</Badge>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardContent className="p-4">
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Privacy:</strong> lookup is
-            local — no network requests.
+            local — no network requests. Magic bytes detection reads only the
+            first 32 bytes of your file in-browser.
           </p>
         </CardContent>
       </Card>

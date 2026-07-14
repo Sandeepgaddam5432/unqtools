@@ -17,7 +17,14 @@ import {
   isBinaryMimeType,
   suggestExtension,
   formatBytes,
+  checkDataUrlSize,
+  optimizeSvgDataUrl,
+  toImgTag,
+  toCssBackground,
+  toFaviconLink,
 } from "./logic";
+import { toast } from "sonner";
+import { AlertTriangle, Code2 } from "lucide-react";
 import { FileCode, Upload, Download } from "lucide-react";
 
 export default function DataUrlConverter() {
@@ -169,6 +176,58 @@ function EncodeTab() {
               <Badge variant="outline" className="font-mono">{getMimeType(dataUrl) ?? "unknown"}</Badge>
               <Badge variant="outline">{formatBytes(getDataUrlSize(dataUrl))} data</Badge>
               <Badge variant="outline">{formatBytes(getUrlLength(dataUrl))} URL length</Badge>
+            </div>
+
+            {/* Size warning (blueprint feature) */}
+            {(() => {
+              const warning = checkDataUrlSize(dataUrl);
+              if (!warning) return null;
+              return (
+                <div className={`flex items-start gap-2 rounded-md border p-2 text-xs ${
+                  warning.severity === "error" ? "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400" :
+                  warning.severity === "warning" ? "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400" :
+                  "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400"
+                }`}>
+                  <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p>{warning.message}</p>
+                    <p className="text-[10px] opacity-80 mt-0.5">{warning.recommendation}</p>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Embed templates (blueprint feature + extra) */}
+            <div className="pt-2 border-t border-border/40">
+              <Label className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                <Code2 className="h-3 w-3" /> Embed as code
+              </Label>
+              <div className="flex flex-wrap gap-1.5">
+                <button type="button" onClick={() => { navigator.clipboard.writeText(toImgTag(dataUrl, file?.name ?? "image")); toast.success("<img> tag copied"); }}
+                  className="px-2 py-1 rounded-md text-[10px] font-medium border bg-background hover:bg-muted cursor-pointer">
+                  &lt;img&gt; tag
+                </button>
+                <button type="button" onClick={() => { navigator.clipboard.writeText(toCssBackground(dataUrl)); toast.success("CSS copied"); }}
+                  className="px-2 py-1 rounded-md text-[10px] font-medium border bg-background hover:bg-muted cursor-pointer">
+                  CSS background
+                </button>
+                <button type="button" onClick={() => { navigator.clipboard.writeText(toFaviconLink(dataUrl)); toast.success("Favicon link copied"); }}
+                  className="px-2 py-1 rounded-md text-[10px] font-medium border bg-background hover:bg-muted cursor-pointer">
+                  Favicon
+                </button>
+                {(getMimeType(dataUrl) === "image/svg+xml" || file?.type === "image/svg+xml") && (
+                  <button type="button" onClick={async () => {
+                    if (file) {
+                      const text = await file.text();
+                      const optimized = optimizeSvgDataUrl(text);
+                      navigator.clipboard.writeText(optimized.url);
+                      toast.success(`SVG optimized (${optimized.encoding}, saved ${optimized.savings} bytes)`);
+                    }
+                  }} className="px-2 py-1 rounded-md text-[10px] font-medium border bg-primary text-primary-foreground hover:opacity-90 cursor-pointer">
+                    Optimize SVG
+                  </button>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
