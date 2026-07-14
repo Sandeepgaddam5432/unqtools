@@ -20,6 +20,8 @@ import { manifest as imageCompressor } from "@/tools/image/image-compressor/mani
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
 import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
 import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
+import { manifest as fileHashChecker } from "@/tools/file/file-hash-checker/manifest";
+import { manifest as fileMetadataViewer } from "@/tools/file/file-metadata-viewer/manifest";
 import { manifest as httpStatusCodeReference } from "@/tools/network-security/http-status-code-reference/manifest";
 import { manifest as ipSubnetCalculator } from "@/tools/network-security/ip-subnet-calculator/manifest";
 import { manifest as jwtDecoder } from "@/tools/network-security/jwt-decoder/manifest";
@@ -30,6 +32,7 @@ import { manifest as urlParser } from "@/tools/network-security/url-parser/manif
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
 import { manifest as cropPdf } from "@/tools/pdf/crop-pdf/manifest";
+import { manifest as csvFileJoiner } from "@/tools/file/csv-file-joiner/manifest";
 import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifest";
 import { manifest as duplicatePdfPages } from "@/tools/pdf/duplicate-pdf-pages/manifest";
 import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
@@ -38,6 +41,7 @@ import { manifest as htmlToPdf } from "@/tools/pdf/html-to-pdf/manifest";
 import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
 import { manifest as insertPdfPages } from "@/tools/pdf/insert-pdf-pages/manifest";
 import { manifest as interleavePdf } from "@/tools/pdf/interleave-pdf/manifest";
+import { manifest as jsonToXmlConverter } from "@/tools/file/json-to-xml-converter/manifest";
 import { manifest as markdownToPdf } from "@/tools/pdf/markdown-to-pdf/manifest";
 import { manifest as mergePdf } from "@/tools/pdf/merge-pdf/manifest";
 import { manifest as nUpPdf } from "@/tools/pdf/n-up-pdf/manifest";
@@ -56,6 +60,7 @@ import { manifest as rotatePdf } from "@/tools/pdf/rotate-pdf/manifest";
 import { manifest as scalePdf } from "@/tools/pdf/scale-pdf/manifest";
 import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
 import { manifest as svgToPdf } from "@/tools/pdf/svg-to-pdf/manifest";
+import { manifest as textFileJoiner } from "@/tools/file/text-file-joiner/manifest";
 import { manifest as textToPdf } from "@/tools/pdf/text-to-pdf/manifest";
 import { manifest as addLineBreaks } from "@/tools/text/add-line-breaks/manifest";
 import { manifest as addPrefixSuffix } from "@/tools/text/add-prefix-suffix/manifest";
@@ -91,6 +96,11 @@ export const TOOLS: readonly ToolManifest[] = [
   passwordGenerator,
   totpGenerator,
   urlParser,
+  csvFileJoiner,
+  fileHashChecker,
+  fileMetadataViewer,
+  jsonToXmlConverter,
+  textFileJoiner,
   compressPdf,
   contactSheetPdf,
   cropPdf,
