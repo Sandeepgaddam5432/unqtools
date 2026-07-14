@@ -79,7 +79,7 @@ export function PWAInstallPrompt() {
       const permission = await Notification.requestPermission();
       setNotificationPermission(permission);
       if (permission === "granted") {
-        new Notification("UnQWebTemplate", {
+        new Notification("UnQTools", {
           body: "Notifications enabled! You'll get updates on new features.",
           icon: "/logo.svg",
         });
@@ -115,7 +115,7 @@ export function PWAInstallPrompt() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-foreground text-base mb-1">
-                Install UnQWebTemplate
+                Install UnQTools
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Add to your home screen for instant access, offline support, and
@@ -201,8 +201,8 @@ export function PWAInstallSection() {
     const permission = await Notification.requestPermission();
     setNotificationPermission(permission);
     if (permission === "granted") {
-      new Notification("UnQWebTemplate", {
-        body: "Welcome! You'll now receive updates on new features and components.",
+      new Notification("UnQTools", {
+        body: "Welcome! You'll now receive updates on new features and tools.",
         icon: "/logo.svg",
       });
     }
@@ -224,7 +224,7 @@ export function PWAInstallSection() {
             Install as PWA
           </h3>
           <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
-            Install UnQWebTemplate as a Progressive Web App for instant loading,
+            Install UnQTools as a Progressive Web App for instant loading,
             offline access, and a native app-like experience. Works on any
             device — desktop, tablet, or mobile.
           </p>
@@ -261,9 +261,9 @@ export function PWAInstallSection() {
             Push Notifications
           </h3>
           <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
-            Enable push notifications to stay updated with new component
-            releases, feature updates, and important announcements. Never miss
-            an update from UnQWebTemplate.
+            Enable push notifications to stay updated with new tools,
+            feature updates, and important announcements. Never miss
+            an update from UnQTools.
           </p>
           {notificationPermission === "granted" ? (
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-sm text-emerald-500 font-medium">

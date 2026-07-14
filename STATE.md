@@ -1,280 +1,183 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-14 by GLM (z.ai sandbox) — v7.2 Batch A/B/C/D ALL COMPLETE, syncing docs repo_
+_Last updated: 2026-07-14 by GLM (z.ai sandbox) — v8.0 Batch 1 (Network/Security) COMPLETE + 2 bug fixes_
 
 ## Current phase
 
-**v7.2 "20-tool production-ready PDF batch" — ALL 4 BATCHES COMPLETE ✅ (A + B + C + D)**
+**v8.0 "Network, Security & Privacy" — Batch 1 COMPLETE ✅ (5 tools shipped)**
 
-Owner approved 20-tool production-ready batch plan. 4 batches × 5 tools.
-All 4 batches shipped, tested, and verified locally. All work on `main`
-(no feature branches, per owner policy).
+First new-category batch outside PDF. 5 client-side security tools shipped, all
+following the v6.0 Tool Module Contract. Plus 2 critical bug fixes that were
+blocking real-world use of the site.
 
 ### Recent commits on `main`
 
 | Commit   | Description                                                                                |
 | -------- | ------------------------------------------------------------------------------------------ |
+| (pending)| feat: v8.0 Batch 1 — 5 Network/Security tools + category page bug fix + PWA name fix |
+| ff222c5  | docs: STATE.md sync — reflect v7.2 Batch B/C/D completion (52 tools live)                  |
 | 827bfbb  | fix: sw.js — only cache GET requests, skip non-http, catch cache.put errors                |
 | 2058661  | fix: pdf-stamp — also apply rotation conditional to drawRectangle                          |
 | b516796  | fix: pdf-stamp — better error handling + remove opacity/rotate edge cases                  |
 | e5f0616  | feat: v7.2 Batch D — 5 conversion tools (text/md/html/rtf/svg → PDF)                       |
 | 29b49a0  | feat: v7.2 Batch B+C — 10 new PDF tools + parallel CI                                      |
-| 94bd999  | fix: a11y — add labels to csv-to-text-list inputs (axe critical violation)                 |
-| 611e573  | fix: bump axe waitForTimeout 3000ms → 5000ms — 37 cards need more time                     |
-| e9a8fc0  | feat: v7.2 Batch A — 5 PDF page-manipulation tools + axe cap bump                          |
-| 23ba653  | feat: v7.1 — advanced merge-pdf + split-pdf (drag-drop, preview, templates, metadata)      |
-| 86cd3ec  | docs: STATE.md — v7.0 PDF batch-1 MERGED to main, deployed to production                   |
 
-## v7.2 — 20-tool production-ready PDF batch ✅ COMPLETE (A + B + C + D)
+## v8.0 Batch 1 — Network, Security & Privacy ✅ COMPLETE
 
-### Batch plan (4 batches × 5 tools)
+### Bug fixes shipped alongside the batch
 
-| Batch | Theme | Tools | New deps | Est. time | Status |
-|-------|-------|-------|----------|-----------|--------|
-| **A** | Page manipulation | compress-pdf, reverse-pdf, duplicate-pdf-pages, insert-pdf-pages, interleave-pdf | none | ~10h | ✅ DONE |
-| **B** | Page geometry | crop-pdf, resize-pdf-pages, scale-pdf, n-up-pdf, remove-blank-pages | none | ~10h | ✅ DONE |
-| **C** | Structure & annotations | pdf-bookmarks-editor, flatten-pdf, pdf-stamp, pdf-sign-draw, pdf-contact-sheet | none | ~15h | ✅ DONE |
-| **D** | Simple conversions | text-to-pdf, html-to-pdf, markdown-to-pdf, rtf-to-pdf, svg-to-pdf | jspdf + marked | ~15h | ✅ DONE |
+#### Bug 1: Category page bug — "Coming soon" for ALL categories (CRITICAL)
 
-> Note: Batch C's `pdf-page-labels` was deferred (pdf-lib limitation); `pdf-contact-sheet`
-> was substituted in its place to keep the 5-tool batch size.
+**Root cause:** `src/app/category/[category]/page.tsx` was using synchronous
+`params` access, but Next.js 16 changed `params` to be a Promise that must be
+awaited. Without `await params`, `params.category` was `undefined` at SSG time,
+which caused `byCategory(undefined)` to return an empty array, which made the
+client component render the "Coming soon" empty state — even for categories
+with 30+ tools (PDF, Text, etc.).
 
-### Batch A — Page manipulation ✅ COMPLETE
+**Fix:** Convert `CategoryPage` to `async function` and `await params`:
 
-5 tools shipped. All pure pdf-lib, all build on existing `_shared/page-ranges.ts`.
+```tsx
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
+  const { category } = await params;
+  // ...
+}
+```
 
-| # | Tool ID | What it does | Tests | Status |
-|---|---|---|---|---|
-| 1 | `compress-pdf` | useObjectStreams:true + optional metadata strip | 9 | ✅ |
-| 2 | `reverse-pdf` | Reverse page order — errors on <2 pages | 8 | ✅ |
-| 3 | `duplicate-pdf-pages` | Clone selected pages N times (1–100) | 10 | ✅ |
-| 4 | `insert-pdf-pages` | Insert pages from 2nd PDF at position N | 11 | ✅ |
-| 5 | `interleave-pdf` | Merge 2 PDFs alternating pages (A1,B1,A2,B2…) | 8 | ✅ |
+**Verified:** PDF category page now shows "30 tools" + the full tools grid.
+Empty categories (audio-video, seo, etc.) still correctly show "Coming soon".
+The sibling `tools/[id]/page.tsx` was already correct.
 
-### Batch B — Page geometry ✅ COMPLETE
+#### Bug 2: PWA install prompt showed "UnQWebTemplate" instead of "UnQTools"
 
-5 tools shipped. All pure pdf-lib.
+**Root cause:** `src/components/pwa-install.tsx` was inherited from the v6.0
+UnQWebTemplate adoption and never rebranded. Five strings still referenced the
+template name in notification titles, install prompt headings, and the
+landing-page install card.
 
-| # | Tool ID | What it does | Tests | Status |
-|---|---|---|---|---|
-| 1 | `crop-pdf` | Crop page boxes (mediaBox / cropBox / trimBox / bleedBox) | 9 | ✅ |
-| 2 | `resize-pdf-pages` | Resize all pages to custom dimensions (mm/in/pt) | 8 | ✅ |
-| 3 | `scale-pdf` | Scale content + page uniformly by factor | 8 | ✅ |
-| 4 | `n-up-pdf` | Place N pages per sheet (2/4/6/9/16-up) | 9 | ✅ |
-| 5 | `remove-blank-pages` | Detect blank pages via content-stream heuristic | 7 | ✅ |
+**Fix:** Replaced all 5 occurrences of "UnQWebTemplate" with "UnQTools" in
+`pwa-install.tsx`. The PWA manifest (`public/manifest.json`) was already
+correct — the bug was only in the in-page UI text.
 
-### Batch C — Structure & annotations ✅ COMPLETE
-
-5 tools shipped. All pure pdf-lib.
+### v8.0 Batch 1 — Tools shipped (5)
 
 | # | Tool ID | What it does | Tests | Status |
 |---|---|---|---|---|
-| 1 | `pdf-bookmarks-editor` | View / add / edit / delete outline (bookmarks) tree | 8 | ✅ |
-| 2 | `flatten-pdf` | Flatten form fields + annotations into page content | 6 | ✅ |
-| 3 | `pdf-stamp` | Place stamp shapes (text, image, shape) on pages | 9 | ✅ |
-| 4 | `pdf-sign-draw` | Draw signature via canvas, embed as image on page | 7 | ✅ |
-| 5 | `pdf-contact-sheet` | Generate thumbnail contact sheet (grid layout) | 9 | ✅ |
+| 1 | `password-generator` | CSPRNG password gen with length/charset/ambiguous controls | 21 | ✅ |
+| 2 | `jwt-decoder` | Decode JWT header/payload/signature, detect expired tokens | 25 | ✅ |
+| 3 | `url-parser` | Decompose URLs into protocol/host/path/query/hash/components | 30 | ✅ |
+| 4 | `ip-subnet-calculator` | IPv4 CIDR + mask notation → network/broadcast/range/hosts | 35 | ✅ |
+| 5 | `bcrypt-hash-generator` | Bcrypt hash + verify with adjustable cost factor (bcryptjs dep) | 24 | ✅ |
 
-### Batch D — Simple conversions ✅ COMPLETE
+### New dependency added
 
-5 tools shipped. Uses `marked` for Markdown parsing (added dep).
+- **`bcryptjs@^3.0.3`** — pure-JavaScript bcrypt (no native bindings, browser-safe).
+  Used by `bcrypt-hash-generator`. WebCrypto doesn't expose bcrypt natively.
 
-| # | Tool ID | What it does | Tests | Status |
-|---|---|---|---|---|
-| 1 | `text-to-pdf` | Convert plain .txt → PDF with custom font/size | 12 | ✅ |
-| 2 | `html-to-pdf` | Render HTML string → PDF via html2canvas | 5 (3 skip — DOM needed) | ✅ |
-| 3 | `markdown-to-pdf` | Render Markdown → PDF via marked + html2canvas | 12 | ✅ |
-| 4 | `rtf-to-pdf` | Strip RTF control words → plain text → PDF | 12 | ✅ |
-| 5 | `svg-to-pdf` | Embed SVG as vector on PDF page | 7 (4 skip — DOM needed) | ✅ |
-
-### Verification (full v7.2 — all 4 batches)
+### Verification
 
 | Gate | Result |
 |------|--------|
 | lint | ✅ 0 errors |
-| unit tests | ✅ 821/821 pass (was 649 pre-v7.2, +172 new tests across 20 tools) |
-| build | ✅ 69 pages (was 49 pre-v7.2, +20 new tool pages) |
-| tool count | ✅ 52 tools live (was 32 pre-v7.2, +20 new PDF tools) |
+| unit tests | ✅ 950/950 pass (was 821, +129 new tests across 5 tools) |
+| build | ✅ 74 pages (was 69, +5 new tool pages) |
+| tool count | ✅ 57 tools live (was 52, +5 Network/Security tools) |
+| category count | ✅ 6 active categories (was 5, +Network/Security now has tools) |
 
-### Infra changes across all 4 batches
+### Infra changes
 
-- `tests/axe.e2e.ts` — bumped `slice(0, 15)` → `slice(0, 30)` so all PDF tools get scanned
-- `tests/tool.e2e.ts` — +20 e2e entries (dropzone-render assertions)
-- `src/lib/registry.ts` — +20 imports + 20 TOOLS entries
-- `src/app/tools/[id]/tool-page-client.tsx` — +20 lazy UI loaders
-- `public/sw.js` — fixed caching to only cache GET requests, skip non-http, catch cache.put errors (commit `827bfbb`)
-- `src/tools/pdf/pdf-stamp/` — bug fixes for rotation/opacity edge cases (commits `2058661`, `b516796`)
-- `src/tools/text/csv-to-text-list/` — a11y fix: added labels to inputs (commit `94bd999`)
-- axe `waitForTimeout` bumped 3000ms → 5000ms for 37-card stagger completion (commit `611e573`)
+- `src/app/category/[category]/page.tsx` — async/await for Next.js 16 params
+- `src/components/pwa-install.tsx` — 5× "UnQWebTemplate" → "UnQTools"
+- `src/lib/registry.ts` — +5 imports + 5 TOOLS entries
+- `src/app/tools/[id]/tool-page-client.tsx` — +5 lazy UI loaders
+- `package.json` — +`bcryptjs@^3.0.3`
 
-### Per-tool deliverables (production-ready definition)
+### What's deferred (post-Batch 1)
 
-Each of the 20 new tools ships with:
-- `manifest.ts` — id, name, description, category="pdf", keywords[7+], icon, requiresNetwork:false, seo{title, faq[3-4]}, status:"done"
-- `logic.ts` — pure functions returning `ToolResult<T>`, try/catch around pdf-lib, user-friendly errors
-- `logic.test.ts` — Vitest 6-12 tests (valid, invalid, edge, large)
-- `ui.tsx` — React client component, dropzone, ActionBar, ErrorBanner, privacy footer, proper a11y
-- `registry.ts` — +1 import + 1 entry
-- `tool-page-client.tsx` — +1 lazy loader
-- `tests/tool.e2e.ts` — +1 entry with at minimum "page renders dropzone" assertion
+- **JWT signature verification** — currently decode-only (intentional; would
+  require secret/key input and complicate the UX). May revisit in a future batch.
+- **IPv6 support** in `ip-subnet-calculator` — IPv6 needs BigInt math (128-bit
+  addresses). Tracked as a follow-up.
+- **TOTP generator** — was originally in the planned Batch 2. Will be picked
+  up in Batch 2 alongside `csp-evaluator`, `http-status-code-reference`,
+  `mime-type-lookup`, `data-url-converter`.
 
-### What's still deferred (post-v7.2)
+## v7.2 — 20-tool production-ready PDF batch ✅ COMPLETE (A + B + C + D)
 
-- **Web Worker support** — pdf-lib still runs on main thread. Deferred to v7.3.
-- **PDF thumbnail previews** — showing first page as thumbnail. Deferred.
-- **Visual page selection** — clicking pages on a visual grid instead of typing ranges. Deferred to a future UX batch.
-- **`pdf-page-labels`** — Batch C substitute; pdf-lib doesn't expose page-label APIs cleanly. May revisit in v7.3.
+[History preserved — see prior STATE.md commits for full v7.2 details]
 
-### Risk callouts (still relevant)
-
-1. **Bundle bloat** — pdf-lib duplicated across 2 chunks (~172 KB gz each). With 30 PDF tools now live, a Turbopack chunking strategy review is overdue. Consider dynamic-import grouping by category in v7.3.
-2. **`html-to-pdf` quality** — html2canvas is heavy (~200 KB) and produces raster output. Quality limitation documented in FAQ per tool.
-3. **`svg-to-pdf` fidelity** — embeds SVG as-is; complex SVGs (gradients, filters) may not render perfectly in all PDF viewers.
-4. **axe slice cap** — currently at 30 with 52 tools. May need to remove cap entirely or split into multiple axe runs in v7.3.
+4 batches × 5 tools shipped. 821 tests, 69 pages, 52 tools.
 
 ## v7.1 — advanced merge-pdf + split-pdf ✅ COMPLETE
 
-Owner picked 2 tools (merge-pdf + split-pdf) to make "the most advanced + most
-useful + much better". v7.1 shipped major UX + capability upgrades for both:
-
-- merge-pdf: drag-and-drop reorder, custom output filename, optional title/
-  author/subject metadata on merged PDF, live total-page-count preview,
-  collapsible "Output settings" panel, better Run button label with page count
-- split-pdf: live preview of split plan (no actual split until user clicks),
-  custom filename template with 6 placeholders ({base}{n}{start}{end}{count}{spec}),
-  reverse output order toggle, per-output startPage/endPage tracking, "Download
-  all" with progress, better preview list (50-row scrollable, "and N more")
-
-29 new unit tests added (620 → 649 total). Backward compat preserved —
-existing per-mode default filename templates (`{base}-page-{n}` for single,
-`{base}-pages-{spec}` for ranges, `{base}-part-{n}` for every) still apply
-unless user provides a custom template.
-
-v7.1 deployed to production on commit `23ba653`. Both tools verified live at
-https://unqtools.pages.dev/tools/merge-pdf + /tools/split-pdf.
+[History preserved]
 
 ## v7.0 — PDF batch-1 ✅ COMPLETE (merged to main, deployed)
 
-10 PDF tools shipped. Merged via merge commit `6f0de52`. Production verified
-at https://unqtools.pages.dev — all 10 PDF tool routes return HTTP 200.
+[History preserved]
 
-For full v7.0 history see git log: `23953e4` (pdf-lib added) through `86cd3ec`
-(final STATE.md update before merge).
+## v6.9 — All 13 categories visible ✅
 
-## v6.9 — All 13 categories visible ✅ (commit 320771d)
-
-- All 13 categories from `ALL_CATEGORIES` now visible in the sidebar, tools directory, and command palette
-- Categories with 0 tools render a "Coming soon" empty state (was previously hidden)
-- Category page client refactored to derive visible categories from registry (no hardcoded list)
-- Sidebar refactored similarly — no longer hides empty categories
+[History preserved]
 
 ## v6.8 — A11y + Cleanup ✅ COMPLETE
 
-### Commits on v6.8-cleanup (8 total)
-
-| Commit   | Description                                                              |
-| -------- | ------------------------------------------------------------------------ |
-| 08f16cb  | Task A: a11y — accessible names on ALL native form controls               |
-| 1916c8a  | Fix: remove duplicate aria-label props in color-picker                    |
-| 6b4e7e4  | CI: promote axe to must-pass build job                                    |
-| d420dd1  | Task B: archive 67 unused UI components + archive-import guard            |
-| 120cd2d  | Task C: delete 3 dead lib files + orphaned test                           |
-| b5fa343  | Task C: remove unused deps batch 1/3 (8 deps)                             |
-| 02d85c2  | Task C: remove unused deps batch 2/3 (8 deps)                             |
-| 57c48e6  | Task C: remove unused deps batch 3/3 (7 deps)                             |
-
-### Task A — A11y fixes + axe promotion ✅
-
-Fixed accessible names on ALL native form controls across 10 tool UIs:
-- 26 `<input type="number">` → added `aria-label`
-- 3 `<select>` → added `aria-label`
-- 3 `<input type="color">` → added `aria-label`
-- 3 `<input type="file">` → added `aria-label`
-- 1 Radix Slider thumb → added `aria-label` pass-through in slider.tsx
-- Color contrast: `text-red-500→red-600`, `text-emerald-600→emerald-700` (light theme)
-
-**Axe: 0 serious/critical on ALL pages × light + dark ✓**
-**Promoted to must-pass CI job** (was informational).
-
-### Task B — Archive unused UI components ✅
-
-67 files moved to `archive/unused-ui/` (62 .tsx + 5 associated). 23 components
-remain in `src/components/ui/` — all used by production. Archive-import guard
-test added (`tests/no-archive-imports.test.ts`).
-
-### Task C — Dead code + unused deps ✅
-
-- Deleted: `src/lib/dom-utils.ts`, `src/lib/runWorker.ts`, `src/lib/theme.ts` (0 importers each)
-- Removed orphaned theme test
-- Removed 23 unused npm deps across 3 batches (build + tests green after each batch)
-- 2 uncertain deps kept: `next-pwa`, `tailwindcss-animate` (owner decides)
-
-### Task D — Bundle measurement
-
-Bundle sizes unchanged (unused components were tree-shaken — never imported by production):
-
-| Page | v6.6 | v6.8 | Delta |
-|------|------|------|-------|
-| Home | 302 KB | 302 KB | 0 |
-| Tools | 280 KB | 280 KB | 0 |
-| JSON Formatter | 281 KB | 281 KB | 0 |
-| Category | 279 KB | 279 KB | 0 |
-
-Savings are in `node_modules` (fewer packages) and install time, not runtime bundle.
+[History preserved]
 
 ## Full gate table
 
-| Gate                 | v6.8 result            | v7.2 (all batches) status    |
+| Gate                 | v6.8 result            | v8.0 Batch 1 status           |
 | -------------------- | ---------------------- | ------------------------------ |
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally) |
-| unit tests           | ✅ 528/528             | ✅ 821/821 (verified locally, +172 new) |
-| build                | ✅ 30 pages            | ✅ 69 pages (verified locally, +15 new) |
+| unit tests           | ✅ 528/528             | ✅ 950/950 (verified locally, +129 new) |
+| build                | ✅ 30 pages            | ✅ 74 pages (verified locally, +5 new) |
 | smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (52 tools) |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (57 tools) |
 | axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30) |
 | CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run         |
 | CI build job         | ✅ includes axe        | 🟡 pending CI auto-run         |
 | CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing — does NOT block) |
 | Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green |
 
-## Docs repo sync (NEW — 2026-07-14)
+## Docs repo sync (2026-07-14 — second sync)
 
-The `unqtools-docs` repo tracks 1,700 tool blueprints (specs). The
-"IMPLEMENTED in production" banner protocol (introduced in commit `277900f`
-on docs repo) marks blueprints whose matching tools are live in production
-in the `unqtools` repo. Per hybrid-sync policy, no Generated Code section
-is appended to bannered blueprints — production code is the single source
-of truth.
+The `unqtools-docs` repo tracks 1,700 tool blueprints. Per hybrid-sync policy,
+blueprints whose tools are live in production get an "✅ IMPLEMENTED in
+production" banner prepended (no Generated Code appended, to avoid drift).
 
-**Pre-sync state:** 10 PDF tools bannered (merge-pdf via Generated Code +
-split-pdf, rotate-pdf, delete-pdf-pages, extract-pdf-pages, reorder-pdf-pages,
-images-to-pdf, pdf-page-numbers, pdf-watermark, pdf-metadata-editor via banner).
+**This sync:** Banner 5 Network/Security blueprints matching v8.0 Batch 1 tools.
+Update PROGRESS.md counts.
 
-**This sync (2026-07-14):** Banner 20 more PDF blueprints matching v7.2
-Batch A/B/C/D tools (compress-pdf, reverse-pdf, duplicate-pdf-pages,
-insert-pdf-pages, interleave-pdf, crop-pdf, resize-pdf-pages, scale-pdf,
-n-up-pdf, remove-blank-pages, pdf-bookmarks-editor, flatten-pdf, pdf-stamp,
-pdf-sign-draw, text-to-pdf, html-to-pdf, markdown-to-pdf, rtf-to-pdf,
-svg-to-pdf, pdf-contact-sheet). PROGRESS.md in docs repo updated with the
-new 20 entries and counts.
+| # | Blueprint | Live tool ID | Batch |
+|---|---|---|---|
+| 1 | Blueprint - Password Generator | password-generator | v8.0 B1 |
+| 2 | Blueprint - JWT Decoder (or similar) | jwt-decoder | v8.0 B1 |
+| 3 | Blueprint - URL Parser | url-parser | v8.0 B1 |
+| 4 | Blueprint - IP Subnet Calculator | ip-subnet-calculator | v8.0 B1 |
+| 5 | Blueprint - Bcrypt Hash Generator | bcrypt-hash-generator | v8.0 B1 |
 
-After this sync: 30 PDF tools bannered in docs repo (out of 30 PDF tools
-live in production).
+After this sync: 34 tools bannered in docs repo (29 PDF + 5 Network/Security).
 
 ## Resume point
 
-**Next session — start v7.3 or new-category batch:**
+**Next session — start v8.0 Batch 2 or pick a new direction:**
 
-1. CI auto-runs on the latest `main` push should be green (821 unit tests, 69 pages, 52 tools).
-2. Production verified at https://unqtools.pages.dev (all 52 tool routes return HTTP 200).
-3. Pick next direction:
-   - **Option A (v7.3 — polish):** Web Worker support for pdf-lib, PDF thumbnail previews, visual page selection grid, `pdf-page-labels` revisit, Turbopack chunking strategy review.
-   - **Option B (v8.0 — new category):** Start a fresh category batch — Network/Security/Privacy, File Management, or Audio/Video are all 100% blueprinted in docs repo and have highest search volume.
-   - **Option C (SEO boost):** Per-tool FAQ structured data, sitemap.xml, OG images, content/blog section.
+1. **v8.0 Batch 2 — Network/Security (5 more tools):**
+   `totp-generator`, `csp-evaluator`, `http-status-code-reference`,
+   `mime-type-lookup`, `data-url-converter`
+2. **v8.1 — start a new category** (File Management or Audio/Video are next
+   in search-volume priority)
+3. **v7.3 — PDF polish (deferred):** Web Worker support, thumbnail previews,
+   visual page selection grid
+4. **SEO boost** — sitemap.xml, per-tool OG images, FAQ structured data
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | v7.2 complete (30 PDF + 22 non-PDF = 52 tools live) |
+| `main`                  | production      | v8.0 Batch 1 ready (30 PDF + 22 non-PDF + 5 Network/Security = 57 tools live) |
 | (all others deleted)    | —               | Per owner policy: only `main` branch exists. |

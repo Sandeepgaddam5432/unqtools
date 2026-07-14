@@ -68,6 +68,12 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "sip-calculator": () => import("@/tools/calculators/sip-calculator/ui"),
   "color-picker": () => import("@/tools/image/color-picker/ui"),
   "image-compressor": () => import("@/tools/image/image-compressor/ui"),
+  // Network, Security & Privacy tools
+  "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
+  "ip-subnet-calculator": () => import("@/tools/network-security/ip-subnet-calculator/ui"),
+  "jwt-decoder": () => import("@/tools/network-security/jwt-decoder/ui"),
+  "password-generator": () => import("@/tools/network-security/password-generator/ui"),
+  "url-parser": () => import("@/tools/network-security/url-parser/ui"),
   "add-line-breaks": () => import("@/tools/text/add-line-breaks/ui"),
   "add-prefix-suffix": () => import("@/tools/text/add-prefix-suffix/ui"),
   "big-text-generator": () => import("@/tools/text/big-text-generator/ui"),

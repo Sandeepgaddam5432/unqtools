@@ -17,6 +17,11 @@ import { manifest as urlEncoder } from "@/tools/developer/url-encoder/manifest";
 import { manifest as uuidGenerator } from "@/tools/developer/uuid-generator/manifest";
 import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
+import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
+import { manifest as ipSubnetCalculator } from "@/tools/network-security/ip-subnet-calculator/manifest";
+import { manifest as jwtDecoder } from "@/tools/network-security/jwt-decoder/manifest";
+import { manifest as passwordGenerator } from "@/tools/network-security/password-generator/manifest";
+import { manifest as urlParser } from "@/tools/network-security/url-parser/manifest";
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
 import { manifest as cropPdf } from "@/tools/pdf/crop-pdf/manifest";
@@ -71,6 +76,11 @@ export const TOOLS: readonly ToolManifest[] = [
   uuidGenerator,
   colorPicker,
   imageCompressor,
+  bcryptHashGenerator,
+  ipSubnetCalculator,
+  jwtDecoder,
+  passwordGenerator,
+  urlParser,
   compressPdf,
   contactSheetPdf,
   cropPdf,
