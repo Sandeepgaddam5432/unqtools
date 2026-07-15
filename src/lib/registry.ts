@@ -99,6 +99,16 @@ import { manifest as gzipDecompressor } from "@/tools/file/gzip-decompressor/man
 import { manifest as jsonToExcelConverter } from "@/tools/file/json-to-excel-converter/manifest";
 import { manifest as localFileIntegrityAuditor } from "@/tools/file/local-file-integrity-auditor/manifest";
 import { manifest as tarExtractor } from "@/tools/file/tar-extractor/manifest";
+import { manifest as apkExtractor } from "@/tools/file/apk-extractor/manifest";
+import { manifest as chmExtractor } from "@/tools/file/chm-extractor/manifest";
+import { manifest as excelToJsonConverter } from "@/tools/file/excel-to-json-converter/manifest";
+import { manifest as fb2Reader } from "@/tools/file/fb2-reader/manifest";
+import { manifest as isoExtractor } from "@/tools/file/iso-extractor/manifest";
+import { manifest as jarExtractor } from "@/tools/file/jar-extractor/manifest";
+import { manifest as lzhExtractor } from "@/tools/file/lzh-extractor/manifest";
+import { manifest as mobiReader } from "@/tools/file/mobi-reader/manifest";
+import { manifest as onlineZipCompressor } from "@/tools/file/online-zip-compressor/manifest";
+import { manifest as onlineZipExtractor } from "@/tools/file/online-zip-extractor/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -193,6 +203,16 @@ export const TOOLS: readonly ToolManifest[] = [
   jsonToExcelConverter,
   localFileIntegrityAuditor,
   tarExtractor,
+  apkExtractor,
+  chmExtractor,
+  excelToJsonConverter,
+  fb2Reader,
+  isoExtractor,
+  jarExtractor,
+  lzhExtractor,
+  mobiReader,
+  onlineZipCompressor,
+  onlineZipExtractor,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
