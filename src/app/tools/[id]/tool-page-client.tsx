@@ -89,6 +89,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "online-file-merger": () => import("@/tools/file/online-file-merger/ui"),
   "online-file-splitter": () => import("@/tools/file/online-file-splitter/ui"),
   "empty-file-creator": () => import("@/tools/file/empty-file-creator/ui"),
+  "cbz-comic-book-reader": () => import("@/tools/file/cbz-comic-book-reader/ui"),
+  "csv-to-excel-converter": () => import("@/tools/file/csv-to-excel-converter/ui"),
+  "epub-reader": () => import("@/tools/file/epub-reader/ui"),
+  "file-metadata-stripper": () => import("@/tools/file/file-metadata-stripper/ui"),
+  "local-file-integrity-auditor": () => import("@/tools/file/local-file-integrity-auditor/ui"),
   // Network, Security & Privacy tools
   "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
   "csp-evaluator": () => import("@/tools/network-security/csp-evaluator/ui"),

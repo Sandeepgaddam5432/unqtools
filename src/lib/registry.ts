@@ -89,6 +89,11 @@ import { manifest as largeFileGenerator } from "@/tools/file/large-file-generato
 import { manifest as onlineFileMerger } from "@/tools/file/online-file-merger/manifest";
 import { manifest as onlineFileSplitter } from "@/tools/file/online-file-splitter/manifest";
 import { manifest as xmlToJsonConverter } from "@/tools/file/xml-to-json-converter/manifest";
+import { manifest as cbzComicBookReader } from "@/tools/file/cbz-comic-book-reader/manifest";
+import { manifest as csvToExcelConverter } from "@/tools/file/csv-to-excel-converter/manifest";
+import { manifest as epubReader } from "@/tools/file/epub-reader/manifest";
+import { manifest as fileMetadataStripper } from "@/tools/file/file-metadata-stripper/manifest";
+import { manifest as localFileIntegrityAuditor } from "@/tools/file/local-file-integrity-auditor/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -173,6 +178,11 @@ export const TOOLS: readonly ToolManifest[] = [
   onlineFileMerger,
   onlineFileSplitter,
   xmlToJsonConverter,
+  cbzComicBookReader,
+  csvToExcelConverter,
+  epubReader,
+  fileMetadataStripper,
+  localFileIntegrityAuditor,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
