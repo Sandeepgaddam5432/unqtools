@@ -82,7 +82,12 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "xml-to-json-converter": () => import("@/tools/file/xml-to-json-converter/ui"),
   "base64-file-encoder": () => import("@/tools/file/base64-file-encoder/ui"),
   "base64-file-decoder": () => import("@/tools/file/base64-file-decoder/ui"),
+  "binary-file-viewer": () => import("@/tools/file/binary-file-viewer/ui"),
+  "file-extension-changer": () => import("@/tools/file/file-extension-changer/ui"),
   "hex-viewer": () => import("@/tools/file/hex-viewer/ui"),
+  "large-file-generator": () => import("@/tools/file/large-file-generator/ui"),
+  "online-file-merger": () => import("@/tools/file/online-file-merger/ui"),
+  "online-file-splitter": () => import("@/tools/file/online-file-splitter/ui"),
   "empty-file-creator": () => import("@/tools/file/empty-file-creator/ui"),
   // Network, Security & Privacy tools
   "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),

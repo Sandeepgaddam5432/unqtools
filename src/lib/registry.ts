@@ -81,8 +81,13 @@ import { manifest as duplicateLinesRemover } from "@/tools/text/duplicate-lines-
 import { manifest as wordCharacterCounter } from "@/tools/text/word-character-counter/manifest";
 import { manifest as base64FileDecoder } from "@/tools/file/base64-file-decoder/manifest";
 import { manifest as base64FileEncoder } from "@/tools/file/base64-file-encoder/manifest";
+import { manifest as binaryFileViewer } from "@/tools/file/binary-file-viewer/manifest";
 import { manifest as emptyFileCreator } from "@/tools/file/empty-file-creator/manifest";
+import { manifest as fileExtensionChanger } from "@/tools/file/file-extension-changer/manifest";
 import { manifest as hexViewer } from "@/tools/file/hex-viewer/manifest";
+import { manifest as largeFileGenerator } from "@/tools/file/large-file-generator/manifest";
+import { manifest as onlineFileMerger } from "@/tools/file/online-file-merger/manifest";
+import { manifest as onlineFileSplitter } from "@/tools/file/online-file-splitter/manifest";
 import { manifest as xmlToJsonConverter } from "@/tools/file/xml-to-json-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
@@ -160,8 +165,13 @@ export const TOOLS: readonly ToolManifest[] = [
   wordCharacterCounter,
   base64FileDecoder,
   base64FileEncoder,
+  binaryFileViewer,
   emptyFileCreator,
+  fileExtensionChanger,
   hexViewer,
+  largeFileGenerator,
+  onlineFileMerger,
+  onlineFileSplitter,
   xmlToJsonConverter,
 ]
   .filter(Boolean)
