@@ -92,8 +92,13 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "cbz-comic-book-reader": () => import("@/tools/file/cbz-comic-book-reader/ui"),
   "csv-to-excel-converter": () => import("@/tools/file/csv-to-excel-converter/ui"),
   "epub-reader": () => import("@/tools/file/epub-reader/ui"),
+  "excel-to-csv-converter": () => import("@/tools/file/excel-to-csv-converter/ui"),
   "file-metadata-stripper": () => import("@/tools/file/file-metadata-stripper/ui"),
+  "gzip-compressor": () => import("@/tools/file/gzip-compressor/ui"),
+  "gzip-decompressor": () => import("@/tools/file/gzip-decompressor/ui"),
+  "json-to-excel-converter": () => import("@/tools/file/json-to-excel-converter/ui"),
   "local-file-integrity-auditor": () => import("@/tools/file/local-file-integrity-auditor/ui"),
+  "tar-extractor": () => import("@/tools/file/tar-extractor/ui"),
   // Network, Security & Privacy tools
   "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
   "csp-evaluator": () => import("@/tools/network-security/csp-evaluator/ui"),

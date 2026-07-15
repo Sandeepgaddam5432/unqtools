@@ -92,8 +92,13 @@ import { manifest as xmlToJsonConverter } from "@/tools/file/xml-to-json-convert
 import { manifest as cbzComicBookReader } from "@/tools/file/cbz-comic-book-reader/manifest";
 import { manifest as csvToExcelConverter } from "@/tools/file/csv-to-excel-converter/manifest";
 import { manifest as epubReader } from "@/tools/file/epub-reader/manifest";
+import { manifest as excelToCsvConverter } from "@/tools/file/excel-to-csv-converter/manifest";
 import { manifest as fileMetadataStripper } from "@/tools/file/file-metadata-stripper/manifest";
+import { manifest as gzipCompressor } from "@/tools/file/gzip-compressor/manifest";
+import { manifest as gzipDecompressor } from "@/tools/file/gzip-decompressor/manifest";
+import { manifest as jsonToExcelConverter } from "@/tools/file/json-to-excel-converter/manifest";
 import { manifest as localFileIntegrityAuditor } from "@/tools/file/local-file-integrity-auditor/manifest";
+import { manifest as tarExtractor } from "@/tools/file/tar-extractor/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -181,8 +186,13 @@ export const TOOLS: readonly ToolManifest[] = [
   cbzComicBookReader,
   csvToExcelConverter,
   epubReader,
+  excelToCsvConverter,
   fileMetadataStripper,
+  gzipCompressor,
+  gzipDecompressor,
+  jsonToExcelConverter,
   localFileIntegrityAuditor,
+  tarExtractor,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
