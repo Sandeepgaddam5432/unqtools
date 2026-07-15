@@ -119,6 +119,16 @@ import { manifest as pdfToTextConverter } from "@/tools/file/pdf-to-text-convert
 import { manifest as pdfToWordConverter } from "@/tools/file/pdf-to-word-converter/manifest";
 import { manifest as pdfToExcelConverter } from "@/tools/file/pdf-to-excel-converter/manifest";
 import { manifest as pdfToRtfConverter } from "@/tools/file/pdf-to-rtf-converter/manifest";
+import { manifest as pdfToImageConverter } from "@/tools/file/pdf-to-image-converter/manifest";
+import { manifest as pdfToEpubConverter } from "@/tools/file/pdf-to-epub-converter/manifest";
+import { manifest as pdfToPowerpointConverter } from "@/tools/file/pdf-to-powerpoint-converter/manifest";
+import { manifest as pdfToOdtConverter } from "@/tools/file/pdf-to-odt-converter/manifest";
+import { manifest as pdfToOdsConverter } from "@/tools/file/pdf-to-ods-converter/manifest";
+import { manifest as pdfToOdpConverter } from "@/tools/file/pdf-to-odp-converter/manifest";
+import { manifest as pdfToPostScriptConverter } from "@/tools/file/pdf-to-postscript-converter/manifest";
+import { manifest as pdfToMobiConverter } from "@/tools/file/pdf-to-mobi-converter/manifest";
+import { manifest as pdfToAzw3Converter } from "@/tools/file/pdf-to-azw3-converter/manifest";
+import { manifest as pdfToDjvuConverter } from "@/tools/file/pdf-to-djvu-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -233,6 +243,16 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfToWordConverter,
   pdfToExcelConverter,
   pdfToRtfConverter,
+  pdfToImageConverter,
+  pdfToEpubConverter,
+  pdfToPowerpointConverter,
+  pdfToOdtConverter,
+  pdfToOdsConverter,
+  pdfToOdpConverter,
+  pdfToPostScriptConverter,
+  pdfToMobiConverter,
+  pdfToAzw3Converter,
+  pdfToDjvuConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
