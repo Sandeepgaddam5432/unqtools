@@ -109,6 +109,16 @@ import { manifest as lzhExtractor } from "@/tools/file/lzh-extractor/manifest";
 import { manifest as mobiReader } from "@/tools/file/mobi-reader/manifest";
 import { manifest as onlineZipCompressor } from "@/tools/file/online-zip-compressor/manifest";
 import { manifest as onlineZipExtractor } from "@/tools/file/online-zip-extractor/manifest";
+import { manifest as debExtractor } from "@/tools/file/deb-extractor/manifest";
+import { manifest as cabFileExtractor } from "@/tools/file/cab-file-extractor/manifest";
+import { manifest as odtToPdfConverter } from "@/tools/file/odt-to-pdf-converter/manifest";
+import { manifest as odsToPdfConverter } from "@/tools/file/ods-to-pdf-converter/manifest";
+import { manifest as odpToPdfConverter } from "@/tools/file/odp-to-pdf-converter/manifest";
+import { manifest as pdfToHtmlConverter } from "@/tools/file/pdf-to-html-converter/manifest";
+import { manifest as pdfToTextConverter } from "@/tools/file/pdf-to-text-converter/manifest";
+import { manifest as pdfToWordConverter } from "@/tools/file/pdf-to-word-converter/manifest";
+import { manifest as pdfToExcelConverter } from "@/tools/file/pdf-to-excel-converter/manifest";
+import { manifest as pdfToRtfConverter } from "@/tools/file/pdf-to-rtf-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -213,6 +223,16 @@ export const TOOLS: readonly ToolManifest[] = [
   mobiReader,
   onlineZipCompressor,
   onlineZipExtractor,
+  debExtractor,
+  cabFileExtractor,
+  odtToPdfConverter,
+  odsToPdfConverter,
+  odpToPdfConverter,
+  pdfToHtmlConverter,
+  pdfToTextConverter,
+  pdfToWordConverter,
+  pdfToExcelConverter,
+  pdfToRtfConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
