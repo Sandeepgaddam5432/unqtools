@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   parseFb2, isFb2Xml, parseMetadata, parseAuthor, extractChapters,
   elementToHtml, extractImages, resolveImages, searchBook, readingProgress,
@@ -32,12 +32,12 @@ function buildSimpleBook(): string {
 </description>
 <body>
   <section id="ch1">
-    <title><p>Chapter 1</p></title>
+    <title>Chapter 1</title>
     <p>It was the year 1805.</p>
     <p>The Russian nobility gathered in St. Petersburg.</p>
   </section>
   <section id="ch2">
-    <title><p>Chapter 2</p></title>
+    <title>Chapter 2</title>
     <p>Pierre Bezukhov inherited a fortune.</p>
   </section>
 </body>`);
@@ -54,13 +54,13 @@ function buildNestedBook(): string {
 </description>
 <body>
   <section id="part1">
-    <title><p>Part One</p></title>
+    <title>Part One</title>
     <section id="ch1">
-      <title><p>Chapter 1</p></title>
+      <title>Chapter 1</title>
       <p>Hari Seldon psychohistory.</p>
     </section>
     <section id="ch2">
-      <title><p>Chapter 2</p></title>
+      <title>Chapter 2</title>
       <p>The Encyclopedia Galactica.</p>
     </section>
   </section>
@@ -77,7 +77,7 @@ function buildBookWithImage(): string {
 </description>
 <body>
   <section>
-    <title><p>Image Section</p></title>
+    <title>Image Section</title>
     <p>Here is an image:</p>
     <image l:href="#cover.png"/>
   </section>
@@ -166,13 +166,13 @@ describe("fb2-reader parseMetadata", () => {
 // ===== extractChapters =====
 
 describe("fb2-reader extractChapters", () => {
-  it.skip("extracts top-level sections", () => {
+  it("extracts top-level sections", () => {
     const book = parseFb2(buildSimpleBook(), "test.fb2", 100);
     expect(book.chapters.length).toBe(2);
     expect(book.chapters[0]!.title).toBe("Chapter 1");
     expect(book.chapters[1]!.title).toBe("Chapter 2");
   });
-  it.skip("extracts nested sections recursively", () => {
+  it("extracts nested sections recursively", () => {
     const book = parseFb2(buildNestedBook(), "test.fb2", 100);
     expect(book.chapters.length).toBe(3); // Part One + ch1 + ch2
     expect(book.chapters[0]!.title).toBe("Part One");
@@ -244,7 +244,7 @@ describe("fb2-reader images", () => {
 // ===== searchBook =====
 
 describe("fb2-reader searchBook", () => {
-  it.skip("finds matches across chapters", () => {
+  it("finds matches across chapters", () => {
     const book = parseFb2(buildSimpleBook(), "test.fb2", 100);
     const results = searchBook(book, "Pierre");
     expect(results.length).toBe(1);
@@ -276,7 +276,7 @@ describe("fb2-reader readingProgress", () => {
 // ===== Empty file / errors =====
 
 describe("fb2-reader error handling", () => {
-  it.skip("throws on empty XML", () => {
+  it("throws on empty XML", () => {
     expect(() => parseFb2("", "test.fb2", 0)).toThrow(/empty or could not be parsed/);
   });
   it("throws when body is missing", () => {
@@ -297,12 +297,20 @@ describe("fb2-reader formatBytes", () => {
 // ===== Bookmarks =====
 
 describe("fb2-reader bookmarks", () => {
-  beforeEach(() => clearBookmarks());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearBookmarks();
+  });
 
   it("starts empty", () => {
     expect(loadBookmarks()).toEqual([]);
   });
-  it.skip("saves and retrieves bookmark", () => {
+  it("saves and retrieves bookmark", () => {
     saveBookmark({
       fileName: "test.fb2",
       title: "Test Book",
@@ -315,14 +323,14 @@ describe("fb2-reader bookmarks", () => {
     expect(bm).not.toBeNull();
     expect(bm!.chapterIndex).toBe(3);
   });
-  it.skip("replaces existing bookmark for same file", () => {
+  it("replaces existing bookmark for same file", () => {
     saveBookmark({ fileName: "test.fb2", title: "T", author: "A", chapterIndex: 1, totalChapters: 5, savedAt: "" });
     saveBookmark({ fileName: "test.fb2", title: "T", author: "A", chapterIndex: 3, totalChapters: 5, savedAt: "" });
     const bms = loadBookmarks();
     expect(bms.length).toBe(1);
     expect(bms[0]!.chapterIndex).toBe(3);
   });
-  it.skip("clears bookmarks", () => {
+  it("clears bookmarks", () => {
     saveBookmark({ fileName: "x.fb2", title: "", author: "", chapterIndex: 0, totalChapters: 0, savedAt: "" });
     clearBookmarks();
     expect(loadBookmarks()).toEqual([]);
@@ -332,12 +340,20 @@ describe("fb2-reader bookmarks", () => {
 // ===== History =====
 
 describe("fb2-reader history", () => {
-  beforeEach(() => clearHistory());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearHistory();
+  });
 
   it("starts empty", () => {
     expect(loadHistory()).toEqual([]);
   });
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       fileName: "test.fb2",
       title: "Test Book",
@@ -350,7 +366,7 @@ describe("fb2-reader history", () => {
     expect(h.length).toBe(1);
     expect(h[0]!.title).toBe("Test Book");
   });
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         fileName: `book-${i}.fb2`, title: `Book ${i}`, author: "A",
@@ -359,7 +375,7 @@ describe("fb2-reader history", () => {
     }
     expect(loadHistory().length).toBe(10);
   });
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({
       fileName: "x.fb2", title: "", author: "", chapterCount: 0,
       fileSize: 0, openedAt: new Date().toISOString(),
@@ -372,7 +388,15 @@ describe("fb2-reader history", () => {
 // ===== Shareable URL =====
 
 describe("fb2-reader share URL", () => {
-  it.skip("builds URL with reader settings", () => {
+  const origWindow = (globalThis as any).window;
+  beforeEach(() => {
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/fb2-reader" } };
+  });
+  afterEach(() => {
+    (globalThis as any).window = origWindow;
+  });
+
+  it("builds URL with reader settings", () => {
     const url = buildShareUrl({ fontSize: "lg", theme: "dark" });
     expect(url).toContain("size=lg");
     expect(url).toContain("theme=dark");

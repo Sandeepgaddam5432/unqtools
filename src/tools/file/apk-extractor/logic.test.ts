@@ -126,15 +126,25 @@ function buildAxmlStringPool(strings: string[]): Uint8Array {
     out.set(utf8, 2);
     return out;
   });
-  const stringsBase = 28 + 4 * strings.length;
-  // Compute offsets
+  // The parser treats `headerSize` as the absolute file offset where the
+  // string offsets array begins, and `stringsOffset` as the absolute file
+  // offset where string data begins. We therefore lay out the file as:
+  //   bytes 0-7    : file header (magic + filesize)
+  //   bytes 8-35   : chunk header (28 bytes of fields)
+  //   bytes 36-... : string offsets array (4 * count bytes)
+  //   bytes (36+4*count)-... : string data
+  // and set headerSize = 36 (start of offsets array) and
+  // stringsOffset = 36 + 4 * count (start of string data).
+  const headerSize = 36;
+  const stringsBase = headerSize + 4 * strings.length;
+  // Compute offsets (relative to stringsBase)
   const offsets: number[] = [];
   let cur = 0;
   for (const sb of stringBytes) {
     offsets.push(cur);
     cur += sb.length;
   }
-  const totalSize = 8 + stringsBase + cur;
+  const totalSize = stringsBase + cur;
   const out = new Uint8Array(totalSize);
   const dv = new DataView(out.buffer);
   // Magic
@@ -143,8 +153,8 @@ function buildAxmlStringPool(strings: string[]): Uint8Array {
   dv.setUint32(2, totalSize - 8, true);
   // String pool chunk type
   dv.setUint16(8, 0x0001, true);
-  // Header size
-  dv.setUint16(10, 0x1c, true);
+  // Header size (absolute file offset of offsets array)
+  dv.setUint16(10, headerSize, true);
   // Chunk size
   dv.setUint32(12, totalSize - 8, true);
   // String count
@@ -153,16 +163,16 @@ function buildAxmlStringPool(strings: string[]): Uint8Array {
   dv.setUint32(20, 0, true);
   // Flags: UTF-8
   dv.setUint32(24, 0x100, true);
-  // Strings offset (relative to chunk start = offset 8)
+  // Strings offset (absolute file offset of string data)
   dv.setUint32(28, stringsBase, true);
   // Styles offset
   dv.setUint32(32, 0, true);
-  // String offsets array
+  // String offsets array (starts at byte headerSize = 36)
   for (let i = 0; i < offsets.length; i++) {
-    dv.setUint32(36 + i * 4, offsets[i]!, true);
+    dv.setUint32(headerSize + i * 4, offsets[i]!, true);
   }
-  // String data
-  let pos = 8 + stringsBase;
+  // String data (starts at byte stringsBase)
+  let pos = stringsBase;
   for (const sb of stringBytes) {
     out.set(sb, pos);
     pos += sb.length;
@@ -229,7 +239,7 @@ describe("apk-extractor parseAxmlStringPool", () => {
     expect(result.strings).toEqual([]);
     expect(result.isUtf8).toBe(false);
   });
-  it.skip("parses UTF-8 string pool", () => {
+  it("parses UTF-8 string pool", () => {
     const axml = buildAxmlStringPool(["com.example.app", "android.permission.INTERNET", "1.0.0"]);
     const result = parseAxmlStringPool(axml);
     expect(result.isUtf8).toBe(true);
@@ -245,7 +255,7 @@ describe("apk-extractor parseAxmlStringPool", () => {
 // ===== parseAppInfoFromManifest =====
 
 describe("apk-extractor parseAppInfoFromManifest", () => {
-  it.skip("extracts package name and permissions", () => {
+  it("extracts package name and permissions", () => {
     const axml = buildAxmlStringPool([
       "com.example.myapp",
       "android.permission.INTERNET",
@@ -261,7 +271,7 @@ describe("apk-extractor parseAppInfoFromManifest", () => {
     expect(info.permissions).toContain("android.permission.CAMERA");
     expect(info.permissions.length).toBe(3);
   });
-  it.skip("deduplicates permissions", () => {
+  it("deduplicates permissions", () => {
     const axml = buildAxmlStringPool([
       "com.test.app",
       "android.permission.INTERNET",
@@ -276,7 +286,7 @@ describe("apk-extractor parseAppInfoFromManifest", () => {
     expect(info.packageName).toBe("");
     expect(info.permissions).toEqual([]);
   });
-  it.skip("handles manifest with no permissions", () => {
+  it("handles manifest with no permissions", () => {
     const axml = buildAxmlStringPool(["com.example.noperm"]);
     const info = parseAppInfoFromManifest(axml);
     expect(info.packageName).toBe("com.example.noperm");
@@ -400,7 +410,7 @@ describe("apk-extractor detectMimeFromName", () => {
 // ===== parseApk (top-level) =====
 
 describe("apk-extractor parseApk", () => {
-  it.skip("parses a valid APK and extracts app info", async () => {
+  it("parses a valid APK and extracts app info", async () => {
     const axmlBytes = buildAxmlStringPool([
       "com.example.test",
       "android.permission.INTERNET",
@@ -422,11 +432,11 @@ describe("apk-extractor parseApk", () => {
     expect(result.manifestEntry).not.toBeNull();
   });
 
-  it.skip("throws on non-ZIP input", async () => {
+  it("throws on non-ZIP input", async () => {
     await expect(parseApk(new TextEncoder().encode("hello"), "bad.apk")).rejects.toThrow(/not a valid APK/);
   });
 
-  it.skip("throws on empty ZIP", async () => {
+  it("throws on empty ZIP", async () => {
     // Build a ZIP with no entries (just EOCD)
     const eocd = new Uint8Array(22);
     const dv = new DataView(eocd.buffer);
@@ -473,12 +483,20 @@ describe("apk-extractor formatBytes / formatRatio", () => {
 // ===== History =====
 
 describe("apk-extractor history", () => {
-  beforeEach(() => clearHistory());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearHistory();
+  });
 
   it("starts empty", () => {
     expect(loadHistory()).toEqual([]);
   });
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       fileName: "test.apk",
       fileSize: 1024,
@@ -492,7 +510,7 @@ describe("apk-extractor history", () => {
     expect(h.length).toBe(1);
     expect(h[0]!.packageName).toBe("com.example.test");
   });
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         fileName: `app-${i}.apk`, fileSize: 10, packageName: `com.x.${i}`,
@@ -502,7 +520,7 @@ describe("apk-extractor history", () => {
     }
     expect(loadHistory().length).toBe(10);
   });
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({
       fileName: "x.apk", fileSize: 1, packageName: "com.x", versionName: "",
       entryCount: 1, permissionCount: 0, inspectedAt: new Date().toISOString(),

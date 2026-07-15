@@ -214,10 +214,13 @@ describe("chm-extractor parseItsfHeader", () => {
     expect(itsf.version).toBe(2);
     expect(itsf.sections.length).toBe(2);
   });
-  it.skip("throws on non-ITSF input", () => {
-    expect(() => parseItsfHeader(new TextEncoder().encode("hello world"))).toThrow(/missing ITSF signature/);
+  it("throws on non-ITSF input", () => {
+    // Use 64+ bytes so we pass the size check and hit the signature check.
+    const bytes = new Uint8Array(80);
+    bytes.set(new TextEncoder().encode("hello world"), 0);
+    expect(() => parseItsfHeader(bytes)).toThrow(/missing ITSF signature/);
   });
-  it.skip("throws on too-small input", () => {
+  it("throws on too-small input", () => {
     expect(() => parseItsfHeader(new Uint8Array(10))).toThrow(/too small/);
   });
 });
@@ -225,7 +228,7 @@ describe("chm-extractor parseItsfHeader", () => {
 // ===== parseItspHeader =====
 
 describe("chm-extractor parseItspHeader", () => {
-  it.skip("parses a valid ITSP header", () => {
+  it("parses a valid ITSP header", () => {
     const bytes = buildChmBytes();
     const itsf = parseItsfHeader(bytes);
     const itsp = parseItspHeader(bytes, itsf.totalHeaderLength);
@@ -233,7 +236,7 @@ describe("chm-extractor parseItspHeader", () => {
     expect(itsp.directoryHeaderLength).toBe(84);
     expect(itsp.chunkCount).toBe(1);
   });
-  it.skip("throws on missing ITSP signature", () => {
+  it("throws on missing ITSP signature", () => {
     const bytes = new Uint8Array(100);
     bytes.set([0x58, 0x58, 0x58, 0x58], 0); // 'XXXX'
     expect(() => parseItspHeader(bytes, 0)).toThrow(/Expected ITSP/);
@@ -398,7 +401,7 @@ describe("chm-extractor extractUncompressedFile", () => {
     const data = extractUncompressedFile(bytes, entry, result.contentOffset);
     expect(data.length).toBe(10);
   });
-  it.skip("throws on LZX-compressed entries", () => {
+  it("throws on LZX-compressed entries", () => {
     const entry: ChmEntry = {
       name: "compressed.html",
       contentSection: 1,
@@ -460,8 +463,11 @@ describe("chm-extractor parseChm", () => {
     expect(result.contentOffset).toBeGreaterThan(0);
   });
 
-  it.skip("throws on non-CHM input", () => {
-    expect(() => parseChm(new TextEncoder().encode("hello"), "bad.chm")).toThrow(/missing ITSF signature/);
+  it("throws on non-CHM input", () => {
+    // Use 64+ bytes so we pass the size check and hit the signature check.
+    const bytes = new Uint8Array(80);
+    bytes.set(new TextEncoder().encode("hello"), 0);
+    expect(() => parseChm(bytes, "bad.chm")).toThrow(/missing ITSF signature/);
   });
 });
 
@@ -477,12 +483,20 @@ describe("chm-extractor formatBytes", () => {
 // ===== History =====
 
 describe("chm-extractor history", () => {
-  beforeEach(() => clearHistory());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearHistory();
+  });
 
   it("starts empty", () => {
     expect(loadHistory()).toEqual([]);
   });
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       fileName: "test.chm",
       fileSize: 1024,
@@ -495,7 +509,7 @@ describe("chm-extractor history", () => {
     expect(h.length).toBe(1);
     expect(h[0]!.packageName).toBe("Test Help");
   });
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         fileName: `h-${i}.chm`, fileSize: 10, packageName: `P${i}`, version: 3,
@@ -504,7 +518,7 @@ describe("chm-extractor history", () => {
     }
     expect(loadHistory().length).toBe(10);
   });
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({
       fileName: "x.chm", fileSize: 1, packageName: "", version: 3,
       entryCount: 0, inspectedAt: new Date().toISOString(),

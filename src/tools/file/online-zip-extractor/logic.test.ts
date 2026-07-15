@@ -297,7 +297,7 @@ describe("zip-extractor decompressEntry", () => {
     expect(Array.from(out)).toEqual(Array.from(original));
   });
 
-  it.skip("throws on encrypted entries", async () => {
+  it("throws on encrypted entries", async () => {
     const fakeEntry: ZipEntry = {
       name: "secret.txt",
       compressionMethod: 99,
@@ -312,7 +312,7 @@ describe("zip-extractor decompressEntry", () => {
     await expect(decompressEntry(fakeEntry)).rejects.toThrow(/encrypted/);
   });
 
-  it.skip("throws on unsupported compression methods", async () => {
+  it("throws on unsupported compression methods", async () => {
     const fakeEntry: ZipEntry = {
       name: "x.txt",
       compressionMethod: 12, // BZIP2
@@ -458,7 +458,7 @@ describe("zip-extractor computeStats", () => {
     expect(stats.ratio).toBeCloseTo(1.0, 5);
   });
 
-  it.skip("detects directories (names ending with /)", () => {
+  it("detects directories (names ending with /)", () => {
     const entries: ZipEntry[] = [
       { name: "dir/", compressionMethod: 0, compressedSize: 0, uncompressedSize: 0, dataOffset: 0, bytes: new Uint8Array(0), compressionName: "STORE", isExtractable: false, isEncrypted: false },
       { name: "dir/a.txt", compressionMethod: 0, compressedSize: 5, uncompressedSize: 5, dataOffset: 0, bytes: new Uint8Array(0), compressionName: "STORE", isExtractable: true, isEncrypted: false },
@@ -579,12 +579,20 @@ describe("zip-extractor formatBytes / formatRatio", () => {
 // ===== History =====
 
 describe("zip-extractor history", () => {
-  beforeEach(() => clearHistory());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearHistory();
+  });
 
   it("starts empty", () => {
     expect(loadHistory()).toEqual([]);
   });
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       fileName: "test.zip",
       archiveSize: 1000,
@@ -597,7 +605,7 @@ describe("zip-extractor history", () => {
     expect(h.length).toBe(1);
     expect(h[0]!.fileName).toBe("test.zip");
   });
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         fileName: `archive-${i}.zip`,
@@ -610,7 +618,7 @@ describe("zip-extractor history", () => {
     }
     expect(loadHistory().length).toBe(10);
   });
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({
       fileName: "x.zip", archiveSize: 1, entryCount: 1, regularFileCount: 1,
       totalUncompressed: 1, extractedAt: new Date().toISOString(),
@@ -623,7 +631,15 @@ describe("zip-extractor history", () => {
 // ===== Shareable URL =====
 
 describe("zip-extractor share URL", () => {
-  it.skip("builds URL with filter + search", () => {
+  const origWindow = (globalThis as any).window;
+  beforeEach(() => {
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/online-zip-extractor" } };
+  });
+  afterEach(() => {
+    (globalThis as any).window = origWindow;
+  });
+
+  it("builds URL with filter + search", () => {
     const url = buildShareUrl({ filter: "image", search: "photo" });
     expect(url).toContain("filter=image");
     expect(url).toContain("q=photo");

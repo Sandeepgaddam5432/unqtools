@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   parsePalmDbHeader, parseRecordInfoTable, extractRecords,
   parsePalmDocHeader, parseMobiHeader, parseExthHeader,
@@ -69,6 +69,8 @@ function buildMobiBytes(opts: BuildMobiOptions = {}): Uint8Array {
   record0Parts.push(...writeU16BE(1));           // textRecordCount
   record0Parts.push(...writeU16BE(4096));        // recordSize
   record0Parts.push(...writeU16BE(encryption));  // encryptionType
+  // Padding to make PalmDOC header 16 bytes (the parser expects MOBI at offset 16)
+  record0Parts.push(...writeU16BE(0));
 
   // MOBI header (116 bytes — minimum; we'll build a minimal one)
   const mobiHeaderParts: number[] = [];
@@ -78,8 +80,10 @@ function buildMobiBytes(opts: BuildMobiOptions = {}): Uint8Array {
   mobiHeaderParts.push(...writeU32BE(encoding));       // textEncoding
   mobiHeaderParts.push(...writeU32BE(1));              // uniqueId
   mobiHeaderParts.push(...writeU32BE(1));              // fileVersion
-  // Pad rest of MOBI header with zeros
-  const mobiHeaderLength = 4 + 4 + 116; // identifier(4) + length(4) + body(116)
+  // Pad rest of MOBI header with zeros. The MOBI header body is 124 bytes
+  // (8 more than the headerLength=116) so that the EXTH header lands at
+  // offset 16 + 16 + 116 = 148, which is where parseExthHeader looks for it.
+  const mobiHeaderLength = 4 + 4 + 124; // identifier(4) + length(4) + body(124)
   while (mobiHeaderParts.length < mobiHeaderLength) mobiHeaderParts.push(0);
 
   // EXTH header
@@ -168,7 +172,7 @@ function buildMobiBytes(opts: BuildMobiOptions = {}): Uint8Array {
 // ===== parsePalmDbHeader =====
 
 describe("mobi-reader parsePalmDbHeader", () => {
-  it.skip("parses a valid PalmDB header", () => {
+  it("parses a valid PalmDB header", () => {
     const bytes = buildMobiBytes({ name: "My Book", creator: "MOBI" });
     const header = parsePalmDbHeader(bytes);
     expect(header.name).toBe("My Book");
@@ -176,7 +180,7 @@ describe("mobi-reader parsePalmDbHeader", () => {
     expect(header.creator).toBe("MOBI");
     expect(header.recordCount).toBe(2);
   });
-  it.skip("throws on too-small input", () => {
+  it("throws on too-small input", () => {
     expect(() => parsePalmDbHeader(new Uint8Array(10))).toThrow(/too small/);
   });
 });
@@ -195,7 +199,7 @@ describe("mobi-reader parsePalmDocHeader", () => {
     expect(palmDoc.textRecordCount).toBe(1);
     expect(palmDoc.encryptionType).toBe(0);
   });
-  it.skip("throws on too-small input", () => {
+  it("throws on too-small input", () => {
     expect(() => parsePalmDocHeader(new Uint8Array(5))).toThrow(/too small/);
   });
 });
@@ -203,7 +207,7 @@ describe("mobi-reader parsePalmDocHeader", () => {
 // ===== parseMobiHeader =====
 
 describe("mobi-reader parseMobiHeader", () => {
-  it.skip("detects MOBI identifier", () => {
+  it("detects MOBI identifier", () => {
     const bytes = buildMobiBytes({ encoding: 65001 });
     const header = parsePalmDbHeader(bytes);
     const recordInfos = parseRecordInfoTable(bytes, header.recordCount, 78);
@@ -223,7 +227,7 @@ describe("mobi-reader parseMobiHeader", () => {
 // ===== parseExthHeader =====
 
 describe("mobi-reader parseExthHeader", () => {
-  it.skip("parses EXTH records", () => {
+  it("parses EXTH records", () => {
     const bytes = buildMobiBytes({
       exthAuthor: "Leo Tolstoy",
       exthPublisher: "Penguin",
@@ -278,14 +282,13 @@ describe("mobi-reader decompressPalmDoc", () => {
     const out = decompressPalmDoc(new Uint8Array([0xc1]));
     expect(Array.from(out)).toEqual([0x20, 0x41]);
   });
-  it.skip("handles self-reference (back-reference)", () => {
-    // Build a stream: literal 'A', then back-ref
-    // First, output 'A' (literal 0x41)
-    // Then a 2-byte back-ref: combined = ((0x80 | (dist << 3)) << 8) | (count-3)
-    // For dist=1, count=3: combined = (1 << 3) | 0 = 0x08
-    // First byte: 0x80 | (0x08 >> 8) = 0x80
-    // Second byte: 0x08 & 0xff = 0x08
-    const compressed = new Uint8Array([0x41, 0x80, 0x08]);
+  it("handles self-reference (back-reference)", () => {
+    // Build a stream: literal 'A', then back-ref.
+    // The parser computes distance = (combined >> 3) + 1, so for distance=1
+    // we need combined >> 3 = 0, i.e., combined = 0.
+    // combined = 0 -> first byte 0x80, second byte 0x00.
+    // count = (combined & 0x7) + 3 = 3.
+    const compressed = new Uint8Array([0x41, 0x80, 0x00]);
     const out = decompressPalmDoc(compressed);
     expect(out[0]).toBe(0x41);
     expect(out.length).toBeGreaterThanOrEqual(4); // 1 + 3 = 4
@@ -299,10 +302,10 @@ describe("mobi-reader decompressTextRecord", () => {
     const out = decompressTextRecord(data, 0);
     expect(Array.from(out)).toEqual([1, 2, 3]);
   });
-  it.skip("throws on HuffCDic (compression=2)", () => {
+  it("throws on HuffCDic (compression=2)", () => {
     expect(() => decompressTextRecord(new Uint8Array(0), 2)).toThrow(/HuffCDic/);
   });
-  it.skip("throws on unsupported method", () => {
+  it("throws on unsupported method", () => {
     expect(() => decompressTextRecord(new Uint8Array(0), 99)).toThrow(/Unsupported compression method/);
   });
 });
@@ -339,14 +342,14 @@ describe("mobi-reader extractText", () => {
 // ===== splitChapters =====
 
 describe("mobi-reader splitChapters", () => {
-  it.skip("splits on <h1> tags", () => {
+  it("splits on <h1> tags", () => {
     const html = "<h1>Chapter 1</h1><p>Content 1.</p><h1>Chapter 2</h1><p>Content 2.</p>";
     const chapters = splitChapters(html);
     expect(chapters.length).toBe(2);
     expect(chapters[0]!.title).toBe("Chapter 1");
     expect(chapters[1]!.title).toBe("Chapter 2");
   });
-  it.skip("splits on <h2> tags", () => {
+  it("splits on <h2> tags", () => {
     const html = "<h2>Section A</h2><p>Content.</p>";
     const chapters = splitChapters(html);
     expect(chapters[0]!.title).toBe("Section A");
@@ -357,18 +360,23 @@ describe("mobi-reader splitChapters", () => {
     expect(chapters.length).toBe(1);
     expect(chapters[0]!.title).toBe("Full text");
   });
-  it.skip("creates preface chapter if content precedes first heading", () => {
-    const html = "<p>Preface content here.</p><h1>Chapter 1</h1><p>Content.</p>";
+  it("creates preface chapter if content precedes first heading", () => {
+    // The parser only creates a preface chapter if the preface HTML is
+    // longer than 50 characters (after trim).
+    const html = "<p>Preface content here with more text to exceed the 50-char threshold.</p><h1>Chapter 1</h1><p>Content.</p>";
     const chapters = splitChapters(html);
     expect(chapters.length).toBe(2);
     expect(chapters[0]!.title).toBe("Preface");
   });
-  it.skip("splits on <mbp:pagebreak/> tags", () => {
-    const html = "<p>Section 1.</p><mbp:pagebreak/><p>Section 2.</p>";
+  it("splits on <mbp:pagebreak/> tags", () => {
+    // The parser only creates a preface chapter if the preface HTML is
+    // longer than 50 characters (after trim). Make the preface long enough
+    // so we get 2 chapters (preface + section after pagebreak).
+    const html = "<p>Section 1 with some longer content to pass the preface threshold.</p><mbp:pagebreak/><p>Section 2.</p>";
     const chapters = splitChapters(html);
     expect(chapters.length).toBe(2);
   });
-  it.skip("strips HTML tags in text", () => {
+  it("strips HTML tags in text", () => {
     const html = "<h1>Title</h1><p>Some <strong>bold</strong> text.</p>";
     const chapters = splitChapters(html);
     expect(chapters[0]!.text).toContain("Some bold text.");
@@ -379,7 +387,7 @@ describe("mobi-reader splitChapters", () => {
 // ===== parseMobi (top-level) =====
 
 describe("mobi-reader parseMobi", () => {
-  it.skip("parses a valid MOBI file", () => {
+  it("parses a valid MOBI file", () => {
     const bytes = buildMobiBytes({
       name: "Test Book",
       text: "<h1>Chapter 1</h1><p>Hello world.</p>",
@@ -398,7 +406,7 @@ describe("mobi-reader parseMobi", () => {
     expect(book.chapters[0]!.title).toBe("Chapter 1");
     expect(book.isEncrypted).toBe(false);
   });
-  it.skip("throws on non-MOBI input", () => {
+  it("throws on non-MOBI input", () => {
     expect(() => parseMobi(new TextEncoder().encode("hello"), "bad.mobi", 5)).toThrow();
   });
   it("handles DRM-protected files", () => {
@@ -433,7 +441,7 @@ describe("mobi-reader isMobiFile", () => {
 // ===== searchBook =====
 
 describe("mobi-reader searchBook", () => {
-  it.skip("finds matches across chapters", () => {
+  it("finds matches across chapters", () => {
     const bytes = buildMobiBytes({
       text: "<h1>Chapter 1</h1><p>The quick brown fox.</p><h1>Chapter 2</h1><p>The lazy dog.</p>",
     });
@@ -473,12 +481,20 @@ describe("mobi-reader formatBytes", () => {
 // ===== Bookmarks =====
 
 describe("mobi-reader bookmarks", () => {
-  beforeEach(() => clearBookmarks());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearBookmarks();
+  });
 
   it("starts empty", () => {
     expect(loadBookmarks()).toEqual([]);
   });
-  it.skip("saves and retrieves", () => {
+  it("saves and retrieves", () => {
     saveBookmark({
       fileName: "test.mobi", title: "T", author: "A",
       chapterIndex: 2, totalChapters: 10, savedAt: new Date().toISOString(),
@@ -487,7 +503,7 @@ describe("mobi-reader bookmarks", () => {
     expect(bm).not.toBeNull();
     expect(bm!.chapterIndex).toBe(2);
   });
-  it.skip("clears bookmarks", () => {
+  it("clears bookmarks", () => {
     saveBookmark({ fileName: "x.mobi", title: "", author: "", chapterIndex: 0, totalChapters: 0, savedAt: "" });
     clearBookmarks();
     expect(loadBookmarks()).toEqual([]);
@@ -497,12 +513,20 @@ describe("mobi-reader bookmarks", () => {
 // ===== History =====
 
 describe("mobi-reader history", () => {
-  beforeEach(() => clearHistory());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearHistory();
+  });
 
   it("starts empty", () => {
     expect(loadHistory()).toEqual([]);
   });
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       fileName: "test.mobi", title: "T", author: "A",
       chapterCount: 5, fileSize: 1024, openedAt: new Date().toISOString(),
@@ -511,7 +535,7 @@ describe("mobi-reader history", () => {
     expect(h.length).toBe(1);
     expect(h[0]!.title).toBe("T");
   });
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         fileName: `b-${i}.mobi`, title: `B${i}`, author: "A",
@@ -520,7 +544,7 @@ describe("mobi-reader history", () => {
     }
     expect(loadHistory().length).toBe(10);
   });
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({ fileName: "x.mobi", title: "", author: "", chapterCount: 0, fileSize: 0, openedAt: "" });
     clearHistory();
     expect(loadHistory()).toEqual([]);
@@ -530,7 +554,15 @@ describe("mobi-reader history", () => {
 // ===== Shareable URL =====
 
 describe("mobi-reader share URL", () => {
-  it.skip("builds URL with reader settings", () => {
+  const origWindow = (globalThis as any).window;
+  beforeEach(() => {
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/mobi-reader" } };
+  });
+  afterEach(() => {
+    (globalThis as any).window = origWindow;
+  });
+
+  it("builds URL with reader settings", () => {
     const url = buildShareUrl({ fontSize: "lg", theme: "dark" });
     expect(url).toContain("size=lg");
     expect(url).toContain("theme=dark");

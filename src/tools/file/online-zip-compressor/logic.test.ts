@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   fileToEntry,
   moveUp, moveDown, removeEntry, renameEntry,
@@ -203,11 +203,11 @@ describe("zip-compressor stats", () => {
 // ===== Build archive =====
 
 describe("zip-compressor buildArchive", () => {
-  it.skip("throws on empty list", () => {
+  it("throws on empty list", () => {
     expect(() => buildArchive([], "test.zip")).toThrow("no files added");
   });
 
-  it.skip("throws on duplicate names", () => {
+  it("throws on duplicate names", () => {
     const entries = [
       makeEntrySync("a", "same.txt", "A"),
       makeEntrySync("b", "same.txt", "B"),
@@ -248,7 +248,7 @@ describe("zip-compressor buildArchive", () => {
     expect(result.fileName).toBe("My Archive.zip");
   });
 
-  it.skip("throws on too-long filename (>65535 bytes)", () => {
+  it("throws on too-long filename (>65535 bytes)", () => {
     const longName = "a".repeat(70000) + ".txt";
     const entries = [makeEntrySync("a", longName, "x")];
     expect(() => buildArchive(entries, "test.zip")).toThrow(/too long/);
@@ -292,6 +292,12 @@ describe("zip-compressor formatBytes / formatRatio", () => {
 
 describe("zip-compressor history", () => {
   beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
     clearHistory();
   });
 
@@ -299,7 +305,7 @@ describe("zip-compressor history", () => {
     expect(loadHistory()).toEqual([]);
   });
 
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       archiveName: "test.zip",
       fileCount: 3,
@@ -312,7 +318,7 @@ describe("zip-compressor history", () => {
     expect(h[0]!.archiveName).toBe("test.zip");
   });
 
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         archiveName: `archive-${i}.zip`,
@@ -325,7 +331,7 @@ describe("zip-compressor history", () => {
     expect(loadHistory().length).toBe(10);
   });
 
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({
       archiveName: "x.zip", fileCount: 1, totalUncompressed: 1, archiveSize: 1,
       createdAt: new Date().toISOString(),
@@ -338,7 +344,15 @@ describe("zip-compressor history", () => {
 // ===== Shareable URL =====
 
 describe("zip-compressor share URL", () => {
-  it.skip("builds URL with archive name", () => {
+  const origWindow = (globalThis as any).window;
+  beforeEach(() => {
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/online-zip-compressor" } };
+  });
+  afterEach(() => {
+    (globalThis as any).window = origWindow;
+  });
+
+  it("builds URL with archive name", () => {
     const url = buildShareUrl({ archiveName: "my-data" });
     expect(url).toContain("#name=my-data");
   });

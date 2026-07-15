@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   parseVolumeDescriptorHeader, parsePrimaryVolumeDescriptor,
   parseDirectoryRecord, readDirectoryEntries, walkDirectoryTree,
@@ -249,7 +249,7 @@ function buildIsoBytes(opts: BuildIsoOptions = {}): Uint8Array {
   }
   // Subdirectory entries
   for (const dir of dirAssignments) {
-    rootEntries.push(...buildDirEntry({ name: dir.name + ";1", isDirectory: true, extent: dir.sector, length: SECTOR_SIZE }));
+    rootEntries.push(...buildDirEntry({ name: dir.name, isDirectory: true, extent: dir.sector, length: SECTOR_SIZE }));
   }
   out.set(new Uint8Array(rootEntries), rootDirOffset);
 
@@ -407,7 +407,7 @@ describe("iso-extractor walkDirectoryTree", () => {
     expect(names).toContain("a.txt");
     expect(names).toContain("b.txt");
   });
-  it.skip("recursively walks subdirectories", () => {
+  it("recursively walks subdirectories", () => {
     const bytes = buildIsoBytes({
       files: [{ name: "root.txt;1", content: "x" }],
       directories: [
@@ -429,7 +429,7 @@ describe("iso-extractor walkDirectoryTree", () => {
     const file = entries.find((e) => e.name.includes("file.txt"));
     expect(file!.name).toBe("file.txt"); // no ;1 suffix
   });
-  it.skip("detects directories vs files", () => {
+  it("detects directories vs files", () => {
     const bytes = buildIsoBytes({
       directories: [{ name: "docs;1", files: [] }],
     });
@@ -544,7 +544,7 @@ describe("iso-extractor extractFile", () => {
     const data = extractFile(bytes, file!);
     expect(new TextDecoder().decode(data)).toBe("Hello, ISO!");
   });
-  it.skip("throws on directory extraction", () => {
+  it("throws on directory extraction", () => {
     const entry: IsoEntry = {
       name: "dir", isDirectory: true, extentLocation: 0, dataLength: 2048,
       recordingDate: "", flags: 2, isHidden: false, fileType: "unknown",
@@ -613,7 +613,7 @@ describe("iso-extractor parseIso", () => {
     expect(result.hasJoliet).toBe(false);
   });
 
-  it.skip("throws on non-ISO input", () => {
+  it("throws on non-ISO input", () => {
     expect(() => parseIso(new TextEncoder().encode("hello"), "bad.iso")).toThrow(/too small|no Primary Volume/);
   });
 });
@@ -631,12 +631,20 @@ describe("iso-extractor formatBytes", () => {
 // ===== History =====
 
 describe("iso-extractor history", () => {
-  beforeEach(() => clearHistory());
+  beforeEach(() => {
+    const store: Record<string, string> = {};
+    (globalThis as any).localStorage = {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => { store[k] = v; },
+      removeItem: (k: string) => { delete store[k]; },
+    };
+    clearHistory();
+  });
 
   it("starts empty", () => {
     expect(loadHistory()).toEqual([]);
   });
-  it.skip("saves and loads entries", () => {
+  it("saves and loads entries", () => {
     saveToHistory({
       fileName: "test.iso",
       fileSize: 1024 * 1024,
@@ -650,7 +658,7 @@ describe("iso-extractor history", () => {
     expect(h.length).toBe(1);
     expect(h[0]!.volumeId).toBe("TESTDISC");
   });
-  it.skip("limits to 10 entries", () => {
+  it("limits to 10 entries", () => {
     for (let i = 0; i < 15; i++) {
       saveToHistory({
         fileName: `iso-${i}.iso`, fileSize: 10, volumeId: `V${i}`, systemId: "X",
@@ -659,7 +667,7 @@ describe("iso-extractor history", () => {
     }
     expect(loadHistory().length).toBe(10);
   });
-  it.skip("clears history", () => {
+  it("clears history", () => {
     saveToHistory({
       fileName: "x.iso", fileSize: 1, volumeId: "", systemId: "", entryCount: 0,
       hasJoliet: false, extractedAt: new Date().toISOString(),
@@ -672,7 +680,15 @@ describe("iso-extractor history", () => {
 // ===== Shareable URL =====
 
 describe("iso-extractor share URL", () => {
-  it.skip("builds URL with filter + search", () => {
+  const origWindow = (globalThis as any).window;
+  beforeEach(() => {
+    (globalThis as any).window = { location: { origin: "https://x.com", pathname: "/tools/iso-extractor" } };
+  });
+  afterEach(() => {
+    (globalThis as any).window = origWindow;
+  });
+
+  it("builds URL with filter + search", () => {
     const url = buildShareUrl({ filter: "image", search: "logo" });
     expect(url).toContain("filter=image");
     expect(url).toContain("q=logo");

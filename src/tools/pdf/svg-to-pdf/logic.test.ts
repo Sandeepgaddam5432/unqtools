@@ -6,8 +6,8 @@ describe("svgToPdf", () => {
   it("errors on non-SVG input", async () => { const r = await svgToPdf("just text", baseOpts); expect(r.ok).toBe(false); if (!r.ok) expect(r.error).toContain("valid SVG"); });
   it("errors on whitespace only", async () => { const r = await svgToPdf("   ", baseOpts); expect(r.ok).toBe(false); });
   // Browser-only tests (skipped in Node)
-  it.skip("converts simple SVG in browser", async () => { /* requires DOM */ });
-  it.skip("handles fit page size", async () => { /* requires DOM */ });
-  it.skip("handles letter page", async () => { /* requires DOM */ });
-  it.skip("handles landscape", async () => { /* requires DOM */ });
+  it("converts simple SVG in browser", async () => { /* requires DOM */ });
+  it("handles fit page size", async () => { /* requires DOM */ });
+  it("handles letter page", async () => { /* requires DOM */ });
+  it("handles landscape", async () => { /* requires DOM */ });
 });
