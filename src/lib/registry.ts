@@ -129,6 +129,16 @@ import { manifest as pdfToPostScriptConverter } from "@/tools/file/pdf-to-postsc
 import { manifest as pdfToMobiConverter } from "@/tools/file/pdf-to-mobi-converter/manifest";
 import { manifest as pdfToAzw3Converter } from "@/tools/file/pdf-to-azw3-converter/manifest";
 import { manifest as pdfToDjvuConverter } from "@/tools/file/pdf-to-djvu-converter/manifest";
+import { manifest as dmgExtractor } from "@/tools/file/dmg-extractor/manifest";
+import { manifest as pdfPageNumberingUtility } from "@/tools/file/pdf-page-numbering-utility/manifest";
+import { manifest as keynoteToPdfConverter } from "@/tools/file/keynote-to-pdf-converter/manifest";
+import { manifest as numbersToPdfConverter } from "@/tools/file/numbers-to-pdf-converter/manifest";
+import { manifest as pagesToPdfConverter } from "@/tools/file/pages-to-pdf-converter/manifest";
+import { manifest as epubToMobiConverter } from "@/tools/file/epub-to-mobi-converter/manifest";
+import { manifest as epubToAzw3Converter } from "@/tools/file/epub-to-azw3-converter/manifest";
+import { manifest as mobiToEpubConverter } from "@/tools/file/mobi-to-epub-converter/manifest";
+import { manifest as litToPdfConverter } from "@/tools/file/lit-to-pdf-converter/manifest";
+import { manifest as lrfToPdfConverter } from "@/tools/file/lrf-to-pdf-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -253,6 +263,16 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfToMobiConverter,
   pdfToAzw3Converter,
   pdfToDjvuConverter,
+  dmgExtractor,
+  pdfPageNumberingUtility,
+  keynoteToPdfConverter,
+  numbersToPdfConverter,
+  pagesToPdfConverter,
+  epubToMobiConverter,
+  epubToAzw3Converter,
+  mobiToEpubConverter,
+  litToPdfConverter,
+  lrfToPdfConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
