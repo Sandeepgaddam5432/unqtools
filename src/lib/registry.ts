@@ -139,6 +139,34 @@ import { manifest as epubToAzw3Converter } from "@/tools/file/epub-to-azw3-conve
 import { manifest as mobiToEpubConverter } from "@/tools/file/mobi-to-epub-converter/manifest";
 import { manifest as litToPdfConverter } from "@/tools/file/lit-to-pdf-converter/manifest";
 import { manifest as lrfToPdfConverter } from "@/tools/file/lrf-to-pdf-converter/manifest";
+import { manifest as extractor7z } from "@/tools/file/7z-extractor/manifest";
+import { manifest as arjExtractor } from "@/tools/file/arj-extractor/manifest";
+import { manifest as bzip2Compressor } from "@/tools/file/bzip2-compressor/manifest";
+import { manifest as bzip2Decompressor } from "@/tools/file/bzip2-decompressor/manifest";
+import { manifest as cbrComicBookReader } from "@/tools/file/cbr-comic-book-reader/manifest";
+import { manifest as litToEpubConverter } from "@/tools/file/lit-to-epub-converter/manifest";
+import { manifest as lrfToEpubConverter } from "@/tools/file/lrf-to-epub-converter/manifest";
+import { manifest as pdfPageExtractor } from "@/tools/file/pdf-page-extractor/manifest";
+import { manifest as pdfPasswordEncryptor } from "@/tools/file/pdf-password-encryptor/manifest";
+import { manifest as pdfSecurityRemover } from "@/tools/file/pdf-security-remover/manifest";
+import { manifest as postscriptToPdfConverter } from "@/tools/file/postscript-to-pdf-converter/manifest";
+import { manifest as prcToEpubConverter } from "@/tools/file/prc-to-epub-converter/manifest";
+import { manifest as rarExtractor } from "@/tools/file/rar-extractor/manifest";
+import { manifest as rpmExtractor } from "@/tools/file/rpm-extractor/manifest";
+import { manifest as tcrToEpubConverter } from "@/tools/file/tcr-to-epub-converter/manifest";
+import { manifest as wimExtractor } from "@/tools/file/wim-extractor/manifest";
+import { manifest as xarExtractor } from "@/tools/file/xar-extractor/manifest";
+import { manifest as zCompressor } from "@/tools/file/z-compressor/manifest";
+import { manifest as canonicalTagGenerator } from "@/tools/seo/canonical-tag-generator/manifest";
+import { manifest as faqSchemaGenerator } from "@/tools/seo/faq-schema-generator/manifest";
+import { manifest as hreflangTagGenerator } from "@/tools/seo/hreflang-tag-generator/manifest";
+import { manifest as metaTagGenerator } from "@/tools/seo/meta-tag-generator/manifest";
+import { manifest as openGraphGenerator } from "@/tools/seo/open-graph-generator/manifest";
+import { manifest as robotsTxtGenerator } from "@/tools/seo/robots-txt-generator/manifest";
+import { manifest as schemaJsonldGenerator } from "@/tools/seo/schema-jsonld-generator/manifest";
+import { manifest as serpSnippetPreview } from "@/tools/seo/serp-snippet-preview/manifest";
+import { manifest as utmUrlBuilder } from "@/tools/seo/utm-url-builder/manifest";
+import { manifest as xmlSitemapGenerator } from "@/tools/seo/xml-sitemap-generator/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -273,6 +301,61 @@ export const TOOLS: readonly ToolManifest[] = [
   mobiToEpubConverter,
   litToPdfConverter,
   lrfToPdfConverter,
+  extractor7z,
+  arjExtractor,
+  bzip2Compressor,
+  bzip2Decompressor,
+  cbrComicBookReader,
+  litToEpubConverter,
+  lrfToEpubConverter,
+  pdfPageExtractor,
+  pdfPasswordEncryptor,
+  pdfSecurityRemover,
+  postscriptToPdfConverter,
+  prcToEpubConverter,
+  rarExtractor,
+  rpmExtractor,
+  tcrToEpubConverter,
+  wimExtractor,
+  xarExtractor,
+  zCompressor,
+  canonicalTagGenerator,
+  faqSchemaGenerator,
+  hreflangTagGenerator,
+  metaTagGenerator,
+  openGraphGenerator,
+  robotsTxtGenerator,
+  schemaJsonldGenerator,
+  serpSnippetPreview,
+  utmUrlBuilder,
+  xmlSitemapGenerator,  extractor7z,
+  arjExtractor,
+  bzip2Compressor,
+  bzip2Decompressor,
+  cbrComicBookReader,
+  litToEpubConverter,
+  lrfToEpubConverter,
+  pdfPageExtractor,
+  pdfPasswordEncryptor,
+  pdfSecurityRemover,
+  postscriptToPdfConverter,
+  prcToEpubConverter,
+  rarExtractor,
+  rpmExtractor,
+  tcrToEpubConverter,
+  wimExtractor,
+  xarExtractor,
+  zCompressor,
+  canonicalTagGenerator,
+  faqSchemaGenerator,
+  hreflangTagGenerator,
+  metaTagGenerator,
+  openGraphGenerator,
+  robotsTxtGenerator,
+  schemaJsonldGenerator,
+  serpSnippetPreview,
+  utmUrlBuilder,
+  xmlSitemapGenerator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
