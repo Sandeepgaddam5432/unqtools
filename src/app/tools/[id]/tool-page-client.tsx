@@ -240,6 +240,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "google-analytics-4-event-builder": () => import("@/tools/seo/google-analytics-4-event-builder/ui"),
   "conversion-tracking-tag-generator": () => import("@/tools/seo/conversion-tracking-tag-generator/ui"),
   "responsive-search-ad-builder": () => import("@/tools/seo/responsive-search-ad-builder/ui"),
+  "seo-slug-generator": () => import("@/tools/seo/seo-slug-generator/ui"),
+  "meta-description-generator": () => import("@/tools/seo/meta-description-generator/ui"),
+  "title-tag-optimizer": () => import("@/tools/seo/title-tag-optimizer/ui"),
+  "internal-linking-suggester": () => import("@/tools/seo/internal-linking-suggester/ui"),
+  "keyword-cannibalization-detector": () => import("@/tools/seo/keyword-cannibalization-detector/ui"),
+  "long-tail-keyword-generator": () => import("@/tools/seo/long-tail-keyword-generator/ui"),
+  "keyword-grouping-tool": () => import("@/tools/seo/keyword-grouping-tool/ui"),
+  "people-also-ask-extractor": () => import("@/tools/seo/people-also-ask-extractor/ui"),
+  "redirect-htaccess-generator": () => import("@/tools/seo/redirect-htaccess-generator/ui"),
+  "seo-content-scorecard": () => import("@/tools/seo/seo-content-scorecard/ui"),
 };
 
 interface ToolPageClientProps {

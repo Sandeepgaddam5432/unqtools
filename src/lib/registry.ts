@@ -185,6 +185,16 @@ import { manifest as napCitationConsistencyChecker } from "@/tools/seo/nap-citat
 import { manifest as googleAnalytics4EventBuilder } from "@/tools/seo/google-analytics-4-event-builder/manifest";
 import { manifest as conversionTrackingTagGenerator } from "@/tools/seo/conversion-tracking-tag-generator/manifest";
 import { manifest as responsiveSearchAdBuilder } from "@/tools/seo/responsive-search-ad-builder/manifest";
+import { manifest as seoSlugGenerator } from "@/tools/seo/seo-slug-generator/manifest";
+import { manifest as metaDescriptionGenerator } from "@/tools/seo/meta-description-generator/manifest";
+import { manifest as titleTagOptimizer } from "@/tools/seo/title-tag-optimizer/manifest";
+import { manifest as internalLinkingSuggester } from "@/tools/seo/internal-linking-suggester/manifest";
+import { manifest as keywordCannibalizationDetector } from "@/tools/seo/keyword-cannibalization-detector/manifest";
+import { manifest as longTailKeywordGenerator } from "@/tools/seo/long-tail-keyword-generator/manifest";
+import { manifest as keywordGroupingTool } from "@/tools/seo/keyword-grouping-tool/manifest";
+import { manifest as peopleAlsoAskExtractor } from "@/tools/seo/people-also-ask-extractor/manifest";
+import { manifest as redirectHtaccessGenerator } from "@/tools/seo/redirect-htaccess-generator/manifest";
+import { manifest as seoContentScorecard } from "@/tools/seo/seo-content-scorecard/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -365,6 +375,16 @@ export const TOOLS: readonly ToolManifest[] = [
   googleAnalytics4EventBuilder,
   conversionTrackingTagGenerator,
   responsiveSearchAdBuilder,
+  seoSlugGenerator,
+  metaDescriptionGenerator,
+  titleTagOptimizer,
+  internalLinkingSuggester,
+  keywordCannibalizationDetector,
+  longTailKeywordGenerator,
+  keywordGroupingTool,
+  peopleAlsoAskExtractor,
+  redirectHtaccessGenerator,
+  seoContentScorecard,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
