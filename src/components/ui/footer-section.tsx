@@ -2,12 +2,14 @@
 import React from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { FacebookIcon, FrameIcon, InstagramIcon, LinkedinIcon, YoutubeIcon } from 'lucide-react';
+import { Github, Heart, Lock, WifiOff, Zap } from 'lucide-react';
+import Link from 'next/link';
+import { TOOLS } from '@/lib/registry';
+import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from '@/lib/tool';
 
 interface FooterLink {
   title: string;
   href: string;
-  icon?: React.ComponentType<{ className?: string }>;
 }
 
 interface FooterSection {
@@ -15,41 +17,44 @@ interface FooterSection {
   links: FooterLink[];
 }
 
+// Build footer links from actual registry data
+const activeCategories = ALL_CATEGORIES.filter((c) => {
+  return TOOLS.some((t) => t.category === c);
+});
+
 const footerLinks: FooterSection[] = [
   {
-    label: 'Product',
+    label: 'Tools',
     links: [
-      { title: 'Features', href: '#features' },
-      { title: 'Pricing', href: '#pricing' },
-      { title: 'Testimonials', href: '#testimonials' },
-      { title: 'Integration', href: '/' },
+      { title: 'All Tools', href: '/tools' },
+      { title: 'PDF & Document', href: '/category/pdf' },
+      { title: 'File Management', href: '/category/file' },
+      { title: 'Text & Writing', href: '/category/text' },
     ],
   },
   {
-    label: 'Company',
+    label: 'Categories',
+    links: activeCategories.slice(4, 8).map((c: ToolCategory) => ({
+      title: CATEGORY_LABELS[c].split(' ')[0].replace(/[,.;:]$/, ''),
+      href: `/category/${c}`,
+    })),
+  },
+  {
+    label: 'More',
     links: [
-      { title: 'FAQs', href: '/faqs' },
-      { title: 'About Us', href: '/about' },
-      { title: 'Privacy Policy', href: '/privacy' },
-      { title: 'Terms of Services', href: '/terms' },
+      { title: 'Developer Tools', href: '/category/developer' },
+      { title: 'SEO & Marketing', href: '/category/seo' },
+      { title: 'Calculators', href: '/category/calculators' },
+      { title: 'Image & Graphics', href: '/category/image' },
     ],
   },
   {
-    label: 'Resources',
+    label: 'About',
     links: [
-      { title: 'Blog', href: '/blog' },
-      { title: 'Changelog', href: '/changelog' },
-      { title: 'Brand', href: '/brand' },
-      { title: 'Help', href: '/help' },
-    ],
-  },
-  {
-    label: 'Social Links',
-    links: [
-      { title: 'Facebook', href: '#', icon: FacebookIcon },
-      { title: 'Instagram', href: '#', icon: InstagramIcon },
-      { title: 'Youtube', href: '#', icon: YoutubeIcon },
-      { title: 'LinkedIn', href: '#', icon: LinkedinIcon },
+      { title: 'Privacy Policy', href: '/' },
+      { title: 'Terms of Service', href: '/' },
+      { title: 'GitHub', href: 'https://github.com/Sandeepgaddam5432/unqtools' },
+      { title: `All ${TOOLS.length} Tools`, href: '/tools' },
     ],
   },
 ];
@@ -61,9 +66,28 @@ export function Footer() {
 
       <div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
         <AnimatedContainer className="space-y-4">
-          <FrameIcon className="size-8" />
-          <p className="text-muted-foreground mt-8 text-sm md:mt-0">
-            &copy; {new Date().getFullYear()} Nexus AI. All rights reserved.
+          <div className="flex items-center gap-2">
+            <img src="/logo.svg" alt="UnQTools" className="h-8 w-8" />
+            <h2 className="text-lg font-bold tracking-tight">
+              UnQ<span className="text-primary">Tools</span>
+            </h2>
+          </div>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {TOOLS.length} free online tools that run 100% in your browser. No uploads, no tracking, no accounts.
+          </p>
+          <div className="flex flex-wrap gap-2 pt-2">
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Lock className="h-3 w-3" /> 100% Private
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <WifiOff className="h-3 w-3" /> Works Offline
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Zap className="h-3 w-3" /> Instant
+            </span>
+          </div>
+          <p className="text-muted-foreground mt-4 text-xs">
+            &copy; {new Date().getFullYear()} UnQTools by Sandeep Gaddam. All rights reserved.
           </p>
         </AnimatedContainer>
 
@@ -71,23 +95,54 @@ export function Footer() {
           {footerLinks.map((section, index) => (
             <AnimatedContainer key={section.label} delay={0.1 + index * 0.1}>
               <div className="mb-10 md:mb-0">
-                <h3 className="text-xs">{section.label}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-foreground">{section.label}</h3>
                 <ul className="text-muted-foreground mt-4 space-y-2 text-sm">
                   {section.links.map((link) => (
                     <li key={link.title}>
-                      <a
-                        href={link.href}
-                        className="hover:text-foreground inline-flex items-center transition-all duration-300"
-                      >
-                        {link.icon && <link.icon className="me-1 size-4" />}
-                        {link.title}
-                      </a>
+                      {link.href.startsWith('http') ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-foreground inline-flex items-center transition-all duration-300"
+                        >
+                          {link.title}
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="hover:text-foreground inline-flex items-center transition-all duration-300"
+                        >
+                          {link.title}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
               </div>
             </AnimatedContainer>
           ))}
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="mt-8 pt-8 border-t border-border/40 w-full flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-xs text-muted-foreground">
+          Built with <Heart className="inline h-3 w-3 text-red-500 fill-red-500" /> by Sandeep Gaddam
+        </p>
+        <div className="flex items-center gap-4">
+          <a
+            href="https://github.com/Sandeepgaddam5432/unqtools"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="GitHub"
+          >
+            <Github className="h-4 w-4" />
+          </a>
+          <span className="text-xs text-muted-foreground">
+            Proprietary — All rights reserved
+          </span>
         </div>
       </div>
     </footer>

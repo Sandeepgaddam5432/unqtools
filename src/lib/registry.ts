@@ -130,7 +130,6 @@ import { manifest as pdfToMobiConverter } from "@/tools/file/pdf-to-mobi-convert
 import { manifest as pdfToAzw3Converter } from "@/tools/file/pdf-to-azw3-converter/manifest";
 import { manifest as pdfToDjvuConverter } from "@/tools/file/pdf-to-djvu-converter/manifest";
 import { manifest as dmgExtractor } from "@/tools/file/dmg-extractor/manifest";
-import { manifest as pdfPageNumberingUtility } from "@/tools/file/pdf-page-numbering-utility/manifest";
 import { manifest as keynoteToPdfConverter } from "@/tools/file/keynote-to-pdf-converter/manifest";
 import { manifest as numbersToPdfConverter } from "@/tools/file/numbers-to-pdf-converter/manifest";
 import { manifest as pagesToPdfConverter } from "@/tools/file/pages-to-pdf-converter/manifest";
@@ -146,7 +145,6 @@ import { manifest as bzip2Decompressor } from "@/tools/file/bzip2-decompressor/m
 import { manifest as cbrComicBookReader } from "@/tools/file/cbr-comic-book-reader/manifest";
 import { manifest as litToEpubConverter } from "@/tools/file/lit-to-epub-converter/manifest";
 import { manifest as lrfToEpubConverter } from "@/tools/file/lrf-to-epub-converter/manifest";
-import { manifest as pdfPageExtractor } from "@/tools/file/pdf-page-extractor/manifest";
 import { manifest as pdfPasswordEncryptor } from "@/tools/file/pdf-password-encryptor/manifest";
 import { manifest as pdfSecurityRemover } from "@/tools/file/pdf-security-remover/manifest";
 import { manifest as postscriptToPdfConverter } from "@/tools/file/postscript-to-pdf-converter/manifest";
@@ -302,7 +300,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfToAzw3Converter,
   pdfToDjvuConverter,
   dmgExtractor,
-  pdfPageNumberingUtility,
   keynoteToPdfConverter,
   numbersToPdfConverter,
   pagesToPdfConverter,
@@ -318,7 +315,6 @@ export const TOOLS: readonly ToolManifest[] = [
   cbrComicBookReader,
   litToEpubConverter,
   lrfToEpubConverter,
-  pdfPageExtractor,
   pdfPasswordEncryptor,
   pdfSecurityRemover,
   postscriptToPdfConverter,
