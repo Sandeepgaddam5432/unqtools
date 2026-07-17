@@ -167,6 +167,16 @@ import { manifest as schemaJsonldGenerator } from "@/tools/seo/schema-jsonld-gen
 import { manifest as serpSnippetPreview } from "@/tools/seo/serp-snippet-preview/manifest";
 import { manifest as utmUrlBuilder } from "@/tools/seo/utm-url-builder/manifest";
 import { manifest as xmlSitemapGenerator } from "@/tools/seo/xml-sitemap-generator/manifest";
+import { manifest as breadcrumbSchemaGenerator } from "@/tools/seo/breadcrumb-schema-generator/manifest";
+import { manifest as howToSchemaGenerator } from "@/tools/seo/how-to-schema-generator/manifest";
+import { manifest as contentReadabilityAnalyzer } from "@/tools/seo/content-readability-analyzer/manifest";
+import { manifest as contentWordCount } from "@/tools/seo/content-word-count/manifest";
+import { manifest as headingStructureAnalyzer } from "@/tools/seo/heading-structure-analyzer/manifest";
+import { manifest as contentOutlineGenerator } from "@/tools/seo/content-outline-generator/manifest";
+import { manifest as contentBriefGenerator } from "@/tools/seo/content-brief-generator/manifest";
+import { manifest as keywordDensityAnalyzer } from "@/tools/seo/keyword-density-analyzer/manifest";
+import { manifest as contentGapAnalyzer } from "@/tools/seo/content-gap-analyzer/manifest";
+import { manifest as redirectChainChecker } from "@/tools/seo/redirect-chain-checker/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -328,34 +338,17 @@ export const TOOLS: readonly ToolManifest[] = [
   schemaJsonldGenerator,
   serpSnippetPreview,
   utmUrlBuilder,
-  xmlSitemapGenerator,  extractor7z,
-  arjExtractor,
-  bzip2Compressor,
-  bzip2Decompressor,
-  cbrComicBookReader,
-  litToEpubConverter,
-  lrfToEpubConverter,
-  pdfPageExtractor,
-  pdfPasswordEncryptor,
-  pdfSecurityRemover,
-  postscriptToPdfConverter,
-  prcToEpubConverter,
-  rarExtractor,
-  rpmExtractor,
-  tcrToEpubConverter,
-  wimExtractor,
-  xarExtractor,
-  zCompressor,
-  canonicalTagGenerator,
-  faqSchemaGenerator,
-  hreflangTagGenerator,
-  metaTagGenerator,
-  openGraphGenerator,
-  robotsTxtGenerator,
-  schemaJsonldGenerator,
-  serpSnippetPreview,
-  utmUrlBuilder,
   xmlSitemapGenerator,
+  breadcrumbSchemaGenerator,
+  howToSchemaGenerator,
+  contentReadabilityAnalyzer,
+  contentWordCount,
+  headingStructureAnalyzer,
+  contentOutlineGenerator,
+  contentBriefGenerator,
+  keywordDensityAnalyzer,
+  contentGapAnalyzer,
+  redirectChainChecker,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

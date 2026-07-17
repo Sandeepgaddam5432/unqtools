@@ -222,6 +222,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "serp-snippet-preview": () => import("@/tools/seo/serp-snippet-preview/ui"),
   "utm-url-builder": () => import("@/tools/seo/utm-url-builder/ui"),
   "xml-sitemap-generator": () => import("@/tools/seo/xml-sitemap-generator/ui"),
+  "breadcrumb-schema-generator": () => import("@/tools/seo/breadcrumb-schema-generator/ui"),
+  "how-to-schema-generator": () => import("@/tools/seo/how-to-schema-generator/ui"),
+  "content-readability-analyzer": () => import("@/tools/seo/content-readability-analyzer/ui"),
+  "content-word-count": () => import("@/tools/seo/content-word-count/ui"),
+  "heading-structure-analyzer": () => import("@/tools/seo/heading-structure-analyzer/ui"),
+  "content-outline-generator": () => import("@/tools/seo/content-outline-generator/ui"),
+  "content-brief-generator": () => import("@/tools/seo/content-brief-generator/ui"),
+  "keyword-density-analyzer": () => import("@/tools/seo/keyword-density-analyzer/ui"),
+  "content-gap-analyzer": () => import("@/tools/seo/content-gap-analyzer/ui"),
+  "redirect-chain-checker": () => import("@/tools/seo/redirect-chain-checker/ui"),
 };
 
 interface ToolPageClientProps {
