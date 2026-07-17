@@ -230,6 +230,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "keyword-density-analyzer": () => import("@/tools/seo/keyword-density-analyzer/ui"),
   "content-gap-analyzer": () => import("@/tools/seo/content-gap-analyzer/ui"),
   "redirect-chain-checker": () => import("@/tools/seo/redirect-chain-checker/ui"),
+  "disavow-file-generator": () => import("@/tools/seo/disavow-file-generator/ui"),
+  "keyword-match-type-builder": () => import("@/tools/seo/keyword-match-type-builder/ui"),
+  "outreach-email-template": () => import("@/tools/seo/outreach-email-template/ui"),
+  "html-to-text-ratio-checker": () => import("@/tools/seo/html-to-text-ratio-checker/ui"),
+  "image-seo-alt-text-auditor": () => import("@/tools/seo/image-seo-alt-text-auditor/ui"),
+  "anchor-text-distribution-analyzer": () => import("@/tools/seo/anchor-text-distribution-analyzer/ui"),
+  "nap-citation-consistency-checker": () => import("@/tools/seo/nap-citation-consistency-checker/ui"),
+  "google-analytics-4-event-builder": () => import("@/tools/seo/google-analytics-4-event-builder/ui"),
+  "conversion-tracking-tag-generator": () => import("@/tools/seo/conversion-tracking-tag-generator/ui"),
+  "responsive-search-ad-builder": () => import("@/tools/seo/responsive-search-ad-builder/ui"),
 };
 
 interface ToolPageClientProps {

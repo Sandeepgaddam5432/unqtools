@@ -175,6 +175,16 @@ import { manifest as contentBriefGenerator } from "@/tools/seo/content-brief-gen
 import { manifest as keywordDensityAnalyzer } from "@/tools/seo/keyword-density-analyzer/manifest";
 import { manifest as contentGapAnalyzer } from "@/tools/seo/content-gap-analyzer/manifest";
 import { manifest as redirectChainChecker } from "@/tools/seo/redirect-chain-checker/manifest";
+import { manifest as disavowFileGenerator } from "@/tools/seo/disavow-file-generator/manifest";
+import { manifest as keywordMatchTypeBuilder } from "@/tools/seo/keyword-match-type-builder/manifest";
+import { manifest as outreachEmailTemplate } from "@/tools/seo/outreach-email-template/manifest";
+import { manifest as htmlToTextRatioChecker } from "@/tools/seo/html-to-text-ratio-checker/manifest";
+import { manifest as imageSeoAltTextAuditor } from "@/tools/seo/image-seo-alt-text-auditor/manifest";
+import { manifest as anchorTextDistributionAnalyzer } from "@/tools/seo/anchor-text-distribution-analyzer/manifest";
+import { manifest as napCitationConsistencyChecker } from "@/tools/seo/nap-citation-consistency-checker/manifest";
+import { manifest as googleAnalytics4EventBuilder } from "@/tools/seo/google-analytics-4-event-builder/manifest";
+import { manifest as conversionTrackingTagGenerator } from "@/tools/seo/conversion-tracking-tag-generator/manifest";
+import { manifest as responsiveSearchAdBuilder } from "@/tools/seo/responsive-search-ad-builder/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -345,6 +355,16 @@ export const TOOLS: readonly ToolManifest[] = [
   keywordDensityAnalyzer,
   contentGapAnalyzer,
   redirectChainChecker,
+  disavowFileGenerator,
+  keywordMatchTypeBuilder,
+  outreachEmailTemplate,
+  htmlToTextRatioChecker,
+  imageSeoAltTextAuditor,
+  anchorTextDistributionAnalyzer,
+  napCitationConsistencyChecker,
+  googleAnalytics4EventBuilder,
+  conversionTrackingTagGenerator,
+  responsiveSearchAdBuilder,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
