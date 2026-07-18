@@ -235,6 +235,16 @@ import { manifest as contentCalendarPlanner } from "@/tools/seo/content-calendar
 import { manifest as topicClusterBuilder } from "@/tools/seo/topic-cluster-builder/manifest";
 import { manifest as contentDistributionPlanner } from "@/tools/seo/content-distribution-planner/manifest";
 import { manifest as brandMentionMonitor } from "@/tools/seo/brand-mention-monitor/manifest";
+import { manifest as internationalSeoPlanner } from "@/tools/seo/international-seo-planner/manifest";
+import { manifest as localeKeywordResearcher } from "@/tools/seo/locale-keyword-researcher/manifest";
+import { manifest as affiliateLinkCloaker } from "@/tools/seo/affiliate-link-cloaker/manifest";
+import { manifest as affiliateCommissionCalculator } from "@/tools/seo/affiliate-commission-calculator/manifest";
+import { manifest as productReviewSchemaGenerator } from "@/tools/seo/product-review-schema-generator/manifest";
+import { manifest as seoReportGenerator } from "@/tools/seo/seo-report-generator/manifest";
+import { manifest as seoKpiDashboardBuilder } from "@/tools/seo/seo-kpi-dashboard-builder/manifest";
+import { manifest as competitorWebsiteAnalyzer } from "@/tools/seo/competitor-website-analyzer/manifest";
+import { manifest as seoExperimentTracker } from "@/tools/seo/experiment-tracker/manifest";
+import { manifest as searchConsoleDataAnalyzer } from "@/tools/seo/search-console-data-analyzer/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -465,6 +475,16 @@ export const TOOLS: readonly ToolManifest[] = [
   topicClusterBuilder,
   contentDistributionPlanner,
   brandMentionMonitor,
+  internationalSeoPlanner,
+  localeKeywordResearcher,
+  affiliateLinkCloaker,
+  affiliateCommissionCalculator,
+  productReviewSchemaGenerator,
+  seoReportGenerator,
+  seoKpiDashboardBuilder,
+  competitorWebsiteAnalyzer,
+  seoExperimentTracker,
+  searchConsoleDataAnalyzer,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

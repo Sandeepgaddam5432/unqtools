@@ -290,6 +290,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "topic-cluster-builder": () => import("@/tools/seo/topic-cluster-builder/ui"),
   "content-distribution-planner": () => import("@/tools/seo/content-distribution-planner/ui"),
   "brand-mention-monitor": () => import("@/tools/seo/brand-mention-monitor/ui"),
+  "international-seo-planner": () => import("@/tools/seo/international-seo-planner/ui"),
+  "locale-keyword-researcher": () => import("@/tools/seo/locale-keyword-researcher/ui"),
+  "affiliate-link-cloaker": () => import("@/tools/seo/affiliate-link-cloaker/ui"),
+  "affiliate-commission-calculator": () => import("@/tools/seo/affiliate-commission-calculator/ui"),
+  "product-review-schema-generator": () => import("@/tools/seo/product-review-schema-generator/ui"),
+  "seo-report-generator": () => import("@/tools/seo/seo-report-generator/ui"),
+  "seo-kpi-dashboard-builder": () => import("@/tools/seo/seo-kpi-dashboard-builder/ui"),
+  "competitor-website-analyzer": () => import("@/tools/seo/competitor-website-analyzer/ui"),
+  "seo-experiment-tracker": () => import("@/tools/seo/experiment-tracker/ui"),
+  "search-console-data-analyzer": () => import("@/tools/seo/search-console-data-analyzer/ui"),
 };
 
 interface ToolPageClientProps {
