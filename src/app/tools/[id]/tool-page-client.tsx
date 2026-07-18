@@ -250,6 +250,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "people-also-ask-extractor": () => import("@/tools/seo/people-also-ask-extractor/ui"),
   "redirect-htaccess-generator": () => import("@/tools/seo/redirect-htaccess-generator/ui"),
   "seo-content-scorecard": () => import("@/tools/seo/seo-content-scorecard/ui"),
+  "keyword-research-explorer": () => import("@/tools/seo/keyword-research-explorer/ui"),
+  "keyword-difficulty-estimator": () => import("@/tools/seo/keyword-difficulty-estimator/ui"),
+  "search-intent-classifier": () => import("@/tools/seo/search-intent-classifier/ui"),
+  "tf-idf-content-optimizer": () => import("@/tools/seo/tf-idf-content-optimizer/ui"),
+  "serp-competitor-analysis": () => import("@/tools/seo/serp-competitor-analysis/ui"),
+  "local-business-schema-generator": () => import("@/tools/seo/local-business-schema-generator/ui"),
+  "open-graph-image-generator": () => import("@/tools/seo/open-graph-image-generator/ui"),
+  "title-meta-pixel-checker": () => import("@/tools/seo/title-meta-pixel-checker/ui"),
+  "structured-data-validator": () => import("@/tools/seo/structured-data-validator/ui"),
+  "backlink-profile-analyzer": () => import("@/tools/seo/backlink-profile-analyzer/ui"),
 };
 
 interface ToolPageClientProps {

@@ -195,6 +195,16 @@ import { manifest as keywordGroupingTool } from "@/tools/seo/keyword-grouping-to
 import { manifest as peopleAlsoAskExtractor } from "@/tools/seo/people-also-ask-extractor/manifest";
 import { manifest as redirectHtaccessGenerator } from "@/tools/seo/redirect-htaccess-generator/manifest";
 import { manifest as seoContentScorecard } from "@/tools/seo/seo-content-scorecard/manifest";
+import { manifest as keywordResearchExplorer } from "@/tools/seo/keyword-research-explorer/manifest";
+import { manifest as keywordDifficultyEstimator } from "@/tools/seo/keyword-difficulty-estimator/manifest";
+import { manifest as searchIntentClassifier } from "@/tools/seo/search-intent-classifier/manifest";
+import { manifest as tfIdfContentOptimizer } from "@/tools/seo/tf-idf-content-optimizer/manifest";
+import { manifest as serpCompetitorAnalysis } from "@/tools/seo/serp-competitor-analysis/manifest";
+import { manifest as localBusinessSchemaGenerator } from "@/tools/seo/local-business-schema-generator/manifest";
+import { manifest as openGraphImageGenerator } from "@/tools/seo/open-graph-image-generator/manifest";
+import { manifest as titleMetaPixelChecker } from "@/tools/seo/title-meta-pixel-checker/manifest";
+import { manifest as structuredDataValidator } from "@/tools/seo/structured-data-validator/manifest";
+import { manifest as backlinkProfileAnalyzer } from "@/tools/seo/backlink-profile-analyzer/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -385,6 +395,16 @@ export const TOOLS: readonly ToolManifest[] = [
   peopleAlsoAskExtractor,
   redirectHtaccessGenerator,
   seoContentScorecard,
+  keywordResearchExplorer,
+  keywordDifficultyEstimator,
+  searchIntentClassifier,
+  tfIdfContentOptimizer,
+  serpCompetitorAnalysis,
+  localBusinessSchemaGenerator,
+  openGraphImageGenerator,
+  titleMetaPixelChecker,
+  structuredDataValidator,
+  backlinkProfileAnalyzer,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
