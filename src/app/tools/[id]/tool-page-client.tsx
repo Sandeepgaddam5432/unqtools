@@ -270,6 +270,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "backlink-gap-analyzer": () => import("@/tools/seo/backlink-gap-analyzer/ui"),
   "link-prospecting-builder": () => import("@/tools/seo/link-prospecting-builder/ui"),
   "guest-post-finder": () => import("@/tools/seo/guest-post-finder/ui"),
+  "content-pruning-auditor": () => import("@/tools/seo/content-pruning-auditor/ui"),
+  "orphan-page-detector": () => import("@/tools/seo/orphan-page-detector/ui"),
+  "crawl-budget-estimator": () => import("@/tools/seo/crawl-budget-estimator/ui"),
+  "pagination-seo-checker": () => import("@/tools/seo/pagination-seo-checker/ui"),
+  "faceted-nav-seo-analyzer": () => import("@/tools/seo/faceted-nav-seo-analyzer/ui"),
+  "javascript-seo-render-tester": () => import("@/tools/seo/javascript-seo-render-tester/ui"),
+  "log-file-analyzer": () => import("@/tools/seo/log-file-analyzer/ui"),
+  "index-coverage-reporter": () => import("@/tools/seo/index-coverage-reporter/ui"),
+  "page-experience-signal-checker": () => import("@/tools/seo/page-experience-signal-checker/ui"),
+  "e-commerce-product-seo-optimizer": () => import("@/tools/seo/e-commerce-product-seo-optimizer/ui"),
 };
 
 interface ToolPageClientProps {

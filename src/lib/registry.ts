@@ -215,6 +215,16 @@ import { manifest as lostNewBacklinkTracker } from "@/tools/seo/lost-new-backlin
 import { manifest as backlinkGapAnalyzer } from "@/tools/seo/backlink-gap-analyzer/manifest";
 import { manifest as linkProspectingBuilder } from "@/tools/seo/link-prospecting-builder/manifest";
 import { manifest as guestPostFinder } from "@/tools/seo/guest-post-finder/manifest";
+import { manifest as contentPruningAuditor } from "@/tools/seo/content-pruning-auditor/manifest";
+import { manifest as orphanPageDetector } from "@/tools/seo/orphan-page-detector/manifest";
+import { manifest as crawlBudgetEstimator } from "@/tools/seo/crawl-budget-estimator/manifest";
+import { manifest as paginationSeoChecker } from "@/tools/seo/pagination-seo-checker/manifest";
+import { manifest as facetedNavSeoAnalyzer } from "@/tools/seo/faceted-nav-seo-analyzer/manifest";
+import { manifest as javascriptSeoRenderTester } from "@/tools/seo/javascript-seo-render-tester/manifest";
+import { manifest as logFileAnalyzer } from "@/tools/seo/log-file-analyzer/manifest";
+import { manifest as indexCoverageReporter } from "@/tools/seo/index-coverage-reporter/manifest";
+import { manifest as pageExperienceSignalChecker } from "@/tools/seo/page-experience-signal-checker/manifest";
+import { manifest as ecommerceProductSeoOptimizer } from "@/tools/seo/e-commerce-product-seo-optimizer/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -425,6 +435,16 @@ export const TOOLS: readonly ToolManifest[] = [
   backlinkGapAnalyzer,
   linkProspectingBuilder,
   guestPostFinder,
+  contentPruningAuditor,
+  orphanPageDetector,
+  crawlBudgetEstimator,
+  paginationSeoChecker,
+  facetedNavSeoAnalyzer,
+  javascriptSeoRenderTester,
+  logFileAnalyzer,
+  indexCoverageReporter,
+  pageExperienceSignalChecker,
+  ecommerceProductSeoOptimizer,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
