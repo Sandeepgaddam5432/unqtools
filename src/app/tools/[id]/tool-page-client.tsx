@@ -280,6 +280,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "index-coverage-reporter": () => import("@/tools/seo/index-coverage-reporter/ui"),
   "page-experience-signal-checker": () => import("@/tools/seo/page-experience-signal-checker/ui"),
   "e-commerce-product-seo-optimizer": () => import("@/tools/seo/e-commerce-product-seo-optimizer/ui"),
+  "local-rank-tracker": () => import("@/tools/seo/local-rank-tracker/ui"),
+  "google-business-profile-optimizer": () => import("@/tools/seo/google-business-profile-optimizer/ui"),
+  "citation-finder": () => import("@/tools/seo/citation-finder/ui"),
+  "review-sentiment-analyzer": () => import("@/tools/seo/review-sentiment-analyzer/ui"),
+  "youtube-video-seo-optimizer": () => import("@/tools/seo/youtube-video-seo-optimizer/ui"),
+  "video-schema-generator": () => import("@/tools/seo/video-schema-generator/ui"),
+  "content-calendar-planner": () => import("@/tools/seo/content-calendar-planner/ui"),
+  "topic-cluster-builder": () => import("@/tools/seo/topic-cluster-builder/ui"),
+  "content-distribution-planner": () => import("@/tools/seo/content-distribution-planner/ui"),
+  "brand-mention-monitor": () => import("@/tools/seo/brand-mention-monitor/ui"),
 };
 
 interface ToolPageClientProps {

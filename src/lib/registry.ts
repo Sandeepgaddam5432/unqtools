@@ -225,6 +225,16 @@ import { manifest as logFileAnalyzer } from "@/tools/seo/log-file-analyzer/manif
 import { manifest as indexCoverageReporter } from "@/tools/seo/index-coverage-reporter/manifest";
 import { manifest as pageExperienceSignalChecker } from "@/tools/seo/page-experience-signal-checker/manifest";
 import { manifest as ecommerceProductSeoOptimizer } from "@/tools/seo/e-commerce-product-seo-optimizer/manifest";
+import { manifest as localRankTracker } from "@/tools/seo/local-rank-tracker/manifest";
+import { manifest as googleBusinessProfileOptimizer } from "@/tools/seo/google-business-profile-optimizer/manifest";
+import { manifest as citationFinder } from "@/tools/seo/citation-finder/manifest";
+import { manifest as reviewSentimentAnalyzer } from "@/tools/seo/review-sentiment-analyzer/manifest";
+import { manifest as youtubeVideoSeoOptimizer } from "@/tools/seo/youtube-video-seo-optimizer/manifest";
+import { manifest as videoSchemaGenerator } from "@/tools/seo/video-schema-generator/manifest";
+import { manifest as contentCalendarPlanner } from "@/tools/seo/content-calendar-planner/manifest";
+import { manifest as topicClusterBuilder } from "@/tools/seo/topic-cluster-builder/manifest";
+import { manifest as contentDistributionPlanner } from "@/tools/seo/content-distribution-planner/manifest";
+import { manifest as brandMentionMonitor } from "@/tools/seo/brand-mention-monitor/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -445,6 +455,16 @@ export const TOOLS: readonly ToolManifest[] = [
   indexCoverageReporter,
   pageExperienceSignalChecker,
   ecommerceProductSeoOptimizer,
+  localRankTracker,
+  googleBusinessProfileOptimizer,
+  citationFinder,
+  reviewSentimentAnalyzer,
+  youtubeVideoSeoOptimizer,
+  videoSchemaGenerator,
+  contentCalendarPlanner,
+  topicClusterBuilder,
+  contentDistributionPlanner,
+  brandMentionMonitor,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
