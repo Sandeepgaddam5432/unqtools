@@ -205,6 +205,16 @@ import { manifest as openGraphImageGenerator } from "@/tools/seo/open-graph-imag
 import { manifest as titleMetaPixelChecker } from "@/tools/seo/title-meta-pixel-checker/manifest";
 import { manifest as structuredDataValidator } from "@/tools/seo/structured-data-validator/manifest";
 import { manifest as backlinkProfileAnalyzer } from "@/tools/seo/backlink-profile-analyzer/manifest";
+import { manifest as keywordRankTracker } from "@/tools/seo/keyword-rank-tracker/manifest";
+import { manifest as serpPositionChecker } from "@/tools/seo/serp-position-checker/manifest";
+import { manifest as rankChangeVisualizer } from "@/tools/seo/rank-change-visualizer/manifest";
+import { manifest as shareOfVoiceCalculator } from "@/tools/seo/share-of-voice-calculator/manifest";
+import { manifest as competitorRankComparison } from "@/tools/seo/competitor-rank-comparison/manifest";
+import { manifest as backlinkQualityScorer } from "@/tools/seo/backlink-quality-scorer/manifest";
+import { manifest as lostNewBacklinkTracker } from "@/tools/seo/lost-new-backlink-tracker/manifest";
+import { manifest as backlinkGapAnalyzer } from "@/tools/seo/backlink-gap-analyzer/manifest";
+import { manifest as linkProspectingBuilder } from "@/tools/seo/link-prospecting-builder/manifest";
+import { manifest as guestPostFinder } from "@/tools/seo/guest-post-finder/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -405,6 +415,16 @@ export const TOOLS: readonly ToolManifest[] = [
   titleMetaPixelChecker,
   structuredDataValidator,
   backlinkProfileAnalyzer,
+  keywordRankTracker,
+  serpPositionChecker,
+  rankChangeVisualizer,
+  shareOfVoiceCalculator,
+  competitorRankComparison,
+  backlinkQualityScorer,
+  lostNewBacklinkTracker,
+  backlinkGapAnalyzer,
+  linkProspectingBuilder,
+  guestPostFinder,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

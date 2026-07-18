@@ -260,6 +260,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "title-meta-pixel-checker": () => import("@/tools/seo/title-meta-pixel-checker/ui"),
   "structured-data-validator": () => import("@/tools/seo/structured-data-validator/ui"),
   "backlink-profile-analyzer": () => import("@/tools/seo/backlink-profile-analyzer/ui"),
+  "keyword-rank-tracker": () => import("@/tools/seo/keyword-rank-tracker/ui"),
+  "serp-position-checker": () => import("@/tools/seo/serp-position-checker/ui"),
+  "rank-change-visualizer": () => import("@/tools/seo/rank-change-visualizer/ui"),
+  "share-of-voice-calculator": () => import("@/tools/seo/share-of-voice-calculator/ui"),
+  "competitor-rank-comparison": () => import("@/tools/seo/competitor-rank-comparison/ui"),
+  "backlink-quality-scorer": () => import("@/tools/seo/backlink-quality-scorer/ui"),
+  "lost-new-backlink-tracker": () => import("@/tools/seo/lost-new-backlink-tracker/ui"),
+  "backlink-gap-analyzer": () => import("@/tools/seo/backlink-gap-analyzer/ui"),
+  "link-prospecting-builder": () => import("@/tools/seo/link-prospecting-builder/ui"),
+  "guest-post-finder": () => import("@/tools/seo/guest-post-finder/ui"),
 };
 
 interface ToolPageClientProps {
