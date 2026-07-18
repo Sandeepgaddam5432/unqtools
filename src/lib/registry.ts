@@ -245,6 +245,26 @@ import { manifest as seoKpiDashboardBuilder } from "@/tools/seo/seo-kpi-dashboar
 import { manifest as competitorWebsiteAnalyzer } from "@/tools/seo/competitor-website-analyzer/manifest";
 import { manifest as seoExperimentTracker } from "@/tools/seo/experiment-tracker/manifest";
 import { manifest as searchConsoleDataAnalyzer } from "@/tools/seo/search-console-data-analyzer/manifest";
+import { manifest as audioRecorder } from "@/tools/audio-video/audio-recorder/manifest";
+import { manifest as audioTrimmer } from "@/tools/audio-video/audio-trimmer/manifest";
+import { manifest as audioConverter } from "@/tools/audio-video/audio-converter/manifest";
+import { manifest as audioVolumeNormalizer } from "@/tools/audio-video/audio-volume-normalizer/manifest";
+import { manifest as audioSpeedChanger } from "@/tools/audio-video/audio-speed-changer/manifest";
+import { manifest as audioReverser } from "@/tools/audio-video/audio-reverser/manifest";
+import { manifest as audioMerger } from "@/tools/audio-video/audio-merger/manifest";
+import { manifest as audioSplitter } from "@/tools/audio-video/audio-splitter/manifest";
+import { manifest as audioFadeGenerator } from "@/tools/audio-video/audio-fade-generator/manifest";
+import { manifest as audioMetadataEditor } from "@/tools/audio-video/audio-metadata-editor/manifest";
+import { manifest as audioSpectrumAnalyzer } from "@/tools/audio-video/audio-spectrum-analyzer/manifest";
+import { manifest as audioWaveformViewer } from "@/tools/audio-video/audio-waveform-viewer/manifest";
+import { manifest as audioNoiseReducer } from "@/tools/audio-video/audio-noise-reducer/manifest";
+import { manifest as audioEqualizer } from "@/tools/audio-video/audio-equalizer/manifest";
+import { manifest as videoTrimmer } from "@/tools/audio-video/video-trimmer/manifest";
+import { manifest as videoCompressor } from "@/tools/audio-video/video-compressor/manifest";
+import { manifest as videoMetadataViewer } from "@/tools/audio-video/video-metadata-viewer/manifest";
+import { manifest as videoFrameExtractor } from "@/tools/audio-video/video-frame-extractor/manifest";
+import { manifest as audioFormatDetector } from "@/tools/audio-video/audio-format-detector/manifest";
+import { manifest as audioBitrateCalculator } from "@/tools/audio-video/audio-bitrate-calculator/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -485,6 +505,26 @@ export const TOOLS: readonly ToolManifest[] = [
   competitorWebsiteAnalyzer,
   seoExperimentTracker,
   searchConsoleDataAnalyzer,
+  audioRecorder,
+  audioTrimmer,
+  audioConverter,
+  audioVolumeNormalizer,
+  audioSpeedChanger,
+  audioReverser,
+  audioMerger,
+  audioSplitter,
+  audioFadeGenerator,
+  audioMetadataEditor,
+  audioSpectrumAnalyzer,
+  audioWaveformViewer,
+  audioNoiseReducer,
+  audioEqualizer,
+  videoTrimmer,
+  videoCompressor,
+  videoMetadataViewer,
+  videoFrameExtractor,
+  audioFormatDetector,
+  audioBitrateCalculator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
