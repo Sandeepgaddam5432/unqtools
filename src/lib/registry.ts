@@ -265,6 +265,31 @@ import { manifest as videoMetadataViewer } from "@/tools/audio-video/video-metad
 import { manifest as videoFrameExtractor } from "@/tools/audio-video/video-frame-extractor/manifest";
 import { manifest as audioFormatDetector } from "@/tools/audio-video/audio-format-detector/manifest";
 import { manifest as audioBitrateCalculator } from "@/tools/audio-video/audio-bitrate-calculator/manifest";
+import { manifest as invoiceGenerator } from "@/tools/business/invoice-generator/manifest";
+import { manifest as quoteGenerator } from "@/tools/business/quote-generator/manifest";
+import { manifest as receiptMaker } from "@/tools/business/receipt-maker/manifest";
+import { manifest as taxCalculator } from "@/tools/business/tax-calculator/manifest";
+import { manifest as payrollCalculator } from "@/tools/business/payroll-calculator/manifest";
+import { manifest as timeTracker } from "@/tools/business/time-tracker/manifest";
+import { manifest as timesheetGenerator } from "@/tools/business/timesheet-generator/manifest";
+import { manifest as pomodoroTimer } from "@/tools/business/pomodoro-timer/manifest";
+import { manifest as workHoursCalculator } from "@/tools/business/work-hours-calculator/manifest";
+import { manifest as expenseTracker } from "@/tools/business/expense-tracker/manifest";
+import { manifest as budgetPlanner } from "@/tools/business/budget-planner/manifest";
+import { manifest as roiCalculator } from "@/tools/business/roi-calculator/manifest";
+import { manifest as breakEvenCalculator } from "@/tools/business/break-even-calculator/manifest";
+import { manifest as loanAmortizationSchedule } from "@/tools/business/loan-amortization-schedule/manifest";
+import { manifest as projectTaskTracker } from "@/tools/business/project-task-tracker/manifest";
+import { manifest as ganttChartMaker } from "@/tools/business/gantt-chart-maker/manifest";
+import { manifest as meetingAgendaMaker } from "@/tools/business/meeting-agenda-maker/manifest";
+import { manifest as decisionMatrixBuilder } from "@/tools/business/decision-matrix-builder/manifest";
+import { manifest as contractTemplateGenerator } from "@/tools/business/contract-template-generator/manifest";
+import { manifest as emailTemplateManager } from "@/tools/business/email-template-manager/manifest";
+import { manifest as meetingNotesMaker } from "@/tools/business/meeting-notes-maker/manifest";
+import { manifest as sopGenerator } from "@/tools/business/sop-generator/manifest";
+import { manifest as salesPipelineTracker } from "@/tools/business/sales-pipeline-tracker/manifest";
+import { manifest as customerTracker } from "@/tools/business/customer-tracker/manifest";
+import { manifest as commissionTracker } from "@/tools/business/commission-tracker/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -525,6 +550,31 @@ export const TOOLS: readonly ToolManifest[] = [
   videoFrameExtractor,
   audioFormatDetector,
   audioBitrateCalculator,
+  invoiceGenerator,
+  quoteGenerator,
+  receiptMaker,
+  taxCalculator,
+  payrollCalculator,
+  timeTracker,
+  timesheetGenerator,
+  pomodoroTimer,
+  workHoursCalculator,
+  expenseTracker,
+  budgetPlanner,
+  roiCalculator,
+  breakEvenCalculator,
+  loanAmortizationSchedule,
+  projectTaskTracker,
+  ganttChartMaker,
+  meetingAgendaMaker,
+  decisionMatrixBuilder,
+  contractTemplateGenerator,
+  emailTemplateManager,
+  meetingNotesMaker,
+  sopGenerator,
+  salesPipelineTracker,
+  customerTracker,
+  commissionTracker,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
