@@ -4,9 +4,9 @@ import ToolsPageClient from "./tools-page-client";
 const SITE_URL = "https://unqtools.pages.dev";
 
 export const metadata: Metadata = {
-  title: "All Tools — 160+ Free Online Browser Tools",
+  title: "All Tools — 280+ Free Online Browser Tools",
   description:
-    "Browse 160+ free online tools — PDF utilities, file converters, text tools, calculators, SEO tools, security tools, and more. 100% private, offline-capable, no signup required.",
+    "Browse 280+ free online tools — PDF utilities, file converters, text tools, calculators, SEO tools, security tools, and more. 100% private, offline-capable, no signup required.",
   keywords: [
     "online tools",
     "free tools",
@@ -25,16 +25,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: `${SITE_URL}/tools`,
-    title: "All Tools — 160+ Free Online Browser Tools",
+    title: "All Tools — 280+ Free Online Browser Tools",
     description:
-      "Browse 160+ free online tools — PDF utilities, file converters, text tools, calculators, SEO tools, and more. 100% private, no signup.",
+      "Browse 280+ free online tools — PDF utilities, file converters, text tools, calculators, SEO tools, and more. 100% private, no signup.",
     siteName: "UnQTools",
   },
   twitter: {
     card: "summary",
-    title: "All Tools — 160+ Free Online Browser Tools",
+    title: "All Tools — 280+ Free Online Browser Tools",
     description:
-      "Browse 160+ free online tools. 100% private, offline-capable, no signup required.",
+      "Browse 280+ free online tools. 100% private, offline-capable, no signup required.",
   },
 };
 
@@ -42,7 +42,7 @@ const itemListJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: "UnQTools — All Tools",
-  numberOfItems: 160,
+  numberOfItems: 283,
   url: `${SITE_URL}/tools`,
 };
 

@@ -87,5 +87,20 @@
     "tw-animate-css": "^1.3.5",
     "typescript": "^5",
     "vitest": "^4.1.9"
-  }
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "Firefox ESR",
+    "Safari >= 16",
+    "Chrome >= 100",
+    "Edge >= 100",
+    "iOS >= 16",
+    "Android >= 10",
+    "not dead",
+    "not ie <= 99",
+    "not op_mini all"
+  ]
 }

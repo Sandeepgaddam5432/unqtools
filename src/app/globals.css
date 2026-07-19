@@ -237,3 +237,149 @@ html {
     transform: none !important;
   }
 }
+
+/* ===== Horizontal overflow protection (fixes PageSpeed report) =====
+   Applied globally to prevent:
+   - Long URLs overflowing their containers
+   - Code blocks causing horizontal scroll
+   - Tables breaking out of card width
+   - Flex/grid children not shrinking to fit
+   - Pre-formatted text causing layout overflow
+*/
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* All elements: break long words by default */
+* {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* But preserve intentional whitespace in pre/code */
+pre, code, kbd, samp, .font-mono {
+  overflow-wrap: normal;
+  word-break: normal;
+  white-space: pre-wrap;
+}
+
+/* Pre blocks: always scroll horizontally inside their container instead of expanding */
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Tables: scroll horizontally within parent container */
+table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Flex children: allow shrinking so long content doesn't push layout */
+.flex > *, .grid > * {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Inline code: wrap if needed */
+code {
+  word-break: break-all;
+}
+
+/* Textareas: never expand beyond their container */
+textarea {
+  max-width: 100%;
+  resize: vertical;
+}
+
+/* Inputs: never expand beyond their container */
+input, select {
+  max-width: 100%;
+}
+
+/* Links with long URLs: break-word */
+a {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Card content: ensure no horizontal overflow */
+[data-slot="card-content"],
+[data-slot="card"] {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Badge: never overflow */
+[data-slot="badge"] {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Tool page hero: prevent long tool names from overflowing */
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Hide horizontal scrollbar on body but keep vertical */
+body::-webkit-scrollbar:horizontal {
+  display: none;
+}
+
+/* Container queries: ensure mobile-first sizing */
+.container {
+  max-width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Long content in tool pages: wrap properly */
+.prose, .tool-content {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* Prevents SVG/canvas from overflowing */
+svg, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Image: never break layout */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Containers with overflow: auto get touch scrolling */
+.overflow-auto, .overflow-x-auto, .overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide content visually but keep accessible (for screen readers) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
