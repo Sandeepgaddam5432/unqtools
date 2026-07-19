@@ -310,6 +310,31 @@ import { manifest as chemistryFormulaCalculator } from "@/tools/education/chemis
 import { manifest as physicsFormulaReference } from "@/tools/education/physics-formula-reference/manifest";
 import { manifest as studyNotesOrganizer } from "@/tools/education/study-notes-organizer/manifest";
 import { manifest as presentationSlideOutliner } from "@/tools/education/presentation-slide-outliner/manifest";
+import { manifest as socialMediaPostGenerator } from "@/tools/social/social-media-post-generator/manifest";
+import { manifest as hashtagGenerator } from "@/tools/social/hashtag-generator/manifest";
+import { manifest as captionGenerator } from "@/tools/social/caption-generator/manifest";
+import { manifest as socialMediaBioGenerator } from "@/tools/social/social-media-bio-generator/manifest";
+import { manifest as emojiPickerKeyboard } from "@/tools/social/emoji-picker-keyboard/manifest";
+import { manifest as socialMediaImageResizer } from "@/tools/social/social-media-image-resizer/manifest";
+import { manifest as tweetThreadPlanner } from "@/tools/social/tweet-thread-planner/manifest";
+import { manifest as instagramStoryPlanner } from "@/tools/social/instagram-story-planner/manifest";
+import { manifest as linkedinPostFormatter } from "@/tools/social/linkedin-post-formatter/manifest";
+import { manifest as youtubeThumbnailTextOverlay } from "@/tools/social/youtube-thumbnail-text-overlay/manifest";
+import { manifest as contentCalendarScheduler } from "@/tools/social/content-calendar-scheduler/manifest";
+import { manifest as socialMediaCharacterCounter } from "@/tools/social/social-media-character-counter/manifest";
+import { manifest as tiktokVideoDescriptionGenerator } from "@/tools/social/tiktok-video-description-generator/manifest";
+import { manifest as pinterestPinDescriptionGenerator } from "@/tools/social/pinterest-pin-description-generator/manifest";
+import { manifest as socialMediaEngagementTracker } from "@/tools/social/social-media-engagement-tracker/manifest";
+import { manifest as socialMediaMentionTracker } from "@/tools/social/social-media-mention-tracker/manifest";
+import { manifest as socialMediaHashtagAnalyzer } from "@/tools/social/social-media-hashtag-analyzer/manifest";
+import { manifest as socialMediaTrendDetector } from "@/tools/social/social-media-trend-detector/manifest";
+import { manifest as socialMediaContestPlanner } from "@/tools/social/social-media-contest-planner/manifest";
+import { manifest as socialMediaCollabFinder } from "@/tools/social/social-media-collab-finder/manifest";
+import { manifest as socialMediaAnalyticsDashboard } from "@/tools/social/social-media-analytics-dashboard/manifest";
+import { manifest as socialMediaContentRepurposer } from "@/tools/social/social-media-content-repurposer/manifest";
+import { manifest as socialMediaCommentResponder } from "@/tools/social/social-media-comment-responder/manifest";
+import { manifest as socialMediaEmojiTranslator } from "@/tools/social/social-media-emoji-translator/manifest";
+import { manifest as socialMediaPollGenerator } from "@/tools/social/social-media-poll-generator/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -615,6 +640,31 @@ export const TOOLS: readonly ToolManifest[] = [
   physicsFormulaReference,
   studyNotesOrganizer,
   presentationSlideOutliner,
+  socialMediaPostGenerator,
+  hashtagGenerator,
+  captionGenerator,
+  socialMediaBioGenerator,
+  emojiPickerKeyboard,
+  socialMediaImageResizer,
+  tweetThreadPlanner,
+  instagramStoryPlanner,
+  linkedinPostFormatter,
+  youtubeThumbnailTextOverlay,
+  contentCalendarScheduler,
+  socialMediaCharacterCounter,
+  tiktokVideoDescriptionGenerator,
+  pinterestPinDescriptionGenerator,
+  socialMediaEngagementTracker,
+  socialMediaMentionTracker,
+  socialMediaHashtagAnalyzer,
+  socialMediaTrendDetector,
+  socialMediaContestPlanner,
+  socialMediaCollabFinder,
+  socialMediaAnalyticsDashboard,
+  socialMediaContentRepurposer,
+  socialMediaCommentResponder,
+  socialMediaEmojiTranslator,
+  socialMediaPollGenerator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
