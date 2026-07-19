@@ -335,6 +335,36 @@ import { manifest as socialMediaContentRepurposer } from "@/tools/social/social-
 import { manifest as socialMediaCommentResponder } from "@/tools/social/social-media-comment-responder/manifest";
 import { manifest as socialMediaEmojiTranslator } from "@/tools/social/social-media-emoji-translator/manifest";
 import { manifest as socialMediaPollGenerator } from "@/tools/social/social-media-poll-generator/manifest";
+import { manifest as pdfOcrTextExtractor } from "@/tools/pdf/pdf-ocr-text-extractor/manifest";
+import { manifest as pdfWordConverterV2 } from "@/tools/pdf/pdf-to-word-converter/manifest";
+import { manifest as pdfExcelConverterV2 } from "@/tools/pdf/pdf-to-excel-converter/manifest";
+import { manifest as pdfFormFiller } from "@/tools/pdf/pdf-form-filler/manifest";
+import { manifest as pdfRedactionTool } from "@/tools/pdf/pdf-redaction-tool/manifest";
+import { manifest as pdfCompare } from "@/tools/pdf/pdf-compare/manifest";
+import { manifest as pdfBookletMaker } from "@/tools/pdf/pdf-booklet-maker/manifest";
+import { manifest as pdfImposition } from "@/tools/pdf/pdf-imposition/manifest";
+import { manifest as pdfColorSeparation } from "@/tools/pdf/pdf-color-separation/manifest";
+import { manifest as pdfGrayscaleConverter } from "@/tools/pdf/pdf-grayscale-converter/manifest";
+import { manifest as pdfBleedAdder } from "@/tools/pdf/pdf-bleed-adder/manifest";
+import { manifest as pdfCropMarks } from "@/tools/pdf/pdf-crop-marks/manifest";
+import { manifest as pdfInkCoverageAnalyzer } from "@/tools/pdf/pdf-ink-coverage-analyzer/manifest";
+import { manifest as pdfFontExtractor } from "@/tools/pdf/pdf-font-extractor/manifest";
+import { manifest as pdfFontSubsetter } from "@/tools/pdf/pdf-font-subsetter/manifest";
+import { manifest as pdfAccessibilityChecker } from "@/tools/pdf/pdf-accessibility-checker/manifest";
+import { manifest as pdfAltTextGenerator } from "@/tools/pdf/pdf-alt-text-generator/manifest";
+import { manifest as pdfTagTreeViewer } from "@/tools/pdf/pdf-tag-tree-viewer/manifest";
+import { manifest as pdfThumbnailGenerator } from "@/tools/pdf/pdf-thumbnail-generator/manifest";
+import { manifest as pdfZipBundler } from "@/tools/pdf/pdf-zip-bundler/manifest";
+import { manifest as pdfSizeOptimizer } from "@/tools/pdf/pdf-size-optimizer/manifest";
+import { manifest as pdfVersionConverter } from "@/tools/pdf/pdf-version-converter/manifest";
+import { manifest as pdfQrCodeStamper } from "@/tools/pdf/pdf-qr-code-stamper/manifest";
+import { manifest as pdfBarcodeStamper } from "@/tools/pdf/pdf-barcode-stamper/manifest";
+import { manifest as pdfHeaderFooterAdder } from "@/tools/pdf/pdf-header-footer-adder/manifest";
+import { manifest as pdfBookmarkFromHeadings } from "@/tools/pdf/pdf-bookmark-from-headings/manifest";
+import { manifest as pdfTranslationOverlay } from "@/tools/pdf/pdf-translation-overlay/manifest";
+import { manifest as pdfTableExtractor } from "@/tools/pdf/pdf-table-extractor/manifest";
+import { manifest as pdfFormFieldExtractor } from "@/tools/pdf/pdf-form-field-extractor/manifest";
+import { manifest as pdfPowerpointConverterV2 } from "@/tools/pdf/pdf-to-powerpoint-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -665,6 +695,36 @@ export const TOOLS: readonly ToolManifest[] = [
   socialMediaCommentResponder,
   socialMediaEmojiTranslator,
   socialMediaPollGenerator,
+  pdfOcrTextExtractor,
+  pdfWordConverterV2,
+  pdfExcelConverterV2,
+  pdfFormFiller,
+  pdfRedactionTool,
+  pdfCompare,
+  pdfBookletMaker,
+  pdfImposition,
+  pdfColorSeparation,
+  pdfGrayscaleConverter,
+  pdfBleedAdder,
+  pdfCropMarks,
+  pdfInkCoverageAnalyzer,
+  pdfFontExtractor,
+  pdfFontSubsetter,
+  pdfAccessibilityChecker,
+  pdfAltTextGenerator,
+  pdfTagTreeViewer,
+  pdfThumbnailGenerator,
+  pdfZipBundler,
+  pdfSizeOptimizer,
+  pdfVersionConverter,
+  pdfQrCodeStamper,
+  pdfBarcodeStamper,
+  pdfHeaderFooterAdder,
+  pdfBookmarkFromHeadings,
+  pdfTranslationOverlay,
+  pdfTableExtractor,
+  pdfFormFieldExtractor,
+  pdfPowerpointConverterV2,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
