@@ -290,6 +290,26 @@ import { manifest as sopGenerator } from "@/tools/business/sop-generator/manifes
 import { manifest as salesPipelineTracker } from "@/tools/business/sales-pipeline-tracker/manifest";
 import { manifest as customerTracker } from "@/tools/business/customer-tracker/manifest";
 import { manifest as commissionTracker } from "@/tools/business/commission-tracker/manifest";
+import { manifest as flashcardMaker } from "@/tools/education/flashcard-maker/manifest";
+import { manifest as quizGenerator } from "@/tools/education/quiz-generator/manifest";
+import { manifest as studyPlanner } from "@/tools/education/study-planner/manifest";
+import { manifest as gradeCalculator } from "@/tools/education/grade-calculator/manifest";
+import { manifest as vocabularyBuilder } from "@/tools/education/vocabulary-builder/manifest";
+import { manifest as typingPractice } from "@/tools/education/typing-practice/manifest";
+import { manifest as multiplicationTablesGenerator } from "@/tools/education/multiplication-tables-generator/manifest";
+import { manifest as unitConverterEducational } from "@/tools/education/unit-converter-educational/manifest";
+import { manifest as periodicTableReference } from "@/tools/education/periodic-table-reference/manifest";
+import { manifest as mathPracticeGenerator } from "@/tools/education/math-practice-generator/manifest";
+import { manifest as spellingBeePractice } from "@/tools/education/spelling-bee-practice/manifest";
+import { manifest as languageTranslatorHelper } from "@/tools/education/language-translator-helper/manifest";
+import { manifest as historyTimelineMaker } from "@/tools/education/history-timeline-maker/manifest";
+import { manifest as geographyQuiz } from "@/tools/education/geography-quiz/manifest";
+import { manifest as citationGenerator } from "@/tools/education/citation-generator/manifest";
+import { manifest as readingListTracker } from "@/tools/education/reading-list-tracker/manifest";
+import { manifest as chemistryFormulaCalculator } from "@/tools/education/chemistry-formula-calculator/manifest";
+import { manifest as physicsFormulaReference } from "@/tools/education/physics-formula-reference/manifest";
+import { manifest as studyNotesOrganizer } from "@/tools/education/study-notes-organizer/manifest";
+import { manifest as presentationSlideOutliner } from "@/tools/education/presentation-slide-outliner/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -575,6 +595,26 @@ export const TOOLS: readonly ToolManifest[] = [
   salesPipelineTracker,
   customerTracker,
   commissionTracker,
+  flashcardMaker,
+  quizGenerator,
+  studyPlanner,
+  gradeCalculator,
+  vocabularyBuilder,
+  typingPractice,
+  multiplicationTablesGenerator,
+  unitConverterEducational,
+  periodicTableReference,
+  mathPracticeGenerator,
+  spellingBeePractice,
+  languageTranslatorHelper,
+  historyTimelineMaker,
+  geographyQuiz,
+  citationGenerator,
+  readingListTracker,
+  chemistryFormulaCalculator,
+  physicsFormulaReference,
+  studyNotesOrganizer,
+  presentationSlideOutliner,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
