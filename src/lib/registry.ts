@@ -365,6 +365,106 @@ import { manifest as pdfTranslationOverlay } from "@/tools/pdf/pdf-translation-o
 import { manifest as pdfTableExtractor } from "@/tools/pdf/pdf-table-extractor/manifest";
 import { manifest as pdfFormFieldExtractor } from "@/tools/pdf/pdf-form-field-extractor/manifest";
 import { manifest as pdfPowerpointConverterV2 } from "@/tools/pdf/pdf-to-powerpoint-converter/manifest";
+import { manifest as aiAltTextGenerator } from "@/tools/ai/ai-alt-text-generator/manifest";
+import { manifest as aiAnalogiesGenerator } from "@/tools/ai/ai-analogies-generator/manifest";
+import { manifest as aiApiPayloadMockingTool } from "@/tools/ai/ai-api-payload-mocking-tool/manifest";
+import { manifest as aiArticleHeadlineGenerator } from "@/tools/ai/ai-article-headline-generator/manifest";
+import { manifest as aiBiasChecker } from "@/tools/ai/ai-bias-checker/manifest";
+import { manifest as aiBookSummaryGenerator } from "@/tools/ai/ai-book-summary-generator/manifest";
+import { manifest as aiBrandPositioningStatementGenerator } from "@/tools/ai/ai-brand-positioning-statement-generator/manifest";
+import { manifest as aiBrandToneOfVoiceBuilder } from "@/tools/ai/ai-brand-tone-of-voice-builder/manifest";
+import { manifest as aiBusinessNameIdeator } from "@/tools/ai/ai-business-name-ideator/manifest";
+import { manifest as aiBusinessPitchDeckOutlineGenerator } from "@/tools/ai/ai-business-pitch-deck-outline-generator/manifest";
+import { manifest as aiCharacterNameGenerator } from "@/tools/ai/ai-character-name-generator/manifest";
+import { manifest as aiChatbotEmulator } from "@/tools/ai/ai-chatbot-emulator/manifest";
+import { manifest as aiChromeExtensionBoilerplateGenerator } from "@/tools/ai/ai-chrome-extension-boilerplate-generator/manifest";
+import { manifest as aiCitationFormatter } from "@/tools/ai/ai-citation-formatter/manifest";
+import { manifest as aiCodeConverter } from "@/tools/ai/ai-code-converter/manifest";
+import { manifest as aiCodeDebugger } from "@/tools/ai/ai-code-debugger/manifest";
+import { manifest as aiCodeExplainer } from "@/tools/ai/ai-code-explainer/manifest";
+import { manifest as aiCodingPatternRefactorer } from "@/tools/ai/ai-coding-pattern-refactorer/manifest";
+import { manifest as aiColdEmailPersonalizer } from "@/tools/ai/ai-cold-email-personalizer/manifest";
+import { manifest as aiCompetitorAnalysisFramework } from "@/tools/ai/ai-competitor-analysis-framework/manifest";
+import { manifest as aiCopywritingFrameworkAssistant } from "@/tools/ai/ai-copywriting-framework-assistant/manifest";
+import { manifest as aiCoverLetterWriter } from "@/tools/ai/ai-cover-letter-writer/manifest";
+import { manifest as aiCronJobSchedulerBuilder } from "@/tools/ai/ai-cron-job-scheduler-builder/manifest";
+import { manifest as aiCssUiComponentGenerator } from "@/tools/ai/ai-css-ui-component-generator/manifest";
+import { manifest as aiCtaGenerator } from "@/tools/ai/ai-cta-generator/manifest";
+import { manifest as aiCustomerSupportScriptWriter } from "@/tools/ai/ai-customer-support-script-writer/manifest";
+import { manifest as aiDbSchemaDiagramBuilder } from "@/tools/ai/ai-db-schema-diagram-builder/manifest";
+import { manifest as aiDockerfileBuilder } from "@/tools/ai/ai-dockerfile-builder/manifest";
+import { manifest as aiDomainNameGenerator } from "@/tools/ai/ai-domain-name-generator/manifest";
+import { manifest as aiEmailDraftGenerator } from "@/tools/ai/ai-email-draft-generator/manifest";
+import { manifest as aiEmojiTranslator } from "@/tools/ai/ai-emoji-translator/manifest";
+import { manifest as aiEssayOutlineGenerator } from "@/tools/ai/ai-essay-outline-generator/manifest";
+import { manifest as aiFaqGenerator } from "@/tools/ai/ai-faq-generator/manifest";
+import { manifest as aiFictionStoryGenerator } from "@/tools/ai/ai-fiction-story-generator/manifest";
+import { manifest as aiFinancialGoalPlanner } from "@/tools/ai/ai-financial-goal-planner/manifest";
+import { manifest as aiFlashcardQaGenerator } from "@/tools/ai/ai-flashcard-qa-generator/manifest";
+import { manifest as aiGiftIdeaGenerator } from "@/tools/ai/ai-gift-idea-generator/manifest";
+import { manifest as aiGitCommitMessageGenerator } from "@/tools/ai/ai-git-commit-message-generator/manifest";
+import { manifest as aiGrammarCorrectionTool } from "@/tools/ai/ai-grammar-correction-tool/manifest";
+import { manifest as aiHtaccessRedirectGenerator } from "@/tools/ai/ai-htaccess-redirect-generator/manifest";
+import { manifest as aiHtmlLandingPageGenerator } from "@/tools/ai/ai-html-landing-page-generator/manifest";
+import { manifest as aiInstagramBioGenerator } from "@/tools/ai/ai-instagram-bio-generator/manifest";
+import { manifest as aiInterviewQuestionGenerator } from "@/tools/ai/ai-interview-question-generator/manifest";
+import { manifest as aiJargonSimplifier } from "@/tools/ai/ai-jargon-simplifier/manifest";
+import { manifest as aiJsObjectToJsonSchemaConverter } from "@/tools/ai/ai-js-object-to-json-schema-converter/manifest";
+import { manifest as aiJsonMockDataGenerator } from "@/tools/ai/ai-json-mock-data-generator/manifest";
+import { manifest as aiKeywordExtractor } from "@/tools/ai/ai-keyword-extractor/manifest";
+import { manifest as aiKubernetesManifestGenerator } from "@/tools/ai/ai-kubernetes-manifest-generator/manifest";
+import { manifest as aiLinkedinBioOptimizer } from "@/tools/ai/ai-linkedin-bio-optimizer/manifest";
+import { manifest as aiLogicalFallacyDetector } from "@/tools/ai/ai-logical-fallacy-detector/manifest";
+import { manifest as aiMarkdownReadmeGenerator } from "@/tools/ai/ai-markdown-readme-generator/manifest";
+import { manifest as aiMarkdownTableGenerator } from "@/tools/ai/ai-markdown-table-generator/manifest";
+import { manifest as aiMathWordProblemSolver } from "@/tools/ai/ai-math-word-problem-solver/manifest";
+import { manifest as aiMeetingMinutesSummarizer } from "@/tools/ai/ai-meeting-minutes-summarizer/manifest";
+import { manifest as aiMermaidFlowchartGenerator } from "@/tools/ai/ai-mermaid-flowchart-generator/manifest";
+import { manifest as aiMetaTagBuilder } from "@/tools/ai/ai-meta-tag-builder/manifest";
+import { manifest as aiMultiLanguageTranslator } from "@/tools/ai/ai-multi-language-translator/manifest";
+import { manifest as aiNewsletterSubjectLineAbTester } from "@/tools/ai/ai-newsletter-subject-line-ab-tester/manifest";
+import { manifest as aiNginxConfigRuleBuilder } from "@/tools/ai/ai-nginx-config-rule-builder/manifest";
+import { manifest as aiParagraphSummarizer } from "@/tools/ai/ai-paragraph-summarizer/manifest";
+import { manifest as aiParaphrasingRewriterTool } from "@/tools/ai/ai-paraphrasing-rewriter-tool/manifest";
+import { manifest as aiPassiveActiveVoiceConverter } from "@/tools/ai/ai-passive-active-voice-converter/manifest";
+import { manifest as aiPassiveAggressiveEmailTranslator } from "@/tools/ai/ai-passive-aggressive-email-translator/manifest";
+import { manifest as aiPodcastEpisodePlanner } from "@/tools/ai/ai-podcast-episode-planner/manifest";
+import { manifest as aiPoemLyricsWriter } from "@/tools/ai/ai-poem-lyrics-writer/manifest";
+import { manifest as aiPresentationOutlineGenerator } from "@/tools/ai/ai-presentation-outline-generator/manifest";
+import { manifest as aiPressReleaseDraftBuilder } from "@/tools/ai/ai-press-release-draft-builder/manifest";
+import { manifest as aiProductDescriptionWriter } from "@/tools/ai/ai-product-description-writer/manifest";
+import { manifest as aiProductFeaturePrioritizationHelper } from "@/tools/ai/ai-product-feature-prioritization-helper/manifest";
+import { manifest as aiPromptImprover } from "@/tools/ai/ai-prompt-improver/manifest";
+import { manifest as aiRecipeGenerator } from "@/tools/ai/ai-recipe-generator/manifest";
+import { manifest as aiRedditPostTitleOptimizer } from "@/tools/ai/ai-reddit-post-title-optimizer/manifest";
+import { manifest as aiRegexBuilder } from "@/tools/ai/ai-regex-builder/manifest";
+import { manifest as aiResumeBulletPointOptimizer } from "@/tools/ai/ai-resume-bullet-point-optimizer/manifest";
+import { manifest as aiRobotsTxt } from "@/tools/ai/ai-robots-txt/manifest";
+import { manifest as aiSalaryNegotiationScriptWriter } from "@/tools/ai/ai-salary-negotiation-script-writer/manifest";
+import { manifest as aiSentimentAnalysisTool } from "@/tools/ai/ai-sentiment-analysis-tool/manifest";
+import { manifest as aiShellBashScriptWriter } from "@/tools/ai/ai-shell-bash-script-writer/manifest";
+import { manifest as aiSloganTaglineGenerator } from "@/tools/ai/ai-slogan-tagline-generator/manifest";
+import { manifest as aiSocialMediaCaptionWriter } from "@/tools/ai/ai-social-media-caption-writer/manifest";
+import { manifest as aiSqlQueryGenerator } from "@/tools/ai/ai-sql-query-generator/manifest";
+import { manifest as aiStudyGuideGenerator } from "@/tools/ai/ai-study-guide-generator/manifest";
+import { manifest as aiSvgVectorArtGenerator } from "@/tools/ai/ai-svg-vector-art-generator/manifest";
+import { manifest as aiSwotAnalysisCreator } from "@/tools/ai/ai-swot-analysis-creator/manifest";
+import { manifest as aiTailwindCssPaletteGenerator } from "@/tools/ai/ai-tailwind-css-palette-generator/manifest";
+import { manifest as aiTargetAudienceDemographicsProfiler } from "@/tools/ai/ai-target-audience-demographics-profiler/manifest";
+import { manifest as aiTechStackRecommender } from "@/tools/ai/ai-tech-stack-recommender/manifest";
+import { manifest as aiTextBasedAdventureGameEngine } from "@/tools/ai/ai-text-based-adventure-game-engine/manifest";
+import { manifest as aiTextSimplifierEli5 } from "@/tools/ai/ai-text-simplifier-eli5/manifest";
+import { manifest as aiTextToImageGenerator } from "@/tools/ai/ai-text-to-image-generator/manifest";
+import { manifest as aiThesisStatementGenerator } from "@/tools/ai/ai-thesis-statement-generator/manifest";
+import { manifest as aiTravelItineraryPlanner } from "@/tools/ai/ai-travel-itinerary-planner/manifest";
+import { manifest as aiTypescriptInterfaceGenerator } from "@/tools/ai/ai-typescript-interface-generator/manifest";
+import { manifest as aiUnitTestCaseGenerator } from "@/tools/ai/ai-unit-test-case-generator/manifest";
+import { manifest as aiUserPersonaCreator } from "@/tools/ai/ai-user-persona-creator/manifest";
+import { manifest as aiUserStoryCreator } from "@/tools/ai/ai-user-story-creator/manifest";
+import { manifest as aiVideoScriptOutliner } from "@/tools/ai/ai-video-script-outliner/manifest";
+import { manifest as aiWebsiteSitemapGenerator } from "@/tools/ai/ai-website-sitemap-generator/manifest";
+import { manifest as aiWeeklyMealPlanner } from "@/tools/ai/ai-weekly-meal-planner/manifest";
+import { manifest as aiWorkoutPlanner } from "@/tools/ai/ai-workout-planner/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -724,7 +824,106 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfTranslationOverlay,
   pdfTableExtractor,
   pdfFormFieldExtractor,
-  pdfPowerpointConverterV2,
+  pdfPowerpointConverterV2,  aiAltTextGenerator,
+  aiAnalogiesGenerator,
+  aiApiPayloadMockingTool,
+  aiArticleHeadlineGenerator,
+  aiBiasChecker,
+  aiBookSummaryGenerator,
+  aiBrandPositioningStatementGenerator,
+  aiBrandToneOfVoiceBuilder,
+  aiBusinessNameIdeator,
+  aiBusinessPitchDeckOutlineGenerator,
+  aiCharacterNameGenerator,
+  aiChatbotEmulator,
+  aiChromeExtensionBoilerplateGenerator,
+  aiCitationFormatter,
+  aiCodeConverter,
+  aiCodeDebugger,
+  aiCodeExplainer,
+  aiCodingPatternRefactorer,
+  aiColdEmailPersonalizer,
+  aiCompetitorAnalysisFramework,
+  aiCopywritingFrameworkAssistant,
+  aiCoverLetterWriter,
+  aiCronJobSchedulerBuilder,
+  aiCssUiComponentGenerator,
+  aiCtaGenerator,
+  aiCustomerSupportScriptWriter,
+  aiDbSchemaDiagramBuilder,
+  aiDockerfileBuilder,
+  aiDomainNameGenerator,
+  aiEmailDraftGenerator,
+  aiEmojiTranslator,
+  aiEssayOutlineGenerator,
+  aiFaqGenerator,
+  aiFictionStoryGenerator,
+  aiFinancialGoalPlanner,
+  aiFlashcardQaGenerator,
+  aiGiftIdeaGenerator,
+  aiGitCommitMessageGenerator,
+  aiGrammarCorrectionTool,
+  aiHtaccessRedirectGenerator,
+  aiHtmlLandingPageGenerator,
+  aiInstagramBioGenerator,
+  aiInterviewQuestionGenerator,
+  aiJargonSimplifier,
+  aiJsObjectToJsonSchemaConverter,
+  aiJsonMockDataGenerator,
+  aiKeywordExtractor,
+  aiKubernetesManifestGenerator,
+  aiLinkedinBioOptimizer,
+  aiLogicalFallacyDetector,
+  aiMarkdownReadmeGenerator,
+  aiMarkdownTableGenerator,
+  aiMathWordProblemSolver,
+  aiMeetingMinutesSummarizer,
+  aiMermaidFlowchartGenerator,
+  aiMetaTagBuilder,
+  aiMultiLanguageTranslator,
+  aiNewsletterSubjectLineAbTester,
+  aiNginxConfigRuleBuilder,
+  aiParagraphSummarizer,
+  aiParaphrasingRewriterTool,
+  aiPassiveActiveVoiceConverter,
+  aiPassiveAggressiveEmailTranslator,
+  aiPodcastEpisodePlanner,
+  aiPoemLyricsWriter,
+  aiPresentationOutlineGenerator,
+  aiPressReleaseDraftBuilder,
+  aiProductDescriptionWriter,
+  aiProductFeaturePrioritizationHelper,
+  aiPromptImprover,
+  aiRecipeGenerator,
+  aiRedditPostTitleOptimizer,
+  aiRegexBuilder,
+  aiResumeBulletPointOptimizer,
+  aiRobotsTxt,
+  aiSalaryNegotiationScriptWriter,
+  aiSentimentAnalysisTool,
+  aiShellBashScriptWriter,
+  aiSloganTaglineGenerator,
+  aiSocialMediaCaptionWriter,
+  aiSqlQueryGenerator,
+  aiStudyGuideGenerator,
+  aiSvgVectorArtGenerator,
+  aiSwotAnalysisCreator,
+  aiTailwindCssPaletteGenerator,
+  aiTargetAudienceDemographicsProfiler,
+  aiTechStackRecommender,
+  aiTextBasedAdventureGameEngine,
+  aiTextSimplifierEli5,
+  aiTextToImageGenerator,
+  aiThesisStatementGenerator,
+  aiTravelItineraryPlanner,
+  aiTypescriptInterfaceGenerator,
+  aiUnitTestCaseGenerator,
+  aiUserPersonaCreator,
+  aiUserStoryCreator,
+  aiVideoScriptOutliner,
+  aiWebsiteSitemapGenerator,
+  aiWeeklyMealPlanner,
+  aiWorkoutPlanner,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
