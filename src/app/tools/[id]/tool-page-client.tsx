@@ -589,6 +589,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "bashrc-zshrc-alias-config-manager": () => import("@/tools/developer/bashrc-zshrc-alias-config-manager/ui"),
   "bitwise-operation-calculator": () => import("@/tools/developer/bitwise-operation-calculator/ui"),
   "bit-shift-rotate-visualizer": () => import("@/tools/developer/bit-shift-rotate-visualizer/ui"),
+  "bit-field-bitmask-flags-designer-decoder": () => import("@/tools/developer/bit-field-bitmask-flags-designer-decoder/ui"),
+  "endianness-byte-order-converter": () => import("@/tools/developer/endianness-byte-order-converter/ui"),
   "dotfiles-manager-generator": () => import("@/tools/developer/dotfiles-manager-generator/ui"),
   "find-command-builder": () => import("@/tools/developer/find-command-builder/ui"),
   "glob-pattern-tester": () => import("@/tools/developer/glob-pattern-tester/ui"),
@@ -618,6 +620,14 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "hex-dump-hex-viewer-editor": () => import("@/tools/developer/hex-dump-hex-viewer-editor/ui"),
   "binary-file-signature-magic-number-inspector": () => import("@/tools/developer/binary-file-signature-magic-number-inspector/ui"),
   "ascii-art-text-banner-generator": () => import("@/tools/developer/ascii-art-text-banner-generator/ui"),
+  "integer-data-type-range-overflow-reference": () => import("@/tools/developer/integer-data-type-range-overflow-reference/ui"),
+  "roman-numeral-converter": () => import("@/tools/developer/roman-numeral-converter/ui"),
+  "scientific-engineering-notation-converter": () => import("@/tools/developer/scientific-engineering-notation-converter/ui"),
+  "modular-arithmetic-gcd-lcm-calculator": () => import("@/tools/developer/modular-arithmetic-gcd-lcm-calculator/ui"),
+  "prime-number-checker-factorization-tool": () => import("@/tools/developer/prime-number-checker-factorization-tool/ui"),
+  "ascii-unicode-code-point-explorer": () => import("@/tools/developer/ascii-unicode-code-point-explorer/ui"),
+  "checksum-parity-bit-calculator": () => import("@/tools/developer/checksum-parity-bit-calculator/ui"),
+  "gray-code-converter": () => import("@/tools/developer/gray-code-converter/ui"),
 };
 
 interface ToolPageClientProps {

@@ -537,6 +537,8 @@ import { manifest as bashPromptPs1Generator } from "@/tools/developer/bash-promp
 import { manifest as bashrcZshrcAliasConfigManager } from "@/tools/developer/bashrc-zshrc-alias-config-manager/manifest";
 import { manifest as bitwiseOperationCalculator } from "@/tools/developer/bitwise-operation-calculator/manifest";
 import { manifest as bitShiftRotateVisualizer } from "@/tools/developer/bit-shift-rotate-visualizer/manifest";
+import { manifest as bitFieldBitmaskFlagsDesignerDecoder } from "@/tools/developer/bit-field-bitmask-flags-designer-decoder/manifest";
+import { manifest as endiannessByteOrderConverter } from "@/tools/developer/endianness-byte-order-converter/manifest";
 import { manifest as dotfilesManagerGenerator } from "@/tools/developer/dotfiles-manager-generator/manifest";
 import { manifest as findCommandBuilder } from "@/tools/developer/find-command-builder/manifest";
 import { manifest as globPatternTester } from "@/tools/developer/glob-pattern-tester/manifest";
@@ -566,6 +568,14 @@ import { manifest as bigIntegerArbitraryPrecisionCalculator } from "@/tools/deve
 import { manifest as hexDumpHexViewerEditor } from "@/tools/developer/hex-dump-hex-viewer-editor/manifest";
 import { manifest as binaryFileSignatureMagicNumberInspector } from "@/tools/developer/binary-file-signature-magic-number-inspector/manifest";
 import { manifest as asciiArtTextBannerGenerator } from "@/tools/developer/ascii-art-text-banner-generator/manifest";
+import { manifest as integerDataTypeRangeOverflowReference } from "@/tools/developer/integer-data-type-range-overflow-reference/manifest";
+import { manifest as romanNumeralConverter } from "@/tools/developer/roman-numeral-converter/manifest";
+import { manifest as scientificEngineeringNotationConverter } from "@/tools/developer/scientific-engineering-notation-converter/manifest";
+import { manifest as modularArithmeticGcdLcmCalculator } from "@/tools/developer/modular-arithmetic-gcd-lcm-calculator/manifest";
+import { manifest as primeNumberCheckerFactorizationTool } from "@/tools/developer/prime-number-checker-factorization-tool/manifest";
+import { manifest as asciiUnicodeCodePointExplorer } from "@/tools/developer/ascii-unicode-code-point-explorer/manifest";
+import { manifest as checksumParityBitCalculator } from "@/tools/developer/checksum-parity-bit-calculator/manifest";
+import { manifest as grayCodeConverter } from "@/tools/developer/gray-code-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1095,6 +1105,8 @@ export const TOOLS: readonly ToolManifest[] = [
   bashrcZshrcAliasConfigManager,
   bitwiseOperationCalculator,
   bitShiftRotateVisualizer,
+  bitFieldBitmaskFlagsDesignerDecoder,
+  endiannessByteOrderConverter,
   dotfilesManagerGenerator,
   findCommandBuilder,
   globPatternTester,
@@ -1124,6 +1136,14 @@ export const TOOLS: readonly ToolManifest[] = [
   hexDumpHexViewerEditor,
   binaryFileSignatureMagicNumberInspector,
   asciiArtTextBannerGenerator,
+  integerDataTypeRangeOverflowReference,
+  romanNumeralConverter,
+  scientificEngineeringNotationConverter,
+  modularArithmeticGcdLcmCalculator,
+  primeNumberCheckerFactorizationTool,
+  asciiUnicodeCodePointExplorer,
+  checksumParityBitCalculator,
+  grayCodeConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
