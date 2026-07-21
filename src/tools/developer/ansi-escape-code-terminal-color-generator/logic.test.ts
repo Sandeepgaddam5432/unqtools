@@ -146,10 +146,14 @@ describe("ansi x256ToRgb", () => {
 
 describe("ansi nearestX256", () => {
   it("finds exact black", () => {
-    expect(nearestX256({ r: 0, g: 0, b: 0 })).toBe(16);
+    // Index 0 (standard black) and 16 (cube black) both have distance 0;
+    // implementation picks the first (index 0).
+    expect(nearestX256({ r: 0, g: 0, b: 0 })).toBe(0);
   });
   it("finds exact white", () => {
-    expect(nearestX256({ r: 255, g: 255, b: 255 })).toBe(231);
+    // Index 15 (standard white) and 231 (cube white) both have distance 0;
+    // implementation picks the first (index 15).
+    expect(nearestX256({ r: 255, g: 255, b: 255 })).toBe(15);
   });
   it("snaps near-pure red to a red index", () => {
     // pure red {255, 0, 0} — nearest cube entry
@@ -163,8 +167,8 @@ describe("ansi nearestX256", () => {
 
 describe("ansi hexToX256 and hexToTruecolor", () => {
   it("converts hex to nearest 256 index", () => {
-    expect(hexToX256("#000000")).toBe(16);
-    expect(hexToX256("#ffffff")).toBe(231);
+    expect(hexToX256("#000000")).toBe(0);
+    expect(hexToX256("#ffffff")).toBe(15);
   });
   it("returns 0 for bad hex", () => {
     expect(hexToX256("nope")).toBe(0);

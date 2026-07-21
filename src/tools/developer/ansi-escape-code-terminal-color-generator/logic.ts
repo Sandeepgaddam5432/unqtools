@@ -484,22 +484,22 @@ export function generateLanguageSnippets(config: AnsiConfig): LanguageSnippet[] 
     {
       id: "nodejs",
       label: "Node.js",
-      code: `process.stdout.write("${reset ? `${jsEsc}${esc(text)}${jsReset}` : `${jsEsc}${esc(text)}"}");\n`,
+      code: 'process.stdout.write("' + (reset ? jsEsc + esc(text) + jsReset : jsEsc + esc(text)) + '");\n',
     },
     {
       id: "go",
       label: "Go",
-      code: `fmt.Printf("${reset ? `${goEsc}${esc(text)}${goReset}` : `${goEsc}${esc(text)}`}\\n")\n`,
+      code: 'fmt.Printf("' + (reset ? goEsc + esc(text) + goReset : goEsc + esc(text)) + '\\n")\n',
     },
     {
       id: "rust",
       label: "Rust",
-      code: `print!("${reset ? `${rustEsc}${esc(text)}${rustReset}` : `${rustEsc}${esc(text)}`}");\n`,
+      code: 'print!("' + (reset ? rustEsc + esc(text) + rustReset : rustEsc + esc(text)) + '");\n',
     },
     {
       id: "c",
       label: "C (printf)",
-      code: `printf("${reset ? `${cEsc}${esc(text)}${cReset}` : `${cEsc}${esc(text)}"}\\n");\n`,
+      code: 'printf("' + (reset ? cEsc + esc(text) + cReset : cEsc + esc(text)) + '\\n");\n',
     },
   ];
 }
@@ -518,8 +518,6 @@ export function decodeAnsi(input: string): DecodeResult {
   if (!input) return { ok: true, segments: [], errors: [], strippedText: "" };
   const segments: DecodedSegment[] = [];
   const errors: string[] = [];
-  let stripped = input;
-
   // Normalize literal-escaped forms to real ESC sequences for uniform parsing.
   const normalized = input
     .replace(/\\x1b/g, ESC)
@@ -527,6 +525,8 @@ export function decodeAnsi(input: string): DecodeResult {
     .replace(/\\033/g, ESC)
     .replace(/\\e/g, ESC)
     .replace(/\^\[/g, ESC);
+
+  let stripped = normalized;
 
   const re = new RegExp(CSI_RE);
   let match: RegExpExecArray | null;
