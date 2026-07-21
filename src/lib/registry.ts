@@ -546,6 +546,16 @@ import { manifest as sshConfigGenerator } from "@/tools/developer/ssh-config-gen
 import { manifest as manPageTldrCommandReference } from "@/tools/developer/man-page-tldr-command-reference/manifest";
 import { manifest as exitCodeSignalReference } from "@/tools/developer/exit-code-signal-reference/manifest";
 import { manifest as crontabGenerator } from "@/tools/developer/crontab-generator/manifest";
+import { manifest as markdownLiveEditorPreviewer } from "@/tools/developer/markdown-live-editor-previewer/manifest";
+import { manifest as markdownTableGenerator } from "@/tools/developer/markdown-table-generator/manifest";
+import { manifest as markdownTableOfContentsGenerator } from "@/tools/developer/markdown-table-of-contents-generator/manifest";
+import { manifest as readmeGenerator } from "@/tools/developer/readme-generator/manifest";
+import { manifest as githubBadgeShieldsIoGenerator } from "@/tools/developer/github-badge-shields-io-generator/manifest";
+import { manifest as mermaidDiagramLiveEditor } from "@/tools/developer/mermaid-diagram-live-editor/manifest";
+import { manifest as plantumlDiagramEditor } from "@/tools/developer/plantuml-diagram-editor/manifest";
+import { manifest as markdownToSlidesPresentationGenerator } from "@/tools/developer/markdown-to-slides-presentation-generator/manifest";
+import { manifest as markdownSyntaxCheatsheetReference } from "@/tools/developer/markdown-syntax-cheatsheet-reference/manifest";
+import { manifest as markdownLinterFormatter } from "@/tools/developer/markdown-linter-formatter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1084,6 +1094,16 @@ export const TOOLS: readonly ToolManifest[] = [
   manPageTldrCommandReference,
   exitCodeSignalReference,
   crontabGenerator,
+  markdownLiveEditorPreviewer,
+  markdownTableGenerator,
+  markdownTableOfContentsGenerator,
+  readmeGenerator,
+  githubBadgeShieldsIoGenerator,
+  mermaidDiagramLiveEditor,
+  plantumlDiagramEditor,
+  markdownToSlidesPresentationGenerator,
+  markdownSyntaxCheatsheetReference,
+  markdownLinterFormatter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

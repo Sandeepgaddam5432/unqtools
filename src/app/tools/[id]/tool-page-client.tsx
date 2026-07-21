@@ -598,6 +598,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "man-page-tldr-command-reference": () => import("@/tools/developer/man-page-tldr-command-reference/ui"),
   "exit-code-signal-reference": () => import("@/tools/developer/exit-code-signal-reference/ui"),
   "crontab-generator": () => import("@/tools/developer/crontab-generator/ui"),
+  "markdown-live-editor-previewer": () => import("@/tools/developer/markdown-live-editor-previewer/ui"),
+  "markdown-table-generator": () => import("@/tools/developer/markdown-table-generator/ui"),
+  "markdown-table-of-contents-generator": () => import("@/tools/developer/markdown-table-of-contents-generator/ui"),
+  "readme-generator": () => import("@/tools/developer/readme-generator/ui"),
+  "github-badge-shields-io-generator": () => import("@/tools/developer/github-badge-shields-io-generator/ui"),
+  "mermaid-diagram-live-editor": () => import("@/tools/developer/mermaid-diagram-live-editor/ui"),
+  "plantuml-diagram-editor": () => import("@/tools/developer/plantuml-diagram-editor/ui"),
+  "markdown-to-slides-presentation-generator": () => import("@/tools/developer/markdown-to-slides-presentation-generator/ui"),
+  "markdown-syntax-cheatsheet-reference": () => import("@/tools/developer/markdown-syntax-cheatsheet-reference/ui"),
+  "markdown-linter-formatter": () => import("@/tools/developer/markdown-linter-formatter/ui"),
 };
 
 interface ToolPageClientProps {
