@@ -531,6 +531,21 @@ import { manifest as userAgentStringGeneratorParser } from "@/tools/developer/us
 import { manifest as visualSqlQueryBuilder } from "@/tools/developer/visual-sql-query-builder/manifest";
 import { manifest as weekNumberIsoCalculator } from "@/tools/developer/week-number-iso-calculator/manifest";
 import { manifest as worldClockMeetingPlanner } from "@/tools/developer/world-clock-meeting-planner/manifest";
+import { manifest as ansiEscapeCodeTerminalColorGenerator } from "@/tools/developer/ansi-escape-code-terminal-color-generator/manifest";
+import { manifest as bashPromptPs1Generator } from "@/tools/developer/bash-prompt-ps1-generator/manifest";
+import { manifest as bashrcZshrcAliasConfigManager } from "@/tools/developer/bashrc-zshrc-alias-config-manager/manifest";
+import { manifest as dotfilesManagerGenerator } from "@/tools/developer/dotfiles-manager-generator/manifest";
+import { manifest as findCommandBuilder } from "@/tools/developer/find-command-builder/manifest";
+import { manifest as globPatternTester } from "@/tools/developer/glob-pattern-tester/manifest";
+import { manifest as grepRipgrepCommandBuilder } from "@/tools/developer/grep-ripgrep-command-builder/manifest";
+import { manifest as rsyncCommandBuilder } from "@/tools/developer/rsync-command-builder/manifest";
+import { manifest as tarArchiveCommandBuilder } from "@/tools/developer/tar-archive-command-builder/manifest";
+import { manifest as tmuxConfigGeneratorCheatsheet } from "@/tools/developer/tmux-config-generator-cheatsheet/manifest";
+import { manifest as vimCheatsheetKeybindingReference } from "@/tools/developer/vim-cheatsheet-keybinding-reference/manifest";
+import { manifest as sshConfigGenerator } from "@/tools/developer/ssh-config-generator/manifest";
+import { manifest as manPageTldrCommandReference } from "@/tools/developer/man-page-tldr-command-reference/manifest";
+import { manifest as exitCodeSignalReference } from "@/tools/developer/exit-code-signal-reference/manifest";
+import { manifest as crontabGenerator } from "@/tools/developer/crontab-generator/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1054,7 +1069,21 @@ export const TOOLS: readonly ToolManifest[] = [
   userAgentStringGeneratorParser,
   visualSqlQueryBuilder,
   weekNumberIsoCalculator,
-  worldClockMeetingPlanner,
+  worldClockMeetingPlanner,  ansiEscapeCodeTerminalColorGenerator,
+  bashPromptPs1Generator,
+  bashrcZshrcAliasConfigManager,
+  dotfilesManagerGenerator,
+  findCommandBuilder,
+  globPatternTester,
+  grepRipgrepCommandBuilder,
+  rsyncCommandBuilder,
+  tarArchiveCommandBuilder,
+  tmuxConfigGeneratorCheatsheet,
+  vimCheatsheetKeybindingReference,
+  sshConfigGenerator,
+  manPageTldrCommandReference,
+  exitCodeSignalReference,
+  crontabGenerator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

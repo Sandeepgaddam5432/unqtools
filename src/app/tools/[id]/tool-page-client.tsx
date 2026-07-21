@@ -583,7 +583,21 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "user-agent-string-generator-parser": () => import("@/tools/developer/user-agent-string-generator-parser/ui"),
   "visual-sql-query-builder": () => import("@/tools/developer/visual-sql-query-builder/ui"),
   "week-number-iso-calculator": () => import("@/tools/developer/week-number-iso-calculator/ui"),
-  "world-clock-meeting-planner": () => import("@/tools/developer/world-clock-meeting-planner/ui"),
+  "world-clock-meeting-planner": () => import("@/tools/developer/world-clock-meeting-planner/ui"),  "ansi-escape-code-terminal-color-generator": () => import("@/tools/developer/ansi-escape-code-terminal-color-generator/ui"),
+  "bash-prompt-ps1-generator": () => import("@/tools/developer/bash-prompt-ps1-generator/ui"),
+  "bashrc-zshrc-alias-config-manager": () => import("@/tools/developer/bashrc-zshrc-alias-config-manager/ui"),
+  "dotfiles-manager-generator": () => import("@/tools/developer/dotfiles-manager-generator/ui"),
+  "find-command-builder": () => import("@/tools/developer/find-command-builder/ui"),
+  "glob-pattern-tester": () => import("@/tools/developer/glob-pattern-tester/ui"),
+  "grep-ripgrep-command-builder": () => import("@/tools/developer/grep-ripgrep-command-builder/ui"),
+  "rsync-command-builder": () => import("@/tools/developer/rsync-command-builder/ui"),
+  "tar-archive-command-builder": () => import("@/tools/developer/tar-archive-command-builder/ui"),
+  "tmux-config-generator-cheatsheet": () => import("@/tools/developer/tmux-config-generator-cheatsheet/ui"),
+  "vim-cheatsheet-keybinding-reference": () => import("@/tools/developer/vim-cheatsheet-keybinding-reference/ui"),
+  "ssh-config-generator": () => import("@/tools/developer/ssh-config-generator/ui"),
+  "man-page-tldr-command-reference": () => import("@/tools/developer/man-page-tldr-command-reference/ui"),
+  "exit-code-signal-reference": () => import("@/tools/developer/exit-code-signal-reference/ui"),
+  "crontab-generator": () => import("@/tools/developer/crontab-generator/ui"),
 };
 
 interface ToolPageClientProps {
