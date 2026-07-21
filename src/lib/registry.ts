@@ -465,6 +465,72 @@ import { manifest as aiVideoScriptOutliner } from "@/tools/ai/ai-video-script-ou
 import { manifest as aiWebsiteSitemapGenerator } from "@/tools/ai/ai-website-sitemap-generator/manifest";
 import { manifest as aiWeeklyMealPlanner } from "@/tools/ai/ai-weekly-meal-planner/manifest";
 import { manifest as aiWorkoutPlanner } from "@/tools/ai/ai-workout-planner/manifest";
+import { manifest as addSubtractDateCalculator } from "@/tools/developer/add-subtract-date-calculator/manifest";
+import { manifest as ageCalculator } from "@/tools/developer/age-calculator/manifest";
+import { manifest as awkCommandBuilderTester } from "@/tools/developer/awk-command-builder-tester/manifest";
+import { manifest as bashScriptGeneratorBoilerplate } from "@/tools/developer/bash-script-generator-boilerplate/manifest";
+import { manifest as businessWorkingDaysCalculator } from "@/tools/developer/business-working-days-calculator/manifest";
+import { manifest as chmodCalculator } from "@/tools/developer/chmod-calculator/manifest";
+import { manifest as connectionStringBuilderParser } from "@/tools/developer/connection-string-builder-parser/manifest";
+import { manifest as countdownTimerGenerator } from "@/tools/developer/countdown-timer-generator/manifest";
+import { manifest as createTableGenerator } from "@/tools/developer/create-table-generator/manifest";
+import { manifest as creditCardTestNumberGenerator } from "@/tools/developer/credit-card-test-number-generator/manifest";
+import { manifest as csvToSqlInsertConverter } from "@/tools/developer/csv-to-sql-insert-converter/manifest";
+import { manifest as databaseSchemaDiff } from "@/tools/developer/database-schema-diff/manifest";
+import { manifest as dateDifferenceCalculator } from "@/tools/developer/date-difference-calculator/manifest";
+import { manifest as dateFormatConverterStrftime } from "@/tools/developer/date-format-converter-strftime/manifest";
+import { manifest as dayOfTheWeekFinder } from "@/tools/developer/day-of-the-week-finder/manifest";
+import { manifest as diceRollerRandomPicker } from "@/tools/developer/dice-roller-random-picker/manifest";
+import { manifest as emailAddressGeneratorValidator } from "@/tools/developer/email-address-generator-validator/manifest";
+import { manifest as erDiagramDesigner } from "@/tools/developer/er-diagram-designer/manifest";
+import { manifest as fakeDataGenerator } from "@/tools/developer/fake-data-generator/manifest";
+import { manifest as ibanGeneratorValidator } from "@/tools/developer/iban-generator-validator/manifest";
+import { manifest as inBrowserSqlPlayground } from "@/tools/developer/in-browser-sql-playground/manifest";
+import { manifest as isbnGeneratorValidator } from "@/tools/developer/isbn-generator-validator/manifest";
+import { manifest as iso-8601DateParserFormatter } from "@/tools/developer/iso-8601-date-parser-formatter/manifest";
+import { manifest as jqPlaygroundFilterBuilder } from "@/tools/developer/jq-playground-filter-builder/manifest";
+import { manifest as julianDateAstronomicalTimeConverter } from "@/tools/developer/julian-date-astronomical-time-converter/manifest";
+import { manifest as luhnCreditCardValidator } from "@/tools/developer/luhn-credit-card-validator/manifest";
+import { manifest as mockCsvDataGenerator } from "@/tools/developer/mock-csv-data-generator/manifest";
+import { manifest as mockGraphqlResponseGenerator } from "@/tools/developer/mock-graphql-response-generator/manifest";
+import { manifest as mockSqlDataGenerator } from "@/tools/developer/mock-sql-data-generator/manifest";
+import { manifest as mongodbAggregationPipelineBuilder } from "@/tools/developer/mongodb-aggregation-pipeline-builder/manifest";
+import { manifest as mongodbQueryBuilder } from "@/tools/developer/mongodb-query-builder/manifest";
+import { manifest as naughtyStringGenerator } from "@/tools/developer/naughty-string-generator/manifest";
+import { manifest as onlineStopwatchTimer } from "@/tools/developer/online-stopwatch-timer/manifest";
+import { manifest as phoneNumberGeneratorValidator } from "@/tools/developer/phone-number-generator-validator/manifest";
+import { manifest as printableCalendarGenerator } from "@/tools/developer/printable-calendar-generator/manifest";
+import { manifest as randomDateTimeGenerator } from "@/tools/developer/random-date-time-generator/manifest";
+import { manifest as randomIpMacAddressGenerator } from "@/tools/developer/random-ip-mac-address-generator/manifest";
+import { manifest as randomNumberGeneratorSeeded } from "@/tools/developer/random-number-generator-seeded/manifest";
+import { manifest as randomUserProfileGenerator } from "@/tools/developer/random-user-profile-generator/manifest";
+import { manifest as recurringDateRruleGenerator } from "@/tools/developer/recurring-date-rrule-generator/manifest";
+import { manifest as redisCommandReferenceBuilder } from "@/tools/developer/redis-command-reference-builder/manifest";
+import { manifest as relativeTimeFormatter } from "@/tools/developer/relative-time-formatter/manifest";
+import { manifest as sampleJsonMockApiResponseGenerator } from "@/tools/developer/sample-json-mock-api-response-generator/manifest";
+import { manifest as sedCommandBuilderTester } from "@/tools/developer/sed-command-builder-tester/manifest";
+import { manifest as shellCommandExplainer } from "@/tools/developer/shell-command-explainer/manifest";
+import { manifest as sqlDdlToErDiagramGenerator } from "@/tools/developer/sql-ddl-to-er-diagram-generator/manifest";
+import { manifest as sqlDialectConverter } from "@/tools/developer/sql-dialect-converter/manifest";
+import { manifest as sqlExplainPlanVisualizer } from "@/tools/developer/sql-explain-plan-visualizer/manifest";
+import { manifest as sqlFormatterBeautifier } from "@/tools/developer/sql-formatter-beautifier/manifest";
+import { manifest as sqlIndexAdvisor } from "@/tools/developer/sql-index-advisor/manifest";
+import { manifest as sqlJoinVisualizer } from "@/tools/developer/sql-join-visualizer/manifest";
+import { manifest as sqlMinifier } from "@/tools/developer/sql-minifier/manifest";
+import { manifest as sqlResultToCsvJsonExporter } from "@/tools/developer/sql-result-to-csv-json-exporter/manifest";
+import { manifest as sqlToOrmCodeConverter } from "@/tools/developer/sql-to-orm-code-converter/manifest";
+import { manifest as testDataAnonymizer } from "@/tools/developer/test-data-anonymizer/manifest";
+import { manifest as testDummyFileGenerator } from "@/tools/developer/test-dummy-file-generator/manifest";
+import { manifest as testIdGenerator } from "@/tools/developer/test-id-generator/manifest";
+import { manifest as timeDurationCalculator } from "@/tools/developer/time-duration-calculator/manifest";
+import { manifest as timeUnitConverter } from "@/tools/developer/time-unit-converter/manifest";
+import { manifest as timeZoneAbbreviationUtcOffsetReference } from "@/tools/developer/time-zone-abbreviation-utc-offset-reference/manifest";
+import { manifest as timeZoneConverter } from "@/tools/developer/time-zone-converter/manifest";
+import { manifest as unixTimestampEpochConverter } from "@/tools/developer/unix-timestamp-epoch-converter/manifest";
+import { manifest as userAgentStringGeneratorParser } from "@/tools/developer/user-agent-string-generator-parser/manifest";
+import { manifest as visualSqlQueryBuilder } from "@/tools/developer/visual-sql-query-builder/manifest";
+import { manifest as weekNumberIsoCalculator } from "@/tools/developer/week-number-iso-calculator/manifest";
+import { manifest as worldClockMeetingPlanner } from "@/tools/developer/world-clock-meeting-planner/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -923,7 +989,72 @@ export const TOOLS: readonly ToolManifest[] = [
   aiVideoScriptOutliner,
   aiWebsiteSitemapGenerator,
   aiWeeklyMealPlanner,
-  aiWorkoutPlanner,
+  aiWorkoutPlanner,  addSubtractDateCalculator,
+  ageCalculator,
+  awkCommandBuilderTester,
+  bashScriptGeneratorBoilerplate,
+  businessWorkingDaysCalculator,
+  chmodCalculator,
+  connectionStringBuilderParser,
+  countdownTimerGenerator,
+  createTableGenerator,
+  creditCardTestNumberGenerator,
+  csvToSqlInsertConverter,
+  databaseSchemaDiff,
+  dateDifferenceCalculator,
+  dateFormatConverterStrftime,
+  dayOfTheWeekFinder,
+  diceRollerRandomPicker,
+  emailAddressGeneratorValidator,
+  erDiagramDesigner,
+  fakeDataGenerator,
+  ibanGeneratorValidator,
+  inBrowserSqlPlayground,
+  isbnGeneratorValidator,
+  iso-8601DateParserFormatter,
+  jqPlaygroundFilterBuilder,
+  julianDateAstronomicalTimeConverter,
+  luhnCreditCardValidator,
+  mockCsvDataGenerator,
+  mockGraphqlResponseGenerator,
+  mockSqlDataGenerator,
+  mongodbAggregationPipelineBuilder,
+  mongodbQueryBuilder,
+  naughtyStringGenerator,
+  onlineStopwatchTimer,
+  phoneNumberGeneratorValidator,
+  printableCalendarGenerator,
+  randomDateTimeGenerator,
+  randomIpMacAddressGenerator,
+  randomNumberGeneratorSeeded,
+  randomUserProfileGenerator,
+  recurringDateRruleGenerator,
+  redisCommandReferenceBuilder,
+  relativeTimeFormatter,
+  sampleJsonMockApiResponseGenerator,
+  sedCommandBuilderTester,
+  shellCommandExplainer,
+  sqlDdlToErDiagramGenerator,
+  sqlDialectConverter,
+  sqlExplainPlanVisualizer,
+  sqlFormatterBeautifier,
+  sqlIndexAdvisor,
+  sqlJoinVisualizer,
+  sqlMinifier,
+  sqlResultToCsvJsonExporter,
+  sqlToOrmCodeConverter,
+  testDataAnonymizer,
+  testDummyFileGenerator,
+  testIdGenerator,
+  timeDurationCalculator,
+  timeUnitConverter,
+  timeZoneAbbreviationUtcOffsetReference,
+  timeZoneConverter,
+  unixTimestampEpochConverter,
+  userAgentStringGeneratorParser,
+  visualSqlQueryBuilder,
+  weekNumberIsoCalculator,
+  worldClockMeetingPlanner,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
