@@ -487,7 +487,7 @@ import { manifest as fakeDataGenerator } from "@/tools/developer/fake-data-gener
 import { manifest as ibanGeneratorValidator } from "@/tools/developer/iban-generator-validator/manifest";
 import { manifest as inBrowserSqlPlayground } from "@/tools/developer/in-browser-sql-playground/manifest";
 import { manifest as isbnGeneratorValidator } from "@/tools/developer/isbn-generator-validator/manifest";
-import { manifest as iso-8601DateParserFormatter } from "@/tools/developer/iso-8601-date-parser-formatter/manifest";
+import { manifest as iso8601DateParserFormatter } from "@/tools/developer/iso-8601-date-parser-formatter/manifest";
 import { manifest as jqPlaygroundFilterBuilder } from "@/tools/developer/jq-playground-filter-builder/manifest";
 import { manifest as julianDateAstronomicalTimeConverter } from "@/tools/developer/julian-date-astronomical-time-converter/manifest";
 import { manifest as luhnCreditCardValidator } from "@/tools/developer/luhn-credit-card-validator/manifest";
@@ -497,6 +497,7 @@ import { manifest as mockSqlDataGenerator } from "@/tools/developer/mock-sql-dat
 import { manifest as mongodbAggregationPipelineBuilder } from "@/tools/developer/mongodb-aggregation-pipeline-builder/manifest";
 import { manifest as mongodbQueryBuilder } from "@/tools/developer/mongodb-query-builder/manifest";
 import { manifest as naughtyStringGenerator } from "@/tools/developer/naughty-string-generator/manifest";
+import { manifest as numberBaseConverter } from "@/tools/developer/number-base-converter/manifest";
 import { manifest as onlineStopwatchTimer } from "@/tools/developer/online-stopwatch-timer/manifest";
 import { manifest as phoneNumberGeneratorValidator } from "@/tools/developer/phone-number-generator-validator/manifest";
 import { manifest as printableCalendarGenerator } from "@/tools/developer/printable-calendar-generator/manifest";
@@ -534,6 +535,8 @@ import { manifest as worldClockMeetingPlanner } from "@/tools/developer/world-cl
 import { manifest as ansiEscapeCodeTerminalColorGenerator } from "@/tools/developer/ansi-escape-code-terminal-color-generator/manifest";
 import { manifest as bashPromptPs1Generator } from "@/tools/developer/bash-prompt-ps1-generator/manifest";
 import { manifest as bashrcZshrcAliasConfigManager } from "@/tools/developer/bashrc-zshrc-alias-config-manager/manifest";
+import { manifest as bitwiseOperationCalculator } from "@/tools/developer/bitwise-operation-calculator/manifest";
+import { manifest as bitShiftRotateVisualizer } from "@/tools/developer/bit-shift-rotate-visualizer/manifest";
 import { manifest as dotfilesManagerGenerator } from "@/tools/developer/dotfiles-manager-generator/manifest";
 import { manifest as findCommandBuilder } from "@/tools/developer/find-command-builder/manifest";
 import { manifest as globPatternTester } from "@/tools/developer/glob-pattern-tester/manifest";
@@ -545,6 +548,7 @@ import { manifest as vimCheatsheetKeybindingReference } from "@/tools/developer/
 import { manifest as sshConfigGenerator } from "@/tools/developer/ssh-config-generator/manifest";
 import { manifest as manPageTldrCommandReference } from "@/tools/developer/man-page-tldr-command-reference/manifest";
 import { manifest as exitCodeSignalReference } from "@/tools/developer/exit-code-signal-reference/manifest";
+import { manifest as twosComplementSignedIntegerCalculator } from "@/tools/developer/twos-complement-signed-integer-calculator/manifest";
 import { manifest as crontabGenerator } from "@/tools/developer/crontab-generator/manifest";
 import { manifest as markdownLiveEditorPreviewer } from "@/tools/developer/markdown-live-editor-previewer/manifest";
 import { manifest as markdownTableGenerator } from "@/tools/developer/markdown-table-generator/manifest";
@@ -556,6 +560,12 @@ import { manifest as plantumlDiagramEditor } from "@/tools/developer/plantuml-di
 import { manifest as markdownToSlidesPresentationGenerator } from "@/tools/developer/markdown-to-slides-presentation-generator/manifest";
 import { manifest as markdownSyntaxCheatsheetReference } from "@/tools/developer/markdown-syntax-cheatsheet-reference/manifest";
 import { manifest as markdownLinterFormatter } from "@/tools/developer/markdown-linter-formatter/manifest";
+import { manifest as ieee754FloatingPointConverter } from "@/tools/developer/ieee-754-floating-point-converter/manifest";
+import { manifest as fixedPointQFormatConverter } from "@/tools/developer/fixed-point-q-format-converter/manifest";
+import { manifest as bigIntegerArbitraryPrecisionCalculator } from "@/tools/developer/big-integer-arbitrary-precision-calculator/manifest";
+import { manifest as hexDumpHexViewerEditor } from "@/tools/developer/hex-dump-hex-viewer-editor/manifest";
+import { manifest as binaryFileSignatureMagicNumberInspector } from "@/tools/developer/binary-file-signature-magic-number-inspector/manifest";
+import { manifest as asciiArtTextBannerGenerator } from "@/tools/developer/ascii-art-text-banner-generator/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1036,7 +1046,7 @@ export const TOOLS: readonly ToolManifest[] = [
   ibanGeneratorValidator,
   inBrowserSqlPlayground,
   isbnGeneratorValidator,
-  iso-8601DateParserFormatter,
+  iso8601DateParserFormatter,
   jqPlaygroundFilterBuilder,
   julianDateAstronomicalTimeConverter,
   luhnCreditCardValidator,
@@ -1046,6 +1056,7 @@ export const TOOLS: readonly ToolManifest[] = [
   mongodbAggregationPipelineBuilder,
   mongodbQueryBuilder,
   naughtyStringGenerator,
+  numberBaseConverter,
   onlineStopwatchTimer,
   phoneNumberGeneratorValidator,
   printableCalendarGenerator,
@@ -1082,6 +1093,8 @@ export const TOOLS: readonly ToolManifest[] = [
   worldClockMeetingPlanner,  ansiEscapeCodeTerminalColorGenerator,
   bashPromptPs1Generator,
   bashrcZshrcAliasConfigManager,
+  bitwiseOperationCalculator,
+  bitShiftRotateVisualizer,
   dotfilesManagerGenerator,
   findCommandBuilder,
   globPatternTester,
@@ -1093,6 +1106,7 @@ export const TOOLS: readonly ToolManifest[] = [
   sshConfigGenerator,
   manPageTldrCommandReference,
   exitCodeSignalReference,
+  twosComplementSignedIntegerCalculator,
   crontabGenerator,
   markdownLiveEditorPreviewer,
   markdownTableGenerator,
@@ -1104,6 +1118,12 @@ export const TOOLS: readonly ToolManifest[] = [
   markdownToSlidesPresentationGenerator,
   markdownSyntaxCheatsheetReference,
   markdownLinterFormatter,
+  ieee754FloatingPointConverter,
+  fixedPointQFormatConverter,
+  bigIntegerArbitraryPrecisionCalculator,
+  hexDumpHexViewerEditor,
+  binaryFileSignatureMagicNumberInspector,
+  asciiArtTextBannerGenerator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

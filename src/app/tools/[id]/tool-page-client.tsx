@@ -550,6 +550,7 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "mongodb-aggregation-pipeline-builder": () => import("@/tools/developer/mongodb-aggregation-pipeline-builder/ui"),
   "mongodb-query-builder": () => import("@/tools/developer/mongodb-query-builder/ui"),
   "naughty-string-generator": () => import("@/tools/developer/naughty-string-generator/ui"),
+  "number-base-converter": () => import("@/tools/developer/number-base-converter/ui"),
   "online-stopwatch-timer": () => import("@/tools/developer/online-stopwatch-timer/ui"),
   "phone-number-generator-validator": () => import("@/tools/developer/phone-number-generator-validator/ui"),
   "printable-calendar-generator": () => import("@/tools/developer/printable-calendar-generator/ui"),
@@ -586,6 +587,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "world-clock-meeting-planner": () => import("@/tools/developer/world-clock-meeting-planner/ui"),  "ansi-escape-code-terminal-color-generator": () => import("@/tools/developer/ansi-escape-code-terminal-color-generator/ui"),
   "bash-prompt-ps1-generator": () => import("@/tools/developer/bash-prompt-ps1-generator/ui"),
   "bashrc-zshrc-alias-config-manager": () => import("@/tools/developer/bashrc-zshrc-alias-config-manager/ui"),
+  "bitwise-operation-calculator": () => import("@/tools/developer/bitwise-operation-calculator/ui"),
+  "bit-shift-rotate-visualizer": () => import("@/tools/developer/bit-shift-rotate-visualizer/ui"),
   "dotfiles-manager-generator": () => import("@/tools/developer/dotfiles-manager-generator/ui"),
   "find-command-builder": () => import("@/tools/developer/find-command-builder/ui"),
   "glob-pattern-tester": () => import("@/tools/developer/glob-pattern-tester/ui"),
@@ -597,6 +600,7 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "ssh-config-generator": () => import("@/tools/developer/ssh-config-generator/ui"),
   "man-page-tldr-command-reference": () => import("@/tools/developer/man-page-tldr-command-reference/ui"),
   "exit-code-signal-reference": () => import("@/tools/developer/exit-code-signal-reference/ui"),
+  "twos-complement-signed-integer-calculator": () => import("@/tools/developer/twos-complement-signed-integer-calculator/ui"),
   "crontab-generator": () => import("@/tools/developer/crontab-generator/ui"),
   "markdown-live-editor-previewer": () => import("@/tools/developer/markdown-live-editor-previewer/ui"),
   "markdown-table-generator": () => import("@/tools/developer/markdown-table-generator/ui"),
@@ -608,6 +612,12 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "markdown-to-slides-presentation-generator": () => import("@/tools/developer/markdown-to-slides-presentation-generator/ui"),
   "markdown-syntax-cheatsheet-reference": () => import("@/tools/developer/markdown-syntax-cheatsheet-reference/ui"),
   "markdown-linter-formatter": () => import("@/tools/developer/markdown-linter-formatter/ui"),
+  "ieee-754-floating-point-converter": () => import("@/tools/developer/ieee-754-floating-point-converter/ui"),
+  "fixed-point-q-format-converter": () => import("@/tools/developer/fixed-point-q-format-converter/ui"),
+  "big-integer-arbitrary-precision-calculator": () => import("@/tools/developer/big-integer-arbitrary-precision-calculator/ui"),
+  "hex-dump-hex-viewer-editor": () => import("@/tools/developer/hex-dump-hex-viewer-editor/ui"),
+  "binary-file-signature-magic-number-inspector": () => import("@/tools/developer/binary-file-signature-magic-number-inspector/ui"),
+  "ascii-art-text-banner-generator": () => import("@/tools/developer/ascii-art-text-banner-generator/ui"),
 };
 
 interface ToolPageClientProps {
