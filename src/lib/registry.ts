@@ -576,6 +576,16 @@ import { manifest as primeNumberCheckerFactorizationTool } from "@/tools/develop
 import { manifest as asciiUnicodeCodePointExplorer } from "@/tools/developer/ascii-unicode-code-point-explorer/manifest";
 import { manifest as checksumParityBitCalculator } from "@/tools/developer/checksum-parity-bit-calculator/manifest";
 import { manifest as grayCodeConverter } from "@/tools/developer/gray-code-converter/manifest";
+import { manifest as hammingCodeErrorCorrectionCalculator } from "@/tools/developer/hamming-code-error-correction-calculator/manifest";
+import { manifest as ipv4SubnetCalculatorCidrVlsm } from "@/tools/developer/ipv4-subnet-calculator-cidr-vlsm/manifest";
+import { manifest as ipv6SubnetCalculator } from "@/tools/developer/ipv6-subnet-calculator/manifest";
+import { manifest as cidrIpRangeNetmaskConverter } from "@/tools/developer/cidr-ip-range-netmask-converter/manifest";
+import { manifest as ipAddressFormatConverter } from "@/tools/developer/ip-address-format-converter/manifest";
+import { manifest as ipv6AddressExpanderCompressorValidator } from "@/tools/developer/ipv6-address-expander-compressor-validator/manifest";
+import { manifest as macAddressVendorOuiLookupFormatter } from "@/tools/developer/mac-address-vendor-oui-lookup-formatter/manifest";
+import { manifest as dnsRecordLookupReference } from "@/tools/developer/dns-record-lookup-reference/manifest";
+import { manifest as reverseDnsPtrLookupGenerator } from "@/tools/developer/reverse-dns-ptr-lookup-generator/manifest";
+import { manifest as dnsPropagationCheckerReference } from "@/tools/developer/dns-propagation-checker-reference/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1144,6 +1154,16 @@ export const TOOLS: readonly ToolManifest[] = [
   asciiUnicodeCodePointExplorer,
   checksumParityBitCalculator,
   grayCodeConverter,
+  hammingCodeErrorCorrectionCalculator,
+  ipv4SubnetCalculatorCidrVlsm,
+  ipv6SubnetCalculator,
+  cidrIpRangeNetmaskConverter,
+  ipAddressFormatConverter,
+  ipv6AddressExpanderCompressorValidator,
+  macAddressVendorOuiLookupFormatter,
+  dnsRecordLookupReference,
+  reverseDnsPtrLookupGenerator,
+  dnsPropagationCheckerReference,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

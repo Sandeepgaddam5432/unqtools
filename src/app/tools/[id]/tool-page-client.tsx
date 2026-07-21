@@ -628,6 +628,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "ascii-unicode-code-point-explorer": () => import("@/tools/developer/ascii-unicode-code-point-explorer/ui"),
   "checksum-parity-bit-calculator": () => import("@/tools/developer/checksum-parity-bit-calculator/ui"),
   "gray-code-converter": () => import("@/tools/developer/gray-code-converter/ui"),
+  "hamming-code-error-correction-calculator": () => import("@/tools/developer/hamming-code-error-correction-calculator/ui"),
+  "ipv4-subnet-calculator-cidr-vlsm": () => import("@/tools/developer/ipv4-subnet-calculator-cidr-vlsm/ui"),
+  "ipv6-subnet-calculator": () => import("@/tools/developer/ipv6-subnet-calculator/ui"),
+  "cidr-ip-range-netmask-converter": () => import("@/tools/developer/cidr-ip-range-netmask-converter/ui"),
+  "ip-address-format-converter": () => import("@/tools/developer/ip-address-format-converter/ui"),
+  "ipv6-address-expander-compressor-validator": () => import("@/tools/developer/ipv6-address-expander-compressor-validator/ui"),
+  "mac-address-vendor-oui-lookup-formatter": () => import("@/tools/developer/mac-address-vendor-oui-lookup-formatter/ui"),
+  "dns-record-lookup-reference": () => import("@/tools/developer/dns-record-lookup-reference/ui"),
+  "reverse-dns-ptr-lookup-generator": () => import("@/tools/developer/reverse-dns-ptr-lookup-generator/ui"),
+  "dns-propagation-checker-reference": () => import("@/tools/developer/dns-propagation-checker-reference/ui"),
 };
 
 interface ToolPageClientProps {
