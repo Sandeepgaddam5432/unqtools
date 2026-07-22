@@ -652,6 +652,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "sorting-algorithm-visualizer": () => import("@/tools/developer/sorting-algorithm-visualizer/ui"),
   "pathfinding-algorithm-visualizer": () => import("@/tools/developer/pathfinding-algorithm-visualizer/ui"),
   "binary-search-tree-bst-visualizer": () => import("@/tools/developer/binary-search-tree-bst-visualizer/ui"),
+  "heap-priority-queue-visualizer": () => import("@/tools/developer/heap-priority-queue-visualizer/ui"),
+  "trie-prefix-tree-visualizer": () => import("@/tools/developer/trie-prefix-tree-visualizer/ui"),
 };
 
 interface ToolPageClientProps {

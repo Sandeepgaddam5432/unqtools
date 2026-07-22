@@ -600,6 +600,8 @@ import { manifest as cidrAggregatorNetworkSummarizer } from "@/tools/developer/c
 import { manifest as sortingAlgorithmVisualizer } from "@/tools/developer/sorting-algorithm-visualizer/manifest";
 import { manifest as pathfindingAlgorithmVisualizer } from "@/tools/developer/pathfinding-algorithm-visualizer/manifest";
 import { manifest as binarySearchTreeBstVisualizer } from "@/tools/developer/binary-search-tree-bst-visualizer/manifest";
+import { manifest as heapPriorityQueueVisualizer } from "@/tools/developer/heap-priority-queue-visualizer/manifest";
+import { manifest as triePrefixTreeVisualizer } from "@/tools/developer/trie-prefix-tree-visualizer/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1192,6 +1194,8 @@ export const TOOLS: readonly ToolManifest[] = [
   sortingAlgorithmVisualizer,
   pathfindingAlgorithmVisualizer,
   binarySearchTreeBstVisualizer,
+  heapPriorityQueueVisualizer,
+  triePrefixTreeVisualizer,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
