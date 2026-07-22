@@ -648,6 +648,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "traceroute-visualizer": () => import("@/tools/developer/traceroute-visualizer/ui"),
   "public-ip-geolocation-lookup": () => import("@/tools/developer/public-ip-geolocation-lookup/ui"),
   "dns-over-https-doh-query-tool": () => import("@/tools/developer/dns-over-https-doh-query-tool/ui"),
+  "cidr-aggregator-network-summarizer": () => import("@/tools/developer/cidr-aggregator-network-summarizer/ui"),
+  "sorting-algorithm-visualizer": () => import("@/tools/developer/sorting-algorithm-visualizer/ui"),
 };
 
 interface ToolPageClientProps {
