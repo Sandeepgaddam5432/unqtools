@@ -1,0 +1,679 @@
+"use client";
+
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  CopyButton,
+  DownloadButton,
+  EmptyState,
+  ShareButton,
+  ClearButton,
+} from "../../_shared";
+import { toast } from "sonner";
+import {
+  createTree,
+  fromValues,
+  cloneTree,
+  getNode,
+  insertPure,
+  deletePure,
+  find,
+  height,
+  checkProperties,
+  computeStats,
+  layout,
+  runInsert,
+  runDelete,
+  runTraversal,
+  parseValues,
+  serializeTree,
+  deserializeTree,
+  nodeColorClass,
+  formatStep,
+  loadHistory,
+  saveHistory,
+  clearHistory,
+  buildShareUrl,
+  parseShareUrl,
+  randomTree,
+  sortedTree,
+  inOrderArray,
+  type RBTree,
+  type OpKind,
+  type OpResult,
+  type HistoryEntry,
+} from "./logic";
+import {
+  History, GitFork, Play, Pause, SkipForward, SkipBack,
+  FastForward, Info, Sparkles, ArrowDownToLine,
+  Trash2, Plus, RefreshCw, CheckCircle2, XCircle,
+} from "lucide-react";
+
+type Tab = "insert" | "delete" | "traverse";
+
+export default function RedBlackTreeVisualizer() {
+  const [tree, setTree] = useState<RBTree>(() => fromValues([50, 30, 70, 20, 40, 60, 80]));
+  const [tab, setTab] = useState<Tab>("insert");
+  const [valueInput, setValueInput] = useState("");
+  const [bulkInput, setBulkInput] = useState("");
+  const [stepIndex, setStepIndex] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState(5);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    setHistory(loadHistory());
+    if (typeof window !== "undefined" && window.location.hash) {
+      const p = parseShareUrl(window.location.hash);
+      if (p) {
+        const t = deserializeTree(p.tree);
+        if (t) {
+          setTree(t);
+          toast.info("Loaded tree from share link");
+        }
+      }
+    }
+  }, []);
+
+  // Run the active operation.
+  const result: OpResult = useMemo(() => {
+    if (tab === "insert") {
+      const v = parseInt(valueInput, 10);
+      if (!Number.isFinite(v)) return { kind: "insert", steps: [], totalComparisons: 0, totalRotations: 0, totalRecolors: 0, output: [], found: false, finalTree: tree };
+      return runInsert(tree, v);
+    }
+    if (tab === "delete") {
+      const v = parseInt(valueInput, 10);
+      if (!Number.isFinite(v)) return { kind: "delete", steps: [], totalComparisons: 0, totalRotations: 0, totalRecolors: 0, output: [], found: false, finalTree: tree };
+      return runDelete(tree, v);
+    }
+    return runTraversal(tree);
+  }, [tab, valueInput, tree]);
+
+  const steps = result.steps;
+  const currentStep = steps[stepIndex] ?? null;
+
+  const displayTree = currentStep?.tree ?? tree;
+  const positioned = useMemo(() => layout(displayTree), [displayTree]);
+  const stats = useMemo(() => computeStats(tree), [tree]);
+  const props = useMemo(() => checkProperties(tree), [tree]);
+  const inOrder = useMemo(() => inOrderArray(tree), [tree]);
+
+  useEffect(() => {
+    setStepIndex(0);
+    setPlaying(false);
+  }, [tree, tab, valueInput]);
+
+  useEffect(() => {
+    if (!playing) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      return;
+    }
+    const total = steps.length;
+    if (total === 0) { setPlaying(false); return; }
+    if (stepIndex >= total - 1) setStepIndex(0);
+    const ms = Math.max(10, 1100 - speed * 110);
+    intervalRef.current = setInterval(() => {
+      setStepIndex((prev) => {
+        if (prev >= total - 1) { setPlaying(false); return prev; }
+        return prev + 1;
+      });
+    }, ms);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    };
+  }, [playing, speed, steps, stepIndex]);
+
+  const commit = useCallback(() => {
+    if (tab === "insert") {
+      const v = parseInt(valueInput, 10);
+      if (Number.isFinite(v)) {
+        const t = cloneTree(tree);
+        const inserted = insertPure(t, v);
+        setTree(t);
+        toast.success(inserted ? `Inserted ${v}` : `${v} is a duplicate — skipped`);
+        handleSaveHistory("insert", v, inserted, t, result.totalComparisons, result.totalRotations, result.totalRecolors);
+        setValueInput("");
+      }
+    } else if (tab === "delete") {
+      const v = parseInt(valueInput, 10);
+      if (Number.isFinite(v)) {
+        const t = cloneTree(tree);
+        const deleted = deletePure(t, v);
+        setTree(t);
+        toast.success(deleted ? `Deleted ${v}` : `${v} not in tree`);
+        handleSaveHistory("delete", v, deleted, t, result.totalComparisons, result.totalRotations, result.totalRecolors);
+        setValueInput("");
+      }
+    } else if (tab === "traverse") {
+      handleSaveHistory("traverse-inorder", undefined, true, tree, result.totalComparisons, 0, 0);
+    }
+  }, [tab, valueInput, tree, result]);
+
+  const handleSaveHistory = useCallback(
+    (op: OpKind, value: number | undefined, found: boolean, t: RBTree, comparisons: number, rotations: number, recolors: number) => {
+      const s = computeStats(t);
+      saveHistory({
+        ts: Date.now(),
+        op,
+        value,
+        nodeCount: s.nodeCount,
+        height: s.height,
+        blackHeight: s.blackHeight,
+        comparisons,
+        rotations,
+        recolors,
+        found,
+      });
+      setHistory(loadHistory());
+    },
+    [],
+  );
+
+  const handleBulkInsert = useCallback(() => {
+    const parsed = parseValues(bulkInput);
+    if (parsed.ok.length === 0) {
+      toast.error("No valid integers found");
+      return;
+    }
+    const t = cloneTree(tree);
+    let inserted = 0;
+    let rotations = 0;
+    let recolors = 0;
+    for (const v of parsed.ok) {
+      const r = runInsert(t, v);
+      if (insertPure(t, v)) {
+        inserted++;
+        rotations += r.totalRotations;
+        recolors += r.totalRecolors;
+      }
+    }
+    setTree(t);
+    toast.success(`Inserted ${inserted} / ${parsed.ok.length} values${parsed.skipped.length > 0 ? ` (skipped ${parsed.skipped.length} invalid)` : ""} · ${rotations} rotations, ${recolors} recolors`);
+    handleSaveHistory("insert", undefined, true, t, 0, rotations, recolors);
+    setBulkInput("");
+  }, [bulkInput, tree, handleSaveHistory]);
+
+  const handleRandomTree = useCallback((n: number) => {
+    const t = randomTree(n, Date.now() % 100000);
+    setTree(t);
+    toast.success(`Generated random ${n}-node RB tree`);
+  }, []);
+
+  const handleSortedTree = useCallback((n: number) => {
+    const t = sortedTree(n);
+    setTree(t);
+    toast.success(`Generated sorted-input ${n}-node RB tree (still balanced)`);
+  }, []);
+
+  const handleClear = useCallback(() => {
+    setTree(createTree());
+    setValueInput("");
+    setBulkInput("");
+    setStepIndex(0);
+    setPlaying(false);
+    toast.info("Cleared tree");
+  }, []);
+
+  const handleClearHistory = useCallback(() => {
+    clearHistory();
+    setHistory([]);
+    toast.success("History cleared");
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setTree(fromValues([50, 30, 70, 20, 40, 60, 80]));
+    setValueInput("");
+    setBulkInput("");
+    setStepIndex(0);
+    setPlaying(false);
+    setTab("insert");
+    toast.info("Reset to default tree");
+  }, []);
+
+  const stepPct = steps.length > 0 ? Math.round((stepIndex / Math.max(1, steps.length - 1)) * 100) : 0;
+
+  // SVG layout dimensions.
+  const cellW = 48;
+  const cellH = 56;
+  const svgW = Math.max(300, positioned.length * cellW + 40);
+  const svgH = Math.max(180, (stats.height + 1) * cellH + 40);
+  const xFor = (x: number) => x * cellW + cellW / 2 + 20;
+  const yFor = (y: number) => y * cellH + 30;
+  const posById = new Map(positioned.map((p) => [p.node.id, p]));
+
+  return (
+    <div className="space-y-4 unq-animate-fade-in-up">
+      <Card>
+        <CardContent className="p-4 space-y-3">
+          <div className="flex flex-wrap gap-1.5">
+            <TabButton active={tab === "insert"} onClick={() => setTab("insert")} icon={<ArrowDownToLine className="h-3.5 w-3.5" />} label="Insert" />
+            <TabButton active={tab === "delete"} onClick={() => setTab("delete")} icon={<Trash2 className="h-3.5 w-3.5" />} label="Delete" />
+            <TabButton active={tab === "traverse"} onClick={() => setTab("traverse")} icon={<GitFork className="h-3.5 w-3.5" />} label="In-order" />
+          </div>
+
+          {tab !== "traverse" ? (
+            <div className="flex flex-wrap items-end gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">{tab === "insert" ? "Value to insert" : "Value to delete"}</Label>
+                <Input
+                  value={valueInput}
+                  onChange={(e) => setValueInput(e.target.value)}
+                  className="h-8 w-32 text-xs"
+                  inputMode="numeric"
+                  placeholder="e.g. 42"
+                />
+              </div>
+              <Button size="sm" onClick={commit} className="h-8 gap-1">
+                <Plus className="h-3.5 w-3.5" /> {tab === "insert" ? "Insert" : "Delete"}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-end gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">In-order traversal (L, V, R)</Label>
+                <div className="text-xs text-muted-foreground">Visits left subtree, then node, then right subtree — produces a sorted sequence.</div>
+              </div>
+              <Button size="sm" onClick={commit} className="h-8 gap-1">
+                <Sparkles className="h-3.5 w-3.5" /> Run traversal
+              </Button>
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <Label className="text-xs">Bulk insert (comma / space / newline separated)</Label>
+            <div className="flex gap-2">
+              <Input
+                value={bulkInput}
+                onChange={(e) => setBulkInput(e.target.value)}
+                className="h-8 text-xs flex-1"
+                placeholder="e.g. 45, 65, 12, 88"
+              />
+              <Button size="sm" variant="secondary" onClick={handleBulkInsert} className="h-8">Bulk insert</Button>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5">
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleRandomTree(10)}>Random 10</Button>
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleRandomTree(25)}>Random 25</Button>
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleSortedTree(15)}>Sorted 15</Button>
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleSortedTree(31)}>Sorted 31</Button>
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={handleClear}>Clear tree</Button>
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={handleReset}>Reset</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Five-property checklist */}
+      <Card>
+        <CardContent className="p-4 space-y-2">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+            <Info className="h-4 w-4" /> Five Red-Black properties
+            {props.allPass
+              ? <Badge variant="secondary" className="text-[10px] text-emerald-700 dark:text-emerald-400">ALL PASS</Badge>
+              : <Badge variant="secondary" className="text-[10px] text-red-700 dark:text-red-400">VIOLATION</Badge>}
+            <Badge variant="outline" className="text-[10px]">black-height = {props.blackHeight}</Badge>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+            <PropCheck ok={props.rootBlack} label="(1) Root is black" />
+            <PropCheck ok={props.noRedRed} label="(2) No red-red (red node has black parent)" />
+            <PropCheck ok={props.nilBlack} label="(3) Every leaf (NIL) is black" />
+            <PropCheck ok={props.equalBlackHeight} label="(4) Equal black-height on all paths" />
+            <PropCheck ok={props.colorsValid} label="(5) Every node is red or black" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+              <GitFork className="h-4 w-4" />
+              {tree.nodes.size} nodes · height {stats.height} · {stats.redCount} red / {stats.blackCount} black
+            </h3>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" disabled={stepIndex <= 0 || playing} onClick={() => setStepIndex(0)} className="h-8 w-8">
+                <SkipBack className="h-3.5 w-3.5" />
+              </Button>
+              <Button variant="outline" size="icon" disabled={stepIndex <= 0 || playing} onClick={() => setStepIndex((i) => Math.max(0, i - 1))} className="h-8 w-8">
+                <SkipBack className="h-3 w-3" />
+              </Button>
+              <Button size="sm" onClick={() => setPlaying((p) => !p)} className="gap-1">
+                {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                {playing ? "Pause" : "Play"}
+              </Button>
+              <Button variant="outline" size="icon" disabled={stepIndex >= steps.length - 1 || playing} onClick={() => setStepIndex((i) => Math.min(steps.length - 1, i + 1))} className="h-8 w-8">
+                <SkipForward className="h-3 w-3" />
+              </Button>
+              <Button variant="outline" size="icon" disabled={stepIndex >= steps.length - 1 || playing} onClick={() => setStepIndex(steps.length - 1)} className="h-8 w-8">
+                <SkipForward className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <FastForward className="h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="range" min={1} max={10} value={speed}
+              onChange={(e) => setSpeed(parseInt(e.target.value, 10))}
+              className="flex-1"
+              aria-label="Speed"
+            />
+            <span className="text-xs text-muted-foreground w-8">{speed}×</span>
+          </div>
+
+          <div className="text-xs text-muted-foreground">
+            Step {stepIndex + 1} / {steps.length} ({stepPct}%)
+            {currentStep && <span className="ml-2">— {currentStep.description}</span>}
+          </div>
+          <div className="w-full h-2 rounded bg-muted overflow-hidden">
+            <div className="h-full bg-primary transition-all" style={{ width: `${stepPct}%` }} />
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <Stat label="Nodes" value={stats.nodeCount} />
+            <Stat label="Height" value={stats.height} />
+            <Stat label="Rotations" value={currentStep?.rotations ?? 0} highlight={currentStep && currentStep.rotations > 0 ? "bad" : undefined} />
+            <Stat label="Recolors" value={currentStep?.recolors ?? 0} highlight={currentStep && currentStep.recolors > 0 ? "bad" : undefined} />
+          </div>
+
+          {currentStep && (currentStep.insertCase || currentStep.deleteCase) && (
+            <div className="rounded border border-purple-400/40 bg-purple-400/10 p-2 text-xs text-purple-700 dark:text-purple-300">
+              <RefreshCw className="inline h-3 w-3 mr-1" />
+              Fix-up case: <strong>{currentStep.insertCase || currentStep.deleteCase}</strong>
+            </div>
+          )}
+
+          {currentStep && currentStep.kind === "double-black" && (
+            <div className="rounded border border-red-400/40 bg-red-400/10 p-2 text-xs text-red-700 dark:text-red-300">
+              <RefreshCw className="inline h-3 w-3 mr-1" />
+              Double-black detected — black-height violation in progress. Running delete fix-up.
+            </div>
+          )}
+
+          {currentStep && currentStep.output.length > 0 && (
+            <div className="rounded border bg-background px-3 py-2 text-xs">
+              <span className="text-muted-foreground">Output: </span>
+              <span className="font-mono text-foreground">[{currentStep.output.join(", ")}]</span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          {positioned.length === 0 ? (
+            <EmptyState
+              title="Tree is empty"
+              hint="Insert a value, run bulk insert, or generate a random / sorted tree to get started."
+              icon={<GitFork className="h-8 w-8" />}
+            />
+          ) : (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                <Legend color="bg-red-500" label="Red node" />
+                <Legend color="bg-zinc-700 dark:bg-zinc-300" label="Black node" />
+                <Legend color="bg-yellow-400" label="Compare / active" />
+                <Legend color="bg-sky-500" label="Path" />
+                <Legend color="bg-purple-500" label="Rotation / recolor" />
+                <Legend color="bg-rose-500" label="Pivot / double-black" />
+                <Legend color="bg-amber-500" label="Successor" />
+              </div>
+              <div className="overflow-auto">
+                <svg width={svgW} height={svgH} className="max-w-full" role="img" aria-label="Red-Black tree visualization">
+                  {/* Edges first */}
+                  {positioned.map(({ node, x, y }) => {
+                    const edges: React.ReactNode[] = [];
+                    if (node.left !== null) {
+                      const c = posById.get(node.left);
+                      if (c) edges.push(
+                        <line
+                          key={`e-${node.id}-L`}
+                          x1={xFor(x)} y1={yFor(y)}
+                          x2={xFor(c.x)} y2={yFor(c.y)}
+                          className="stroke-border"
+                          strokeWidth={1.5}
+                        />,
+                      );
+                    }
+                    if (node.right !== null) {
+                      const c = posById.get(node.right);
+                      if (c) edges.push(
+                        <line
+                          key={`e-${node.id}-R`}
+                          x1={xFor(x)} y1={yFor(y)}
+                          x2={xFor(c.x)} y2={yFor(c.y)}
+                          className="stroke-border"
+                          strokeWidth={1.5}
+                        />,
+                      );
+                    }
+                    return edges;
+                  })}
+                  {/* Nodes */}
+                  {positioned.map(({ node, x, y }) => {
+                    const cls = currentStep ? nodeColorClass(node.id, currentStep) : "default";
+                    const fill = nodeFill(cls, node.color);
+                    const isRoot = node.id === displayTree.root;
+                    return (
+                      <g key={node.id}>
+                        <circle
+                          cx={xFor(x)} cy={yFor(y)} r={16}
+                          className={fill}
+                          stroke={isRoot ? "currentColor" : "none"}
+                          strokeWidth={isRoot ? 2 : 0}
+                        />
+                        <text
+                          x={xFor(x)} y={yFor(y) + 4}
+                          textAnchor="middle"
+                          className={node.color === "R" ? "fill-white text-[10px] font-mono" : "fill-white dark:fill-black text-[10px] font-mono"}
+                        >{node.value}</text>
+                        <text
+                          x={xFor(x) + 18} y={yFor(y) - 12}
+                          className="fill-muted-foreground text-[8px]"
+                        >{node.color}</text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                Red nodes (filled red); black nodes (filled dark). Top-right of each node = color (R or B). Root has a highlighted outline.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+              <Info className="h-4 w-4" /> Operation details
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              <CopyButton
+                getText={() => steps.map((s, i) => formatStep(s, i, steps.length)).join("\n")}
+                label="Copy steps"
+              />
+              <DownloadButton
+                getText={() => steps.map((s, i) => formatStep(s, i, steps.length)).join("\n")}
+                filename="rb-tree-steps.txt"
+                label="Download log"
+              />
+              {inOrder.length > 0 && (
+                <CopyButton
+                  getText={() => inOrder.join(", ")}
+                  label="Copy in-order"
+                />
+              )}
+              <ShareButton getUrl={() => { handleSaveHistory("traverse-inorder", undefined, true, tree, 0, 0, 0); return buildShareUrl(tree); }} />
+              <CopyButton
+                getText={() => serializeTree(tree)}
+                label="Copy tree"
+              />
+              <ClearButton onClick={handleReset} />
+            </div>
+          </div>
+
+          {tab === "insert" && (
+            <div className="rounded border bg-background px-3 py-2 text-xs space-y-1">
+              <div className="font-medium text-foreground">Insert fix-up cases (CLRS)</div>
+              <div className="text-muted-foreground"><strong>Case 1:</strong> z is root → recolor black.</div>
+              <div className="text-muted-foreground"><strong>Case 2:</strong> parent black → no violation, done.</div>
+              <div className="text-muted-foreground"><strong>Case 3:</strong> parent & uncle both red → recolor parent B, uncle B, grandparent R; move z up.</div>
+              <div className="text-muted-foreground"><strong>Case 4:</strong> uncle black, z is same-side as parent (LL or RR) → recolor parent B, grandparent R, single-rotate grandparent.</div>
+              <div className="text-muted-foreground"><strong>Case 5:</strong> uncle black, z is opposite side (LR or RL) → rotate parent to reduce to case 4, then case 4.</div>
+            </div>
+          )}
+
+          {tab === "delete" && (
+            <div className="rounded border bg-background px-3 py-2 text-xs space-y-1">
+              <div className="font-medium text-foreground">Delete fix-up cases (CLRS)</div>
+              <div className="text-muted-foreground"><strong>Case 1:</strong> x is root → done.</div>
+              <div className="text-muted-foreground"><strong>Case 2:</strong> sibling red → recolor sibling B, parent R, rotate parent; fall through.</div>
+              <div className="text-muted-foreground"><strong>Case 3:</strong> sibling black, both nieces black → recolor sibling red, move up.</div>
+              <div className="text-muted-foreground"><strong>Case 4:</strong> sibling black, near niece red, far niece black → recolor, rotate sibling → case 5.</div>
+              <div className="text-muted-foreground"><strong>Case 5:</strong> sibling black, far niece red → sibling takes parent's color, parent B, far niece B, rotate parent.</div>
+              <div className="text-muted-foreground"><strong>Case 6 (splice):</strong> at-most-one-child node — splice up; if removed was black, run fix-up.</div>
+            </div>
+          )}
+
+          <div className="max-h-[200px] overflow-auto rounded border bg-background p-2 text-[10px] font-mono whitespace-pre-wrap">
+            {steps.slice(Math.max(0, stepIndex - 4), stepIndex + 1).map((s, i) => {
+              const real = Math.max(0, stepIndex - 4) + i;
+              return (
+                <div key={real} className={real === stepIndex ? "text-foreground font-semibold" : "text-muted-foreground"}>
+                  {formatStep(s, real, steps.length)}
+                </div>
+              );
+            })}
+            {steps.length === 0 && <span className="text-muted-foreground">No steps yet. Enter a value or run a traversal.</span>}
+          </div>
+        </CardContent>
+      </Card>
+
+      {history.length > 0 && (
+        <Card>
+          <CardContent className="p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <History className="h-4 w-4" /> Recent ({history.length})
+              </h3>
+              <Button variant="ghost" size="sm" onClick={handleClearHistory}>Clear</Button>
+            </div>
+            <div className="space-y-1">
+              {history.slice(0, 5).map((h, i) => (
+                <div key={i} className="rounded border bg-background px-3 py-2 text-xs">
+                  <Badge variant="outline" className="mr-2">{h.op}</Badge>
+                  {h.value !== undefined && <Badge variant="outline" className="mr-2">val={h.value}</Badge>}
+                  <Badge variant="outline" className="mr-2">{h.nodeCount} nodes</Badge>
+                  <Badge variant="outline" className="mr-2">h={h.height}</Badge>
+                  <Badge variant="outline" className="mr-2">bh={h.blackHeight}</Badge>
+                  <Badge variant="outline" className="mr-2">{h.rotations} rot</Badge>
+                  <Badge variant="outline" className="mr-2">{h.recolors} rec</Badge>
+                  <span className="text-muted-foreground ml-1">{h.found ? "✓" : "✗"} · {new Date(h.ts).toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="p-3">
+          <p className="text-xs text-muted-foreground">
+            <strong className="text-foreground">Privacy:</strong> All tree operations, fix-ups, and animation run locally. History is stored in localStorage on this device only.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <Button
+      variant={active ? "default" : "outline"}
+      size="sm"
+      className="h-8 text-xs gap-1.5"
+      onClick={onClick}
+    >
+      {icon}
+      {label}
+    </Button>
+  );
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1">
+      <span className={`inline-block h-3 w-3 rounded-full ${color}`} />
+      <span className="text-muted-foreground">{label}</span>
+    </span>
+  );
+}
+
+function PropCheck({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div className={`flex items-center gap-1.5 rounded border px-2 py-1 ${ok ? "bg-emerald-400/10 border-emerald-400/40 text-emerald-700 dark:text-emerald-400" : "bg-red-400/10 border-red-400/40 text-red-700 dark:text-red-400"}`}>
+      {ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function nodeFill(cls: string, nodeColor: "R" | "B"): string {
+  switch (cls) {
+    case "compare":
+    case "active": return "fill-yellow-400";
+    case "successor": return "fill-amber-500";
+    case "path": return "fill-sky-500";
+    case "insert":
+    case "rotation":
+    case "recolor": return "fill-purple-500";
+    case "pivot":
+    case "double-black": return "fill-rose-500";
+    case "default":
+    default: return nodeColor === "R" ? "fill-red-500" : "fill-zinc-700 dark:fill-zinc-300";
+  }
+}
+
+function Stat({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string | number;
+  highlight?: "bad" | "good";
+}) {
+  const color = highlight === "bad"
+    ? "text-purple-600 dark:text-purple-400"
+    : highlight === "good"
+      ? "text-emerald-600 dark:text-emerald-400"
+      : "text-foreground";
+  return (
+    <div className="rounded border bg-background px-3 py-2">
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className={`text-base font-semibold ${color}`}>{value}</div>
+    </div>
+  );
+}
