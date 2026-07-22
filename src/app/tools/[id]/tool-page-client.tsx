@@ -638,6 +638,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "dns-record-lookup-reference": () => import("@/tools/developer/dns-record-lookup-reference/ui"),
   "reverse-dns-ptr-lookup-generator": () => import("@/tools/developer/reverse-dns-ptr-lookup-generator/ui"),
   "dns-propagation-checker-reference": () => import("@/tools/developer/dns-propagation-checker-reference/ui"),
+  "whois-domain-ip-lookup": () => import("@/tools/developer/whois-domain-ip-lookup/ui"),
+  "spf-record-generator-validator": () => import("@/tools/developer/spf-record-generator-validator/ui"),
+  "dkim-record-generator-validator": () => import("@/tools/developer/dkim-record-generator-validator/ui"),
+  "dmarc-record-generator-validator": () => import("@/tools/developer/dmarc-record-generator-validator/ui"),
+  "ssl-tls-certificate-decoder-checker": () => import("@/tools/developer/ssl-tls-certificate-decoder-checker/ui"),
+  "well-known-common-ports-reference": () => import("@/tools/developer/well-known-common-ports-reference/ui"),
+  "ping-latency-tester-browser": () => import("@/tools/developer/ping-latency-tester-browser/ui"),
+  "traceroute-visualizer": () => import("@/tools/developer/traceroute-visualizer/ui"),
+  "public-ip-geolocation-lookup": () => import("@/tools/developer/public-ip-geolocation-lookup/ui"),
+  "dns-over-https-doh-query-tool": () => import("@/tools/developer/dns-over-https-doh-query-tool/ui"),
 };
 
 interface ToolPageClientProps {

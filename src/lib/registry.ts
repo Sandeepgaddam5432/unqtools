@@ -586,6 +586,16 @@ import { manifest as macAddressVendorOuiLookupFormatter } from "@/tools/develope
 import { manifest as dnsRecordLookupReference } from "@/tools/developer/dns-record-lookup-reference/manifest";
 import { manifest as reverseDnsPtrLookupGenerator } from "@/tools/developer/reverse-dns-ptr-lookup-generator/manifest";
 import { manifest as dnsPropagationCheckerReference } from "@/tools/developer/dns-propagation-checker-reference/manifest";
+import { manifest as whoisDomainIpLookup } from "@/tools/developer/whois-domain-ip-lookup/manifest";
+import { manifest as spfRecordGeneratorValidator } from "@/tools/developer/spf-record-generator-validator/manifest";
+import { manifest as dkimRecordGeneratorValidator } from "@/tools/developer/dkim-record-generator-validator/manifest";
+import { manifest as dmarcRecordGeneratorValidator } from "@/tools/developer/dmarc-record-generator-validator/manifest";
+import { manifest as sslTlsCertificateDecoderChecker } from "@/tools/developer/ssl-tls-certificate-decoder-checker/manifest";
+import { manifest as wellKnownCommonPortsReference } from "@/tools/developer/well-known-common-ports-reference/manifest";
+import { manifest as pingLatencyTesterBrowser } from "@/tools/developer/ping-latency-tester-browser/manifest";
+import { manifest as tracerouteVisualizer } from "@/tools/developer/traceroute-visualizer/manifest";
+import { manifest as publicIpGeolocationLookup } from "@/tools/developer/public-ip-geolocation-lookup/manifest";
+import { manifest as dnsOverHttpsDohQueryTool } from "@/tools/developer/dns-over-https-doh-query-tool/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1164,6 +1174,16 @@ export const TOOLS: readonly ToolManifest[] = [
   dnsRecordLookupReference,
   reverseDnsPtrLookupGenerator,
   dnsPropagationCheckerReference,
+  whoisDomainIpLookup,
+  spfRecordGeneratorValidator,
+  dkimRecordGeneratorValidator,
+  dmarcRecordGeneratorValidator,
+  sslTlsCertificateDecoderChecker,
+  wellKnownCommonPortsReference,
+  pingLatencyTesterBrowser,
+  tracerouteVisualizer,
+  publicIpGeolocationLookup,
+  dnsOverHttpsDohQueryTool,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
