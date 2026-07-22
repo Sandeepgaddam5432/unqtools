@@ -598,6 +598,8 @@ import { manifest as publicIpGeolocationLookup } from "@/tools/developer/public-
 import { manifest as dnsOverHttpsDohQueryTool } from "@/tools/developer/dns-over-https-doh-query-tool/manifest";
 import { manifest as cidrAggregatorNetworkSummarizer } from "@/tools/developer/cidr-aggregator-network-summarizer/manifest";
 import { manifest as sortingAlgorithmVisualizer } from "@/tools/developer/sorting-algorithm-visualizer/manifest";
+import { manifest as pathfindingAlgorithmVisualizer } from "@/tools/developer/pathfinding-algorithm-visualizer/manifest";
+import { manifest as binarySearchTreeBstVisualizer } from "@/tools/developer/binary-search-tree-bst-visualizer/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -1188,6 +1190,8 @@ export const TOOLS: readonly ToolManifest[] = [
   dnsOverHttpsDohQueryTool,
   cidrAggregatorNetworkSummarizer,
   sortingAlgorithmVisualizer,
+  pathfindingAlgorithmVisualizer,
+  binarySearchTreeBstVisualizer,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

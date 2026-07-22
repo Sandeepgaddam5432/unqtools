@@ -650,6 +650,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "dns-over-https-doh-query-tool": () => import("@/tools/developer/dns-over-https-doh-query-tool/ui"),
   "cidr-aggregator-network-summarizer": () => import("@/tools/developer/cidr-aggregator-network-summarizer/ui"),
   "sorting-algorithm-visualizer": () => import("@/tools/developer/sorting-algorithm-visualizer/ui"),
+  "pathfinding-algorithm-visualizer": () => import("@/tools/developer/pathfinding-algorithm-visualizer/ui"),
+  "binary-search-tree-bst-visualizer": () => import("@/tools/developer/binary-search-tree-bst-visualizer/ui"),
 };
 
 interface ToolPageClientProps {
