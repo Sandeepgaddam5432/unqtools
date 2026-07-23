@@ -7,9 +7,17 @@
  */
 import type { ToolCategory, ToolManifest } from "./tool";
 
+import { manifest as ageCalculator } from "@/tools/calculators/age-calculator/manifest";
+import { manifest as bmiCalculator } from "@/tools/calculators/bmi-calculator/manifest";
+import { manifest as dateDifferenceCalculator } from "@/tools/calculators/date-difference-calculator/manifest";
+import { manifest as discountCalculator } from "@/tools/calculators/discount-calculator/manifest";
 import { manifest as emiCalculator } from "@/tools/calculators/emi-calculator/manifest";
 import { manifest as mortgageCalculator } from "@/tools/calculators/mortgage-calculator/manifest";
+import { manifest as percentageCalculator } from "@/tools/calculators/percentage-calculator/manifest";
+import { manifest as simpleInterestCalculator } from "@/tools/calculators/simple-interest-calculator/manifest";
 import { manifest as sipCalculator } from "@/tools/calculators/sip-calculator/manifest";
+import { manifest as tipCalculator } from "@/tools/calculators/tip-calculator/manifest";
+import { manifest as unitConverterLength } from "@/tools/calculators/unit-converter-length/manifest";
 import { manifest as base64 } from "@/tools/developer/base64/manifest";
 import { manifest as hashGenerator } from "@/tools/developer/hash-generator/manifest";
 import { manifest as jsonFormatter } from "@/tools/developer/json-formatter/manifest";
@@ -609,6 +617,8 @@ import { manifest as heapPriorityQueueVisualizer } from "@/tools/developer/heap-
 import { manifest as triePrefixTreeVisualizer } from "@/tools/developer/trie-prefix-tree-visualizer/manifest";
 import { manifest as avlTreeVisualizer } from "@/tools/developer/avl-tree-visualizer/manifest";
 import { manifest as redBlackTreeVisualizer } from "@/tools/developer/red-black-tree-visualizer/manifest";
+import { manifest as metaTagGenerator } from "@/tools/seo/meta-tag-generator/manifest";
+import { manifest as seoSlugGenerator } from "@/tools/seo/seo-slug-generator/manifest";
 import { manifest as brokenBacklinkFinder } from "@/tools/seo/broken-backlink-finder/manifest";
 import { manifest as brokenLinkChecker } from "@/tools/seo/broken-link-checker/manifest";
 import { manifest as coreWebVitalsAnalyzer } from "@/tools/seo/core-web-vitals-analyzer/manifest";
@@ -619,9 +629,19 @@ import { manifest as referringDomainsExplorer } from "@/tools/seo/referring-doma
 import { manifest as sslHttpsChecker } from "@/tools/seo/ssl-https-checker/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
+  ageCalculator,
+  bmiCalculator,
+  dateDifferenceCalculator,
+  discountCalculator,
   emiCalculator,
   mortgageCalculator,
+  percentageCalculator,
+  simpleInterestCalculator,
   sipCalculator,
+  tipCalculator,
+  unitConverterLength,
+  metaTagGenerator,
+  seoSlugGenerator,
   base64,
   hashGenerator,
   jsonFormatter,

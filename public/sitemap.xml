@@ -91,6 +91,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://unqtools.pages.dev/tools/age-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/bmi-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/date-difference-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/discount-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://unqtools.pages.dev/tools/emi-calculator</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
@@ -103,7 +127,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://unqtools.pages.dev/tools/percentage-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/simple-interest-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://unqtools.pages.dev/tools/sip-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/tip-calculator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/unit-converter-length</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -3698,6 +3746,18 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/red-black-tree-visualizer</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/meta-tag-generator</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/seo-slug-generator</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

@@ -1,474 +1,177 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useState, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CopyButton, DownloadButton, ErrorBanner, EmptyState, ShareButton, ClearButton } from "../../_shared";
-import { toast } from "sonner";
-import {
-  generateMetaTags,
-  validateInput,
-  countCharacters,
-  buildPreviewData,
-  buildShareUrl,
-  parseShareUrl,
-  loadHistory,
-  saveHistory,
-  clearHistory,
-  TITLE_MAX,
-  DESCRIPTION_MAX,
-  estimatePixelWidth,
-  type MetaTagInput,
-  type RobotsDirective,
-  type HistoryEntry,
-} from "./logic";
-import { History, Eye } from "lucide-react";
-
-const ROBOTS_OPTIONS: RobotsDirective[] = [
-  "index, follow",
-  "noindex, follow",
-  "index, nofollow",
-  "noindex, nofollow",
-];
-
-function CharCounter({ value, max }: { value: string; max: number }) {
-  const c = countCharacters(value, max);
-  const px = estimatePixelWidth(value);
-  const color = c.isOver
-    ? "text-red-600 dark:text-red-400"
-    : c.isWarn
-      ? "text-amber-600 dark:text-amber-400"
-      : "text-muted-foreground";
-  return (
-    <div className={`text-xs ${color}`}>
-      {c.value}/{max} chars · ~{px}px
-      {c.isOver && " (over limit)"}
-      {c.isWarn && !c.isOver && " (near limit)"}
-    </div>
-  );
-}
+import { CopyButton, DownloadButton, ErrorBanner } from "../../_shared";
+import { generateMetaTags, generateHreflang, type MetaInput } from "./logic";
 
 export default function MetaTagGenerator() {
-  const [input, setInput] = useState<MetaTagInput>({
-    title: "",
-    description: "",
-    keywords: "",
-    author: "",
-    robots: "index, follow",
-    viewport: "width=device-width, initial-scale=1",
-    charset: "UTF-8",
-    canonical: "",
-    themeColor: "#ffffff",
-    appleWebApp: false,
-    ogTitle: "",
-    ogDescription: "",
-    ogImage: "",
-    ogUrl: "",
+  const [input, setInput] = useState<MetaInput>({
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
+    description: "UnQTools is a 100% static, privacy-first, offline-capable PWA of 610+ fast browser-based tools. No uploads, no tracking, no accounts.",
+    url: "https://unqtools.pages.dev",
+    siteName: "UnQTools",
+    image: "https://unqtools.pages.dev/logo.svg",
+    imageAlt: "UnQTools logo",
+    author: "Sandeep Gaddam",
+    keywords: ["online tools", "browser tools", "privacy"],
     ogType: "website",
-    ogSiteName: "",
     twitterCard: "summary",
-    twitterSite: "",
-    twitterCreator: "",
+    twitterSite: "@unqtools",
+    canonical: "https://unqtools.pages.dev",
+    locale: "en_US",
+    themeColor: "#0a0a0a",
+    favicon: "/favicon.ico",
+    appleTouchIcon: "/apple-touch-icon.png",
+    manifest: "/manifest.json",
   });
+  const [result, setResult] = useState<ReturnType<typeof generateMetaTags> | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
 
-  useEffect(() => {
-    setHistory(loadHistory());
-    if (typeof window !== "undefined" && window.location.hash) {
-      const parsed = parseShareUrl(window.location.hash);
-      if (Object.keys(parsed).length > 0) {
-        setInput((prev) => ({ ...prev, ...parsed } as MetaTagInput));
-        toast.info("Loaded from share link");
-      }
-    }
+  const update = useCallback((patch: Partial<MetaInput>) => {
+    setInput((prev) => ({ ...prev, ...patch }));
   }, []);
 
-  const validation = useMemo(() => validateInput(input), [input]);
-  const output = useMemo(() => {
-    if (!input.title.trim()) return "";
-    try {
-      return generateMetaTags(input);
-    } catch (e) {
-      return "";
-    }
+  const generate = useCallback(() => {
+    const r = generateMetaTags(input);
+    if ("error" in r) { setError(r.error); setResult(null); } else { setResult(r); setError(null); }
   }, [input]);
-  const preview = useMemo(() => buildPreviewData(input), [input]);
-
-  const update = useCallback(<K extends keyof MetaTagInput>(key: K, val: MetaTagInput[K]) => {
-    setInput((prev) => ({ ...prev, [key]: val }));
-  }, []);
-
-  const handleCopy = useCallback(() => {
-    if (output) {
-      try {
-        saveHistory({
-          ts: Date.now(),
-          title: input.title,
-          description: input.description,
-          snippet: output,
-        });
-        setHistory(loadHistory());
-      } catch {
-        // ignore
-      }
-    }
-  }, [output, input]);
-
-  const handleClear = useCallback(() => {
-    setInput({
-      title: "",
-      description: "",
-      keywords: "",
-      author: "",
-      robots: "index, follow",
-      viewport: "width=device-width, initial-scale=1",
-      charset: "UTF-8",
-      canonical: "",
-      themeColor: "#ffffff",
-      appleWebApp: false,
-      ogTitle: "",
-      ogDescription: "",
-      ogImage: "",
-      ogUrl: "",
-      ogType: "website",
-      ogSiteName: "",
-      twitterCard: "summary",
-      twitterSite: "",
-      twitterCreator: "",
-    });
-    setError(null);
-    toast.info("Form cleared");
-  }, []);
-
-  const handleClearHistory = useCallback(() => {
-    clearHistory();
-    setHistory([]);
-    toast.success("History cleared");
-  }, []);
 
   return (
-    <div className="space-y-4 unq-animate-fade-in-up">
+    <div className="space-y-4">
       <Card>
         <CardContent className="p-4 space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-title">Title</Label>
-              <Input
-                id="mt-title"
-                value={input.title}
-                onChange={(e) => update("title", e.target.value)}
-                placeholder="Page title (max 60 chars recommended)"
-              />
-              <CharCounter value={input.title} max={TITLE_MAX} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label className="text-xs text-muted-foreground">Title ({input.title.length} chars)</Label>
+              <Input value={input.title} onChange={(e) => update({ title: e.target.value })} />
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-canonical">Canonical URL</Label>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label className="text-xs text-muted-foreground">Description ({input.description.length} chars)</Label>
+              <textarea className="rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px]" value={input.description} onChange={(e) => update({ description: e.target.value })} />
+            </div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">URL</Label><Input value={input.url ?? ""} onChange={(e) => update({ url: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Site name</Label><Input value={input.siteName ?? ""} onChange={(e) => update({ siteName: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Image URL</Label><Input value={input.image ?? ""} onChange={(e) => update({ image: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Image alt</Label><Input value={input.imageAlt ?? ""} onChange={(e) => update({ imageAlt: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Author</Label><Input value={input.author ?? ""} onChange={(e) => update({ author: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Keywords (comma-separated)</Label>
               <Input
-                id="mt-canonical"
-                value={input.canonical}
-                onChange={(e) => update("canonical", e.target.value)}
-                placeholder="https://example.com/page"
+                value={(input.keywords ?? []).join(", ")}
+                onChange={(e) => update({ keywords: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })}
               />
+            </div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Canonical URL</Label><Input value={input.canonical ?? ""} onChange={(e) => update({ canonical: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">OG type</Label>
+              <select className="h-9 rounded-md border border-input bg-background px-3 text-sm" value={input.ogType ?? "website"} onChange={(e) => update({ ogType: e.target.value as MetaInput["ogType"] })}>
+                <option value="website">website</option>
+                <option value="article">article</option>
+                <option value="product">product</option>
+                <option value="profile">profile</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Twitter card</Label>
+              <select className="h-9 rounded-md border border-input bg-background px-3 text-sm" value={input.twitterCard ?? "summary"} onChange={(e) => update({ twitterCard: e.target.value as MetaInput["twitterCard"] })}>
+                <option value="summary">summary</option>
+                <option value="summary_large_image">summary_large_image</option>
+                <option value="player">player</option>
+                <option value="app">app</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Twitter @site</Label><Input value={input.twitterSite ?? ""} onChange={(e) => update({ twitterSite: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Twitter @creator</Label><Input value={input.twitterCreator ?? ""} onChange={(e) => update({ twitterCreator: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Theme color</Label><Input value={input.themeColor ?? ""} onChange={(e) => update({ themeColor: e.target.value })} placeholder="#ffffff" /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Locale</Label><Input value={input.locale ?? ""} onChange={(e) => update({ locale: e.target.value })} placeholder="en_US" /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Favicon path</Label><Input value={input.favicon ?? ""} onChange={(e) => update({ favicon: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Manifest path</Label><Input value={input.manifest ?? ""} onChange={(e) => update({ manifest: e.target.value })} /></div>
+            <div className="flex items-end gap-4">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={input.robots?.index === false} onChange={(e) => update({ robots: { ...input.robots, index: !e.target.checked } })} />
+                <span>noindex</span>
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={input.robots?.follow === false} onChange={(e) => update({ robots: { ...input.robots, follow: !e.target.checked } })} />
+                <span>nofollow</span>
+              </label>
             </div>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="mt-desc">Meta description</Label>
-            <Textarea
-              id="mt-desc"
-              value={input.description}
-              onChange={(e) => update("description", e.target.value)}
-              placeholder="Page description (max 160 chars recommended)"
-              className="min-h-[80px] resize-y"
-            />
-            <CharCounter value={input.description} max={DESCRIPTION_MAX} />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-keywords">Keywords</Label>
-              <Input
-                id="mt-keywords"
-                value={input.keywords}
-                onChange={(e) => update("keywords", e.target.value)}
-                placeholder="seo, html, meta"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-author">Author</Label>
-              <Input
-                id="mt-author"
-                value={input.author}
-                onChange={(e) => update("author", e.target.value)}
-                placeholder="Author name"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Robots directive</Label>
-              <Select
-                value={input.robots}
-                onValueChange={(v) => update("robots", v as RobotsDirective)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ROBOTS_OPTIONS.map((r) => (
-                    <SelectItem key={r} value={r}>{r}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-viewport">Viewport</Label>
-              <Input
-                id="mt-viewport"
-                value={input.viewport}
-                onChange={(e) => update("viewport", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-charset">Charset</Label>
-              <Input
-                id="mt-charset"
-                value={input.charset}
-                onChange={(e) => update("charset", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-theme">Theme color</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="mt-theme"
-                  value={input.themeColor}
-                  onChange={(e) => update("themeColor", e.target.value)}
-                />
-                <input
-                  type="color"
-                  value={input.themeColor}
-                  onChange={(e) => update("themeColor", e.target.value)}
-                  className="h-9 w-12 rounded border border-input bg-background"
-                  aria-label="Pick theme color"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Switch
-              id="mt-apple"
-              checked={!!input.appleWebApp}
-              onCheckedChange={(v) => update("appleWebApp", v)}
-            />
-            <Label htmlFor="mt-apple" className="text-sm cursor-pointer">
-              Apple mobile web-app capable
-            </Label>
+
+          <div className="flex gap-2">
+            <Button size="sm" onClick={generate}>Generate</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setInput({ ...input, title: "", description: "" }); setResult(null); setError(null); }}>Clear</Button>
           </div>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-            <Eye className="h-4 w-4" /> Open Graph &amp; Twitter Card
-          </h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-ogt">og:title</Label>
-              <Input
-                id="mt-ogt"
-                value={input.ogTitle}
-                onChange={(e) => update("ogTitle", e.target.value)}
-                placeholder="(defaults to title)"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-ogd">og:description</Label>
-              <Input
-                id="mt-ogd"
-                value={input.ogDescription}
-                onChange={(e) => update("ogDescription", e.target.value)}
-                placeholder="(defaults to description)"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-ogi">og:image</Label>
-              <Input
-                id="mt-ogi"
-                value={input.ogImage}
-                onChange={(e) => update("ogImage", e.target.value)}
-                placeholder="https://example.com/image.png"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-ogu">og:url</Label>
-              <Input
-                id="mt-ogu"
-                value={input.ogUrl}
-                onChange={(e) => update("ogUrl", e.target.value)}
-                placeholder="https://example.com"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-ogty">og:type</Label>
-              <Input
-                id="mt-ogty"
-                value={input.ogType}
-                onChange={(e) => update("ogType", e.target.value)}
-                placeholder="website"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-ogsn">og:site_name</Label>
-              <Input
-                id="mt-ogsn"
-                value={input.ogSiteName}
-                onChange={(e) => update("ogSiteName", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Twitter card type</Label>
-              <Select
-                value={input.twitterCard}
-                onValueChange={(v) =>
-                  update("twitterCard", v as "summary" | "summary_large_image")
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="summary">summary</SelectItem>
-                  <SelectItem value="summary_large_image">summary_large_image</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-tsite">twitter:site</Label>
-              <Input
-                id="mt-tsite"
-                value={input.twitterSite}
-                onChange={(e) => update("twitterSite", e.target.value)}
-                placeholder="@handle"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mt-tc">twitter:creator</Label>
-              <Input
-                id="mt-tc"
-                value={input.twitterCreator}
-                onChange={(e) => update("twitterCreator", e.target.value)}
-                placeholder="@handle"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Preview */}
-      {preview.title && (
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-              <Eye className="h-4 w-4" /> Live preview
-            </h3>
-            <div className="rounded-md border bg-background p-3 space-y-1">
-              <div className="text-[#1a0dab] text-lg leading-snug">{preview.truncatedTitle || "Untitled"}</div>
-              <div className="text-[#006621] text-xs">{preview.url || "https://example.com"}</div>
-              <div className="text-sm text-muted-foreground">
-                {preview.truncatedDescription || "No description yet."}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Validation warnings */}
-      {validation.warnings.length > 0 && (
-        <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400 space-y-1">
-          {validation.warnings.map((w, i) => (
-            <div key={i}>• {w}</div>
-          ))}
-        </div>
-      )}
 
       {error && <ErrorBanner message={error} />}
 
-      {/* Output */}
-      {output ? (
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <Label>Generated meta tags</Label>
-            <div className="flex flex-wrap gap-2">
-              <CopyButton getText={() => { handleCopy(); return output; }} />
-              <DownloadButton
-                getText={() => output}
-                filename="meta-tags.html"
-                mime="text/html"
-              />
-              <ShareButton getUrl={() => buildShareUrl(input)} />
-              <ClearButton onClick={handleClear} />
-            </div>
-          </div>
-          <pre className="overflow-auto whitespace-pre-wrap rounded-md border bg-muted/30 p-3 font-mono text-xs break-all">
-            {output}
-          </pre>
-        </div>
-      ) : (
-        <EmptyState
-          title="Fill the form to generate meta tags"
-          hint="At minimum enter a page title to produce the title, charset, viewport, and description tags."
-        />
+      {result && !("error" in result) && (
+        <>
+          {result.warnings.length > 0 && (
+            <Card><CardContent className="p-4 space-y-1">
+              {result.warnings.map((w, i) => <p key={i} className="text-xs text-yellow-700 dark:text-yellow-400">⚠️ {w}</p>)}
+            </CardContent></Card>
+          )}
+
+          {/* SERP preview */}
+          <Card>
+            <CardHeader className="pb-3"><CardTitle className="text-sm">Google SERP preview</CardTitle></CardHeader>
+            <CardContent className="p-4 pt-0">
+              <div className="bg-white dark:bg-[#1a1a1a] p-3 rounded-md">
+                <p className="text-[#202124] dark:text-[#e8eaed] text-lg leading-tight">{result.serpPreview.title}</p>
+                <p className="text-[#006621] dark:text-[#5f965f] text-xs mt-0.5">{result.serpPreview.url}</p>
+                <p className="text-[#4d5156] dark:text-[#bdc1c6] text-sm mt-0.5">{result.serpPreview.description}</p>
+              </div>
+              <div className="flex gap-3 mt-3 text-xs text-muted-foreground">
+                <Badge variant="outline">Title: {input.title.length} chars / {result.titlePixelWidth}px</Badge>
+                <Badge variant="outline">Desc: {input.description.length} chars / {result.descriptionPixelWidth}px</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {[
+            { title: "Basic meta tags", content: result.basic },
+            { title: "Open Graph", content: result.openGraph },
+            { title: "Twitter Card", content: result.twitter },
+            { title: "Extras (theme, favicon, hreflang, refresh, rating)", content: result.extras },
+            { title: "JSON-LD schema", content: result.jsonLd ?? "" },
+          ].filter((s) => s.content).map((section) => (
+            <Card key={section.title}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm">{section.title}</CardTitle>
+                  <CopyButton getText={() => section.content} label="Copy" />
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <pre className="text-xs overflow-x-auto p-4 bg-muted/40 rounded-b-lg"><code>{section.content}</code></pre>
+              </CardContent>
+            </Card>
+          ))}
+
+          <Card>
+            <CardContent className="p-4 flex items-center justify-between flex-wrap gap-2">
+              <p className="text-xs text-muted-foreground">Complete HTML head block:</p>
+              <div className="flex gap-2">
+                <CopyButton getText={() => result.fullHtml} label="Copy full block" />
+                <DownloadButton getText={() => result.fullHtml} filename="meta-tags.html" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <pre className="text-xs overflow-x-auto"><code>{result.fullHtml}</code></pre>
+            </CardContent>
+          </Card>
+        </>
       )}
 
-      {/* History */}
-      {history.length > 0 && (
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <History className="h-4 w-4" /> Recent ({history.length})
-              </h3>
-              <Button variant="ghost" size="sm" onClick={handleClearHistory}>Clear</Button>
-            </div>
-            <div className="space-y-1">
-              {history.slice(0, 5).map((h, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setInput((prev) => ({ ...prev, title: h.title, description: h.description }));
-                    toast.info("Loaded from history");
-                  }}
-                  className="block w-full text-left rounded border bg-background px-3 py-2 text-xs hover:bg-muted/50 transition-colors cursor-pointer"
-                >
-                  <span className="font-medium">{h.title || "Untitled"}</span>
-                  <span className="text-muted-foreground ml-2">{h.description.slice(0, 60)}</span>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardContent className="p-3">
-          <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> tag generation runs locally — your inputs never leave the browser. History is stored in localStorage on this device only.
-          </p>
-        </CardContent>
-      </Card>
+      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> all generation runs locally. No data leaves your browser.</p></CardContent></Card>
     </div>
   );
 }

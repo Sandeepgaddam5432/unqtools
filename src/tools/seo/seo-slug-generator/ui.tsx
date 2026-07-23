@@ -1,339 +1,197 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useState, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { CopyButton, DownloadButton, EmptyState, ShareButton, ClearButton } from "../../_shared";
-import { toast } from "sonner";
-import {
-  generateSlug,
-  generateBatch,
-  computeStats,
-  validateSlug,
-  buildUrlPreview,
-  renderBatchCsv,
-  buildShareUrl,
-  parseShareUrl,
-  loadHistory,
-  saveHistory,
-  clearHistory,
-  type Separator,
-  type SlugOptions,
-  type HistoryEntry,
-} from "./logic";
-import { History, Link as LinkIcon, ListChecks, Globe } from "lucide-react";
+import { CopyButton, ErrorBanner } from "../../_shared";
+import { generateSlug, generateSlugsBatch, slugToTitle, deduplicateSlug, type Separator, type CaseMode, type SlugInput } from "./logic";
+
+const SEPARATORS: Separator[] = ["-", "_", ".", "~", "+"];
+const LANGS = ["en", "es", "fr", "de", "it", "pt", "nl", "sv", "all"];
 
 export default function SeoSlugGenerator() {
-  const [title, setTitle] = useState("");
-  const [domain, setDomain] = useState("https://example.com");
+  const [text, setText] = useState("The Best Coffee Grinders for Your Home in 2024");
   const [separator, setSeparator] = useState<Separator>("-");
-  const [maxLength, setMaxLength] = useState(75);
+  const [caseMode, setCaseMode] = useState<CaseMode>("lower");
   const [removeStopWords, setRemoveStopWords] = useState(true);
-  const [lower, setLower] = useState(true);
-  const [strip, setStrip] = useState(true);
-  const [trailingSlash, setTrailingSlash] = useState(false);
-  const [bulkMode, setBulkMode] = useState(false);
-  const [bulkInput, setBulkInput] = useState("");
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [stopWordLang, setStopWordLang] = useState("en");
+  const [transliterate, setTransliterate] = useState(true);
+  const [maxLength, setMaxLength] = useState("");
+  const [preserveNumbers, setPreserveNumbers] = useState(true);
+  const [stripEmoji, setStripEmoji] = useState(true);
+  const [customReplacements, setCustomReplacements] = useState("");
 
-  useEffect(() => {
-    setHistory(loadHistory());
-    if (typeof window !== "undefined" && window.location.hash) {
-      const parsed = parseShareUrl(window.location.hash);
-      if (parsed.title || parsed.domain) {
-        setTitle(parsed.title);
-        setDomain(parsed.domain || "https://example.com");
-        if (parsed.options.separator) setSeparator(parsed.options.separator);
-        if (parsed.options.maxLength !== undefined) setMaxLength(parsed.options.maxLength);
-        if (parsed.options.removeStopWords !== undefined) setRemoveStopWords(parsed.options.removeStopWords);
-        if (parsed.options.lower !== undefined) setLower(parsed.options.lower);
-        if (parsed.options.stripDiacritics !== undefined) setStrip(parsed.options.stripDiacritics);
-        setTrailingSlash(parsed.trailingSlash);
-        toast.info("Loaded from share link");
-      }
-    }
-  }, []);
+  const [result, setResult] = useState<ReturnType<typeof generateSlug> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const options: SlugOptions = useMemo(
-    () => ({ separator, maxLength, removeStopWords, lower, stripDiacritics: strip }),
-    [separator, maxLength, removeStopWords, lower, strip],
-  );
+  // Batch
+  const [batchText, setBatchText] = useState("Hello World\nFoo Bar\nBaz Qux");
+  const [batchResults, setBatchResults] = useState<ReturnType<typeof generateSlugsBatch> | null>(null);
 
-  const slug = useMemo(() => generateSlug(title, options), [title, options]);
-  const stats = useMemo(() => computeStats(slug), [slug]);
-  const validation = useMemo(() => validateSlug(slug), [slug]);
-  const urlPreview = useMemo(
-    () => buildUrlPreview(slug, domain, trailingSlash),
-    [slug, domain, trailingSlash],
-  );
+  // Reverse
+  const [reverseSlug, setReverseSlug] = useState("hello-world");
+  const [reverseResult, setReverseResult] = useState<string | null>(null);
 
-  const bulkResults = useMemo(() => {
-    if (!bulkMode) return [];
-    return generateBatch(bulkInput, options);
-  }, [bulkMode, bulkInput, options]);
+  // Deduplicate
+  const [dedupeSlug, setDedupeSlug] = useState("hello-world");
+  const [dedupeExisting, setDedupeExisting] = useState("hello-world\nhello-world-1");
+  const [dedupeResult, setDedupeResult] = useState<string | null>(null);
 
-  const bulkCsv = useMemo(() => renderBatchCsv(bulkResults), [bulkResults]);
+  const buildInput = useCallback((): SlugInput => {
+    const replacements = customReplacements
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => {
+        const [find, ...rest] = line.split("=");
+        return { find: find?.trim() ?? "", replace: rest.join("=").trim() };
+      })
+      .filter((r) => r.find);
+    return {
+      text,
+      separator,
+      caseMode,
+      removeStopWords,
+      stopWordLang: stopWordLang as SlugInput["stopWordLang"],
+      transliterate,
+      maxLength: maxLength ? Number(maxLength) : undefined,
+      preserveNumbers,
+      stripEmoji,
+      customReplacements: replacements,
+    };
+  }, [text, separator, caseMode, removeStopWords, stopWordLang, transliterate, maxLength, preserveNumbers, stripEmoji, customReplacements]);
 
-  const handleSaveHistory = useCallback(() => {
-    if (slug) {
-      saveHistory({
-        ts: Date.now(),
-        title,
-        slug,
-        separator,
-        maxLength,
-        removeStopWords,
-      });
-      setHistory(loadHistory());
-    }
-  }, [slug, title, separator, maxLength, removeStopWords]);
+  const generate = useCallback(() => {
+    const r = generateSlug(buildInput());
+    if ("error" in r) { setError(r.error); setResult(null); } else { setResult(r); setError(null); }
+  }, [buildInput]);
 
-  const handleClear = useCallback(() => {
-    setTitle("");
-    setBulkInput("");
-    toast.info("Form cleared");
-  }, []);
-
-  const handleClearHistory = useCallback(() => {
-    clearHistory();
-    setHistory([]);
-    toast.success("History cleared");
-  }, []);
+  const runBatch = useCallback(() => {
+    const lines = batchText.split("\n").filter(Boolean);
+    const r = generateSlugsBatch(lines.map((t) => ({ ...buildInput(), text: t })));
+    if ("error" in r) { setError(r.error); setBatchResults(null); } else { setBatchResults(r); setError(null); }
+  }, [batchText, buildInput]);
 
   return (
-    <div className="space-y-4 unq-animate-fade-in-up">
+    <div className="space-y-4">
       <Card>
-        <CardContent className="p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">Input</h3>
-            <Button
-              size="sm"
-              variant={bulkMode ? "default" : "outline"}
-              onClick={() => setBulkMode((m) => !m)}
-            >
-              {bulkMode ? "Single mode" : "Bulk mode"}
-            </Button>
+        <CardContent className="p-4 space-y-4">
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-xs text-muted-foreground">Text to slugify</Label>
+            <Input value={text} onChange={(e) => setText(e.target.value)} />
           </div>
-          {!bulkMode ? (
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="sg-title">Title / text</Label>
-                <Input
-                  id="sg-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="The Best 10 SEO Tools of 2026"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="sg-domain">Domain (for preview)</Label>
-                <Input
-                  id="sg-domain"
-                  value={domain}
-                  onChange={(e) => setDomain(e.target.value)}
-                  placeholder="https://example.com"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-1.5">
-              <Label htmlFor="sg-bulk">Titles (one per line)</Label>
-              <Textarea
-                id="sg-bulk"
-                value={bulkInput}
-                onChange={(e) => setBulkInput(e.target.value)}
-                placeholder={"The Best SEO Tools\nHow to Write a Blog Post"}
-                className="min-h-[140px] font-mono text-xs resize-y"
-              />
-            </div>
-          )}
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="sg-sep">Separator</Label>
-              <select
-                id="sg-sep"
-                value={separator}
-                onChange={(e) => setSeparator(e.target.value as Separator)}
-                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="-">Hyphen ( - )</option>
-                <option value="_">Underscore ( _ )</option>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Separator</Label>
+              <select className="h-9 rounded-md border border-input bg-background px-3 text-sm" value={separator} onChange={(e) => setSeparator(e.target.value as Separator)}>
+                {SEPARATORS.map((s) => <option key={s} value={s}>{s === " " ? "(space)" : s}</option>)}
               </select>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="sg-max">Max length: {maxLength}</Label>
-              <input
-                id="sg-max"
-                type="range"
-                min={10}
-                max={120}
-                step={5}
-                value={maxLength}
-                onChange={(e) => setMaxLength(parseInt(e.target.value, 10))}
-                className="w-full cursor-pointer"
-              />
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Case</Label>
+              <select className="h-9 rounded-md border border-input bg-background px-3 text-sm" value={caseMode} onChange={(e) => setCaseMode(e.target.value as CaseMode)}>
+                <option value="lower">lowercase</option>
+                <option value="upper">UPPERCASE</option>
+                <option value="preserve">Preserve</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Stop words lang</Label>
+              <select className="h-9 rounded-md border border-input bg-background px-3 text-sm" value={stopWordLang} onChange={(e) => setStopWordLang(e.target.value)} disabled={!removeStopWords}>
+                {LANGS.map((l) => <option key={l} value={l}>{l === "all" ? "All languages" : l}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Max length</Label>
+              <Input type="number" min="0" value={maxLength} onChange={(e) => setMaxLength(e.target.value)} placeholder="(no limit)" />
             </div>
           </div>
-
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <Switch id="sg-stop" checked={removeStopWords} onCheckedChange={setRemoveStopWords} />
-              <Label htmlFor="sg-stop" className="text-sm cursor-pointer">Remove stop words</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch id="sg-lower" checked={lower} onCheckedChange={setLower} />
-              <Label htmlFor="sg-lower" className="text-sm cursor-pointer">Lowercase</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch id="sg-strip" checked={strip} onCheckedChange={setStrip} />
-              <Label htmlFor="sg-strip" className="text-sm cursor-pointer">Strip diacritics</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch id="sg-slash" checked={trailingSlash} onCheckedChange={setTrailingSlash} />
-              <Label htmlFor="sg-slash" className="text-sm cursor-pointer">Trailing slash</Label>
-            </div>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <label className="flex items-center gap-2"><input type="checkbox" checked={removeStopWords} onChange={(e) => setRemoveStopWords(e.target.checked)} /><span>Remove stop words</span></label>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={transliterate} onChange={(e) => setTransliterate(e.target.checked)} /><span>Transliterate unicode (é→e)</span></label>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={preserveNumbers} onChange={(e) => setPreserveNumbers(e.target.checked)} /><span>Preserve numbers</span></label>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={stripEmoji} onChange={(e) => setStripEmoji(e.target.checked)} /><span>Strip emoji</span></label>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-xs text-muted-foreground">Custom replacements (one per line: find=replace)</Label>
+            <textarea className="rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[60px]" value={customReplacements} onChange={(e) => setCustomReplacements(e.target.value)} placeholder={"C++=cpp\n.NET=dotnet"} />
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={generate}>Generate slug</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setText("The Best Coffee Grinders for Your Home in 2024"); setSeparator("-"); setCaseMode("lower"); setRemoveStopWords(true); setTransliterate(true); setPreserveNumbers(true); setStripEmoji(true); setCustomReplacements(""); setMaxLength(""); }}>Sample</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setResult(null); setError(null); }}>Clear</Button>
           </div>
         </CardContent>
       </Card>
 
-      {!bulkMode && slug && (
-        <>
-          <Card>
-            <CardContent className="p-4 space-y-3">
-              <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Generated slug</Label>
-                <div className="font-mono text-lg break-all text-foreground">{slug}</div>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">URL preview</Label>
-                <div className="font-mono text-xs break-all text-emerald-600 dark:text-emerald-400">
-                  <Globe className="h-3 w-3 inline mr-1" />
-                  {urlPreview}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline">{stats.length} chars</Badge>
-                <Badge variant="outline">{stats.wordCount} words</Badge>
-                <Badge variant="outline">{stats.alphaCount} letters</Badge>
-                <Badge variant="outline">{stats.digitCount} digits</Badge>
-                <Badge variant={validation.ok ? "default" : "destructive"}>
-                  {validation.ok ? "Valid" : `${validation.issues.length} issue(s)`}
-                </Badge>
-              </div>
-              {!validation.ok && (
-                <ul className="text-xs text-amber-600 dark:text-amber-400 list-disc list-inside space-y-0.5">
-                  {validation.issues.map((iss, i) => (
-                    <li key={i}>{iss}</li>
-                  ))}
-                </ul>
-              )}
-              <div className="flex flex-wrap gap-2 pt-2">
-                <CopyButton
-                  getText={() => {
-                    handleSaveHistory();
-                    return slug;
-                  }}
-                  label="Copy slug"
-                />
-                <CopyButton getText={() => urlPreview} label="Copy URL" />
-                <ShareButton
-                  getUrl={() => {
-                    handleSaveHistory();
-                    return buildShareUrl({ title, domain, options, trailingSlash });
-                  }}
-                />
-                <ClearButton onClick={handleClear} />
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
+      {error && <ErrorBanner message={error} />}
 
-      {!bulkMode && !slug && (
-        <EmptyState
-          title="Enter a title to generate a slug"
-          hint="Lowercase, hyphens, special-char stripping, stop-word removal, length caps, and live URL preview."
-          icon={<LinkIcon className="h-8 w-8" />}
-        />
-      )}
-
-      {bulkMode && bulkResults.length > 0 && (
+      {result && !("error" in result) && (
         <Card>
-          <CardContent className="p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4" /> {bulkResults.length} slugs
-              </h3>
-              <div className="flex gap-2">
-                <CopyButton getText={() => bulkResults.map((r) => r.slug).join("\n")} label="Copy slugs" />
-                <DownloadButton
-                  getText={() => bulkCsv}
-                  filename="slugs.csv"
-                  mime="text/csv"
-                  label="Download CSV"
-                />
-              </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground mb-1">Generated slug</p>
+            <p className="text-2xl font-bold text-primary font-mono break-all">{result.slug || "(empty)"}</p>
+            <p className="text-xs text-muted-foreground mt-1">{result.slug.length} chars</p>
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <CopyButton getText={() => result.slug} />
+              {result.truncated && <Badge variant="outline">Truncated</Badge>}
+              {result.wordsRemoved.length > 0 && <Badge variant="outline">{result.wordsRemoved.length} stop words removed</Badge>}
             </div>
-            <div className="space-y-1 max-h-[300px] overflow-auto">
-              {bulkResults.map((r, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 rounded border bg-background px-3 py-1.5 text-xs"
-                >
-                  <div className="flex-1 truncate text-muted-foreground">{r.title}</div>
-                  <div className="text-muted-foreground">→</div>
-                  <div className="font-mono text-foreground">{r.slug || "(empty)"}</div>
-                </div>
-              ))}
-            </div>
+            {result.warnings.length > 0 && (
+              <ul className="mt-3 space-y-1 text-xs text-yellow-700 dark:text-yellow-400">
+                {result.warnings.map((w, i) => <li key={i}>⚠️ {w}</li>)}
+              </ul>
+            )}
           </CardContent>
         </Card>
       )}
 
-      {history.length > 0 && (
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <History className="h-4 w-4" /> Recent ({history.length})
-              </h3>
-              <Button variant="ghost" size="sm" onClick={handleClearHistory}>Clear</Button>
-            </div>
-            <div className="space-y-1">
-              {history.slice(0, 5).map((h, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setTitle(h.title);
-                    setSeparator(h.separator);
-                    setMaxLength(h.maxLength);
-                    setRemoveStopWords(h.removeStopWords);
-                    toast.info("Loaded from history");
-                  }}
-                  className="block w-full text-left rounded border bg-background px-3 py-2 text-xs hover:bg-muted/50 transition-colors cursor-pointer"
-                >
-                  <div className="font-mono text-foreground">{h.slug}</div>
-                  <div className="text-muted-foreground truncate mt-0.5">{h.title}</div>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
+      {/* Batch mode */}
       <Card>
-        <CardContent className="p-3">
-          <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> slug generation runs locally. History is stored in localStorage on this device only.
-          </p>
+        <CardHeader className="pb-3"><CardTitle className="text-sm">Batch mode (one slug per line)</CardTitle></CardHeader>
+        <CardContent className="p-4 pt-0 space-y-3">
+          <textarea className="rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[100px] font-mono" value={batchText} onChange={(e) => setBatchText(e.target.value)} />
+          <Button size="sm" onClick={runBatch}>Generate batch</Button>
+          {batchResults && !("error" in batchResults) && (
+            <div className="space-y-2">
+              {batchResults.map((r, i) => (
+                <div key={i} className="flex items-center gap-2 p-2 rounded-md border border-border/50">
+                  <span className="text-xs text-muted-foreground flex-1 truncate">{r.originalText}</span>
+                  <span className="text-xs font-mono font-bold text-primary">{r.slug}</span>
+                  <CopyButton getText={() => r.slug} size="icon-sm" />
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Reverse */}
+      <Card>
+        <CardHeader className="pb-3"><CardTitle className="text-sm">Reverse: slug → Title Case</CardTitle></CardHeader>
+        <CardContent className="p-4 pt-0 space-y-3">
+          <Input value={reverseSlug} onChange={(e) => setReverseSlug(e.target.value)} placeholder="hello-world" />
+          <Button size="sm" onClick={() => setReverseResult(slugToTitle(reverseSlug, separator))}>Convert</Button>
+          {reverseResult && <p className="text-sm">Title: <strong className="text-primary">{reverseResult}</strong></p>}
+        </CardContent>
+      </Card>
+
+      {/* Deduplicate */}
+      <Card>
+        <CardHeader className="pb-3"><CardTitle className="text-sm">Deduplicate: avoid slug collisions</CardTitle></CardHeader>
+        <CardContent className="p-4 pt-0 space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">New slug</Label><Input value={dedupeSlug} onChange={(e) => setDedupeSlug(e.target.value)} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Existing slugs (one per line)</Label><textarea className="rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[60px] font-mono" value={dedupeExisting} onChange={(e) => setDedupeExisting(e.target.value)} /></div>
+          </div>
+          <Button size="sm" onClick={() => setDedupeResult(deduplicateSlug(dedupeSlug, dedupeExisting.split("\n").filter(Boolean), separator))}>Deduplicate</Button>
+          {dedupeResult && <p className="text-sm">Unique slug: <strong className="text-primary font-mono">{dedupeResult}</strong></p>}
+        </CardContent>
+      </Card>
+
+      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> all slug generation runs locally. No data leaves your browser.</p></CardContent></Card>
     </div>
   );
 }

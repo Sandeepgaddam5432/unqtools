@@ -1,299 +1,190 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import {
-  STOP_WORDS,
-  stripDiacritics,
-  tokenize,
-  filterStopWords,
-  generateSlug,
-  validateSlug,
-  computeStats,
-  buildUrlPreview,
-  generateBatch,
-  renderBatchCsv,
-  loadHistory,
-  saveHistory,
-  clearHistory,
-  buildShareUrl,
-  parseShareUrl,
-  type SlugOptions,
-} from "./logic";
+/**
+ * SEO Slug Generator — unit tests.
+ */
+import { describe, it, expect } from "vitest";
+import { generateSlug, generateSlugsBatch, slugToTitle, deduplicateSlug } from "./logic";
 
-beforeEach(() => {
-  const store: Record<string, string> = {};
-  (globalThis as Record<string, unknown>).localStorage = {
-    getItem: (k: string) => store[k] ?? null,
-    setItem: (k: string, v: string) => {
-      store[k] = v;
-    },
-    removeItem: (k: string) => {
-      delete store[k];
-    },
-    clear: () => {
-      for (const k of Object.keys(store)) delete store[k];
-    },
-    key: (i: number) => Object.keys(store)[i] ?? null,
-    get length() {
-      return Object.keys(store).length;
-    },
-  };
-});
-
-describe("seo-slug-generator stripDiacritics", () => {
-  it("strips accents", () => {
-    expect(stripDiacritics("café")).toBe("cafe");
+describe("generateSlug — basic", () => {
+  it("lowercases and hyphenates", () => {
+    const r = generateSlug({ text: "Hello World" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("hello-world");
   });
-  it("strips umlauts", () => {
-    expect(stripDiacritics("über")).toBe("uber");
+  it("errors on empty text", () => {
+    expect("error" in generateSlug({ text: "" })).toBe(true);
   });
-  it("returns empty for empty input", () => {
-    expect(stripDiacritics("")).toBe("");
+  it("errors on too-long text", () => {
+    expect("error" in generateSlug({ text: "x".repeat(501) })).toBe(true);
+  });
+  it("strips special characters and emoji", () => {
+    const r = generateSlug({ text: "Hello!!! World 🎉" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("hello-world");
+  });
+  it("replaces multiple spaces with single separator", () => {
+    const r = generateSlug({ text: "Hello     World" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("hello-world");
   });
 });
 
-describe("seo-slug-generator tokenize", () => {
-  it("splits on non-alphanumeric", () => {
-    expect(tokenize("Hello, World!")).toEqual(["Hello", "World"]);
-  });
-  it("returns empty array for empty input", () => {
-    expect(tokenize("")).toEqual([]);
-  });
-  it("handles numbers", () => {
-    expect(tokenize("top 10 tools")).toEqual(["top", "10", "tools"]);
-  });
-});
-
-describe("seo-slug-generator filterStopWords", () => {
-  it("removes stop words", () => {
-    expect(filterStopWords(["the", "best", "of", "tools"])).toEqual(["best", "tools"]);
-  });
-  it("preserves all words if no stop words", () => {
-    expect(filterStopWords(["hello", "world"])).toEqual(["hello", "world"]);
-  });
-  it("STOP_WORDS contains common words", () => {
-    expect(STOP_WORDS.has("the")).toBe(true);
-    expect(STOP_WORDS.has("a")).toBe(true);
-  });
-});
-
-describe("seo-slug-generator generateSlug", () => {
-  it("generates basic slug", () => {
-    expect(generateSlug("Hello World")).toBe("hello-world");
-  });
-  it("removes stop words by default", () => {
-    expect(generateSlug("The Best of Tools")).toBe("best-tools");
-  });
-  it("preserves stop words when option off", () => {
-    expect(generateSlug("The Best of Tools", { removeStopWords: false })).toBe("the-best-of-tools");
-  });
+describe("generateSlug — separators", () => {
   it("uses underscore separator", () => {
-    expect(generateSlug("Hello World", { separator: "_" })).toBe("hello_world");
+    const r = generateSlug({ text: "Hello World", separator: "_" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("hello_world");
   });
-  it("strips diacritics by default", () => {
-    expect(generateSlug("Café Résumé")).toBe("cafe-resume");
-  });
-  it("respects max length without cutting words", () => {
-    const slug = generateSlug("A Very Long Title About Many Things To Discuss", { maxLength: 20 });
-    expect(slug.length).toBeLessThanOrEqual(20);
-    expect(slug.endsWith("-")).toBe(false);
-  });
-  it("returns empty for empty input", () => {
-    expect(generateSlug("")).toBe("");
-  });
-  it("returns empty when only stop words", () => {
-    expect(generateSlug("the of a an")).toBe("");
-  });
-  it("handles special characters", () => {
-    expect(generateSlug("Hello! @World #123")).toBe("hello-world-123");
-  });
-  it("preserves case when lower=false", () => {
-    expect(generateSlug("Hello World", { lower: false })).toBe("Hello-World");
-  });
-  it("trims leading/trailing separators", () => {
-    expect(generateSlug("!!! Hello World !!!")).toBe("hello-world");
+  it("uses dot separator", () => {
+    const r = generateSlug({ text: "Hello World", separator: "." });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("hello.world");
   });
 });
 
-describe("seo-slug-generator validateSlug", () => {
-  it("accepts valid slug", () => {
-    const r = validateSlug("hello-world");
-    expect(r.ok).toBe(true);
-    expect(r.issues).toHaveLength(0);
+describe("generateSlug — case modes", () => {
+  it("preserves case when caseMode=preserve", () => {
+    const r = generateSlug({ text: "HelloWorld", caseMode: "preserve" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("HelloWorld");
   });
-  it("rejects uppercase", () => {
-    const r = validateSlug("Hello-World");
-    expect(r.ok).toBe(false);
-    expect(r.issues.some((s) => /uppercase/i.test(s))).toBe(true);
-  });
-  it("rejects special chars", () => {
-    const r = validateSlug("hello@world");
-    expect(r.ok).toBe(false);
-    expect(r.issues.some((s) => /special/i.test(s))).toBe(true);
-  });
-  it("rejects empty", () => {
-    const r = validateSlug("");
-    expect(r.ok).toBe(false);
-  });
-  it("rejects consecutive separators", () => {
-    const r = validateSlug("hello--world");
-    expect(r.ok).toBe(false);
-    expect(r.issues.some((s) => /consecutive/i.test(s))).toBe(true);
+  it("uppercases when caseMode=upper", () => {
+    const r = generateSlug({ text: "Hello World", caseMode: "upper" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("HELLO-WORLD");
   });
 });
 
-describe("seo-slug-generator computeStats", () => {
-  it("computes stats correctly", () => {
-    const s = computeStats("hello-world-123");
-    expect(s.length).toBe(15);
-    expect(s.wordCount).toBe(3);
-    expect(s.alphaCount).toBe(10);
-    expect(s.digitCount).toBe(3);
-    expect(s.sepCount).toBe(2);
-    expect(s.isLowercase).toBe(true);
-    expect(s.hasInvalidChars).toBe(false);
+describe("generateSlug — stop words", () => {
+  it("removes English stop words", () => {
+    const r = generateSlug({ text: "The Best Coffee in the World", removeStopWords: true });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("best-coffee-world");
+    expect(r.wordsRemoved).toContain("the");
+    expect(r.wordsRemoved).toContain("in");
   });
-  it("flags uppercase", () => {
-    expect(computeStats("Hello").isLowercase).toBe(false);
+  it("does not remove stop words by default", () => {
+    const r = generateSlug({ text: "The Best Coffee" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("the-best-coffee");
   });
-  it("flags invalid chars", () => {
-    expect(computeStats("hello@world").hasInvalidChars).toBe(true);
+  it("supports multiple languages", () => {
+    const r = generateSlug({ text: "Le Chat Noir", removeStopWords: true, stopWordLang: "fr" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("chat-noir");
   });
-  it("handles empty slug", () => {
-    const s = computeStats("");
-    expect(s.length).toBe(0);
-    expect(s.wordCount).toBe(0);
-  });
-});
-
-describe("seo-slug-generator buildUrlPreview", () => {
-  it("builds URL with no trailing slash", () => {
-    expect(buildUrlPreview("hello-world", "https://example.com", false)).toBe(
-      "https://example.com/hello-world",
-    );
-  });
-  it("builds URL with trailing slash", () => {
-    expect(buildUrlPreview("hello-world", "https://example.com", true)).toBe(
-      "https://example.com/hello-world/",
-    );
-  });
-  it("uses default domain if empty", () => {
-    expect(buildUrlPreview("hello", "", false)).toContain("example.com");
-  });
-  it("strips trailing slashes from domain", () => {
-    expect(buildUrlPreview("hello", "https://example.com///", false)).toBe(
-      "https://example.com/hello",
-    );
-  });
-  it("returns empty for empty slug", () => {
-    expect(buildUrlPreview("", "https://example.com", false)).toBe("");
+  it("supports all-languages mode", () => {
+    const r = generateSlug({ text: "El Le The", removeStopWords: true, stopWordLang: "all" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("");
   });
 });
 
-describe("seo-slug-generator generateBatch", () => {
-  it("generates slugs for multiple titles", () => {
-    const rows = generateBatch("Hello World\nThe Best Tools\n");
-    expect(rows).toHaveLength(2);
-    expect(rows[0].slug).toBe("hello-world");
-    expect(rows[1].slug).toBe("best-tools");
+describe("generateSlug — transliteration", () => {
+  it("transliterates accented characters", () => {
+    const r = generateSlug({ text: "Café Résumé" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("cafe-resume");
   });
-  it("handles empty input", () => {
-    expect(generateBatch("")).toEqual([]);
+  it("transliterates Spanish ñ", () => {
+    const r = generateSlug({ text: "España" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("espana");
   });
-  it("skips blank lines", () => {
-    expect(generateBatch("a\n\nb\n\n")).toHaveLength(2);
+  it("transliterates German ß", () => {
+    const r = generateSlug({ text: "Straße" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("strasse");
   });
-});
-
-describe("seo-slug-generator renderBatchCsv", () => {
-  it("renders CSV with header", () => {
-    const csv = renderBatchCsv([
-      { title: "Hello, World", slug: "hello-world" },
-      { title: "Foo", slug: "foo" },
-    ]);
-    expect(csv).toContain("title,slug");
-    expect(csv).toContain('"Hello, World",hello-world');
-  });
-  it("escapes quotes", () => {
-    const csv = renderBatchCsv([{ title: 'Say "Hi"', slug: "say-hi" }]);
-    expect(csv).toContain('""Hi""');
+  it("can be disabled", () => {
+    const r = generateSlug({ text: "Café", transliterate: false });
+    if ("error" in r) throw new Error("Should not error");
+    // Non-ASCII gets stripped, leaving just 'caf'
+    expect(r.slug).toBe("caf");
   });
 });
 
-describe("seo-slug-generator history", () => {
-  it("loads empty initially", () => {
-    expect(loadHistory()).toEqual([]);
+describe("generateSlug — max length", () => {
+  it("truncates on word boundary", () => {
+    const r = generateSlug({ text: "Hello World Foo Bar Baz", maxLength: 15 });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.truncated).toBe(true);
+    expect(r.slug.length).toBeLessThanOrEqual(15);
   });
-  it("saves and loads", () => {
-    saveHistory({
-      ts: 1,
-      title: "Hello",
-      slug: "hello",
-      separator: "-",
-      maxLength: 75,
-      removeStopWords: true,
+  it("warns when truncation happens", () => {
+    const r = generateSlug({ text: "Hello World Foo Bar Baz", maxLength: 10 });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.warnings.some((w) => w.includes("truncated"))).toBe(true);
+  });
+});
+
+describe("generateSlug — numbers", () => {
+  it("preserves numbers by default", () => {
+    const r = generateSlug({ text: "Top 10 Tools 2024" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("top-10-tools-2024");
+  });
+  it("strips numbers when preserveNumbers=false", () => {
+    const r = generateSlug({ text: "Top 10 Tools 2024", preserveNumbers: false });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("top-tools");
+  });
+});
+
+describe("generateSlug — custom replacements", () => {
+  it("applies custom replacements before slugification", () => {
+    const r = generateSlug({
+      text: "C++ Programming",
+      customReplacements: [{ find: "C++", replace: "Cpp" }],
     });
-    const h = loadHistory();
-    expect(h).toHaveLength(1);
-    expect(h[0].slug).toBe("hello");
-  });
-  it("caps at 20", () => {
-    for (let i = 0; i < 25; i++) {
-      saveHistory({
-        ts: i,
-        title: `T${i}`,
-        slug: `t${i}`,
-        separator: "-",
-        maxLength: 75,
-        removeStopWords: true,
-      });
-    }
-    expect(loadHistory()).toHaveLength(20);
-  });
-  it("clears", () => {
-    saveHistory({
-      ts: 1,
-      title: "x",
-      slug: "x",
-      separator: "-",
-      maxLength: 75,
-      removeStopWords: true,
-    });
-    clearHistory();
-    expect(loadHistory()).toEqual([]);
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.slug).toBe("cpp-programming");
   });
 });
 
-describe("seo-slug-generator shareable URL", () => {
-  const opts: SlugOptions = { separator: "-", maxLength: 75, removeStopWords: true };
-  it("builds share URL when window unavailable", () => {
-    const origWindow = (globalThis as Record<string, unknown>).window;
-    (globalThis as Record<string, unknown>).window = undefined;
-    const url = buildShareUrl({ title: "Hello World", domain: "https://example.com", options: opts });
-    expect(url).toContain("title=Hello+World");
-    expect(url).toContain("separator=-");
-    (globalThis as Record<string, unknown>).window = origWindow;
+describe("generateSlug — warnings", () => {
+  it("warns when slug exceeds 75 chars", () => {
+    const longText = "This Is A Very Long Title That Will Definitely Exceed The Recommended SEO Slug Length Of Seventy Five Characters";
+    const r = generateSlug({ text: longText });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.warnings.some((w) => w.includes("75"))).toBe(true);
   });
-  it("parses share URL back to input", () => {
-    const parsed = parseShareUrl("title=Hello+World&domain=https%3A%2F%2Fexample.com&separator=-&removeStopWords=1");
-    expect(parsed.title).toBe("Hello World");
-    expect(parsed.domain).toBe("https://example.com");
-    expect(parsed.options.separator).toBe("-");
-    expect(parsed.options.removeStopWords).toBe(true);
+  it("warns when slug becomes empty", () => {
+    const r = generateSlug({ text: "🎉🎉🎉" });
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.warnings.some((w) => w.includes("empty"))).toBe(true);
   });
-  it("parses trailing slash", () => {
-    const parsed = parseShareUrl("title=x&trailingSlash=1");
-    expect(parsed.trailingSlash).toBe(true);
+});
+
+describe("generateSlugsBatch", () => {
+  it("generates multiple slugs at once", () => {
+    const r = generateSlugsBatch([{ text: "Hello World" }, { text: "Foo Bar" }]);
+    if ("error" in r) throw new Error("Should not error");
+    expect(r.length).toBe(2);
+    expect(r[0]!.slug).toBe("hello-world");
+    expect(r[1]!.slug).toBe("foo-bar");
   });
-  it("parses underscore separator", () => {
-    const parsed = parseShareUrl("title=x&separator=_");
-    expect(parsed.options.separator).toBe("_");
+  it("errors if input is empty", () => {
+    expect("error" in generateSlugsBatch([])).toBe(true);
   });
-  it("handles empty hash", () => {
-    const parsed = parseShareUrl("");
-    expect(parsed.title).toBe("");
-    expect(parsed.trailingSlash).toBe(false);
+});
+
+describe("slugToTitle", () => {
+  it("converts slug to Title Case", () => {
+    expect(slugToTitle("hello-world")).toBe("Hello World");
   });
-  it("parses maxLength", () => {
-    const parsed = parseShareUrl("title=x&maxLength=50");
-    expect(parsed.options.maxLength).toBe(50);
+  it("respects custom separator", () => {
+    expect(slugToTitle("hello_world", "_")).toBe("Hello World");
+  });
+});
+
+describe("deduplicateSlug", () => {
+  it("returns slug unchanged if no collision", () => {
+    expect(deduplicateSlug("hello-world", ["foo-bar"])).toBe("hello-world");
+  });
+  it("appends -1 on first collision", () => {
+    expect(deduplicateSlug("hello-world", ["hello-world"])).toBe("hello-world-1");
+  });
+  it("increments until unique", () => {
+    expect(deduplicateSlug("hello-world", ["hello-world", "hello-world-1", "hello-world-2"])).toBe("hello-world-3");
   });
 });

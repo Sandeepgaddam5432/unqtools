@@ -66,6 +66,14 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "emi-calculator": () => import("@/tools/calculators/emi-calculator/ui"),
   "mortgage-calculator": () => import("@/tools/calculators/mortgage-calculator/ui"),
   "sip-calculator": () => import("@/tools/calculators/sip-calculator/ui"),
+  "age-calculator": () => import("@/tools/calculators/age-calculator/ui"),
+  "bmi-calculator": () => import("@/tools/calculators/bmi-calculator/ui"),
+  "date-difference-calculator": () => import("@/tools/calculators/date-difference-calculator/ui"),
+  "discount-calculator": () => import("@/tools/calculators/discount-calculator/ui"),
+  "percentage-calculator": () => import("@/tools/calculators/percentage-calculator/ui"),
+  "simple-interest-calculator": () => import("@/tools/calculators/simple-interest-calculator/ui"),
+  "tip-calculator": () => import("@/tools/calculators/tip-calculator/ui"),
+  "unit-converter-length": () => import("@/tools/calculators/unit-converter-length/ui"),
   "color-picker": () => import("@/tools/image/color-picker/ui"),
   "image-compressor": () => import("@/tools/image/image-compressor/ui"),
   "ascii-art-generator": () => import("@/tools/image/ascii-art-generator/ui"),
@@ -669,6 +677,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "mobile-friendly-tester": () => import("@/tools/seo/mobile-friendly-tester/ui"),
   "referring-domains-explorer": () => import("@/tools/seo/referring-domains-explorer/ui"),
   "ssl-https-checker": () => import("@/tools/seo/ssl-https-checker/ui"),
+  "meta-tag-generator": () => import("@/tools/seo/meta-tag-generator/ui"),
+  "seo-slug-generator": () => import("@/tools/seo/seo-slug-generator/ui"),
 };
 
 interface ToolPageClientProps {

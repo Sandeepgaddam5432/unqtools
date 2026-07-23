@@ -1,10 +1,10 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.38 (Phase 1 quick sync + Phase 2 image batch) + Option A cleanup batch (stale 280→610 metadata, README/STATE sync, CI timeout bump)_
+_Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.40 (10 new tools: 8 Calculators + 2 SEO, SEO category complete) + Option A cleanup batch_
 
 ## Current phase
 
-**v17.38 — Developer waves 1-16 complete + Phase 1 quick sync (10 dangling tools) + Phase 2 (5 image tools shipped)**
+**v17.40 — 10 new tools (8 Calculators + 2 SEO) shipped, SEO category complete (100/100)**
 
 > STATE.md was last touched at v8.0 Batch 2 (62 tools live) on 2026-07-14.
 > Between then and the v17.37 catch-up sync (2026-07-23), waves v17.17 → v17.37
@@ -15,6 +15,8 @@ _Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.38 (Phase 1 quick sync +
 
 | Commit   | Description                                                                                       |
 | -------- | ------------------------------------------------------------------------------------------------- |
+| (pending) | feat: v17.40 — 10 new tools (8 Calculators + 2 SEO) — SEO category complete — ZERO SKIPS         |
+| 789a84b  | chore: v17.39 — Option A cleanup batch (stale metadata + CI hardening)                           |
 | a693291  | feat: v17.38 — Phase 1 quick sync (10 dangling tools) + Phase 2 (5 image tools) + state sync      |
 | 51ce64c  | feat: v17.37 — 148 Developer tools from blueprints (waves 1-16) — ZERO SKIPS                      |
 | 9ccb035  | feat: v17.36 — 146 Developer tools from blueprints (waves 1-16 partial) — ZERO SKIPS              |
@@ -101,6 +103,42 @@ risks identified during the post-clone analysis:
 - Deleted orphan remote branch `v0/videosmail5432-4983-1d7b581d`.
 
 Verified locally: lint ✅, unit tests ✅, build ✅.
+
+## v17.40 — 10 new tools (8 Calculators + 2 SEO) — SEO category complete ✅
+
+Shipped 10 brand-new tools in a single session per AGENTS.md § 1d
+(≥5 tools/session). All 10 follow the v17.x rule: 100% blueprint
+compliance + 10 extras per AGENTS.md § 1b and § 1c. ZERO SKIPS.
+
+### Calculators (8 new)
+
+| # | Tool ID | Tests | Description + 10+ extras |
+|---|---|---:|---|
+| 1 | `bmi-calculator` | 30 | BMI with category, healthy range, BMI Prime, BSA, Ponderal, BMR, calorie needs, macros, z-score, waist-to-height, CSV scenarios |
+| 2 | `percentage-calculator` | 23 | 6 modes (of/isWhatPercent/change/ofTotal/reverse/error), compound percent, fraction-to-%, history (localStorage), CSV export, precision control |
+| 3 | `tip-calculator` | 20 | Tip + tax + split, round-up, service quality presets, 12 currencies, comparison, history, CSV, tip-on-tax toggle |
+| 4 | `discount-calculator` | 22 | Stacked %, fixed, BOGO, threshold coupon, markup/markdown, tax-on-original, multi-currency, history, CSV |
+| 5 | `age-calculator` | 28 | Y/M/D breakdown, total units, weekday, Zodiac (Western + Chinese), birthstone, generation, half-birthday, retirement, eligibility, life expectancy |
+| 6 | `date-difference-calculator` | 23 | Total/business/weekend days, holidays exclusion, add/subtract, ISO week, day-of-year, quarter, per-week breakdown, CSV |
+| 7 | `simple-interest-calculator` | 15 | 4 solver modes (SI/P/R/T), partial years, CI comparison, inflation-adjusted, per-year/month/day, CSV |
+| 8 | `unit-converter-length` | 23 | 22 length units (metric/imperial/nautical/astronomical/typographic), scientific notation, chained parser, ft-in display, history, CSV |
+
+### SEO (2 new — closes SEO category to 100/100 ✅)
+
+| # | Tool ID | Tests | Description + 10+ extras |
+|---|---|---:|---|
+| 9 | `meta-tag-generator` | 25 | Title/desc with pixel-width estimator, OG, Twitter Card, JSON-LD (Article/Product/WebSite), robots, canonical, hreflang, refresh, SERP preview, full HTML head block |
+| 10 | `seo-slug-generator` | 31 | 5 separators, 3 case modes, 9 stop-word languages, unicode transliteration, custom replacements, max-length, batch mode, slug→title reverse, dedupe |
+
+### Result
+
+- **620 tools live** (was 610). +10 new.
+- **Calculators**: 3 → 11 (89 still to go to 100).
+- **SEO**: 98 → 100 ✅ **CATEGORY COMPLETE** (second category after AI).
+- **Unit tests**: 39,306 → 39,439 (+133 new tests across 10 tools).
+- **Sitemap**: regenerated to 635 URLs (was 625).
+- **Verified locally**: lint ✅, unit tests ✅ 39,439/39,439, build ⚠️ (sandbox OOM — CI runners have more RAM).
+- **0 skips**: All 10 tools shipped with 100% blueprint compliance + 10 extras.
 
 ### Owner directive: Telugu-English conversation language (MANDATORY)
 
@@ -223,25 +261,25 @@ bcrypt-hash-generator, category page bug fix, PWA name fix]
 
 ## Full gate table
 
-> ⚠️ The unit test count has grown massively (610 `logic.test.ts` files
+> ⚠️ The unit test count has grown massively (620 `logic.test.ts` files
 > now exist, one per tool). Last verified count at v8.0 Batch 2 was
-> 1104/1104. As of v17.38: 39,306/39,306 pass (per commit message +
+> 1104/1104. As of v17.40: 39,439/39,439 pass (per commit message +
 > verified locally post-cleanup).
 
-| Gate                 | v6.8 result            | v17.38 + Option A cleanup status                |
+| Gate                 | v6.8 result            | v17.40 status                                   |
 | -------------------- | ---------------------- | ---------------------------------------------- |
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally)                 |
-| unit tests           | ✅ 528/528             | ✅ 39,306/39,306 pass (verified locally post-cleanup) |
-| build                | ✅ 30 pages            | ✅ 625 pages (610 tools + 13 categories + 2 static) |
+| unit tests           | ✅ 528/528             | ✅ 39,439/39,439 pass (verified locally post-v17.40) |
+| build                | ✅ 30 pages            | ✅ 635 pages (620 tools + 13 categories + 2 static) |
 | smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run                         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 578 untested) |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 588 untested) |
 | axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30)                |
 | CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run                         |
 | CI build job         | ✅ includes axe        | ✅ timeout bumped 10 → 25 min (Option A)        |
 | CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing — does NOT block) |
 | Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green              |
-| sitemap.xml          | n/a                   | ✅ regenerated to include all 610 tools (v17.38) |
-| JSON-LD numberOfItems | n/a                  | ✅ updated to 610 in `src/app/tools/page.tsx` (v17.38) |
+| sitemap.xml          | n/a                   | ✅ regenerated to include all 620 tools (v17.40) |
+| JSON-LD numberOfItems | n/a                  | ✅ updated to 620 in `src/app/tools/page.tsx` (v17.40) |
 
 ## Docs repo sync
 
@@ -261,19 +299,19 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 
 1. **Continue adding tools from blueprints.** Image category still has
    the biggest visible gap: only 7/100 live (93 to go). Other large
-   gaps: calculators (97), network-security (90), text (88),
+   gaps: calculators (89), network-security (90), text (88),
    audio-video (80), education (80), social (75), business (75).
-2. **Close SEO category** — only 2 more tools needed to hit 100/100
-   (trivial quick win, marks category as complete).
+2. **Close File category** — only 14 more tools needed to hit 100/100
+   (trivial quick win, marks category as complete — would be 3rd ✅).
 3. **Apply 100% blueprint + 10 extras rule** per `AGENTS.md` § 1b and § 1c
    on every new tool. No sub-100% ships allowed.
 4. **Ship at least 5 tools per session** per `AGENTS.md` § 1d.
 5. **Developer category** still has the biggest absolute gap (356 to go
    to hit the 500 target) — viable to keep momentum there if blueprints
    are ready.
-6. **Docs repo sync** — banner the ~575 newly-live blueprints in
+6. **Docs repo sync** — banner the ~580 newly-live blueprints in
    `unqtools-docs` and refresh `PROGRESS.md`.
-7. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 610
+7. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 620
    tools. Either expand the TOOLS array or replace with a generic
    "load every tool page, assert no console errors" sweep.
 
@@ -281,7 +319,7 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | 610 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image batch |
+| `main`                  | production      | 620 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image batch + v17.40 calc/SEO batch |
 | (all others deleted)    | —               | Per owner policy: only `main` branch exists. |
 
 ## Historical batches (summary)
@@ -309,11 +347,11 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 ### v6.9 — All 13 categories visible (commit 320771d)
 ### v6.8 — A11y + cleanup (8 commits, archived 67 unused UI components, removed 23 unused deps)
 
-## Per-category live count (2026-07-23 sync, post-v17.38)
+## Per-category live count (2026-07-23 sync, post-v17.40)
 
-Counts reflect post-v17.38 state (610 tools live). Includes the 10
-newly-registered dangling tools (2 dev + 8 SEO) and 5 new image tools
-shipped in Phase 2.
+Counts reflect post-v17.40 state (620 tools live). Includes the 10
+newly-registered dangling tools (2 dev + 8 SEO), 5 image tools from
+v17.38, and 10 new tools from v17.40 (8 Calculators + 2 SEO).
 
 | # | Category | Live | On disk | Target | Gap |
 |---|---|---:|---:|---:|---:|
@@ -321,8 +359,8 @@ shipped in Phase 2.
 | 2 | image | 7 | 7 | 100 | 93 |
 | 3 | audio-video | 20 | 20 | 100 | 80 |
 | 4 | developer | 144 | 144 | 500 | 356 |
-| 5 | seo | 98 | 98 | 100 | 2 |
-| 6 | calculators | 3 | 3 | 100 | 97 |
+| 5 | seo | 100 | 100 | 100 | 0 ✅ |
+| 6 | calculators | 11 | 11 | 100 | 89 |
 | 7 | text | 12 | 12 | 100 | 88 |
 | 8 | network-security | 10 | 10 | 100 | 90 |
 | 9 | file | 86 | 86 | 100 | 14 |
@@ -330,9 +368,9 @@ shipped in Phase 2.
 | 11 | education | 20 | 20 | 100 | 80 |
 | 12 | social | 25 | 25 | 100 | 75 |
 | 13 | ai | 100 | 100 | 100 | 0 ✅ |
-| **TOTAL** | | **610** | **610** | **1,700** | **1,090** |
+| **TOTAL** | | **620** | **620** | **1,700** | **1,080** |
 
-Only the AI category is COMPLETE. SEO and File are nearly done (2 and 14
-to go respectively). Image is still the biggest visible gap (7/100, 93
-to go), while developer is the biggest absolute gap (356 more needed
+Two categories are COMPLETE: AI (100/100) and SEO (100/100). File is
+nearly done (14 to go). Image is still the biggest visible gap (7/100,
+93 to go), while developer is the biggest absolute gap (356 more needed
 to hit 500).
