@@ -68,6 +68,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "sip-calculator": () => import("@/tools/calculators/sip-calculator/ui"),
   "color-picker": () => import("@/tools/image/color-picker/ui"),
   "image-compressor": () => import("@/tools/image/image-compressor/ui"),
+  "ascii-art-generator": () => import("@/tools/image/ascii-art-generator/ui"),
+  "barcode-generator": () => import("@/tools/image/barcode-generator/ui"),
+  "bulk-image-renamer-optimizer": () => import("@/tools/image/bulk-image-renamer-optimizer/ui"),
+  "photo-mosaic-generator": () => import("@/tools/image/photo-mosaic-generator/ui"),
+  "pixel-art-maker": () => import("@/tools/image/pixel-art-maker/ui"),
   // File tools
   "csv-file-joiner": () => import("@/tools/file/csv-file-joiner/ui"),
   "csv-file-splitter": () => import("@/tools/file/csv-file-splitter/ui"),
@@ -654,6 +659,16 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "binary-search-tree-bst-visualizer": () => import("@/tools/developer/binary-search-tree-bst-visualizer/ui"),
   "heap-priority-queue-visualizer": () => import("@/tools/developer/heap-priority-queue-visualizer/ui"),
   "trie-prefix-tree-visualizer": () => import("@/tools/developer/trie-prefix-tree-visualizer/ui"),
+  "avl-tree-visualizer": () => import("@/tools/developer/avl-tree-visualizer/ui"),
+  "red-black-tree-visualizer": () => import("@/tools/developer/red-black-tree-visualizer/ui"),
+  "broken-backlink-finder": () => import("@/tools/seo/broken-backlink-finder/ui"),
+  "broken-link-checker": () => import("@/tools/seo/broken-link-checker/ui"),
+  "core-web-vitals-analyzer": () => import("@/tools/seo/core-web-vitals-analyzer/ui"),
+  "gtm-datalayer-helper": () => import("@/tools/seo/gtm-datalayer-helper/ui"),
+  "meta-robots-tester": () => import("@/tools/seo/meta-robots-tester/ui"),
+  "mobile-friendly-tester": () => import("@/tools/seo/mobile-friendly-tester/ui"),
+  "referring-domains-explorer": () => import("@/tools/seo/referring-domains-explorer/ui"),
+  "ssl-https-checker": () => import("@/tools/seo/ssl-https-checker/ui"),
 };
 
 interface ToolPageClientProps {

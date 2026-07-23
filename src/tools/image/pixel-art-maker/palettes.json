@@ -1,0 +1,255 @@
+[
+  {
+    "name": "Endesga-32",
+    "author": "Edel Rendón (Endesga)",
+    "colors": [
+      "#be4a2f", "#d77643", "#ead4aa", "#e4a672", "#b86f50", "#733e39", "#3e2731",
+      "#a22633", "#e43b44", "#f77622", "#feae34", "#fee761", "#63c74d", "#3e8948",
+      "#265c42", "#193c3e", "#124e89", "#0099db", "#2ce8f5", "#ffffff", "#c0cbdc",
+      "#8b9bb4", "#5a6988", "#3a4466", "#262b44", "#181425", "#ff0044", "#68386c",
+      "#b55088", "#f6757a", "#e8b796", "#c28569"
+    ]
+  },
+  {
+    "name": "PICO-8",
+    "author": "Lexaloffle",
+    "colors": [
+      "#000000", "#1d2b53", "#7e2553", "#008751", "#ab5236", "#5f574f", "#c2c3c7",
+      "#fff1e8", "#ff004d", "#ffa300", "#ffec27", "#00e436", "#29adff", "#83769c",
+      "#ff77a8", "#ffccaa"
+    ]
+  },
+  {
+    "name": "Sweetie-16",
+    "author": "GrafxKid",
+    "colors": [
+      "#1a1c2c", "#5d275d", "#b13e53", "#ef7d57", "#ffcd75", "#a7f070", "#38b764",
+      "#257179", "#29366f", "#3b5dc9", "#41a6f6", "#73eff7", "#f4f4f4", "#94b0c2",
+      "#566c86", "#333c57"
+    ]
+  },
+  {
+    "name": "NES",
+    "author": "Nintendo",
+    "colors": [
+      "#7c7c7c", "#0000fc", "#0000bc", "#4428bc", "#940084", "#a80020", "#a81000",
+      "#881400", "#503000", "#007800", "#006800", "#005800", "#004058", "#000000",
+      "#bcbcbc", "#0078f8", "#0058f8", "#6844fc", "#d800cc", "#e40058", "#f83800",
+      "#e45c10", "#ac7c00", "#00b800", "#00a800", "#00a844", "#008888", "#000000",
+      "#f8f8f8", "#3cbcfc", "#6888fc", "#9878f8", "#f878f8", "#f85898", "#f87858",
+      "#fca044", "#f8b800", "#b8f818", "#58d854", "#58f898", "#00e8d8", "#787878",
+      "#fcfcfc", "#a4e4fc", "#b8b8f8", "#d8b8f8", "#f8b8f8", "#f8a4c0", "#f0d0b0",
+      "#fce0a8", "#f8d878", "#d8f878", "#b8f8b8", "#b8f8d8", "#00fcfc", "#f8d8f8"
+    ]
+  },
+  {
+    "name": "Gameboy",
+    "author": "Nintendo",
+    "colors": ["#0f380f", "#306230", "#8bac0f", "#9bbc0f"]
+  },
+  {
+    "name": "Gameboy-DMG-Original",
+    "author": "Nintendo (4-color DMG)",
+    "colors": ["#1b1b1b", "#565656", "#a0a0a0", "#e0e0e0"]
+  },
+  {
+    "name": "Commodore-64",
+    "author": "Commodore",
+    "colors": [
+      "#000000", "#ffffff", "#9f4e44", "#ffabb1", "#7859ff", "#b9a7ff", "#5b9c2a",
+      "#5bff75", "#41404b", "#8b8091", "#bf795f", "#ff9b85", "#a85c23", "#ffd07c",
+      "#45709e", "#65d3ff"
+    ]
+  },
+  {
+    "name": "CGA",
+    "author": "IBM",
+    "colors": [
+      "#000000", "#55ffff", "#ff55ff", "#ffffff", "#000000", "#55ff55", "#ff5555",
+      "#ffff55"
+    ]
+  },
+  {
+    "name": "EDG16",
+    "author": "Endesga",
+    "colors": [
+      "#e4a672", "#b86f50", "#743f39", "#3f2832", "#9e2835", "#e53b44", "#fb922b",
+      "#ffe762", "#63c64d", "#327345", "#193d3f", "#4f6781", "#afbfd2", "#ffffff",
+      "#2ce8f4", "#0484d1"
+    ]
+  },
+  {
+    "name": "EDG64",
+    "author": "Endesga",
+    "colors": [
+      "#ff0040", "#ff4040", "#ff8040", "#ffc040", "#ffff40", "#c0ff40", "#80ff40",
+      "#40ff40", "#40ff80", "#40ffc0", "#40ffff", "#40c0ff", "#4080ff", "#4040ff",
+      "#8040ff", "#c040ff", "#ff40ff", "#ff40c0", "#ff4080", "#ff4040", "#ff8080",
+      "#ff80c0", "#ff80ff", "#c080ff", "#8080ff", "#80c0ff", "#80ffff", "#80ffc0",
+      "#80ff80", "#c0ff80", "#ffff80", "#ffc080", "#ff80c0", "#c0c0c0", "#808080",
+      "#404040", "#000000", "#ffffff", "#800000", "#008000", "#000080", "#808000",
+      "#800080", "#008080", "#808040", "#804080", "#408080", "#404080", "#408040",
+      "#804040", "#202020", "#606060", "#a0a0a1", "#e0e0e0", "#400000", "#004000",
+      "#000040", "#404000", "#400040", "#004040"
+    ]
+  },
+  {
+    "name": "Resurrect-32",
+    "author": "DawnBringer",
+    "colors": [
+      "#2b1d24", "#303a72", "#44627a", "#6283a1", "#94a6bd", "#aabac2", "#d4d6c8",
+      "#f4ead0", "#b6452b", "#cf8b3c", "#e8cf76", "#9cc687", "#5ba362", "#395548",
+      "#1e2b22", "#5a3a60", "#a05fa3", "#ec77a0", "#f7b5b3", "#ffffff", "#6f6f6f",
+      "#a0a0a0", "#cccccc", "#524b3b", "#7d6b46", "#a59367", "#d6b583", "#efcf9a",
+      "#3e6e8c", "#5f9bb3", "#a6c7d3", "#e3f1f4"
+    ]
+  },
+  {
+    "name": "DB16",
+    "author": "DawnBringer",
+    "colors": [
+      "#140c1c", "#442434", "#30346d", "#4e4a4e", "#854c30", "#346524", "#d04648",
+      "#757161", "#597dce", "#d27d2c", "#8595a1", "#6daa2c", "#d2aa99", "#6dc2ca",
+      "#d4534b", "#c8b09a"
+    ]
+  },
+  {
+    "name": "DB32",
+    "author": "DawnBringer",
+    "colors": [
+      "#000000", "#222034", "#45283c", "#663931", "#8f563b", "#9f6334", "#ab5236",
+      "#b5703b", "#7e2553", "#a05b45", "#1a1a1a", "#3e3e3e", "#5e5e5e", "#7c7c7c",
+      "#9b9b9b", "#bababa", "#d8d8d8", "#f6f6f6", "#6abe30", "#5cab2d", "#3c8e1c",
+      "#387719", "#2d5510", "#d77bba", "#d65a9c", "#d44280", "#c92b67", "#b82158",
+      "#8f1b4b", "#6d0f3a", "#481b3a", "#a85b23", "#7f3f15"
+    ]
+  },
+  {
+    "name": "Journey",
+    "author": "DawnBringer",
+    "colors": [
+      "#050914", "#0e1330", "#3a2a1d", "#4a354b", "#624364", "#5e8c75", "#5fb9a6",
+      "#69b0ce", "#9ee2f2", "#a5d6cf", "#cad0c1", "#dbb092", "#e2c89f", "#eef2e6",
+      "#f3b87d", "#f6cd8b", "#f7d8a0", "#f9e3b0", "#fceec5", "#fff8da"
+    ]
+  },
+  {
+    "name": "Famicube",
+    "author": "Arctic (Skye)",
+    "colors": [
+      "#000000", "#1d2b53", "#7e2553", "#9c4239", "#ab5236", "#5f574f", "#c2c3c7",
+      "#16161a", "#2a2a2e", "#454450", "#6a6b7f", "#8e8e9c", "#b3b4cd", "#d6d7ee",
+      "#fbfbff", "#7a2238", "#a02e2a", "#c9442f", "#df6c2d", "#e99836", "#f0c040",
+      "#ffd76b", "#ffe48d", "#566c86", "#7e97b1", "#a5c2db", "#cdeded", "#a5c25f",
+      "#6ba32e", "#2b7e2f", "#1c5424", "#262844", "#3b3d75", "#4c5499"
+    ]
+  },
+  {
+    "name": "Vinik24",
+    "author": "Vinik",
+    "colors": [
+      "#000000", "#1d2b53", "#7e2553", "#9c4239", "#ab5236", "#5f574f", "#c2c3c7",
+      "#16161a", "#2a2a2e", "#454450", "#6a6b7f", "#8e8e9c", "#b3b4cd", "#d6d7ee",
+      "#fbfbff", "#ff004d", "#ff5b00", "#ffa300", "#ffec27", "#00e436", "#29adff",
+      "#83769c", "#ff77a8", "#ffccaa", "#4a4a4a", "#8b8b8b", "#c5c5c5", "#ffffff",
+      "#7c3c00", "#c3c300", "#00c3c3", "#007c7c"
+    ]
+  },
+  {
+    "name": "Bubblegum-16",
+    "author": "Tallpeoplewriting",
+    "colors": [
+      "#3c1e2c", "#5b2b4c", "#7e3c64", "#a8557e", "#c97b9d", "#d9a1b8", "#ddc6d2",
+      "#b9c1a8", "#84a07c", "#4f6e4e", "#2c423f", "#1a2b2a", "#21362e", "#3b6e3f",
+      "#63ab53", "#dff1c1"
+    ]
+  },
+  {
+    "name": "Ice-Cream",
+    "author": "Wendigo Studio",
+    "colors": [
+      "#b58173", "#a26d54", "#7e4b3a", "#663c2e", "#4a2820", "#cf6e87", "#a85465",
+      "#713a4f", "#3f2233", "#2c1830", "#e0c1a1", "#caa07e", "#9d7861", "#715648",
+      "#564134", "#ffd5c1"
+    ]
+  },
+  {
+    "name": "Strawberry-Milkshake",
+    "author": "Anonymous",
+    "colors": [
+      "#26081c", "#3d1226", "#5c1e3c", "#7d2953", "#a13669", "#c44b80", "#e06098",
+      "#f47fa9", "#fba0bf", "#fdc0d3", "#fde0e6", "#ffffff", "#f5d4a8", "#e8a8a8",
+      "#c47878", "#7a4d4d"
+    ]
+  },
+  {
+    "name": "Cute-Forest",
+    "author": "Sato",
+    "colors": [
+      "#1a1a1a", "#4d4937", "#756d4c", "#a39d6c", "#d1cb98", "#ede6a6", "#f4ecc2",
+      "#8b9d6c", "#5e7d4c", "#3d5d3d", "#27412c", "#0d2a1c", "#643044", "#8d4a5d",
+      "#b56e7e", "#dc9ea0"
+    ]
+  },
+  {
+    "name": "Warm-Sunset",
+    "author": "Anonymous",
+    "colors": [
+      "#1a0f0a", "#341c0d", "#54220e", "#782a11", "#9a3814", "#bd4f1b", "#dd6e22",
+      "#f08f33", "#f8b65f", "#fcd590", "#fee5b8", "#fff0d4", "#4a2840", "#743a55",
+      "#9b5470", "#c57d95"
+    ]
+  },
+  {
+    "name": "Cyberpunk",
+    "author": "Anonymous",
+    "colors": [
+      "#0a0e27", "#1f1f4e", "#3d2c5c", "#5b2c8f", "#7d3cff", "#a64fff", "#d450ff",
+      "#ff4ff0", "#ff4faa", "#ff4f6a", "#ff7f4f", "#ffaf4f", "#fff04f", "#aaff4f",
+      "#4fffaf", "#4ffff0"
+    ]
+  },
+  {
+    "name": "Muted-Dawn",
+    "author": "Anonymous",
+    "colors": [
+      "#2b2b2b", "#4a4a4a", "#6e6e6e", "#929292", "#b6b6b6", "#d8d8d8", "#f0f0f0",
+      "#ffffff", "#3d3340", "#5a4a60", "#7d6680", "#9c85a0", "#b8a4c2", "#d4c4dc",
+      "#e8dcef", "#f4ecf5"
+    ]
+  },
+  {
+    "name": "Pixel-Food",
+    "author": "Anonymous",
+    "colors": [
+      "#1a1a1a", "#5d2814", "#a0451a", "#d96527", "#f18938", "#ffb455", "#ffd573",
+      "#fff09a", "#3e3a21", "#5a552e", "#847a3c", "#a89d4e", "#ccc067", "#e0d682",
+      "#f0e89c", "#fff4b3"
+    ]
+  },
+  {
+    "name": "Synthwave",
+    "author": "Anonymous",
+    "colors": [
+      "#1a0033", "#2d0052", "#4d0075", "#7d00b3", "#b300d9", "#e600ff", "#ff00ff",
+      "#ff4dff", "#ff7aff", "#ffa6ff", "#ffccff", "#ffffff", "#00ffff", "#00b3b3",
+      "#007575", "#003d3d"
+    ]
+  },
+  {
+    "name": "Slate8",
+    "author": "Anonymous",
+    "colors": [
+      "#1e1e22", "#36363c", "#4e4e56", "#666670", "#7e7e8a", "#9696a4", "#aeaebe",
+      "#c6c6d8"
+    ]
+  },
+  {
+    "name": "Crimson-8",
+    "author": "Anonymous",
+    "colors": [
+      "#1a0408", "#400914", "#6b1426", "#9a2340", "#c93860", "#e66688", "#f0a0b8",
+      "#f8d8e0"
+    ]
+  }
+]

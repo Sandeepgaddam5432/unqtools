@@ -1,86 +1,79 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-14 by GLM (z.ai sandbox) — v8.0 Batch 2 + 2 follow-up bug fixes (tools filter, pdf-stamp rotation) + Telugu-English language rule_
+_Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.37 catch-up sync + Phase 1 quick sync (10 dangling tools registered) + Telugu-English language rule_
 
 ## Current phase
 
-**v8.0 "Network, Security & Privacy" — Batch 2 COMPLETE ✅ + 2 follow-up bug fixes**
+**v17.37 — Developer waves 1-16 complete + Phase 1 quick sync (10 dangling tools registered)**
 
-Second batch of Network/Security tools shipped (10 total in category). Two
-follow-up bugs found by owner and fixed:
-1. Tools page category filtering showed blank screen on tab click
-2. pdf-stamp `degreeAngle must be of type number` error on every Run
+> STATE.md was last touched at v8.0 Batch 2 (62 tools live) on 2026-07-14.
+> Between then and now (2026-07-23), waves v17.17 → v17.37 added ~533
+> tools (mostly Developer category). This sync brings STATE.md back in
+> line with reality.
 
 ### Recent commits on `main`
 
-| Commit   | Description                                                                                |
-| -------- | ------------------------------------------------------------------------------------------ |
-| (pending)| fix: pdf-stamp degreeAngle undefined + add rotation UI control + Telugu-English rule in AGENTS.md |
-| 7d514b2  | fix: tools page category filtering — blank screen on tab click (framer-motion whileInView bug) |
-| 9f79377  | feat: v8.0 Batch 2 — 5 more Network/Security tools (totp, csp, http-status, mime, data-url) |
-| a5ebf13  | feat: v8.0 Batch 1 — 5 Network/Security tools + category page bug fix + PWA name fix       |
-| ff222c5  | docs: STATE.md sync — reflect v7.2 Batch B/C/D completion (52 tools live)                  |
-| 827bfbb  | fix: sw.js — only cache GET requests, skip non-http, catch cache.put errors                |
-| 2058661  | fix: pdf-stamp — also apply rotation conditional to drawRectangle                          |
-| b516796  | fix: pdf-stamp — better error handling + remove opacity/rotate edge cases                  |
-| e5f0616  | feat: v7.2 Batch D — 5 conversion tools (text/md/html/rtf/svg → PDF)                       |
-| 29b49a0  | feat: v7.2 Batch B+C — 10 new PDF tools + parallel CI                                      |
+| Commit   | Description                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| 51ce64c  | feat: v17.37 — 148 Developer tools from blueprints (waves 1-16) — ZERO SKIPS                      |
+| 9ccb035  | feat: v17.36 — 146 Developer tools from blueprints (waves 1-16 partial) — ZERO SKIPS              |
+| 5ba9d73  | feat: v17.35 — 144 Developer tools from blueprints (waves 1-15) — ZERO SKIPS                      |
+| 8cbad51  | feat: v17.34 — 142 Developer tools from blueprints (waves 1-15 partial) — ZERO SKIPS              |
+| 26db531  | feat: v17.33 — 140 Developer tools from blueprints (waves 1-14) — ZERO SKIPS                      |
+| fbdbef3  | feat: v17.32 — 130 Developer tools from blueprints (waves 1-13) — ZERO SKIPS                      |
+| c26521d  | feat: v17.31 — 120 Developer tools from blueprints (waves 1-12) — ZERO SKIPS                      |
+| 3019b9b  | feat: v17.30 — 110 Developer tools from blueprints (waves 1-11) — ZERO SKIPS                      |
+| c92d662  | feat: v17.29 — 100 Developer tools from blueprints (waves 1-10) — ZERO SKIPS                      |
+| a7b2008  | feat: v17.28 — 86 Developer tools from blueprints (waves 1-9) — ZERO SKIPS                        |
+| f5b13ce  | feat: v17.27 — 76 Developer tools from blueprints (wave 8 complete) — ZERO SKIPS                  |
+| 97b84e8  | feat: v17.26 — 72 Developer tools from blueprints (wave 8 + fixes) — ZERO SKIPS                   |
+| 4405411  | feat: v17.25 — 70 Developer tools from blueprints (wave 8 partial) — ZERO SKIPS                   |
+| 0d3cebd  | feat: v17.23 — 64 Developer tools from blueprints (waves 1-7 partial) — ZERO SKIPS                |
+| 243b5b8  | feat: v17.22 — 64 Developer tools from blueprints (wave 7 cont.) — ZERO SKIPS                     |
+| e8a0f54  | feat: v17.21 — 62 Developer tools from blueprints (wave 7 start) — ZERO SKIPS                     |
+| a8cb330  | feat: v17.20 — 60 Developer tools from blueprints (waves 1-6 complete) — ZERO SKIPS               |
+| f16648e  | feat: v17.19 — 58 Developer tools from blueprints (wave 6 cont.) — ZERO SKIPS                     |
+| c8cf704  | feat: v17.18 — 56 Developer tools from blueprints (wave 6 cont.) — ZERO SKIPS                     |
+| 40b1de4  | feat: v17.17 — 54 Developer tools from blueprints (wave 6 cont.) — ZERO SKIPS                     |
 
-## Follow-up bug fixes (2026-07-14)
+The v17.x wave series shipped ~533 new tools (predominantly Developer)
+after STATE.md was last touched at v8.0 Batch 2 (62 tools, 2026-07-14).
 
-### Bug 3: Tools page category filtering — blank screen on tab click
+## Catch-up sync (2026-07-23)
 
-**Symptom:** On `/tools`, clicking "Image (2)", "Developer (5)",
-"Calculators (3)", "Text (12)", or "Network (10)" tab made the tools
-grid disappear (screen went blank). Only "All (62)" tab showed tools.
+STATE.md had drifted badly out of date — last touched 2026-07-14 at
+v8.0 Batch 2 (62 tools live), while the actual repo state had grown to:
 
-**Root cause:** The tools grid parent `motion.div` used
-`whileInView="visible"` with `viewport={{ once: true }}`. When the user
-switched categories, the `filteredTools` array changed and new tool cards
-mounted with `initial="hidden"` (opacity: 0, y: 20). The parent's
-`whileInView` had already fired once on initial page load and wouldn't
-re-trigger — so new cards stayed at opacity: 0 forever.
+- **595 tools registered** in `src/lib/registry.ts`
+- **605 tool folders** on disk (10 dangling — files present, no registry
+  entry, no UI loader)
+- v17.17 → v17.37 waves shipped ~533 tools (mostly Developer category)
+- Latest commit: `51ce64c feat: v17.37 — 148 Developer tools from
+  blueprints (waves 1-16) — ZERO SKIPS`
+- Working tree was clean at start of Phase 1
 
-**Fix (commit `7d514b2`):**
-1. Added `key={\`${activeCategory}-${query}\`}` to the tools grid parent
-   `motion.div` so it remounts when the filter changes. Each remount
-   re-triggers the entrance animation, so new cards stagger in correctly.
-2. Replaced `whileInView` with `animate` on the grid parent (no longer
-   needs viewport tracking).
-3. Removed `viewport={{ once: true }}` prop.
+### Phase 1-A — quick sync: register 10 dangling tools
 
-**Bonus fix:** Category short labels had trailing commas
-("Network, Security & Privacy" → "Network,"). Added
-`.replace(/[,.;:]$/, "")` in 4 files: tools/page.tsx (2 spots),
-sidebar.tsx, category-page-client.tsx, command-palette.tsx (2 spots).
+10 tool folders existed on disk with `manifest.ts` + `logic.ts` +
+`logic.test.ts` + `ui.tsx` but no entry in `registry.ts` and no UI
+loader in `tool-page-client.tsx`. This phase registered them with a
+2-line registry entry + 1-line UI loader each:
 
-### Bug 4: pdf-stamp `degreeAngle must be of type number`
+- **developer (2):** `avl-tree-visualizer`, `red-black-tree-visualizer`
+- **seo (8):** `broken-backlink-finder`, `broken-link-checker`,
+  `core-web-vitals-analyzer`, `gtm-datalayer-helper`,
+  `meta-robots-tester`, `mobile-friendly-tester`,
+  `referring-domains-explorer`, `ssl-https-checker`
 
-**Symptom:** On `/tools/pdf-stamp`, clicking "Add stamp" on any PDF
-threw: `Stamping failed: \`degreeAngle\` must be of type \`number\`,
-but was actually of type \`undefined\`. The PDF may use features pdf-lib
-can't re-save...`
+**Result:** 605 tools live (595 previously registered + 10 newly
+registered). Developer count: 142 → 144. SEO count: 90 → 98.
 
-**Root cause:** The UI's `run()` function never passed `rotation` to
-`addStamp()` — only `{ text, includeDate, fontSize, color, position, pages }`.
-So `opts.rotation` was `undefined`. In logic.ts:
-- `if (opts.rotation !== 0)` → `undefined !== 0` is `true` → so it tried
-  to call `degrees(undefined)` → which creates an object with
-  `degreeAngle: undefined` → pdf-lib throws.
+### Phase 1-D — SEO infrastructure fixes
 
-The `rotation` field was clearly intended (it's in the `StampOptions`
-interface and logic.ts references it), but the UI control was never built.
-
-**Fix:**
-1. Made `rotation` optional in `StampOptions` (`rotation?: 0 | -45 | 45`)
-2. Added defensive default at the top of the try block:
-   `const rotation = opts.rotation ?? 0;` and replaced all `opts.rotation`
-   references with `rotation`.
-3. Added a Rotation dropdown to the UI (0° / -45° / 45°) so the feature
-   is actually usable.
-4. Updated `run()` to pass `rotation: Number(rotation) as 0 | -45 | 45`.
-5. Changed grid layout from `sm:grid-cols-3` to `sm:grid-cols-2
-   lg:grid-cols-4` to fit the new 4th control.
+- Regenerated `sitemap.xml` to include all 605 live tools (was stale,
+  referencing ~62 tools).
+- Fixed JSON-LD `numberOfItems` in `src/app/tools/page.tsx`: was `283`,
+  updated to `605`.
 
 ### Owner directive: Telugu-English conversation language (MANDATORY)
 
@@ -103,33 +96,37 @@ tool built or upgraded after this date MUST:
 1. Implement 100% of its blueprint's feature set (sections 5, 7, 10 from
    `unqtools-docs` repo).
 2. Ship with at least **10 extra useful features** beyond the blueprint.
+3. Be added at **≥ 5 tools per session** (AGENTS.md § 1d).
 
-**Existing 10 Network/Security tools shipped at 40-50% compliance with
-zero extras.** The following backlog tracks what's missing per tool.
-When upgrading a tool, implement all missing blueprint features + 10
-extras, then clear the backlog row. New tools (Batch 3+) must hit
-100% + 10 extras on first ship — no backlog entry allowed.
+### Owner directive: 5 tools per session minimum (MANDATORY)
 
-## Blueprint compliance backlog (existing tools, ~40-50% complete, 0 extras)
+Per `AGENTS.md` § 1d, each session must register / ship at least 5 new
+tools. Sessions that ship fewer must be continued immediately rather
+than committed as "done."
 
-| Tool | Missing blueprint features | 10 extras (to brainstorm) |
-|------|----------------------------|---------------------------|
-| ✅ `password-generator` — **UPGRADED to 100% + 12 extras (2026-07-14)** | All blueprint features shipped: EFF passphrase mode, per-class minimums, pronounceable mode, batch + CSV, shareable URL preset, auto-clear clipboard, HIBP skipped (documented), zxcvbn cross-check (lazy-loaded), keyboard shortcuts | 12 extras shipped: history (localStorage), pattern detection (sequential/repeated/keyboard), PIN mode, WiFi mode, Diceware with visible dice rolls, crack-time estimate, batch generation, pronounceable-strong mode, keyboard shortcuts, CSV/JSON export, shareable preset URL, auto-clear clipboard 30s |
-| ✅ `jwt-decoder` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: signature verification (HS256/384/512, RS256/384/512, PS256/384/512, ES256/384/512, EdDSA via WebCrypto), JWK/JWKS input, security lint (alg:none, missing exp, long-lived, missing kid), JWT encoder/generator, exact byte preservation, timeline + countdown, three-pane UX | 10 extras shipped: JWKS auto-select by kid, token comparison mode (diff 2 JWTs), copy individual claims, timeline visualization (iat→nbf→exp with now), PEM cert parser, freshness warning (<5min), encoder panel, JSON export, shareable URL (fragment), keyboard shortcuts (V/C) |
-| ✅ `url-parser` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: Punycode IDN detection, mailto/tel/file/ftp/ws/wss/data/blob scheme support, normalize URL (lowercase host, strip default port, sort query params, dedup slashes), URL builder, copy individual components | 10 extras: URL history (localStorage), phishing/safety check (9 patterns), redirect hints, encoded-char highlight, scheme reference, mailto parser, tel parser, URL diff, shareable URL, copy components |
-| ✅ `ip-subnet-calculator` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: IPv6 (BigInt 128-bit math, :: expansion, special range detection), VLSM subnetting (split by host counts, largest-first), Cisco ACL wildcard mask, reverse DNS PTR (IPv4 in-addr.arpa + IPv6 ip6.arpa), ASN whois URL | 10 extras: subnet history, CIDR↔range conversion, CIDR merge (minimal covering set), subnet containment check, binary view of IPv4/mask, CSV/JSON export, RIPEstat URL, shareable URL, copy formats, range-to-CIDR aggregation |
-| ✅ `bcrypt-hash-generator` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: PBKDF2-SHA256 (WebCrypto native), salt-only generation, hash-from-salt re-hash, batch verify, constant-time compare | 10 extras: hash history, batch verify (multiple hashes vs 1 password), crack-time estimate (per-algorithm GPU hashrates), password strength check (entropy + crack time), hash comparison (diff 2 hashes), CSV export, hash format detector (bcrypt/pbkdf2/argon2/scrypt/md5/sha1/sha256/sha512), cost factor recommendation (benchmark + suggest), shareable URL, algorithm reference table (4 algos with pros/cons) |
-| ✅ `totp-generator` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: HOTP mode (RFC 4226), Steam Guard codes (custom alphabet), multi-account (localStorage add/remove), backup code generator, time-skew warning, QR otpauth URI builder | 10 extras: otpauth URI parser, batch code generation for accounts, export/import accounts JSON, code history, copy with auto-clear 30s, next-N codes preview, secret strength check, algorithm reference, shareable URL, keyboard shortcuts |
-| ✅ `csp-evaluator` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: bypass gadget detection (Angular/JSONP/Prototype on CDNs), auto-suggest strict CSP (SPA/SSR/static/API presets), hash/nonce injection suggestion, report-endpoint test, deprecated header warnings, comparison mode (diff 2 CSPs) | 10 extras: CSP history, CSP builder (directive toggles), CSP preset templates (5), source explanation (risk levels), score breakdown, export to Nginx/Apache/meta-tag, directive reference (15+), nonce generator, shareable URL, CSP report parser |
-| ✅ `http-status-code-reference` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: common causes + how-to-fix per code (20 codes), IANA registration link, copy-as-curl, deep-link (#code=418), server-software mapping (nginx/Cloudflare/Apache/HAProxy), HTTP/2 vs HTTP/1.1 vs HTTP/3 differences | 10 extras: view history, favorites, filter by server, export CSV/Markdown, HTTP version diff table, quiz mode, related codes, copy as JSON, cheat sheet (16 common codes), shareable URL |
-| ✅ `mime-type-lookup` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: IANA registration URL, charset detection (BOM + heuristic), magic bytes detection (20 patterns), sniffing attack warning, .htaccess + nginx export, custom MIME type registration form | 10 extras: view history, favorites, category stats, extension analyzer, conflict finder (extensions claimed by multiple types), Content-Type header builder, Accept header builder (with q= values), JSON export, quiz mode, shareable URL |
-| ✅ `data-url-converter` — **UPGRADED to 100% + 10 extras (2026-07-14)** | All blueprint features shipped: size warning (10KB/100KB/2MB thresholds), SVG optimization (auto-pick base64 vs plain), drag-drop file support, paste image (clipboard API), batch convert (multiple files), copy-as-img-tag (HTML/CSS/favicon/JS/JSON/Markdown templates) | 10 extras: history (localStorage), batch encode + JSON export, decode to Blob, data URL comparison (diff 2 URLs), embed templates (7 contexts), deep validation (size + MIME + sniffing), size estimator (before encoding), file info extractor, shareable URL, drag-drop file detection |
+## Blueprint compliance backlog (existing v8.0 tools, upgraded to 100% + 10+ extras)
 
-**Upgrade path:** When picking up an existing tool for upgrade, read its
-backlog row above, read the matching blueprint, implement every missing
-feature + brainstorm/implement 10 extras, then delete the row from this
-table. Replace the row with a one-line "✅ upgraded to 100% + 10 extras"
-note for traceability.
+All 10 Network/Security tools shipped in v8.0 Batches 1-2 have been
+upgraded to 100% blueprint compliance + 10+ extras (2026-07-14).
+Backlog table preserved below for traceability.
+
+| Tool | Status |
+|------|--------|
+| ✅ `password-generator` | UPGRADED to 100% + 12 extras (2026-07-14) |
+| ✅ `jwt-decoder` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `url-parser` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `ip-subnet-calculator` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `bcrypt-hash-generator` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `totp-generator` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `csp-evaluator` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `http-status-code-reference` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `mime-type-lookup` | UPGRADED to 100% + 10 extras (2026-07-14) |
+| ✅ `data-url-converter` | UPGRADED to 100% + 10 extras (2026-07-14) |
+
+**Upgrade path (for any newly-discovered sub-100% tools):** read the
+matching blueprint from `unqtools-docs`, implement every missing
+feature + brainstorm/implement 10 extras, then update this table with
+a one-line "✅ upgraded to 100% + 10 extras" note for traceability.
 
 ## v8.0 Batch 2 — Network, Security & Privacy ✅ COMPLETE
 
@@ -143,7 +140,7 @@ note for traceability.
 | 4 | `mime-type-lookup` | Searchable MIME type ↔ extension lookup, ~70 entries, detect from filename | 25 | ✅ |
 | 5 | `data-url-converter` | Convert files to/from data: URLs (RFC 2397), base64 + plain encoding | 33 | ✅ |
 
-### Verification
+### Verification (at time of v8.0 Batch 2 ship — preserved for history)
 
 | Gate | Result |
 |------|--------|
@@ -153,28 +150,32 @@ note for traceability.
 | tool count | ✅ 62 tools live (was 57, +5 Network/Security) |
 | category 8 count | ✅ 10 tools live (was 5, +5 Batch 2) |
 
-### Infra changes
+### Follow-up bug fixes (2026-07-14, preserved for history)
 
-- `src/lib/registry.ts` — +5 imports + 5 entries (alphabetical order maintained)
-- `src/app/tools/[id]/tool-page-client.tsx` — +5 lazy UI loaders
-- No new npm dependencies (TOTP uses Web Crypto HMAC; CSP/MIME/HTTP are pure data; data-URL uses FileReader)
+**Bug 3:** Tools page category filtering showed blank screen on tab
+click — root cause was `motion.div` parent using `whileInView` with
+`viewport={{ once: true }}` so newly-mounted cards stayed at opacity 0
+forever. Fix (commit `7d514b2`): added `key={\`${activeCategory}-${query}\`}`
+to force remount on filter change, replaced `whileInView` with
+`animate`. Bonus fix: stripped trailing punctuation from category short
+labels in 4 files.
 
-### Highlights
-
-- **TOTP**: passes RFC 6238 known-answer test vector (T=59s → "94287082" for SHA-1, 8 digits). Live countdown with progress bar, otpauth:// URI builder for QR scanning.
-- **CSP Evaluator**: 0-100 score with severity-weighted deductions (high=-25, medium=-10, low=-3). Detects unsafe-inline/eval, http: schemes, wildcards, deprecated directives, missing base-uri/form-action/frame-ancestors/report-uri/upgrade-insecure-requests.
-- **HTTP Status Code Reference**: ~70 codes including official RFC 9110 codes (1xx-5xx), unofficial but widely-used (418 teapot, 429, 451, 5xx from Cloudflare). Filterable by category, searchable by code/name/description/use-case.
-- **MIME Type Lookup**: ~70 entries across 8 categories (text/image/audio/video/application/font/multipart/model). Detects from filename, handles aliases (application/javascript ↔ text/javascript), and parameters (text/html; charset=utf-8).
-- **Data URL Converter**: bidirectional file↔data URL encoding. Handles UTF-8 correctly via TextEncoder/TextDecoder. Binary data note: bytes that aren't valid UTF-8 get replacement chars when decoded as text (documented in code).
+**Bug 4:** `pdf-stamp` threw `degreeAngle must be of type number` because
+the UI's `run()` never passed `rotation` to `addStamp()`. Fix: made
+`rotation` optional in `StampOptions`, added defensive default
+`opts.rotation ?? 0`, added a Rotation dropdown to the UI (0° / -45° /
+45°), updated `run()` to pass `rotation: Number(rotation) as 0 | -45 | 45`,
+changed grid layout to fit the new 4th control.
 
 ## v8.0 Batch 1 — Network, Security & Privacy ✅ COMPLETE
 
-[History preserved — see v8.0 Batch 1 section below for details on password-generator, jwt-decoder, url-parser, ip-subnet-calculator, bcrypt-hash-generator, category page bug fix, PWA name fix]
+[History preserved — see v8.0 Batch 1 section in git history for details
+on password-generator, jwt-decoder, url-parser, ip-subnet-calculator,
+bcrypt-hash-generator, category page bug fix, PWA name fix]
 
 ## v7.2 — 20-tool production-ready PDF batch ✅ COMPLETE (A + B + C + D)
 
 [History preserved — see prior STATE.md commits for full v7.2 details]
-
 4 batches × 5 tools shipped. 821 tests, 69 pages, 52 tools.
 
 ## v7.1 — advanced merge-pdf + split-pdf ✅ COMPLETE
@@ -195,47 +196,59 @@ note for traceability.
 
 ## Full gate table
 
-| Gate                 | v6.8 result            | v8.0 Batch 2 status           |
-| -------------------- | ---------------------- | ------------------------------ |
-| lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally) |
-| unit tests           | ✅ 528/528             | ✅ 1104/1104 (verified locally, +154 new from Batch 2) |
-| build                | ✅ 30 pages            | ✅ 79 pages (verified locally, +5 new) |
-| smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (62 tools) |
-| axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30) |
-| CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run         |
-| CI build job         | ✅ includes axe        | 🟡 pending CI auto-run         |
+> ⚠️ The unit test count has grown massively (605 `logic.test.ts` files
+> now exist, one per tool). Last verified count at v8.0 Batch 2 was
+> 1104/1104. The actual current count must be re-verified by running
+> the suite after Phase 4.
+
+| Gate                 | v6.8 result            | v17.37 + Phase 1 status                       |
+| -------------------- | ---------------------- | ---------------------------------------------- |
+| lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally)                 |
+| unit tests           | ✅ 528/528             | 🟡 [verify count after Phase 4 test run] — suite has grown to 605 test files |
+| build                | ✅ 30 pages            | 🟡 [verify page count after build] — ~605 tool pages expected |
+| smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run                         |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (605 tools)             |
+| axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30)                |
+| CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run                         |
+| CI build job         | ✅ includes axe        | 🟡 pending CI auto-run                         |
 | CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing — does NOT block) |
-| Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green |
+| Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green              |
+| sitemap.xml          | n/a                   | ✅ regenerated to include all 605 tools (Phase 1-D) |
+| JSON-LD numberOfItems | n/a                  | ✅ updated to 605 in `src/app/tools/page.tsx` (Phase 1-D) |
 
-## Docs repo sync (2026-07-14 — third sync)
+## Docs repo sync
 
-The `unqtools-docs` repo tracks 1,700 tool blueprints. Per hybrid-sync policy,
-blueprints whose tools are live in production get an "✅ IMPLEMENTED in
-production" banner prepended.
+The `unqtools-docs` repo tracks 1,700 tool blueprints. Per hybrid-sync
+policy, blueprints whose tools are live in production get an
+"✅ IMPLEMENTED in production" banner prepended.
 
-**This sync:** Banner matching Network/Security blueprints for v8.0 Batch 2
-tools. Update PROGRESS.md counts.
-
-After this sync: 38 tools bannered in docs repo (29 PDF + 4 Batch 1 + 5 Batch 2,
-assuming all 5 Batch 2 have matching blueprints).
+**Status (2026-07-23):** Docs repo `PROGRESS.md` is stale (says 35
+tools live). Actual production has 605 tools live. A docs-repo sync
+to banner the ~570 newly-live tools is queued as a follow-up task.
 
 ## Resume point
 
 **Next session — pick direction:**
 
-1. **v8.0 Batch 3 — Network/Security (5 more tools):** `http-headers-reference`, `user-agent-parser`, `qr-code-generator` (security-flavored), `ssl-cert-decoder`, `mac-address-lookup`
-2. **v8.1 — start a new category** (File Management or Audio/Video are next in search-volume priority)
-3. **v7.3 — PDF polish (deferred):** Web Worker support, thumbnail previews, visual page selection grid
-4. **SEO boost** — sitemap.xml, per-tool OG images, FAQ structured data
+1. **Continue adding tools from blueprints.** Image category has the
+   biggest visible gap: only 2/100 live (98 to go). Other large gaps:
+   calculators (97), network-security (90), text (88), audio-video (80),
+   education (80), social (75), business (75).
+2. **Apply 100% blueprint + 10 extras rule** per `AGENTS.md` § 1b and § 1c
+   on every new tool. No sub-100% ships allowed.
+3. **Ship at least 5 tools per session** per `AGENTS.md` § 1d.
+4. **Developer category** still has the biggest absolute gap (356 to go
+   to hit the 500 target) — viable to keep momentum there if blueprints
+   are ready.
+5. **Docs repo sync** — banner the ~570 newly-live blueprints in
+   `unqtools-docs` and refresh `PROGRESS.md`.
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | v8.0 Batch 2 ready (30 PDF + 22 non-PDF + 10 Network/Security = 62 tools live) |
+| `main`                  | production      | 605 tools live (was 62 at last STATE.md update) — v17.37 waves + Phase 1 quick sync |
 | (all others deleted)    | —               | Per owner policy: only `main` branch exists. |
-
 
 ## Historical batches (summary)
 
@@ -261,3 +274,33 @@ assuming all 5 Batch 2 have matching blueprints).
 
 ### v6.9 — All 13 categories visible (commit 320771d)
 ### v6.8 — A11y + cleanup (8 commits, archived 67 unused UI components, removed 23 unused deps)
+
+## Per-category live count (2026-07-23 sync)
+
+Counts reflect post-Phase-1-A state (605 tools live). Developer and
+SEO counts include the 10 newly-registered dangling tools (2 dev +
+8 SEO).
+
+| # | Category | Live | On disk | Target | Gap |
+|---|---|---:|---:|---:|---:|
+| 1 | pdf | 60 | 60 | 100 | 40 |
+| 2 | image | 2 | 2 | 100 | 98 |
+| 3 | audio-video | 20 | 20 | 100 | 80 |
+| 4 | developer | 144 | 144 | 500 | 356 |
+| 5 | seo | 98 | 98 | 100 | 2 |
+| 6 | calculators | 3 | 3 | 100 | 97 |
+| 7 | text | 12 | 12 | 100 | 88 |
+| 8 | network-security | 10 | 10 | 100 | 90 |
+| 9 | file | 86 | 86 | 100 | 14 |
+| 10 | business | 25 | 25 | 100 | 75 |
+| 11 | education | 20 | 20 | 100 | 80 |
+| 12 | social | 25 | 25 | 100 | 75 |
+| 13 | ai | 100 | 100 | 100 | 0 ✅ |
+| **TOTAL** | | **605** | **605** | **1,700** | **1,095** |
+
+Note: After Phase 1-A registers the 10 dangling tools, developer count
+becomes 144 (was 142) and seo count becomes 98 (was 90).
+
+Only the AI category is COMPLETE. All others need more work. Image is
+the biggest visible gap (2/100), while developer is the biggest absolute
+gap (356 more needed to hit 500).

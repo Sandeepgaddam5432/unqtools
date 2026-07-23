@@ -15,8 +15,13 @@ import { manifest as hashGenerator } from "@/tools/developer/hash-generator/mani
 import { manifest as jsonFormatter } from "@/tools/developer/json-formatter/manifest";
 import { manifest as urlEncoder } from "@/tools/developer/url-encoder/manifest";
 import { manifest as uuidGenerator } from "@/tools/developer/uuid-generator/manifest";
+import { manifest as asciiArtGenerator } from "@/tools/image/ascii-art-generator/manifest";
+import { manifest as barcodeGenerator } from "@/tools/image/barcode-generator/manifest";
+import { manifest as bulkImageRenamerOptimizer } from "@/tools/image/bulk-image-renamer-optimizer/manifest";
 import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
+import { manifest as photoMosaicGenerator } from "@/tools/image/photo-mosaic-generator/manifest";
+import { manifest as pixelArtMaker } from "@/tools/image/pixel-art-maker/manifest";
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
 import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
 import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
@@ -602,6 +607,16 @@ import { manifest as pathfindingAlgorithmVisualizer } from "@/tools/developer/pa
 import { manifest as binarySearchTreeBstVisualizer } from "@/tools/developer/binary-search-tree-bst-visualizer/manifest";
 import { manifest as heapPriorityQueueVisualizer } from "@/tools/developer/heap-priority-queue-visualizer/manifest";
 import { manifest as triePrefixTreeVisualizer } from "@/tools/developer/trie-prefix-tree-visualizer/manifest";
+import { manifest as avlTreeVisualizer } from "@/tools/developer/avl-tree-visualizer/manifest";
+import { manifest as redBlackTreeVisualizer } from "@/tools/developer/red-black-tree-visualizer/manifest";
+import { manifest as brokenBacklinkFinder } from "@/tools/seo/broken-backlink-finder/manifest";
+import { manifest as brokenLinkChecker } from "@/tools/seo/broken-link-checker/manifest";
+import { manifest as coreWebVitalsAnalyzer } from "@/tools/seo/core-web-vitals-analyzer/manifest";
+import { manifest as gtmDatalayerHelper } from "@/tools/seo/gtm-datalayer-helper/manifest";
+import { manifest as metaRobotsTester } from "@/tools/seo/meta-robots-tester/manifest";
+import { manifest as mobileFriendlyTester } from "@/tools/seo/mobile-friendly-tester/manifest";
+import { manifest as referringDomainsExplorer } from "@/tools/seo/referring-domains-explorer/manifest";
+import { manifest as sslHttpsChecker } from "@/tools/seo/ssl-https-checker/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   emiCalculator,
@@ -612,8 +627,13 @@ export const TOOLS: readonly ToolManifest[] = [
   jsonFormatter,
   urlEncoder,
   uuidGenerator,
+  asciiArtGenerator,
+  barcodeGenerator,
+  bulkImageRenamerOptimizer,
   colorPicker,
   imageCompressor,
+  photoMosaicGenerator,
+  pixelArtMaker,
   bcryptHashGenerator,
   cspEvaluator,
   dataUrlConverter,
@@ -1196,6 +1216,16 @@ export const TOOLS: readonly ToolManifest[] = [
   binarySearchTreeBstVisualizer,
   heapPriorityQueueVisualizer,
   triePrefixTreeVisualizer,
+  avlTreeVisualizer,
+  redBlackTreeVisualizer,
+  brokenBacklinkFinder,
+  brokenLinkChecker,
+  coreWebVitalsAnalyzer,
+  gtmDatalayerHelper,
+  metaRobotsTester,
+  mobileFriendlyTester,
+  referringDomainsExplorer,
+  sslHttpsChecker,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
