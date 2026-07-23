@@ -4,26 +4,26 @@ import HomePageClient from "./home-page-client";
 const SITE_URL = "https://unqtools.pages.dev";
 
 export const metadata: Metadata = {
-  title: "UnQTools — 280+ Private, Offline Browser Tools",
+  title: "UnQTools — 610+ Private, Offline Browser Tools",
   description:
-    "280+ free online tools that run 100% in your browser — PDF utilities, file converters, text tools, calculators, SEO tools, security tools. No uploads, no tracking, no accounts. Privacy-first PWA.",
+    "610+ free online tools that run 100% in your browser — PDF utilities, file converters, text tools, calculators, SEO tools, security tools, developer tools, image tools. No uploads, no tracking, no accounts. Privacy-first PWA.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "UnQTools — 280+ Private, Offline Browser Tools",
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
     description:
-      "280+ free online tools that run 100% in your browser. No uploads, no tracking, no accounts.",
+      "610+ free online tools that run 100% in your browser. No uploads, no tracking, no accounts.",
     siteName: "UnQTools",
     images: [{ url: "/logo.svg", width: 512, height: 512, alt: "UnQTools" }],
   },
   twitter: {
     card: "summary",
-    title: "UnQTools — 280+ Private, Offline Browser Tools",
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
     description:
-      "280+ free online tools that run 100% in your browser. No uploads, no tracking, no accounts.",
+      "610+ free online tools that run 100% in your browser. No uploads, no tracking, no accounts.",
     images: ["/logo.svg"],
   },
 };

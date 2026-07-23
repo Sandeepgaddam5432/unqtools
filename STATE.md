@@ -1,20 +1,21 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.37 catch-up sync + Phase 1 quick sync (10 dangling tools registered) + Telugu-English language rule_
+_Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.38 (Phase 1 quick sync + Phase 2 image batch) + Option A cleanup batch (stale 280→610 metadata, README/STATE sync, CI timeout bump)_
 
 ## Current phase
 
-**v17.37 — Developer waves 1-16 complete + Phase 1 quick sync (10 dangling tools registered)**
+**v17.38 — Developer waves 1-16 complete + Phase 1 quick sync (10 dangling tools) + Phase 2 (5 image tools shipped)**
 
 > STATE.md was last touched at v8.0 Batch 2 (62 tools live) on 2026-07-14.
-> Between then and now (2026-07-23), waves v17.17 → v17.37 added ~533
-> tools (mostly Developer category). This sync brings STATE.md back in
-> line with reality.
+> Between then and the v17.37 catch-up sync (2026-07-23), waves v17.17 → v17.37
+> added ~533 tools (mostly Developer category). v17.38 then shipped 5 image
+> tools + registered 10 dangling tools, bringing the live count to 610.
 
 ### Recent commits on `main`
 
 | Commit   | Description                                                                                       |
 | -------- | ------------------------------------------------------------------------------------------------- |
+| a693291  | feat: v17.38 — Phase 1 quick sync (10 dangling tools) + Phase 2 (5 image tools) + state sync      |
 | 51ce64c  | feat: v17.37 — 148 Developer tools from blueprints (waves 1-16) — ZERO SKIPS                      |
 | 9ccb035  | feat: v17.36 — 146 Developer tools from blueprints (waves 1-16 partial) — ZERO SKIPS              |
 | 5ba9d73  | feat: v17.35 — 144 Developer tools from blueprints (waves 1-15) — ZERO SKIPS                      |
@@ -29,28 +30,17 @@ _Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.37 catch-up sync + Phase
 | 97b84e8  | feat: v17.26 — 72 Developer tools from blueprints (wave 8 + fixes) — ZERO SKIPS                   |
 | 4405411  | feat: v17.25 — 70 Developer tools from blueprints (wave 8 partial) — ZERO SKIPS                   |
 | 0d3cebd  | feat: v17.23 — 64 Developer tools from blueprints (waves 1-7 partial) — ZERO SKIPS                |
-| 243b5b8  | feat: v17.22 — 64 Developer tools from blueprints (wave 7 cont.) — ZERO SKIPS                     |
-| e8a0f54  | feat: v17.21 — 62 Developer tools from blueprints (wave 7 start) — ZERO SKIPS                     |
-| a8cb330  | feat: v17.20 — 60 Developer tools from blueprints (waves 1-6 complete) — ZERO SKIPS               |
-| f16648e  | feat: v17.19 — 58 Developer tools from blueprints (wave 6 cont.) — ZERO SKIPS                     |
-| c8cf704  | feat: v17.18 — 56 Developer tools from blueprints (wave 6 cont.) — ZERO SKIPS                     |
-| 40b1de4  | feat: v17.17 — 54 Developer tools from blueprints (wave 6 cont.) — ZERO SKIPS                     |
 
 The v17.x wave series shipped ~533 new tools (predominantly Developer)
 after STATE.md was last touched at v8.0 Batch 2 (62 tools, 2026-07-14).
+v17.38 then added 5 image tools + registered 10 dangling tools, bringing
+the total live count from 605 to 610.
 
-## Catch-up sync (2026-07-23)
+## v17.38 sync (2026-07-23)
 
 STATE.md had drifted badly out of date — last touched 2026-07-14 at
-v8.0 Batch 2 (62 tools live), while the actual repo state had grown to:
-
-- **595 tools registered** in `src/lib/registry.ts`
-- **605 tool folders** on disk (10 dangling — files present, no registry
-  entry, no UI loader)
-- v17.17 → v17.37 waves shipped ~533 tools (mostly Developer category)
-- Latest commit: `51ce64c feat: v17.37 — 148 Developer tools from
-  blueprints (waves 1-16) — ZERO SKIPS`
-- Working tree was clean at start of Phase 1
+v8.0 Batch 2 (62 tools live). v17.37 catch-up sync brought it back to
+605 tools. v17.38 then performed two phases:
 
 ### Phase 1-A — quick sync: register 10 dangling tools
 
@@ -73,7 +63,44 @@ registered). Developer count: 142 → 144. SEO count: 90 → 98.
 - Regenerated `sitemap.xml` to include all 605 live tools (was stale,
   referencing ~62 tools).
 - Fixed JSON-LD `numberOfItems` in `src/app/tools/page.tsx`: was `283`,
-  updated to `605`.
+  updated to `605` then `610`.
+
+### Phase 2 — 5 brand-new image tools shipped
+
+Image category was the biggest visible gap (only 2/100 live). v17.38
+shipped 5 brand-new image tools, each with 100% blueprint compliance +
+10 extras per AGENTS.md § 1b and § 1c:
+
+| # | Tool ID | Tests | Status |
+|---|---|---:|---|
+| 1 | `bulk-image-renamer-optimizer` | 108 | ✅ |
+| 2 | `barcode-generator` | 81 | ✅ |
+| 3 | `ascii-art-generator` | 88 | ✅ |
+| 4 | `pixel-art-maker` | 90 | ✅ |
+| 5 | `photo-mosaic-generator` | 70 | ✅ |
+
+New deps added (all lazy-loaded): `bwip-js`, `jspdf`, `@zxing/browser`,
+`@zxing/library`, `jszip`, `exifr`, `heic2any`, `idb`, `figlet`.
+
+**Result:** 610 tools live (605 + 5 new image). Image count: 2 → 7.
+Unit test count: 38,869 → 39,306 (per commit message).
+
+## Option A cleanup batch (2026-07-23)
+
+After v17.38, a cleanup batch fixed stale user-facing copy and quality
+risks identified during the post-clone analysis:
+
+- Updated `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/tools/page.tsx`:
+  all `280+` references → `610+` (titles, descriptions, OG, Twitter).
+- Updated `src/app/home-page-client.tsx` stats strip: `14.3K` tests → `39.3K`.
+- Regenerated `README.md` Status section to reflect v17.38 reality (was
+  stuck at v7.0 PDF batch-1 / 32 tools).
+- Updated `STATE.md` per-category table: image 2 → 7, total 605 → 610.
+- Bumped `build` job `timeout-minutes` from 10 → 25 in `.github/workflows/ci.yml`
+  (was tuned for 22-tool build, now 610-tool build needs more headroom).
+- Deleted orphan remote branch `v0/videosmail5432-4983-1d7b581d`.
+
+Verified locally: lint ✅, unit tests ✅, build ✅.
 
 ### Owner directive: Telugu-English conversation language (MANDATORY)
 
@@ -196,25 +223,25 @@ bcrypt-hash-generator, category page bug fix, PWA name fix]
 
 ## Full gate table
 
-> ⚠️ The unit test count has grown massively (605 `logic.test.ts` files
+> ⚠️ The unit test count has grown massively (610 `logic.test.ts` files
 > now exist, one per tool). Last verified count at v8.0 Batch 2 was
-> 1104/1104. The actual current count must be re-verified by running
-> the suite after Phase 4.
+> 1104/1104. As of v17.38: 39,306/39,306 pass (per commit message +
+> verified locally post-cleanup).
 
-| Gate                 | v6.8 result            | v17.37 + Phase 1 status                       |
+| Gate                 | v6.8 result            | v17.38 + Option A cleanup status                |
 | -------------------- | ---------------------- | ---------------------------------------------- |
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally)                 |
-| unit tests           | ✅ 528/528             | 🟡 [verify count after Phase 4 test run] — suite has grown to 605 test files |
-| build                | ✅ 30 pages            | 🟡 [verify page count after build] — ~605 tool pages expected |
+| unit tests           | ✅ 528/528             | ✅ 39,306/39,306 pass (verified locally post-cleanup) |
+| build                | ✅ 30 pages            | ✅ 625 pages (610 tools + 13 categories + 2 static) |
 | smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run                         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (605 tools)             |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 578 untested) |
 | axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30)                |
 | CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run                         |
-| CI build job         | ✅ includes axe        | 🟡 pending CI auto-run                         |
+| CI build job         | ✅ includes axe        | ✅ timeout bumped 10 → 25 min (Option A)        |
 | CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing — does NOT block) |
 | Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green              |
-| sitemap.xml          | n/a                   | ✅ regenerated to include all 605 tools (Phase 1-D) |
-| JSON-LD numberOfItems | n/a                  | ✅ updated to 605 in `src/app/tools/page.tsx` (Phase 1-D) |
+| sitemap.xml          | n/a                   | ✅ regenerated to include all 610 tools (v17.38) |
+| JSON-LD numberOfItems | n/a                  | ✅ updated to 610 in `src/app/tools/page.tsx` (v17.38) |
 
 ## Docs repo sync
 
@@ -222,32 +249,39 @@ The `unqtools-docs` repo tracks 1,700 tool blueprints. Per hybrid-sync
 policy, blueprints whose tools are live in production get an
 "✅ IMPLEMENTED in production" banner prepended.
 
-**Status (2026-07-23):** Docs repo `PROGRESS.md` is stale (says 35
-tools live). Actual production has 605 tools live. A docs-repo sync
-to banner the ~570 newly-live tools is queued as a follow-up task.
+**Status (2026-07-23, post-v17.38):** Docs repo `PROGRESS.md` was
+synced on 2026-07-23 to acknowledge the 605-tool state, but production
+has since grown to 610 tools (v17.38 image batch). ~575 banners are
+still pending in the docs repo. A docs-repo bulk-sync to banner the
+~575 newly-live tools is queued as a follow-up task.
 
 ## Resume point
 
 **Next session — pick direction:**
 
-1. **Continue adding tools from blueprints.** Image category has the
-   biggest visible gap: only 2/100 live (98 to go). Other large gaps:
-   calculators (97), network-security (90), text (88), audio-video (80),
-   education (80), social (75), business (75).
-2. **Apply 100% blueprint + 10 extras rule** per `AGENTS.md` § 1b and § 1c
+1. **Continue adding tools from blueprints.** Image category still has
+   the biggest visible gap: only 7/100 live (93 to go). Other large
+   gaps: calculators (97), network-security (90), text (88),
+   audio-video (80), education (80), social (75), business (75).
+2. **Close SEO category** — only 2 more tools needed to hit 100/100
+   (trivial quick win, marks category as complete).
+3. **Apply 100% blueprint + 10 extras rule** per `AGENTS.md` § 1b and § 1c
    on every new tool. No sub-100% ships allowed.
-3. **Ship at least 5 tools per session** per `AGENTS.md` § 1d.
-4. **Developer category** still has the biggest absolute gap (356 to go
+4. **Ship at least 5 tools per session** per `AGENTS.md` § 1d.
+5. **Developer category** still has the biggest absolute gap (356 to go
    to hit the 500 target) — viable to keep momentum there if blueprints
    are ready.
-5. **Docs repo sync** — banner the ~570 newly-live blueprints in
+6. **Docs repo sync** — banner the ~575 newly-live blueprints in
    `unqtools-docs` and refresh `PROGRESS.md`.
+7. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 610
+   tools. Either expand the TOOLS array or replace with a generic
+   "load every tool page, assert no console errors" sweep.
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | 605 tools live (was 62 at last STATE.md update) — v17.37 waves + Phase 1 quick sync |
+| `main`                  | production      | 610 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image batch |
 | (all others deleted)    | —               | Per owner policy: only `main` branch exists. |
 
 ## Historical batches (summary)
@@ -275,16 +309,16 @@ to banner the ~570 newly-live tools is queued as a follow-up task.
 ### v6.9 — All 13 categories visible (commit 320771d)
 ### v6.8 — A11y + cleanup (8 commits, archived 67 unused UI components, removed 23 unused deps)
 
-## Per-category live count (2026-07-23 sync)
+## Per-category live count (2026-07-23 sync, post-v17.38)
 
-Counts reflect post-Phase-1-A state (605 tools live). Developer and
-SEO counts include the 10 newly-registered dangling tools (2 dev +
-8 SEO).
+Counts reflect post-v17.38 state (610 tools live). Includes the 10
+newly-registered dangling tools (2 dev + 8 SEO) and 5 new image tools
+shipped in Phase 2.
 
 | # | Category | Live | On disk | Target | Gap |
 |---|---|---:|---:|---:|---:|
 | 1 | pdf | 60 | 60 | 100 | 40 |
-| 2 | image | 2 | 2 | 100 | 98 |
+| 2 | image | 7 | 7 | 100 | 93 |
 | 3 | audio-video | 20 | 20 | 100 | 80 |
 | 4 | developer | 144 | 144 | 500 | 356 |
 | 5 | seo | 98 | 98 | 100 | 2 |
@@ -296,11 +330,9 @@ SEO counts include the 10 newly-registered dangling tools (2 dev +
 | 11 | education | 20 | 20 | 100 | 80 |
 | 12 | social | 25 | 25 | 100 | 75 |
 | 13 | ai | 100 | 100 | 100 | 0 ✅ |
-| **TOTAL** | | **605** | **605** | **1,700** | **1,095** |
+| **TOTAL** | | **610** | **610** | **1,700** | **1,090** |
 
-Note: After Phase 1-A registers the 10 dangling tools, developer count
-becomes 144 (was 142) and seo count becomes 98 (was 90).
-
-Only the AI category is COMPLETE. All others need more work. Image is
-the biggest visible gap (2/100), while developer is the biggest absolute
-gap (356 more needed to hit 500).
+Only the AI category is COMPLETE. SEO and File are nearly done (2 and 14
+to go respectively). Image is still the biggest visible gap (7/100, 93
+to go), while developer is the biggest absolute gap (356 more needed
+to hit 500).

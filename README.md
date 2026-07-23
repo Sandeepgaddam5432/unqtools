@@ -9,18 +9,34 @@ tool-collection sites.
 
 ## Status
 
-**v7.0 — PDF batch-1** (in progress on `v7.0-pdf-batch1`).
+**v17.38 — 610 tools live across all 13 categories** (2026-07-23).
 
-32 tools live across 5 categories:
+Recent waves: v17.0 → v17.37 shipped 144 Developer tools from blueprints
+(waves 1-16, zero skips). v17.38 registered 10 dangling tools (2 dev +
+8 SEO) and shipped 5 brand-new image tools (bulk-image-renamer-optimizer,
+barcode-generator, ascii-art-generator, pixel-art-maker, photo-mosaic-generator)
+with 70-108 unit tests each — 100% blueprint compliance + 10 extras.
 
-| Category              | Tools | Status            |
-| --------------------- | ----- | ----------------- |
-| Text & Writing        | 12    | live              |
-| Developer & Code      | 5     | live              |
-| Calculators           | 3     | live              |
-| Image & Graphics      | 2     | live              |
-| PDF & Document        | 10    | live (v7.0 batch-1) |
-| 8 other categories    | 0     | "Coming soon" UI  |
+| # | Category               | Live | Target | Gap |
+|---|------------------------|-----:|-------:|----:|
+| 1 | PDF & Document         |   60 |    100 |  40 |
+| 2 | Image & Graphics       |    7 |    100 |  93 |
+| 3 | Audio & Video          |   20 |    100 |  80 |
+| 4 | Developer & Code       |  144 |    500 | 356 |
+| 5 | SEO & Marketing        |   98 |    100 |   2 |
+| 6 | Calculators            |    3 |    100 |  97 |
+| 7 | Text & Writing         |   12 |    100 |  88 |
+| 8 | Network, Security      |   10 |    100 |  90 |
+| 9 | File Management        |   86 |    100 |  14 |
+| 10 | Business & Productivity |   25 |    100 |  75 |
+| 11 | Education & Learning   |   20 |    100 |  80 |
+| 12 | Social Media           |   25 |    100 |  75 |
+| 13 | AI & Smart Tools       |  100 |    100 |   0 ✅ |
+| **Total** |                    | **610** | **1,700** | **1,090** |
+
+39,306 unit tests passing. AI category is fully complete; SEO and File
+are nearly done. Biggest visible gaps: Image (93), Calculators (97),
+Network-Security (90), Text (88).
 
 See [`STATE.md`](./STATE.md) for the live resume point and
 [`AGENTS.md`](./AGENTS.md) for the build rules.
@@ -38,7 +54,8 @@ See [`STATE.md`](./STATE.md) for the live resume point and
 | Theming       | **next-themes** (dark default, terracotta/copper palette)                           |
 | Toasts        | **Sonner**                                                                          |
 | PWA           | **next-pwa** + custom service worker (`public/sw.js`) + `manifest.json`             |
-| PDF processing| **pdf-lib** ^1.17.1 (added in v7.0 for PDF tools — client-side only)                |
+| PDF processing| **pdf-lib** ^1.17.1 + **jspdf** (client-side only)                                  |
+| Image / heavy lifting | **bwip-js**, **@zxing/browser**, **jszip**, **exifr**, **heic2any**, **idb**, **figlet**, **sharp** (all lazy-loaded) |
 | Unit tests    | **Vitest**                                                                          |
 | e2e tests     | **Playwright** (+ `@axe-core/playwright` a11y assertions)                           |
 | Lint          | **ESLint 9** (`eslint-config-next`)                                                 |
@@ -73,7 +90,7 @@ npm run dev      # http://localhost:3000
 ## CI gates (must pass on `ci.yml`)
 
 1. **Lint** — 0 ESLint errors
-2. **Unit tests** — Vitest (528+ tests, includes per-tool logic tests)
+2. **Unit tests** — Vitest (39,306 tests, includes per-tool logic tests)
 3. **Build** — `next build` static export
 4. **Smoke E2E** — every route serves 200, no React errors
 5. **Tool E2E** — every registered tool works end-to-end

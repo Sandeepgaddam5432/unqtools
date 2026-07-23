@@ -24,7 +24,7 @@ jobs:
   build:
     name: Lint + Test + Build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25  # bumped from 10 in Option A cleanup — 610-tool build needs more headroom
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -102,7 +102,7 @@ jobs:
     name: Tool E2E
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15  # bumped from 8 in Option A cleanup — 32 tools asserted, may expand to 610
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -160,7 +160,7 @@ jobs:
     name: Axe A11y
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20  # bumped from 10 in Option A cleanup — 625 routes to scan
     steps:
       - name: Checkout
         uses: actions/checkout@v4

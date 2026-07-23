@@ -24,12 +24,12 @@ const geistMono = Geist_Mono({
 
 const SITE_URL = "https://unqtools.pages.dev";
 const SITE_NAME = "UnQTools";
-const SITE_DESCRIPTION = "UnQTools is a 100% static, privacy-first, offline-capable PWA of 280+ fast browser-based tools — converters, calculators, generators, formatters, PDF utilities, SEO tools. No uploads, no tracking, no accounts.";
+const SITE_DESCRIPTION = "UnQTools is a 100% static, privacy-first, offline-capable PWA of 610+ fast browser-based tools — converters, calculators, generators, formatters, PDF utilities, SEO tools, developer tools, image tools. No uploads, no tracking, no accounts.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "UnQTools — 280+ Private, Offline Browser Tools",
+    default: "UnQTools — 610+ Private, Offline Browser Tools",
     template: "%s | UnQTools",
   },
   description: SITE_DESCRIPTION,
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "UnQTools — 280+ Private, Offline Browser Tools",
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
     description: SITE_DESCRIPTION,
     images: [
       {
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "UnQTools — 280+ Private, Offline Browser Tools",
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
     description: SITE_DESCRIPTION,
     images: ["/logo.svg"],
   },
