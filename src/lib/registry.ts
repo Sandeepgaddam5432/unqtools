@@ -16,6 +16,8 @@ import { manifest as simpleInterestCalculator } from "@/tools/calculators/simple
 import { manifest as sipCalculator } from "@/tools/calculators/sip-calculator/manifest";
 import { manifest as tipCalculator } from "@/tools/calculators/tip-calculator/manifest";
 import { manifest as unitConverterLength } from "@/tools/calculators/unit-converter-length/manifest";
+import { manifest as compoundInterestCalculator } from "@/tools/calculators/compound-interest-calculator/manifest";
+import { manifest as gstCalculator } from "@/tools/calculators/gst-calculator/manifest";
 import { manifest as base64 } from "@/tools/developer/base64/manifest";
 import { manifest as hashGenerator } from "@/tools/developer/hash-generator/manifest";
 import { manifest as jsonFormatter } from "@/tools/developer/json-formatter/manifest";
@@ -39,6 +41,11 @@ import { manifest as jwtDecoder } from "@/tools/network-security/jwt-decoder/man
 import { manifest as mimeTypeLookup } from "@/tools/network-security/mime-type-lookup/manifest";
 import { manifest as passwordGenerator } from "@/tools/network-security/password-generator/manifest";
 import { manifest as totpGenerator } from "@/tools/network-security/totp-generator/manifest";
+import { manifest as aes256EncryptorDecryptor } from "@/tools/network-security/aes-256-encryptor-decryptor/manifest";
+import { manifest as passwordStrengthChecker } from "@/tools/network-security/password-strength-checker/manifest";
+import { manifest as htaccessGenerator } from "@/tools/network-security/htaccess-generator/manifest";
+import { manifest as sshKeyFingerprintExplorer } from "@/tools/network-security/ssh-key-fingerprint-explorer/manifest";
+import { manifest as hashVerifier } from "@/tools/network-security/hash-verifier/manifest";
 import { manifest as urlParser } from "@/tools/network-security/url-parser/manifest";
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
@@ -93,6 +100,9 @@ import { manifest as wordCharacterCounter } from "@/tools/text/word-character-co
 import { manifest as textReverser } from "@/tools/text/text-reverser/manifest";
 import { manifest as textTrimmer } from "@/tools/text/text-trimmer/manifest";
 import { manifest as textRepeater } from "@/tools/text/text-repeater/manifest";
+import { manifest as textSorter } from "@/tools/text/text-sorter/manifest";
+import { manifest as morseCodeTranslator } from "@/tools/text/morse-code-translator/manifest";
+import { manifest as loremIpsumGenerator } from "@/tools/text/lorem-ipsum-generator/manifest";
 import { manifest as base64FileDecoder } from "@/tools/file/base64-file-decoder/manifest";
 import { manifest as base64FileEncoder } from "@/tools/file/base64-file-encoder/manifest";
 import { manifest as binaryFileViewer } from "@/tools/file/binary-file-viewer/manifest";
@@ -653,6 +663,8 @@ export const TOOLS: readonly ToolManifest[] = [
   sipCalculator,
   tipCalculator,
   unitConverterLength,
+  compoundInterestCalculator,
+  gstCalculator,
   base64,
   hashGenerator,
   jsonFormatter,
@@ -674,6 +686,11 @@ export const TOOLS: readonly ToolManifest[] = [
   mimeTypeLookup,
   passwordGenerator,
   totpGenerator,
+  aes256EncryptorDecryptor,
+  passwordStrengthChecker,
+  htaccessGenerator,
+  sshKeyFingerprintExplorer,
+  hashVerifier,
   urlParser,
   csvFileJoiner,
   csvFileSplitter,
@@ -730,6 +747,9 @@ export const TOOLS: readonly ToolManifest[] = [
   textReverser,
   textTrimmer,
   textRepeater,
+  textSorter,
+  morseCodeTranslator,
+  loremIpsumGenerator,
   base64FileDecoder,
   base64FileEncoder,
   binaryFileViewer,
