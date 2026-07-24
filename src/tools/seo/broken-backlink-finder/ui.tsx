@@ -28,7 +28,7 @@ import {
   parseShareUrl,
   type HistoryEntry,
 } from "./logic";
-import { History, LinkOff, AlertTriangle, CheckCircle2, Skull } from "lucide-react";
+import { History, Link2Off, AlertTriangle, CheckCircle2, Skull } from "lucide-react";
 
 const SAMPLE = `url,status_code,anchor,source_url,source_domain
 https://example.com/old-post,404,best seo tools,https://forbes.com/article-1,forbes.com
@@ -120,7 +120,7 @@ export default function BrokenBacklinkFinder() {
           <Card>
             <CardContent className="p-4 space-y-3">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <LinkOff className="h-4 w-4" /> Summary ({result.total} links)
+                <Link2Off className="h-4 w-4" /> Summary ({result.total} links)
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <Stat label="Total" value={result.total} />
@@ -223,7 +223,7 @@ export default function BrokenBacklinkFinder() {
         <EmptyState
           title="Paste backlink data with status codes"
           hint="CSV with columns: url, status_code, anchor, source_url, source_domain. Click 'Load sample' to see broken links and reclamation opportunities."
-          icon={<LinkOff className="h-8 w-8" />}
+          icon={<Link2Off className="h-8 w-8" />}
         />
       )}
 

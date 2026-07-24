@@ -15,7 +15,7 @@ import {
   Eraser,
   PaintBucket,
   Paintbrush,
-  EyeDropper,
+  Pipette,
   Square,
   Circle,
   Minus,
@@ -1016,7 +1016,7 @@ export default function PixelArtMaker() {
             <ToolButton active={tool === "rect-filled"} onClick={() => setTool("rect-filled")} title="Filled rectangle"><Grid2x2 className="h-4 w-4" /></ToolButton>
             <ToolButton active={tool === "ellipse"} onClick={() => setTool("ellipse")} title="Ellipse outline (O)"><Circle className="h-4 w-4" /></ToolButton>
             <ToolButton active={tool === "ellipse-filled"} onClick={() => setTool("ellipse-filled")} title="Filled ellipse"><Circle className="h-4 w-4 opacity-50" /></ToolButton>
-            <ToolButton active={tool === "eyedropper"} onClick={() => setTool("eyedropper")} title="Eyedropper (I)"><EyeDropper className="h-4 w-4" /></ToolButton>
+            <ToolButton active={tool === "eyedropper"} onClick={() => setTool("eyedropper")} title="Eyedropper (I)"><Pipette className="h-4 w-4" /></ToolButton>
             <ToolButton active={tool === "select-rect"} onClick={() => setTool("select-rect")} title="Rectangle select (S)"><Copy className="h-4 w-4" /></ToolButton>
             <ToolButton active={tool === "move"} onClick={() => setTool("move")} title="Pan / move (M or Space)"><Move className="h-4 w-4" /></ToolButton>
             <ToolButton active={tool === "dither"} onClick={() => setTool("dither")} title="Dithering brush"><Sparkles className="h-4 w-4" /></ToolButton>

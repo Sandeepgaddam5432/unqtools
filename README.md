@@ -9,15 +9,17 @@ tool-collection sites.
 
 ## Status
 
-**v17.40 — 620 tools live across all 13 categories** (2026-07-23).
+**v17.41 — 616 tools live across all 13 categories** (2026-07-24).
 
 Recent waves: v17.0 → v17.37 shipped 144 Developer tools from blueprints
 (waves 1-16, zero skips). v17.38 registered 10 dangling tools + shipped
 5 image tools (bulk-image-renamer-optimizer, barcode-generator,
 ascii-art-generator, pixel-art-maker, photo-mosaic-generator).
 v17.39 cleanup batch fixed stale metadata + CI timeouts.
-v17.40 shipped 10 new tools (8 Calculators + 2 SEO) closing the SEO
-category to 100/100 and starting the Calculators gap reduction.
+v17.40 added 6 new Calculators (bmi, percentage, tip, discount,
+simple-interest, unit-converter-length) + upgraded 2 existing SEO tools.
+v17.41 fixed build errors from v17.40 (4 duplicate tool IDs, 2 missing
+lucide-react exports) and corrected counts.
 
 | # | Category               | Live | Target | Gap |
 |---|------------------------|-----:|-------:|----:|
@@ -25,8 +27,8 @@ category to 100/100 and starting the Calculators gap reduction.
 | 2 | Image & Graphics       |    7 |    100 |  93 |
 | 3 | Audio & Video          |   20 |    100 |  80 |
 | 4 | Developer & Code       |  144 |    500 | 356 |
-| 5 | SEO & Marketing        |  100 |    100 |   0 ✅ |
-| 6 | Calculators            |   11 |    100 |  89 |
+| 5 | SEO & Marketing        |   98 |    100 |   2 |
+| 6 | Calculators            |    9 |    100 |  91 |
 | 7 | Text & Writing         |   12 |    100 |  88 |
 | 8 | Network, Security      |   10 |    100 |  90 |
 | 9 | File Management        |   86 |    100 |  14 |
@@ -34,11 +36,11 @@ category to 100/100 and starting the Calculators gap reduction.
 | 11 | Education & Learning   |   20 |    100 |  80 |
 | 12 | Social Media           |   25 |    100 |  75 |
 | 13 | AI & Smart Tools       |  100 |    100 |   0 ✅ |
-| **Total** |                    | **620** | **1,700** | **1,080** |
+| **Total** |                    | **616** | **1,700** | **1,084** |
 
-39,439 unit tests passing. Two categories now complete: AI (100/100) and
-SEO (100/100). Biggest visible gaps: Image (93), Calculators (89),
-Network-Security (90), Text (88).
+39,388 unit tests passing. One category complete: AI (100/100).
+Biggest visible gaps: Image (93), Calculators (91), Network-Security (90),
+Text (88).
 
 See [`STATE.md`](./STATE.md) for the live resume point and
 [`AGENTS.md`](./AGENTS.md) for the build rules.
@@ -92,7 +94,7 @@ npm run dev      # http://localhost:3000
 ## CI gates (must pass on `ci.yml`)
 
 1. **Lint** — 0 ESLint errors
-2. **Unit tests** — Vitest (39,439 tests, includes per-tool logic tests)
+2. **Unit tests** — Vitest (39,388 tests, includes per-tool logic tests)
 3. **Build** — `next build` static export
 4. **Smoke E2E** — every route serves 200, no React errors
 5. **Tool E2E** — every registered tool works end-to-end

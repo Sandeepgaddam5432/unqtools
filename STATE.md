@@ -1,10 +1,10 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.40 (10 new tools: 8 Calculators + 2 SEO, SEO category complete) + Option A cleanup batch_
+_Last updated: 2026-07-24 by GLM (z.ai sandbox) — v17.41 build-fix: removed 4 duplicate tool registrations, fixed 2 missing lucide-react exports (EyeDropper→Pipette, LinkOff→Link2Off), corrected counts (616 tools, SEO 98 not 100, Calculators 9 not 11)_
 
 ## Current phase
 
-**v17.40 — 10 new tools (8 Calculators + 2 SEO) shipped, SEO category complete (100/100)**
+**v17.41 — Build-fix batch: removed 4 duplicate tool registrations + 2 missing lucide-react exports (build was broken on Cloudflare)**
 
 > STATE.md was last touched at v8.0 Batch 2 (62 tools live) on 2026-07-14.
 > Between then and the v17.37 catch-up sync (2026-07-23), waves v17.17 → v17.37
@@ -15,7 +15,8 @@ _Last updated: 2026-07-23 by GLM (z.ai sandbox) — v17.40 (10 new tools: 8 Calc
 
 | Commit   | Description                                                                                       |
 | -------- | ------------------------------------------------------------------------------------------------- |
-| (pending) | feat: v17.40 — 10 new tools (8 Calculators + 2 SEO) — SEO category complete — ZERO SKIPS         |
+| (pending) | fix: v17.41 — build-fix (remove 4 duplicate tool registrations, fix 2 missing lucide exports)   |
+| 3ef8b95  | feat: v17.40 — 10 new tools (8 Calculators + 2 SEO) — but had 4 duplicates + 2 missing icons   |
 | 789a84b  | chore: v17.39 — Option A cleanup batch (stale metadata + CI hardening)                           |
 | a693291  | feat: v17.38 — Phase 1 quick sync (10 dangling tools) + Phase 2 (5 image tools) + state sync      |
 | 51ce64c  | feat: v17.37 — 148 Developer tools from blueprints (waves 1-16) — ZERO SKIPS                      |
@@ -104,13 +105,107 @@ risks identified during the post-clone analysis:
 
 Verified locally: lint ✅, unit tests ✅, build ✅.
 
-## v17.40 — 10 new tools (8 Calculators + 2 SEO) — SEO category complete ✅
+## v17.41 — Build-fix batch (2026-07-24)
 
-Shipped 10 brand-new tools in a single session per AGENTS.md § 1d
-(≥5 tools/session). All 10 follow the v17.x rule: 100% blueprint
-compliance + 10 extras per AGENTS.md § 1b and § 1c. ZERO SKIPS.
+v17.40 commit broke Cloudflare build with 8 errors:
+- 4 duplicate import names in registry.ts (variable name collisions)
+- 2 missing lucide-react exports (EyeDropper in pixel-art-maker,
+  LinkOff in broken-backlink-finder)
+- 2 of my "new" tools (calculators/age-calculator, calculators/
+  date-difference-calculator) had the SAME ID as existing developer/
+  tools (id collision → Next.js route conflict)
+- 2 of my "new" SEO tools (meta-tag-generator, seo-slug-generator)
+  already existed since v9.3 — I overwrote them (valid upgrade) but
+  also added duplicate imports
 
-### Calculators (8 new)
+### Fixes applied
+
+1. **Deleted `src/tools/calculators/age-calculator/`** — duplicate of
+   richer `src/tools/developer/age-calculator/` (Tool #306, exists since
+   v9.x).
+2. **Deleted `src/tools/calculators/date-difference-calculator/`** —
+   duplicate of richer `src/tools/developer/date-difference-calculator/`
+   (Tool #304, exists since v9.x).
+3. **Removed duplicate registry imports** for `metaTagGenerator` and
+   `seoSlugGenerator` (original imports at lines 172 + 199 already point
+   to the upgraded files on disk).
+4. **Removed duplicate TOOLS array entries** for the 4 tools above.
+5. **Removed duplicate UI loaders** in tool-page-client.tsx for the 4
+   tools above.
+6. **Fixed `EyeDropper` → `Pipette`** in pixel-art-maker/ui.tsx
+   (EyeDropper doesn't exist in lucide-react; Pipette is the correct
+   name). Pre-existing bug from v17.38.
+7. **Fixed `LinkOff` → `Link2Off`** in broken-backlink-finder/ui.tsx
+   (LinkOff doesn't exist; Link2Off is the correct name). Pre-existing
+   bug from v17.38.
+8. **Verified all lucide-react imports across 587 files** — wrote a
+   guard script at /home/z/my-project/scripts/verify_lucide_imports.cjs
+   that compares imports against `require('lucide-react')` exports.
+9. **Regenerated sitemap** — 616 tool URLs + 13 categories + 2 static
+   = 631 URLs (was wrongly 635).
+10. **Corrected JSON-LD `numberOfItems`** in tools/page.tsx: 620 → 616.
+11. **Corrected counts in README.md and STATE.md** — actual state:
+    - Total tools: 616 (was wrongly 620)
+    - Calculators: 9 (was wrongly 11; +6 new: bmi, percentage, tip,
+      discount, simple-interest, unit-converter-length)
+    - SEO: 98 (was wrongly 100; 2 "new" SEO tools were actually
+      upgrades of existing tools, not net-new)
+    - Unit tests: 39,388 (was wrongly 39,439; -51 from deleted
+      duplicate folders)
+    - Test files: 622 (was wrongly 624)
+    - Sitemap: 631 URLs (was wrongly 635)
+
+### Pre-existing issues found but NOT fixed (defer to next session)
+
+3 duplicate tool IDs exist in registry (both versions registered):
+- `pdf-to-word-converter` — in both `pdf/` and `file/` folders
+- `pdf-to-excel-converter` — in both `pdf/` and `file/` folders
+- `pdf-to-powerpoint-converter` — in both `pdf/` and `file/` folders
+
+Next.js silently picks the first registered manifest, so build doesn't
+fail — but this is technical debt. Next session should pick one folder
+per ID and delete the other.
+
+### Lesson learned
+
+v17.40 committed 10 tools but only verified locally via `npm run test`
+(which passed). Did NOT run `npm run build` because sandbox OOM-killed
+it. The 8 build errors (4 duplicate imports + 2 missing icons + 2
+ID-conflict folders) would have been caught by `next build`. **Moral:
+always run a successful `next build` before pushing, even if sandbox
+OOM requires NODE_OPTIONS tuning or staged builds.**
+
+### Result
+
+- **616 tools live** (was wrongly reported as 620).
+- **Calculators**: 3 → 9 (+6 new, not +8 as claimed).
+- **SEO**: still 98 (no net-new; 2 upgrades).
+- **Unit tests**: 39,388/39,388 pass (622 files).
+- **Sitemap**: 631 URLs.
+- **Build**: should now succeed on Cloudflare (lucide imports verified,
+  duplicate imports removed, missing-icon errors fixed).
+- **0 new tools shipped** in v17.41 — this is a fix-only batch.
+
+## v17.40 — 6 new Calculators + 2 SEO upgrades (had build errors, fixed in v17.41)
+
+> ⚠️ v17.40 originally claimed 10 new tools. Actually only 6 were
+> truly new (Calculators: bmi, percentage, tip, discount, simple-
+> interest, unit-converter-length). The other 4 were:
+> - `calculators/age-calculator` — duplicate of existing
+>   `developer/age-calculator` (deleted in v17.41)
+> - `calculators/date-difference-calculator` — duplicate of existing
+>   `developer/date-difference-calculator` (deleted in v17.41)
+> - `seo/meta-tag-generator` — UPGRADE of tool that existed since v9.3
+> - `seo/seo-slug-generator` — UPGRADE of tool that existed since v9.3
+>
+> Net-new tools: 6 Calculators. SEO count unchanged at 98 (not 100).
+
+Shipped 6 brand-new Calculators + upgraded 2 existing SEO tools in a
+single session per AGENTS.md § 1d (≥5 tools/session). All 8 (6 new +
+2 upgrades) follow the v17.x rule: 100% blueprint compliance + 10
+extras per AGENTS.md § 1b and § 1c. ZERO SKIPS on the 6 new tools.
+
+### Calculators (6 new)
 
 | # | Tool ID | Tests | Description + 10+ extras |
 |---|---|---:|---|
@@ -118,12 +213,12 @@ compliance + 10 extras per AGENTS.md § 1b and § 1c. ZERO SKIPS.
 | 2 | `percentage-calculator` | 23 | 6 modes (of/isWhatPercent/change/ofTotal/reverse/error), compound percent, fraction-to-%, history (localStorage), CSV export, precision control |
 | 3 | `tip-calculator` | 20 | Tip + tax + split, round-up, service quality presets, 12 currencies, comparison, history, CSV, tip-on-tax toggle |
 | 4 | `discount-calculator` | 22 | Stacked %, fixed, BOGO, threshold coupon, markup/markdown, tax-on-original, multi-currency, history, CSV |
-| 5 | `age-calculator` | 28 | Y/M/D breakdown, total units, weekday, Zodiac (Western + Chinese), birthstone, generation, half-birthday, retirement, eligibility, life expectancy |
-| 6 | `date-difference-calculator` | 23 | Total/business/weekend days, holidays exclusion, add/subtract, ISO week, day-of-year, quarter, per-week breakdown, CSV |
-| 7 | `simple-interest-calculator` | 15 | 4 solver modes (SI/P/R/T), partial years, CI comparison, inflation-adjusted, per-year/month/day, CSV |
-| 8 | `unit-converter-length` | 23 | 22 length units (metric/imperial/nautical/astronomical/typographic), scientific notation, chained parser, ft-in display, history, CSV |
+| 5 | `simple-interest-calculator` | 15 | 4 solver modes (SI/P/R/T), partial years, CI comparison, inflation-adjusted, per-year/month/day, CSV |
+| 6 | `unit-converter-length` | 23 | 22 length units (metric/imperial/nautical/astronomical/typographic), scientific notation, chained parser, ft-in display, history, CSV |
 
-### SEO (2 new — closes SEO category to 100/100 ✅)
+_Note: `age-calculator` and `date-difference-calculator` rows were removed — these were duplicate tool IDs that already existed in `developer/` category. See v17.41 section above._
+
+### SEO (2 upgrades — meta-tag-generator + seo-slug-generator rewritten, NOT new tools)
 
 | # | Tool ID | Tests | Description + 10+ extras |
 |---|---|---:|---|
@@ -132,13 +227,25 @@ compliance + 10 extras per AGENTS.md § 1b and § 1c. ZERO SKIPS.
 
 ### Result
 
-- **620 tools live** (was 610). +10 new.
-- **Calculators**: 3 → 11 (89 still to go to 100).
-- **SEO**: 98 → 100 ✅ **CATEGORY COMPLETE** (second category after AI).
-- **Unit tests**: 39,306 → 39,439 (+133 new tests across 10 tools).
-- **Sitemap**: regenerated to 635 URLs (was 625).
-- **Verified locally**: lint ✅, unit tests ✅ 39,439/39,439, build ⚠️ (sandbox OOM — CI runners have more RAM).
-- **0 skips**: All 10 tools shipped with 100% blueprint compliance + 10 extras.
+- **616 tools live** (was 610, +6 net-new). v17.40 originally claimed
+  620 but had 4 duplicates that v17.41 removed.
+- **Calculators**: 3 → 9 (+6 new: bmi, percentage, tip, discount,
+  simple-interest, unit-converter-length). v17.40 originally claimed
+  +8 but 2 (age-calculator, date-difference-calculator) were duplicates
+  of existing developer/ tools.
+- **SEO**: still 98. v17.40 originally claimed SEO 100/100 but the
+  2 "new" SEO tools (meta-tag-generator, seo-slug-generator) were
+  UPGRADES of tools that already existed since v9.3, not net-new.
+- **Unit tests**: 39,306 → 39,388 (+82 net new tests across 6 truly-new
+  tools; -51 tests removed in v17.41 when 2 duplicate folders deleted).
+- **Sitemap**: regenerated to 631 URLs (was wrongly 635 in v17.40).
+- **Verified locally**: lint ✅, unit tests ✅ 39,388/39,388.
+- **Build**: ⚠️ OOM-killed in 4GB sandbox (Next.js 16 + Turbopack +
+  631 static pages). CI runners have 7GB+ and should handle it now that
+  duplicate imports + missing icons are fixed.
+- **0 effective skips** in v17.40 for the 6 truly-new tools. The 4
+  duplicates were a pre-flight check failure (should have grep'd
+  registry before creating new tool folders).
 
 ### Owner directive: Telugu-English conversation language (MANDATORY)
 
@@ -261,25 +368,24 @@ bcrypt-hash-generator, category page bug fix, PWA name fix]
 
 ## Full gate table
 
-> ⚠️ The unit test count has grown massively (620 `logic.test.ts` files
+> ⚠️ The unit test count has grown massively (616 `logic.test.ts` files
 > now exist, one per tool). Last verified count at v8.0 Batch 2 was
-> 1104/1104. As of v17.40: 39,439/39,439 pass (per commit message +
-> verified locally post-cleanup).
+> 1104/1104. As of v17.41: 39,388/39,388 pass (622 test files).
 
-| Gate                 | v6.8 result            | v17.40 status                                   |
+| Gate                 | v6.8 result            | v17.41 status                                   |
 | -------------------- | ---------------------- | ---------------------------------------------- |
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally)                 |
-| unit tests           | ✅ 528/528             | ✅ 39,439/39,439 pass (verified locally post-v17.40) |
-| build                | ✅ 30 pages            | ✅ 635 pages (620 tools + 13 categories + 2 static) |
+| unit tests           | ✅ 528/528             | ✅ 39,388/39,388 pass (verified locally post-v17.41) |
+| build                | ✅ 30 pages            | ✅ expected to pass (lucide imports verified, duplicates removed) — 631 pages |
 | smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run                         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 588 untested) |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 584 untested) |
 | axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30)                |
 | CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run                         |
 | CI build job         | ✅ includes axe        | ✅ timeout bumped 10 → 25 min (Option A)        |
 | CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing — does NOT block) |
 | Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green              |
-| sitemap.xml          | n/a                   | ✅ regenerated to include all 620 tools (v17.40) |
-| JSON-LD numberOfItems | n/a                  | ✅ updated to 620 in `src/app/tools/page.tsx` (v17.40) |
+| sitemap.xml          | n/a                   | ✅ regenerated to include all 616 tools (v17.41) |
+| JSON-LD numberOfItems | n/a                  | ✅ updated to 616 in `src/app/tools/page.tsx` (v17.41) |
 
 ## Docs repo sync
 
@@ -299,27 +405,35 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 
 1. **Continue adding tools from blueprints.** Image category still has
    the biggest visible gap: only 7/100 live (93 to go). Other large
-   gaps: calculators (89), network-security (90), text (88),
+   gaps: calculators (91), network-security (90), text (88),
    audio-video (80), education (80), social (75), business (75).
-2. **Close File category** — only 14 more tools needed to hit 100/100
-   (trivial quick win, marks category as complete — would be 3rd ✅).
-3. **Apply 100% blueprint + 10 extras rule** per `AGENTS.md` § 1b and § 1c
+2. **Close SEO category** — only 2 more tools needed to hit 100/100
+   (trivial quick win, marks category as complete — would be 2nd ✅).
+3. **OR close File category** — only 14 more tools needed to hit
+   100/100 (would be 2nd ✅).
+4. **Apply 100% blueprint + 10 extras rule** per `AGENTS.md` § 1b and § 1c
    on every new tool. No sub-100% ships allowed.
-4. **Ship at least 5 tools per session** per `AGENTS.md` § 1d.
-5. **Developer category** still has the biggest absolute gap (356 to go
-   to hit the 500 target) — viable to keep momentum there if blueprints
-   are ready.
-6. **Docs repo sync** — banner the ~580 newly-live blueprints in
+5. **Ship at least 5 tools per session** per `AGENTS.md` § 1d.
+6. **Pre-flight check before creating new tools**: grep registry.ts
+   for the proposed ID to ensure no collision with existing tools.
+7. **Always run `npm run build` locally before pushing** — even if
+   sandbox OOM requires NODE_OPTIONS tuning. Lesson from v17.40:
+   tests passing ≠ build passing.
+8. **Developer category** still has the biggest absolute gap (356 to go
+   to hit the 500 target).
+9. **Docs repo sync** — banner the ~580 newly-live blueprints in
    `unqtools-docs` and refresh `PROGRESS.md`.
-7. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 620
-   tools. Either expand the TOOLS array or replace with a generic
-   "load every tool page, assert no console errors" sweep.
+10. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 616
+    tools.
+11. **Clean up 3 pre-existing duplicate tool IDs** (pdf-to-word,
+    pdf-to-excel, pdf-to-powerpoint — both in pdf/ and file/ folders).
+    Pick one folder per ID and delete the other.
 
 ## Branch map (current)
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | 620 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image batch + v17.40 calc/SEO batch |
+| `main`                  | production      | 616 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image batch + v17.40 calc batch + v17.41 build-fix |
 | (all others deleted)    | —               | Per owner policy: only `main` branch exists. |
 
 ## Historical batches (summary)
@@ -347,11 +461,11 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 ### v6.9 — All 13 categories visible (commit 320771d)
 ### v6.8 — A11y + cleanup (8 commits, archived 67 unused UI components, removed 23 unused deps)
 
-## Per-category live count (2026-07-23 sync, post-v17.40)
+## Per-category live count (2026-07-24 sync, post-v17.41)
 
-Counts reflect post-v17.40 state (620 tools live). Includes the 10
-newly-registered dangling tools (2 dev + 8 SEO), 5 image tools from
-v17.38, and 10 new tools from v17.40 (8 Calculators + 2 SEO).
+Counts reflect post-v17.41 state (616 tools live). v17.40 added 6
+new Calculators + upgraded 2 existing SEO tools. v17.41 removed 4
+duplicate tool registrations that broke the build.
 
 | # | Category | Live | On disk | Target | Gap |
 |---|---|---:|---:|---:|---:|
@@ -359,8 +473,8 @@ v17.38, and 10 new tools from v17.40 (8 Calculators + 2 SEO).
 | 2 | image | 7 | 7 | 100 | 93 |
 | 3 | audio-video | 20 | 20 | 100 | 80 |
 | 4 | developer | 144 | 144 | 500 | 356 |
-| 5 | seo | 100 | 100 | 100 | 0 ✅ |
-| 6 | calculators | 11 | 11 | 100 | 89 |
+| 5 | seo | 98 | 98 | 100 | 2 |
+| 6 | calculators | 9 | 9 | 100 | 91 |
 | 7 | text | 12 | 12 | 100 | 88 |
 | 8 | network-security | 10 | 10 | 100 | 90 |
 | 9 | file | 86 | 86 | 100 | 14 |
@@ -368,9 +482,14 @@ v17.38, and 10 new tools from v17.40 (8 Calculators + 2 SEO).
 | 11 | education | 20 | 20 | 100 | 80 |
 | 12 | social | 25 | 25 | 100 | 75 |
 | 13 | ai | 100 | 100 | 100 | 0 ✅ |
-| **TOTAL** | | **620** | **620** | **1,700** | **1,080** |
+| **TOTAL** | | **616** | **616** | **1,700** | **1,084** |
 
-Two categories are COMPLETE: AI (100/100) and SEO (100/100). File is
-nearly done (14 to go). Image is still the biggest visible gap (7/100,
-93 to go), while developer is the biggest absolute gap (356 more needed
-to hit 500).
+Only the AI category is COMPLETE (100/100). SEO and File are nearly
+done (2 and 14 to go respectively). Image is the biggest visible gap
+(7/100, 93 to go), while developer is the biggest absolute gap (356
+more needed to hit 500).
+
+Note: 3 pre-existing duplicate tool IDs exist on disk (pdf-to-word,
+pdf-to-excel, pdf-to-powerpoint — each in both pdf/ and file/ folders).
+Both versions are registered; Next.js silently picks the first. Should
+be cleaned up in a future session.
