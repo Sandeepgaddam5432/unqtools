@@ -172,6 +172,9 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "diff-checker": () => import("@/tools/text/diff-checker/ui"),
   "duplicate-lines-remover": () => import("@/tools/text/duplicate-lines-remover/ui"),
   "word-character-counter": () => import("@/tools/text/word-character-counter/ui"),
+  "text-reverser": () => import("@/tools/text/text-reverser/ui"),
+  "text-trimmer": () => import("@/tools/text/text-trimmer/ui"),
+  "text-repeater": () => import("@/tools/text/text-repeater/ui"),
   // PDF tools
   "compress-pdf": () => import("@/tools/pdf/compress-pdf/ui"),
   "crop-pdf": () => import("@/tools/pdf/crop-pdf/ui"),
@@ -689,6 +692,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "mobile-friendly-tester": () => import("@/tools/seo/mobile-friendly-tester/ui"),
   "referring-domains-explorer": () => import("@/tools/seo/referring-domains-explorer/ui"),
   "ssl-https-checker": () => import("@/tools/seo/ssl-https-checker/ui"),
+  "open-graph-social-card-generator": () => import("@/tools/seo/open-graph-social-card-generator/ui"),
+  "twitter-card-preview-tool": () => import("@/tools/seo/twitter-card-preview-tool/ui"),
 };
 
 interface ToolPageClientProps {

@@ -90,6 +90,9 @@ import { manifest as csvToTextList } from "@/tools/text/csv-to-text-list/manifes
 import { manifest as diffChecker } from "@/tools/text/diff-checker/manifest";
 import { manifest as duplicateLinesRemover } from "@/tools/text/duplicate-lines-remover/manifest";
 import { manifest as wordCharacterCounter } from "@/tools/text/word-character-counter/manifest";
+import { manifest as textReverser } from "@/tools/text/text-reverser/manifest";
+import { manifest as textTrimmer } from "@/tools/text/text-trimmer/manifest";
+import { manifest as textRepeater } from "@/tools/text/text-repeater/manifest";
 import { manifest as base64FileDecoder } from "@/tools/file/base64-file-decoder/manifest";
 import { manifest as base64FileEncoder } from "@/tools/file/base64-file-encoder/manifest";
 import { manifest as binaryFileViewer } from "@/tools/file/binary-file-viewer/manifest";
@@ -637,6 +640,8 @@ import { manifest as metaRobotsTester } from "@/tools/seo/meta-robots-tester/man
 import { manifest as mobileFriendlyTester } from "@/tools/seo/mobile-friendly-tester/manifest";
 import { manifest as referringDomainsExplorer } from "@/tools/seo/referring-domains-explorer/manifest";
 import { manifest as sslHttpsChecker } from "@/tools/seo/ssl-https-checker/manifest";
+import { manifest as openGraphSocialCardGenerator } from "@/tools/seo/open-graph-social-card-generator/manifest";
+import { manifest as twitterCardPreviewTool } from "@/tools/seo/twitter-card-preview-tool/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
@@ -722,6 +727,9 @@ export const TOOLS: readonly ToolManifest[] = [
   diffChecker,
   duplicateLinesRemover,
   wordCharacterCounter,
+  textReverser,
+  textTrimmer,
+  textRepeater,
   base64FileDecoder,
   base64FileEncoder,
   binaryFileViewer,
@@ -1266,6 +1274,8 @@ export const TOOLS: readonly ToolManifest[] = [
   mobileFriendlyTester,
   referringDomainsExplorer,
   sslHttpsChecker,
+  openGraphSocialCardGenerator,
+  twitterCardPreviewTool,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

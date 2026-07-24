@@ -589,6 +589,24 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://unqtools.pages.dev/tools/text-reverser</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/text-trimmer</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/text-repeater</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://unqtools.pages.dev/tools/base64-file-decoder</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
@@ -3866,6 +3884,18 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/ssl-https-checker</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/open-graph-social-card-generator</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/twitter-card-preview-tool</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
