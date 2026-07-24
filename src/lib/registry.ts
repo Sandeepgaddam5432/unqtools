@@ -18,6 +18,11 @@ import { manifest as tipCalculator } from "@/tools/calculators/tip-calculator/ma
 import { manifest as unitConverterLength } from "@/tools/calculators/unit-converter-length/manifest";
 import { manifest as compoundInterestCalculator } from "@/tools/calculators/compound-interest-calculator/manifest";
 import { manifest as gstCalculator } from "@/tools/calculators/gst-calculator/manifest";
+import { manifest as scientificCalculator } from "@/tools/calculators/scientific-calculator/manifest";
+import { manifest as weightUnitConverter } from "@/tools/calculators/weight-unit-converter/manifest";
+import { manifest as temperatureConverter } from "@/tools/calculators/temperature-converter/manifest";
+import { manifest as fuelCostCalculator } from "@/tools/calculators/fuel-cost-calculator/manifest";
+import { manifest as dataStorageConverter } from "@/tools/calculators/data-storage-converter/manifest";
 import { manifest as base64 } from "@/tools/developer/base64/manifest";
 import { manifest as hashGenerator } from "@/tools/developer/hash-generator/manifest";
 import { manifest as jsonFormatter } from "@/tools/developer/json-formatter/manifest";
@@ -46,6 +51,11 @@ import { manifest as passwordStrengthChecker } from "@/tools/network-security/pa
 import { manifest as htaccessGenerator } from "@/tools/network-security/htaccess-generator/manifest";
 import { manifest as sshKeyFingerprintExplorer } from "@/tools/network-security/ssh-key-fingerprint-explorer/manifest";
 import { manifest as hashVerifier } from "@/tools/network-security/hash-verifier/manifest";
+import { manifest as textEntropyCalculator } from "@/tools/network-security/text-entropy-calculator/manifest";
+import { manifest as macAddressGenerator } from "@/tools/network-security/mac-address-generator/manifest";
+import { manifest as uuidVersionDetector } from "@/tools/network-security/uuid-version-detector/manifest";
+import { manifest as secureRandomGenerator } from "@/tools/network-security/secure-random-generator/manifest";
+import { manifest as certificatePemParser } from "@/tools/network-security/certificate-pem-parser/manifest";
 import { manifest as urlParser } from "@/tools/network-security/url-parser/manifest";
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
@@ -103,6 +113,16 @@ import { manifest as textRepeater } from "@/tools/text/text-repeater/manifest";
 import { manifest as textSorter } from "@/tools/text/text-sorter/manifest";
 import { manifest as morseCodeTranslator } from "@/tools/text/morse-code-translator/manifest";
 import { manifest as loremIpsumGenerator } from "@/tools/text/lorem-ipsum-generator/manifest";
+import { manifest as textFinderReplacer } from "@/tools/text/text-finder-replacer/manifest";
+import { manifest as textStatistics } from "@/tools/text/text-statistics/manifest";
+import { manifest as textDeduplicator } from "@/tools/text/text-deduplicator/manifest";
+import { manifest as textEncoderDecoder } from "@/tools/text/text-encoder-decoder/manifest";
+import { manifest as textColumnFormatter } from "@/tools/text/text-column-formatter/manifest";
+import { manifest as textIndentationFixer } from "@/tools/text/text-indentation-fixer/manifest";
+import { manifest as textAligner } from "@/tools/text/text-aligner/manifest";
+import { manifest as textRedactor } from "@/tools/text/text-redactor/manifest";
+import { manifest as unicodeExplorer } from "@/tools/text/unicode-explorer/manifest";
+import { manifest as textWidthMeasurer } from "@/tools/text/text-width-measurer/manifest";
 import { manifest as base64FileDecoder } from "@/tools/file/base64-file-decoder/manifest";
 import { manifest as base64FileEncoder } from "@/tools/file/base64-file-encoder/manifest";
 import { manifest as binaryFileViewer } from "@/tools/file/binary-file-viewer/manifest";
@@ -665,6 +685,11 @@ export const TOOLS: readonly ToolManifest[] = [
   unitConverterLength,
   compoundInterestCalculator,
   gstCalculator,
+  scientificCalculator,
+  weightUnitConverter,
+  temperatureConverter,
+  fuelCostCalculator,
+  dataStorageConverter,
   base64,
   hashGenerator,
   jsonFormatter,
@@ -691,6 +716,11 @@ export const TOOLS: readonly ToolManifest[] = [
   htaccessGenerator,
   sshKeyFingerprintExplorer,
   hashVerifier,
+  textEntropyCalculator,
+  macAddressGenerator,
+  uuidVersionDetector,
+  secureRandomGenerator,
+  certificatePemParser,
   urlParser,
   csvFileJoiner,
   csvFileSplitter,
@@ -750,6 +780,16 @@ export const TOOLS: readonly ToolManifest[] = [
   textSorter,
   morseCodeTranslator,
   loremIpsumGenerator,
+  textFinderReplacer,
+  textStatistics,
+  textDeduplicator,
+  textEncoderDecoder,
+  textColumnFormatter,
+  textIndentationFixer,
+  textAligner,
+  textRedactor,
+  unicodeExplorer,
+  textWidthMeasurer,
   base64FileDecoder,
   base64FileEncoder,
   binaryFileViewer,

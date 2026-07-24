@@ -1,10 +1,10 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-24 by GLM (z.ai sandbox) — v17.44: 10 new tools (5 Network-Security + 3 Text + 2 Calculators). ZERO SKIPS._
+_Last updated: 2026-07-24 by GLM (z.ai sandbox) — v17.45: 20 new tools (10 Text + 5 Calculators + 5 Net-Sec). ZERO SKIPS._
 
 ## Current phase
 
-**v17.44 — 10 new tools across Network-Security, Text, and Calculators — ZERO SKIPS**
+**v17.45 — 20 new tools (10 Text + 5 Calculators + 5 Net-Sec) — ZERO SKIPS**
 
 > STATE.md was last touched at v8.0 Batch 2 (62 tools live) on 2026-07-14.
 > Between then and the v17.37 catch-up sync (2026-07-23), waves v17.17 → v17.37
@@ -15,7 +15,8 @@ _Last updated: 2026-07-24 by GLM (z.ai sandbox) — v17.44: 10 new tools (5 Netw
 
 | Commit   | Description                                                                                       |
 | -------- | ------------------------------------------------------------------------------------------------- |
-| (pending) | feat: v17.44 — 10 new tools (5 Net-Sec + 3 Text + 2 Calculators) — ZERO SKIPS                   |
+| (pending) | feat: v17.45 — 20 new tools (10 Text + 5 Calc + 5 Net-Sec) — ZERO SKIPS                         |
+| 0a8653a  | feat: v17.44 — 10 new tools (5 Net-Sec + 3 Text + 2 Calculators) — ZERO SKIPS                   |
 | d476dea  | feat: v17.43 — 2 SEO + 3 Text tools, SEO category complete (100/100) — ZERO SKIPS               |
 | a0a2491  | feat: v17.42 — 14 new File tools, File category complete (100/100) — ZERO SKIPS                 |
 | 596cb41  | fix: v17.41 — build-fix (remove 4 duplicate tool registrations, fix 2 missing lucide exports)   |
@@ -509,24 +510,24 @@ bcrypt-hash-generator, category page bug fix, PWA name fix]
 
 ## Full gate table
 
-> ⚠️ The unit test count has grown massively (645 `logic.test.ts` files
+> ⚠️ The unit test count has grown massively (665 `logic.test.ts` files
 > now exist, one per tool). Last verified count at v8.0 Batch 2 was
-> 1104/1104. As of v17.44: 39,869/39,869 pass (+1 skipped) (651 test files).
+> 1104/1104. As of v17.45: 40,092/40,092 pass (+1 skipped) (671 test files).
 
-| Gate                 | v6.8 result            | v17.44 status                                   |
+| Gate                 | v6.8 result            | v17.45 status                                   |
 | -------------------- | ---------------------- | ---------------------------------------------- |
 | lint                 | ✅ 0 errors            | ✅ 0 errors (verified locally)                 |
-| unit tests           | ✅ 528/528             | ✅ 39,869/39,869 pass (+1 skipped) (verified post-v17.44) |
-| build                | ✅ 30 pages            | ✅ expected to pass (660 pages — pre-flight checks passed; sandbox OOM but Cloudflare 7GB runners should handle) |
+| unit tests           | ✅ 528/528             | ✅ 40,092/40,092 pass (+1 skipped) (verified post-v17.45) |
+| build                | ✅ 30 pages            | ✅ expected to pass (680 pages — pre-flight checks passed; sandbox OOM but Cloudflare 7GB runners should handle) |
 | smoke e2e            | ✅ 33/33               | 🟡 pending CI auto-run                         |
-| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 613 untested) |
+| tool e2e             | ✅ 22/22               | 🟡 pending CI auto-run (32 tools asserted, 633 untested) |
 | axe (must-pass)      | ✅ 0 serious           | 🟡 pending CI auto-run (cap 30)                |
 | CLS                  | ✅ 0.0001              | 🟡 pending CI auto-run                         |
 | CI build job         | ✅ includes axe        | ✅ timeout bumped 10 → 25 min (Option A)        |
 | CI informational     | overflow + motion only | ❌ overflow expected to still fail (pre-existing — does NOT block) |
 | Cloudflare deploy    | n/a                   | 🟡 will auto-deploy once CI green              |
-| sitemap.xml          | n/a                   | ✅ regenerated to include all 645 tools (v17.44) |
-| JSON-LD numberOfItems | n/a                  | ✅ updated to 645 in `src/app/tools/page.tsx` (v17.44) |
+| sitemap.xml          | n/a                   | ✅ regenerated to include all 665 tools (v17.45) |
+| JSON-LD numberOfItems | n/a                  | ✅ updated to 665 in `src/app/tools/page.tsx` (v17.45) |
 
 ## Docs repo sync
 
@@ -564,7 +565,7 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
    to hit the 500 target).
 8. **Docs repo sync** — banner the ~590 newly-live blueprints in
    `unqtools-docs` and refresh `PROGRESS.md`.
-9. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 645
+9. **Expand `tests/tool.e2e.ts`** — currently only asserts 32 of 665
    tools.
 10. **Clean up 3 pre-existing duplicate tool IDs** (pdf-to-word,
     pdf-to-excel, pdf-to-powerpoint — both in pdf/ and file/ folders).
@@ -574,7 +575,7 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 
 | Branch                  | Status          | Notes                                                  |
 | ----------------------- | --------------- | ------------------------------------------------------ |
-| `main`                  | production      | 645 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image + v17.40 calc + v17.41 build-fix + v17.42 File ✅ + v17.43 SEO ✅ + v17.44 10 misc tools |
+| `main`                  | production      | 665 tools live (was 62 at v8.0 Batch 2 STATE.md update) — v17.x waves + v17.38 image + v17.40 calc + v17.41 build-fix + v17.42 File ✅ + v17.43 SEO ✅ + v17.44 10 misc + v17.45 20 misc |
 | (all others deleted)    | —               | Per owner policy: only `main` branch exists. |
 
 ## Historical batches (summary)
@@ -602,12 +603,13 @@ still pending in the docs repo. A docs-repo bulk-sync to banner the
 ### v6.9 — All 13 categories visible (commit 320771d)
 ### v6.8 — A11y + cleanup (8 commits, archived 67 unused UI components, removed 23 unused deps)
 
-## Per-category live count (2026-07-24 sync, post-v17.44)
+## Per-category live count (2026-07-24 sync, post-v17.45)
 
-Counts reflect post-v17.44 state (645 tools live). v17.40 added 6 new
+Counts reflect post-v17.45 state (665 tools live). v17.40 added 6 new
 Calculators. v17.41 removed 4 duplicate tool registrations. v17.42
 shipped 14 File tools. v17.43 shipped 2 SEO + 3 Text tools. v17.44
-shipped 5 Net-Sec + 3 Text + 2 Calculators.
+shipped 5 Net-Sec + 3 Text + 2 Calculators. v17.45 shipped
+10 Text + 5 Calculators + 5 Net-Sec.
 
 | # | Category | Live | On disk | Target | Gap |
 |---|---|---:|---:|---:|---:|
@@ -616,15 +618,15 @@ shipped 5 Net-Sec + 3 Text + 2 Calculators.
 | 3 | audio-video | 20 | 20 | 100 | 80 |
 | 4 | developer | 144 | 144 | 500 | 356 |
 | 5 | seo | 100 | 100 | 100 | 0 ✅ |
-| 6 | calculators | 11 | 11 | 100 | 89 |
-| 7 | text | 18 | 18 | 100 | 82 |
-| 8 | network-security | 15 | 15 | 100 | 85 |
+| 6 | calculators | 16 | 16 | 100 | 84 |
+| 7 | text | 28 | 28 | 100 | 72 |
+| 8 | network-security | 20 | 20 | 100 | 80 |
 | 9 | file | 100 | 100 | 100 | 0 ✅ |
 | 10 | business | 25 | 25 | 100 | 75 |
 | 11 | education | 20 | 20 | 100 | 80 |
 | 12 | social | 25 | 25 | 100 | 75 |
 | 13 | ai | 100 | 100 | 100 | 0 ✅ |
-| **TOTAL** | | **645** | **645** | **1,700** | **1,055** |
+| **TOTAL** | | **665** | **665** | **1,700** | **1,035** |
 
 Three categories are COMPLETE: AI (100/100), File (100/100), SEO
 (100/100). Biggest visible gap: Image (7/100, 93 to go). Biggest
