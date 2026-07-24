@@ -166,6 +166,20 @@ import { manifest as tcrToEpubConverter } from "@/tools/file/tcr-to-epub-convert
 import { manifest as wimExtractor } from "@/tools/file/wim-extractor/manifest";
 import { manifest as xarExtractor } from "@/tools/file/xar-extractor/manifest";
 import { manifest as zCompressor } from "@/tools/file/z-compressor/manifest";
+import { manifest as azw3ToPdfConverter } from "@/tools/file/azw3-to-pdf-converter/manifest";
+import { manifest as bulkFileTimestampChanger } from "@/tools/file/bulk-file-timestamp-changer/manifest";
+import { manifest as djvuToPdfConverter } from "@/tools/file/djvu-to-pdf-converter/manifest";
+import { manifest as encodingDetector } from "@/tools/file/encoding-detector/manifest";
+import { manifest as epubToPdfConverter } from "@/tools/file/epub-to-pdf-converter/manifest";
+import { manifest as fileTreePrinter } from "@/tools/file/file-tree-printer/manifest";
+import { manifest as fileTypeDetector } from "@/tools/file/file-type-detector/manifest";
+import { manifest as lineEndingConverter } from "@/tools/file/line-ending-converter/manifest";
+import { manifest as mobiToPdfConverter } from "@/tools/file/mobi-to-pdf-converter/manifest";
+import { manifest as pdfFormFlattener } from "@/tools/file/pdf-form-flattener/manifest";
+import { manifest as pdfPageOrganizer } from "@/tools/file/pdf-page-organizer/manifest";
+import { manifest as pdfToXpsConverter } from "@/tools/file/pdf-to-xps-converter/manifest";
+import { manifest as textEncodingConverter } from "@/tools/file/text-encoding-converter/manifest";
+import { manifest as xpsToPdfConverter } from "@/tools/file/xps-to-pdf-converter/manifest";
 import { manifest as canonicalTagGenerator } from "@/tools/seo/canonical-tag-generator/manifest";
 import { manifest as faqSchemaGenerator } from "@/tools/seo/faq-schema-generator/manifest";
 import { manifest as hreflangTagGenerator } from "@/tools/seo/hreflang-tag-generator/manifest";
@@ -784,6 +798,20 @@ export const TOOLS: readonly ToolManifest[] = [
   wimExtractor,
   xarExtractor,
   zCompressor,
+  azw3ToPdfConverter,
+  bulkFileTimestampChanger,
+  djvuToPdfConverter,
+  encodingDetector,
+  epubToPdfConverter,
+  fileTreePrinter,
+  fileTypeDetector,
+  lineEndingConverter,
+  mobiToPdfConverter,
+  pdfFormFlattener,
+  pdfPageOrganizer,
+  pdfToXpsConverter,
+  textEncodingConverter,
+  xpsToPdfConverter,
   canonicalTagGenerator,
   faqSchemaGenerator,
   hreflangTagGenerator,
