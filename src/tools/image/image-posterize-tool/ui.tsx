@@ -3,41 +3,53 @@
 import React, { useState, useCallback, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ErrorBanner } from "../../_shared";
-import { quantize, validatePosterizeOptions } from "./logic";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
+import {
+  applyToRgba, buildCssFilter, buildPosterizeFilename, countUniqueColors,
+  validatePosterizeOptions, DEFAULT_OPTIONS,
+  type PosterizeOptions, type PresetPalette,
+} from "./logic";
 import { toast } from "sonner";
+
+const PALETTES: { value: PresetPalette; label: string }[] = [
+  { value: "none", label: "None (quantize)" },
+  { value: "gameboy", label: "Game Boy (4)" },
+  { value: "cga", label: "CGA (4)" },
+  { value: "ega", label: "EGA (16)" },
+  { value: "apple2", label: "Apple II (16)" },
+  { value: "websafe", label: "Web-safe (216)" },
+];
 
 export default function ImagePosterizeTool() {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [fileName, setFileName] = useState("posterized.png");
-  const [levels, setLevels] = useState(4);
+  const [inputName, setInputName] = useState("image.png");
+  const [opts, setOpts] = useState<PosterizeOptions>(DEFAULT_OPTIONS);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uniqueColors, setUniqueColors] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const update = <K extends keyof PosterizeOptions>(key: K, value: PosterizeOptions[K]) =>
+    setOpts((p) => ({ ...p, [key]: value }));
+
   const onFile = useCallback((file: File | undefined) => {
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file");
-      return;
-    }
+    if (!file.type.startsWith("image/")) { setError("Please choose an image file"); return; }
     const url = URL.createObjectURL(file);
     const img = new Image();
-    img.onload = () => {
-      setImage(img);
-      setFileName(file.name.replace(/\.[^.]+$/, "") + "-posterized.png");
-      setError(null);
-      setPreviewUrl(null);
-    };
+    img.onload = () => { setImage(img); setInputName(file.name); setError(null); setPreviewUrl(null); setUniqueColors(null); };
     img.onerror = () => setError("Could not load image");
     img.src = url;
   }, []);
 
   const apply = useCallback(() => {
     if (!image || !canvasRef.current) return;
-    const v = validatePosterizeOptions({ levels });
+    const v = validatePosterizeOptions(opts);
     if ("error" in v) { setError(v.error); return; }
     setError(null);
     const canvas = canvasRef.current;
@@ -47,19 +59,16 @@ export default function ImagePosterizeTool() {
     if (!ctx) return;
     ctx.drawImage(image, 0, 0);
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const px = data.data;
-    for (let i = 0; i < px.length; i += 4) {
-      px[i] = quantize(px[i]!, levels);
-      px[i + 1] = quantize(px[i + 1]!, levels);
-      px[i + 2] = quantize(px[i + 2]!, levels);
-    }
+    const result = applyToRgba(data.data, canvas.width, canvas.height, opts);
+    data.data.set(result);
     ctx.putImageData(data, 0, 0);
+    setUniqueColors(countUniqueColors(result, Math.max(1, Math.floor(result.length / 4 / 50000))));
     canvas.toBlob((blob) => {
       if (!blob) return;
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(URL.createObjectURL(blob));
     }, "image/png");
-  }, [image, levels, previewUrl]);
+  }, [image, opts, previewUrl]);
 
   const download = useCallback(() => {
     if (!canvasRef.current) return;
@@ -67,13 +76,11 @@ export default function ImagePosterizeTool() {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      a.click();
+      a.href = url; a.download = buildPosterizeFilename(inputName, opts); a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       toast.success("Image downloaded");
     }, "image/png");
-  }, [fileName]);
+  }, [inputName, opts]);
 
   return (
     <div className="space-y-4">
@@ -88,13 +95,58 @@ export default function ImagePosterizeTool() {
         <Card>
           <CardContent className="p-4 space-y-3">
             <div>
-              <Label className="text-xs text-muted-foreground">Levels: {levels}</Label>
-              <input type="range" min={2} max={32} value={levels} onChange={(e) => setLevels(Number(e.target.value))} className="w-full" />
+              <Label className="text-xs text-muted-foreground">Palette</Label>
+              <select value={opts.palette} onChange={(e) => update("palette", e.target.value as PresetPalette)} className="h-9 rounded-md border bg-background px-3 text-sm w-full">
+                {PALETTES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+              </select>
             </div>
-            <div className="flex gap-2">
+            {opts.palette === "none" && (
+              <>
+                <div className="flex items-center gap-2">
+                  <Switch checked={opts.usePerChannel} onCheckedChange={(v) => update("usePerChannel", v)} id="pc" />
+                  <Label htmlFor="pc" className="text-sm cursor-pointer">Per-channel levels</Label>
+                </div>
+                {!opts.usePerChannel ? (
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Levels: {opts.levels}</Label>
+                    <Slider value={[opts.levels]} onValueChange={(v) => update("levels", v[0]!)} min={2} max={32} step={1} />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-3">
+                    <div><Label className="text-xs text-muted-foreground">Red: {opts.perChannel.r}</Label><Slider value={[opts.perChannel.r]} onValueChange={(v) => update("perChannel", { ...opts.perChannel, r: v[0]! })} min={2} max={32} step={1} /></div>
+                    <div><Label className="text-xs text-muted-foreground">Green: {opts.perChannel.g}</Label><Slider value={[opts.perChannel.g]} onValueChange={(v) => update("perChannel", { ...opts.perChannel, g: v[0]! })} min={2} max={32} step={1} /></div>
+                    <div><Label className="text-xs text-muted-foreground">Blue: {opts.perChannel.b}</Label><Slider value={[opts.perChannel.b]} onValueChange={(v) => update("perChannel", { ...opts.perChannel, b: v[0]! })} min={2} max={32} step={1} /></div>
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Switch checked={opts.hueOnly} onCheckedChange={(v) => update("hueOnly", v)} id="ho" />
+                    <Label htmlFor="ho" className="text-sm cursor-pointer">Hue only</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={opts.preserveSaturation} onCheckedChange={(v) => update("preserveSaturation", v)} id="ps" />
+                    <Label htmlFor="ps" className="text-sm cursor-pointer">Preserve saturation</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={opts.dither} onCheckedChange={(v) => update("dither", v)} id="di" />
+                    <Label htmlFor="di" className="text-sm cursor-pointer">Floyd-Steinberg dither</Label>
+                  </div>
+                </div>
+              </>
+            )}
+            <div>
+              <Label className="text-xs text-muted-foreground">Intensity: {opts.intensity}%</Label>
+              <Slider value={[opts.intensity]} onValueChange={(v) => update("intensity", v[0]!)} min={0} max={100} step={5} />
+            </div>
+            <div className="flex flex-wrap gap-2">
               <Button size="sm" onClick={apply}>Posterize</Button>
               <Button variant="outline" size="sm" onClick={download} disabled={!previewUrl}>Download</Button>
+              <DownloadButton getText={async () => { await new Promise((r) => setTimeout(r, 0)); return ""; }} filename={buildPosterizeFilename(inputName, opts)} disabled={!previewUrl} mime="image/png" label="Download (shared)" />
+              <CopyButton getText={() => buildCssFilter(opts)} label="Copy CSS filter" />
             </div>
+            {uniqueColors !== null && (
+              <p className="text-xs text-muted-foreground">Unique colors in output: ~{uniqueColors}</p>
+            )}
           </CardContent>
         </Card>
       )}
@@ -104,16 +156,14 @@ export default function ImagePosterizeTool() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-2">Preview</p>
-            <img src={previewUrl} alt="Posterized preview" className="max-w-full rounded-md border" />
+            <img src={previewUrl} alt="Posterized preview" className="max-w-full rounded-md border" style={{ imageRendering: "pixelated" }} />
           </CardContent>
         </Card>
       )}
       {error && <ErrorBanner message={error} />}
       <Card>
         <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> posterization runs locally via the Canvas API.
-          </p>
+          <p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> posterization runs locally via the Canvas API.</p>
         </CardContent>
       </Card>
     </div>

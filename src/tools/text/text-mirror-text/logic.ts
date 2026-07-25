@@ -21,9 +21,24 @@ const UPSIDE_DOWN: Record<string, string> = {
   "<": ">", ">": "<", "&": "⅋", "_": "‾",
 };
 
+export type MirrorMode = "horizontal" | "vertical" | "both";
+
+export interface MirrorStats {
+  chars: number;
+  lines: number;
+  charsMirrored: number;
+  mode: MirrorMode;
+  durationMs: number;
+}
+
 /** Map a single character to its upside-down equivalent. */
 export function mirrorChar(ch: string): string {
   return UPSIDE_DOWN[ch] ?? ch;
+}
+
+/** Build the character map for display. */
+export function characterMap(): { from: string; to: string }[] {
+  return Object.entries(UPSIDE_DOWN).map(([from, to]) => ({ from, to }));
 }
 
 /** Horizontal mirror — reverse character sequence. */
@@ -48,4 +63,71 @@ export function mirrorBoth(text: string): string {
   return mirrorVertical(mirrorHorizontal(text));
 }
 
-export type MirrorMode = "horizontal" | "vertical" | "both";
+/** Dispatch by mode. */
+export function applyMirror(text: string, mode: MirrorMode): string {
+  if (mode === "horizontal") return mirrorHorizontal(text);
+  if (mode === "vertical") return mirrorVertical(text);
+  return mirrorBoth(text);
+}
+
+/** Batch: process each line independently. */
+export function applyMirrorBatch(inputs: string[], mode: MirrorMode): string[] {
+  return inputs.map((s) => applyMirror(s, mode));
+}
+
+/** Compute statistics about a mirror operation. */
+export function computeStats(input: string, mode: MirrorMode): MirrorStats {
+  const start = typeof performance !== "undefined" ? performance.now() : Date.now();
+  const lines = input ? input.split("\n").length : 0;
+  let charsMirrored = 0;
+  if (mode === "vertical" || mode === "both") {
+    for (const ch of input) {
+      if (UPSIDE_DOWN[ch]) charsMirrored++;
+    }
+  }
+  const end = typeof performance !== "undefined" ? performance.now() : Date.now();
+  return {
+    chars: input.length,
+    lines,
+    charsMirrored,
+    mode,
+    durationMs: Math.max(0, end - start),
+  };
+}
+
+/** List characters in the input that have upside-down equivalents. */
+export function listMirrorableChars(input: string): string[] {
+  const seen = new Set<string>();
+  for (const ch of input) {
+    if (UPSIDE_DOWN[ch]) seen.add(ch);
+  }
+  return [...seen];
+}
+
+/** Per-character breakdown of input → mirrored output. */
+export function perCharBreakdown(input: string): { char: string; mirrored: string }[] {
+  if (!input) return [];
+  const seen = new Set<string>();
+  const out: { char: string; mirrored: string }[] = [];
+  for (const ch of input) {
+    if (UPSIDE_DOWN[ch] && !seen.has(ch)) {
+      seen.add(ch);
+      out.push({ char: ch, mirrored: UPSIDE_DOWN[ch]! });
+    }
+  }
+  return out;
+}
+
+/** Serialize a per-character breakdown to CSV. */
+export function breakdownToCsv(breakdown: { char: string; mirrored: string }[]): string {
+  const lines = ["Char,Mirrored"];
+  for (const e of breakdown) {
+    lines.push(`"${e.char}","${e.mirrored}"`);
+  }
+  return lines.join("\n");
+}
+
+/** Generate a sample text for quick demos. */
+export function sampleText(): string {
+  return "hello world\nmirror me";
+}

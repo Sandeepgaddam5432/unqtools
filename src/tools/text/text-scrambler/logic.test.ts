@@ -1,5 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { mulberry32, shuffle, scrambleWord, isWord, scrambleText } from "./logic";
+import {
+  mulberry32,
+  shuffle,
+  sortChars,
+  reverseChars,
+  scrambleMiddle,
+  scrambleWord,
+  isWord,
+  tokenize,
+  scrambleText,
+  scrambleBatch,
+  computeStats,
+  listScramblableWords,
+  diffWords,
+} from "./logic";
 
 describe("mulberry32", () => {
   it("produces deterministic sequence for same seed", () => {
@@ -45,6 +59,37 @@ describe("shuffle", () => {
   });
 });
 
+describe("sortChars", () => {
+  it("sorts alphabetically", () => {
+    expect(sortChars(["c", "a", "b"]).join("")).toBe("abc");
+  });
+  it("is case-insensitive (a before B)", () => {
+    expect(sortChars(["B", "a"]).join("").toLowerCase()).toBe("ab");
+  });
+});
+
+describe("reverseChars", () => {
+  it("reverses order", () => {
+    expect(reverseChars(["a", "b", "c"]).join("")).toBe("cba");
+  });
+});
+
+describe("scrambleMiddle", () => {
+  it("uses sorted method", () => {
+    const out = scrambleMiddle(["c", "a", "b"], "sorted", mulberry32(1));
+    expect(out.join("")).toBe("abc");
+  });
+  it("uses reversed method", () => {
+    const out = scrambleMiddle(["a", "b", "c"], "reversed", mulberry32(1));
+    expect(out.join("")).toBe("cba");
+  });
+  it("uses random method (deterministic)", () => {
+    const a = scrambleMiddle(["a", "b", "c", "d"], "random", mulberry32(5));
+    const b = scrambleMiddle(["a", "b", "c", "d"], "random", mulberry32(5));
+    expect(a).toEqual(b);
+  });
+});
+
 describe("scrambleWord", () => {
   it("keeps first and last letter", () => {
     const out = scrambleWord("hello", mulberry32(1));
@@ -56,6 +101,11 @@ describe("scrambleWord", () => {
     expect(scrambleWord("hi", mulberry32(1))).toBe("hi");
     expect(scrambleWord("the", mulberry32(1))).toBe("the");
   });
+  it("respects minLength option", () => {
+    expect(scrambleWord("abc", mulberry32(1), { minLength: 4 })).toBe("abc");
+    expect(scrambleWord("abcd", mulberry32(1), { minLength: 5 })).toBe("abcd");
+    expect(scrambleWord("stable", mulberry32(1), { minLength: 4, method: "sorted" })).toBe("sablte");
+  });
   it("preserves middle letters as multiset", () => {
     const out = scrambleWord("worlds", mulberry32(7));
     expect(out.split("").sort().join("")).toBe("worlds".split("").sort().join(""));
@@ -64,6 +114,10 @@ describe("scrambleWord", () => {
     const a = scrambleWord("programming", mulberry32(99));
     const b = scrambleWord("programming", mulberry32(99));
     expect(a).toBe(b);
+  });
+  it("supports sorted method", () => {
+    const out = scrambleWord("stable", mulberry32(1), { method: "sorted" });
+    expect(out).toBe("sablte");
   });
 });
 
@@ -75,6 +129,12 @@ describe("isWord", () => {
     expect(isWord("hello!")).toBe(false);
     expect(isWord(" ")).toBe(false);
     expect(isWord("")).toBe(false);
+  });
+});
+
+describe("tokenize", () => {
+  it("splits words and punctuation", () => {
+    expect(tokenize("hello, world!")).toEqual(["hello", ",", " ", "world", "!"]);
   });
 });
 
@@ -100,5 +160,41 @@ describe("scrambleText", () => {
     expect(words[0]![words[0]!.length - 1]).toBe("o");
     expect(words[1]![0]).toBe("w");
     expect(words[1]![words[1]!.length - 1]).toBe("s");
+  });
+  it("supports options object", () => {
+    const out = scrambleText("stable", { seed: 5, method: "sorted" });
+    expect(out).toBe("sablte");
+  });
+});
+
+describe("scrambleBatch", () => {
+  it("processes multiple inputs", () => {
+    const out = scrambleBatch(["stable", "worlds"], { seed: 5, method: "sorted" });
+    expect(out[0]).toBe("sablte");
+    expect(out[1]).toBe("wdlors");
+  });
+});
+
+describe("computeStats", () => {
+  it("counts words correctly", () => {
+    const s = computeStats("hello worlds hi", { seed: 1 });
+    expect(s.wordsTotal).toBe(3);
+    expect(s.wordsScrambled).toBe(2); // "hi" is too short (min=4)
+    expect(s.wordsSkipped).toBe(1);
+    expect(s.method).toBe("random");
+  });
+});
+
+describe("listScramblableWords", () => {
+  it("returns scramblable words", () => {
+    expect(listScramblableWords("hi hello worlds", 4)).toEqual(["hello", "worlds"]);
+  });
+});
+
+describe("diffWords", () => {
+  it("compares original vs scrambled", () => {
+    const d = diffWords("hello worlds", "hlleo wdlors");
+    expect(d.length).toBe(2);
+    expect(d[0].changed).toBe(true);
   });
 });
