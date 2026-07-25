@@ -23,6 +23,11 @@ import { manifest as loanPayoffCalc } from "@/tools/calculators/loan-payoff-calc
 import { manifest as discountRateCalc } from "@/tools/calculators/discount-rate-calc/manifest";
 import { manifest as markupMarginCalc } from "@/tools/calculators/markup-margin-calc/manifest";
 import { manifest as paymentPlanCalc } from "@/tools/calculators/payment-plan-calc/manifest";
+import { manifest as areaCalculator } from "@/tools/calculators/area-calculator/manifest";
+import { manifest as perimeterCalculator } from "@/tools/calculators/perimeter-calculator/manifest";
+import { manifest as speedDistanceCalc } from "@/tools/calculators/speed-distance-calc/manifest";
+import { manifest as bmiBmrCombo } from "@/tools/calculators/bmi-bmr-combo/manifest";
+import { manifest as timeDurationCalc } from "@/tools/calculators/time-duration-calc/manifest";
 import { manifest as scientificCalculator } from "@/tools/calculators/scientific-calculator/manifest";
 import { manifest as weightUnitConverter } from "@/tools/calculators/weight-unit-converter/manifest";
 import { manifest as temperatureConverter } from "@/tools/calculators/temperature-converter/manifest";
@@ -70,6 +75,16 @@ import { manifest as imagePixelateTool } from "@/tools/image/image-pixelate-tool
 import { manifest as imagePosterizeTool } from "@/tools/image/image-posterize-tool/manifest";
 import { manifest as imageThresholdTool } from "@/tools/image/image-threshold-tool/manifest";
 import { manifest as imageChannelMixer } from "@/tools/image/image-channel-mixer/manifest";
+import { manifest as imageFisheyeTool } from "@/tools/image/image-fisheye-tool/manifest";
+import { manifest as imageDrosteEffect } from "@/tools/image/image-droste-effect/manifest";
+import { manifest as imageGlitchArt } from "@/tools/image/image-glitch-art/manifest";
+import { manifest as imagePixelSorter } from "@/tools/image/image-pixel-sorter/manifest";
+import { manifest as imageColorPickerTool } from "@/tools/image/image-color-picker-tool/manifest";
+import { manifest as imageExposureAdjuster } from "@/tools/image/image-exposure-adjuster/manifest";
+import { manifest as imageGammaCorrector } from "@/tools/image/image-gamma-corrector/manifest";
+import { manifest as imageDitherTool } from "@/tools/image/image-dither-tool/manifest";
+import { manifest as imageSolarizeTool } from "@/tools/image/image-solarize-tool/manifest";
+import { manifest as imageEmbossTool } from "@/tools/image/image-emboss-tool/manifest";
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
 import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
 import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
@@ -91,6 +106,11 @@ import { manifest as macAddressGenerator } from "@/tools/network-security/mac-ad
 import { manifest as uuidVersionDetector } from "@/tools/network-security/uuid-version-detector/manifest";
 import { manifest as secureRandomGenerator } from "@/tools/network-security/secure-random-generator/manifest";
 import { manifest as certificatePemParser } from "@/tools/network-security/certificate-pem-parser/manifest";
+import { manifest as cronExpressionParser } from "@/tools/network-security/cron-expression-parser/manifest";
+import { manifest as jwtClaimExtractor } from "@/tools/network-security/jwt-claim-extractor/manifest";
+import { manifest as dnsRecordValidator } from "@/tools/network-security/dns-record-validator/manifest";
+import { manifest as ipv6SubnetCalc } from "@/tools/network-security/ipv6-subnet-calc/manifest";
+import { manifest as httpHeaderParser } from "@/tools/network-security/http-header-parser/manifest";
 import { manifest as urlParser } from "@/tools/network-security/url-parser/manifest";
 import { manifest as compressPdf } from "@/tools/pdf/compress-pdf/manifest";
 import { manifest as contactSheetPdf } from "@/tools/pdf/pdf-contact-sheet/manifest";
@@ -153,6 +173,11 @@ import { manifest as binaryToText } from "@/tools/text/binary-to-text/manifest";
 import { manifest as textCaseAdvancer } from "@/tools/text/text-case-advancer/manifest";
 import { manifest as textStripper } from "@/tools/text/text-stripper/manifest";
 import { manifest as textWordsExtractor } from "@/tools/text/text-words-extractor/manifest";
+import { manifest as textAccentRemover } from "@/tools/text/text-accent-remover/manifest";
+import { manifest as textAccentAdder } from "@/tools/text/text-accent-adder/manifest";
+import { manifest as textPhoneticGenerator } from "@/tools/text/text-phonetic-generator/manifest";
+import { manifest as textPigLatin } from "@/tools/text/text-pig-latin/manifest";
+import { manifest as textLeetspeak } from "@/tools/text/text-leetspeak/manifest";
 import { manifest as textFinderReplacer } from "@/tools/text/text-finder-replacer/manifest";
 import { manifest as textStatistics } from "@/tools/text/text-statistics/manifest";
 import { manifest as textDeduplicator } from "@/tools/text/text-deduplicator/manifest";
@@ -336,6 +361,11 @@ import { manifest as brandMentionMonitor } from "@/tools/seo/brand-mention-monit
 import { manifest as internationalSeoPlanner } from "@/tools/seo/international-seo-planner/manifest";
 import { manifest as localeKeywordResearcher } from "@/tools/seo/locale-keyword-researcher/manifest";
 import { manifest as affiliateLinkCloaker } from "@/tools/seo/affiliate-link-cloaker/manifest";
+  timesheetCalc,
+  meetingDurationCalc,
+  payslipGenerator,
+  shiftScheduler,
+  workOrderGenerator,
 import { manifest as affiliateCommissionCalculator } from "@/tools/seo/affiliate-commission-calculator/manifest";
 import { manifest as productReviewSchemaGenerator } from "@/tools/seo/product-review-schema-generator/manifest";
 import { manifest as seoReportGenerator } from "@/tools/seo/seo-report-generator/manifest";
@@ -388,6 +418,11 @@ import { manifest as sopGenerator } from "@/tools/business/sop-generator/manifes
 import { manifest as salesPipelineTracker } from "@/tools/business/sales-pipeline-tracker/manifest";
 import { manifest as customerTracker } from "@/tools/business/customer-tracker/manifest";
 import { manifest as commissionTracker } from "@/tools/business/commission-tracker/manifest";
+import { manifest as timesheetCalc } from "@/tools/business/timesheet-calc/manifest";
+import { manifest as meetingDurationCalc } from "@/tools/business/meeting-duration-calc/manifest";
+import { manifest as payslipGenerator } from "@/tools/business/payslip-generator/manifest";
+import { manifest as shiftScheduler } from "@/tools/business/shift-scheduler/manifest";
+import { manifest as workOrderGenerator } from "@/tools/business/work-order-generator/manifest";
 import { manifest as flashcardMaker } from "@/tools/education/flashcard-maker/manifest";
 import { manifest as quizGenerator } from "@/tools/education/quiz-generator/manifest";
 import { manifest as studyPlanner } from "@/tools/education/study-planner/manifest";
@@ -772,6 +807,16 @@ export const TOOLS: readonly ToolManifest[] = [
   imagePosterizeTool,
   imageThresholdTool,
   imageChannelMixer,
+  imageFisheyeTool,
+  imageDrosteEffect,
+  imageGlitchArt,
+  imagePixelSorter,
+  imageColorPickerTool,
+  imageExposureAdjuster,
+  imageGammaCorrector,
+  imageDitherTool,
+  imageSolarizeTool,
+  imageEmbossTool,
   bcryptHashGenerator,
   cspEvaluator,
   dataUrlConverter,
@@ -791,6 +836,11 @@ export const TOOLS: readonly ToolManifest[] = [
   uuidVersionDetector,
   secureRandomGenerator,
   certificatePemParser,
+  cronExpressionParser,
+  jwtClaimExtractor,
+  dnsRecordValidator,
+  ipv6SubnetCalc,
+  httpHeaderParser,
   urlParser,
   csvFileJoiner,
   csvFileSplitter,

@@ -42,7 +42,7 @@ const itemListJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: "UnQTools — All Tools",
-  numberOfItems: 705,
+  numberOfItems: 735,
   url: `${SITE_URL}/tools`,
 };
 
