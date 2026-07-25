@@ -28,6 +28,11 @@ import { manifest as perimeterCalculator } from "@/tools/calculators/perimeter-c
 import { manifest as speedDistanceCalc } from "@/tools/calculators/speed-distance-calc/manifest";
 import { manifest as bmiBmrCombo } from "@/tools/calculators/bmi-bmr-combo/manifest";
 import { manifest as timeDurationCalc } from "@/tools/calculators/time-duration-calc/manifest";
+import { manifest as volumeConverter } from "@/tools/calculators/volume-converter/manifest";
+import { manifest as angleConverter } from "@/tools/calculators/angle-converter/manifest";
+import { manifest as pressureConverter } from "@/tools/calculators/pressure-converter/manifest";
+import { manifest as forceConverter } from "@/tools/calculators/force-converter/manifest";
+import { manifest as energyConverter } from "@/tools/calculators/energy-converter/manifest";
 import { manifest as scientificCalculator } from "@/tools/calculators/scientific-calculator/manifest";
 import { manifest as weightUnitConverter } from "@/tools/calculators/weight-unit-converter/manifest";
 import { manifest as temperatureConverter } from "@/tools/calculators/temperature-converter/manifest";
@@ -85,6 +90,16 @@ import { manifest as imageGammaCorrector } from "@/tools/image/image-gamma-corre
 import { manifest as imageDitherTool } from "@/tools/image/image-dither-tool/manifest";
 import { manifest as imageSolarizeTool } from "@/tools/image/image-solarize-tool/manifest";
 import { manifest as imageEmbossTool } from "@/tools/image/image-emboss-tool/manifest";
+import { manifest as imageAnaglyphMaker } from "@/tools/image/image-anaglyph-maker/manifest";
+import { manifest as imageKaleidoscope } from "@/tools/image/image-kaleidoscope/manifest";
+import { manifest as imageTileMaker } from "@/tools/image/image-tile-maker/manifest";
+import { manifest as imageStitcher } from "@/tools/image/image-stitcher/manifest";
+import { manifest as imageSplitter } from "@/tools/image/image-splitter/manifest";
+import { manifest as imageGifFrameExtractor } from "@/tools/image/image-gif-frame-extractor/manifest";
+import { manifest as imageColorOverlay } from "@/tools/image/image-color-overlay/manifest";
+import { manifest as imageMosaicBlend } from "@/tools/image/image-mosaic-blend/manifest";
+import { manifest as imageDehazeTool } from "@/tools/image/image-dehaze-tool/manifest";
+import { manifest as imageShadowsHighlights } from "@/tools/image/image-shadows-highlights/manifest";
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
 import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
 import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
@@ -178,6 +193,11 @@ import { manifest as textAccentAdder } from "@/tools/text/text-accent-adder/mani
 import { manifest as textPhoneticGenerator } from "@/tools/text/text-phonetic-generator/manifest";
 import { manifest as textPigLatin } from "@/tools/text/text-pig-latin/manifest";
 import { manifest as textLeetspeak } from "@/tools/text/text-leetspeak/manifest";
+import { manifest as textRot13Cipher } from "@/tools/text/text-rot13-cipher/manifest";
+import { manifest as textVigenereCipher } from "@/tools/text/text-vigenere-cipher/manifest";
+import { manifest as textAtbashCipher } from "@/tools/text/text-atbash-cipher/manifest";
+import { manifest as textCaesarBruteforce } from "@/tools/text/text-caesar-bruteforce/manifest";
+import { manifest as textMorseDecoder } from "@/tools/text/text-morse-decoder/manifest";
 import { manifest as textFinderReplacer } from "@/tools/text/text-finder-replacer/manifest";
 import { manifest as textStatistics } from "@/tools/text/text-statistics/manifest";
 import { manifest as textDeduplicator } from "@/tools/text/text-deduplicator/manifest";
@@ -812,6 +832,16 @@ export const TOOLS: readonly ToolManifest[] = [
   imageDitherTool,
   imageSolarizeTool,
   imageEmbossTool,
+  imageAnaglyphMaker,
+  imageKaleidoscope,
+  imageTileMaker,
+  imageStitcher,
+  imageSplitter,
+  imageGifFrameExtractor,
+  imageColorOverlay,
+  imageMosaicBlend,
+  imageDehazeTool,
+  imageShadowsHighlights,
   bcryptHashGenerator,
   cspEvaluator,
   dataUrlConverter,
