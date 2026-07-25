@@ -1,8 +1,25 @@
 import { describe, it, expect } from "vitest";
-import { iterate, escapeIterations, iterToColor, pixelToComplex, validateFractalOptions } from "./logic";
+import {
+  iterate,
+  escapeIterations,
+  smoothEscape,
+  iterToColor,
+  pixelToComplex,
+  validateFractalOptions,
+  isIdentity,
+  batchValidate,
+  preservesAlpha,
+  findPreset,
+  PRESETS,
+  clampByte,
+  meanDelta,
+  luma,
+  type FractalOptions,
+} from "./logic";
 
-const OPTS: import("./logic").FractalOptions = {
-  cx: -0.5, cy: 0, zoom: 1, maxIter: 100, julia: false, jx: 0, jy: 0, escape: 4,
+const OPTS: FractalOptions = {
+  cx: -0.5, cy: 0, zoom: 1, maxIter: 100, julia: false, jx: 0, jy: 0,
+  escape: 4, palette: "default", smooth: false,
 };
 
 describe("iterate", () => {
@@ -34,6 +51,16 @@ describe("escapeIterations", () => {
   });
 });
 
+describe("smoothEscape", () => {
+  it("returns -1 for bounded points", () => {
+    expect(smoothEscape(0, 0, OPTS)).toBe(-1);
+  });
+  it("returns positive value for escaping points", () => {
+    const v = smoothEscape(2, 0, OPTS);
+    expect(v).toBeGreaterThanOrEqual(0);
+  });
+});
+
 describe("iterToColor", () => {
   it("returns black for bounded points", () => {
     expect(iterToColor(-1, 100)).toEqual({ r: 0, g: 0, b: 0 });
@@ -42,6 +69,21 @@ describe("iterToColor", () => {
     const c = iterToColor(50, 100);
     expect(c.r).toBeGreaterThanOrEqual(0);
     expect(c.r).toBeLessThanOrEqual(255);
+  });
+  it("fire palette returns valid colors", () => {
+    const c = iterToColor(50, 100, "fire");
+    expect(c.r).toBeGreaterThanOrEqual(0);
+    expect(c.r).toBeLessThanOrEqual(255);
+  });
+  it("ocean palette returns valid colors", () => {
+    const c = iterToColor(50, 100, "ocean");
+    expect(c.r).toBeGreaterThanOrEqual(0);
+    expect(c.r).toBeLessThanOrEqual(255);
+  });
+  it("grayscale palette returns equal R=G=B", () => {
+    const c = iterToColor(50, 100, "grayscale");
+    expect(c.r).toBe(c.g);
+    expect(c.g).toBe(c.b);
   });
 });
 
@@ -67,5 +109,39 @@ describe("validateFractalOptions", () => {
   });
   it("rejects non-positive zoom", () => {
     expect(validateFractalOptions({ ...OPTS, zoom: 0 })).toHaveProperty("error");
+  });
+  it("rejects bad palette", () => {
+    expect(validateFractalOptions({ ...OPTS, palette: "bad" as never })).toHaveProperty("error");
+  });
+});
+
+describe("helpers + presets", () => {
+  it("isIdentity always false", () => {
+    expect(isIdentity(OPTS)).toBe(false);
+  });
+  it("batchValidate validates each file", () => {
+    const r = batchValidate([{ name: "a.png" }], OPTS);
+    expect("ok" in r[0]!.result).toBe(true);
+  });
+  it("preservesAlpha correct", () => {
+    expect(preservesAlpha("image/png")).toBe(true);
+    expect(preservesAlpha("image/jpeg")).toBe(false);
+  });
+  it("findPreset returns matching", () => {
+    expect(findPreset("spiral")?.options.zoom).toBe(8);
+  });
+  it("has at least 5 presets", () => {
+    expect(PRESETS.length).toBeGreaterThanOrEqual(5);
+  });
+  it("clampByte rounds and clamps", () => {
+    expect(clampByte(-5)).toBe(0);
+    expect(clampByte(300)).toBe(255);
+  });
+  it("meanDelta returns 0 for identical", () => {
+    const a = new Uint8ClampedArray([10, 20, 30, 255]);
+    expect(meanDelta(a, a)).toBe(0);
+  });
+  it("luma of black is 0", () => {
+    expect(luma(0, 0, 0)).toBe(0);
   });
 });

@@ -5,16 +5,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
-import { makeComparator, validatePixelSortOptions, type SortKey } from "./logic";
+import {
+  makeComparator,
+  validatePixelSortOptions,
+  sortWithThreshold,
+  findPreset,
+  SORT_PRESETS,
+  type SortKey,
+  type PixelSortOptions,
+  type EdgeMode,
+  type OutputFormat,
+} from "./logic";
 import { toast } from "sonner";
+
+const KEYS: SortKey[] = ["brightness", "hue", "saturation", "red", "green", "blue"];
+const EDGES: EdgeMode[] = ["clamp", "wrap", "mirror", "zero"];
 
 export default function ImagePixelSorter() {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [fileName, setFileName] = useState("sorted.png");
-  const [key, setKey] = useState<SortKey>("brightness");
-  const [direction, setDirection] = useState<"asc" | "desc">("desc");
-  const [axis, setAxis] = useState<"row" | "column">("row");
-  const [threshold, setThreshold] = useState(0);
+  const [opts, setOpts] = useState<PixelSortOptions>({
+    key: "brightness", direction: "desc", axis: "row", threshold: 0, edge: "clamp", minLuma: 0, maxLuma: 255,
+  });
+  const [format, setFormat] = useState<OutputFormat>("image/png");
+  const [quality, setQuality] = useState(0.9);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,7 +46,7 @@ export default function ImagePixelSorter() {
 
   const apply = useCallback(() => {
     if (!image || !canvasRef.current) return;
-    const v = validatePixelSortOptions({ key, direction, axis, threshold });
+    const v = validatePixelSortOptions(opts);
     if ("error" in v) { setError(v.error); return; }
     setError(null);
     const canvas = canvasRef.current;
@@ -43,18 +57,18 @@ export default function ImagePixelSorter() {
     ctx.drawImage(image, 0, 0);
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const px = data.data, w = canvas.width, h = canvas.height;
-    const cmp = makeComparator(key, direction);
-    if (axis === "row") {
+    const cmp = makeComparator(opts.key, opts.direction);
+    if (opts.axis === "row") {
       for (let y = 0; y < h; y++) {
         const row: Array<[number, number, number]> = [];
         for (let x = 0; x < w; x++) {
           const i = (y * w + x) * 4;
           row.push([px[i]!, px[i + 1]!, px[i + 2]!]);
         }
-        row.sort(cmp);
+        const sorted = sortWithThreshold(row, cmp, opts.minLuma, opts.maxLuma);
         for (let x = 0; x < w; x++) {
           const i = (y * w + x) * 4;
-          px[i] = row[x]![0]; px[i + 1] = row[x]![1]; px[i + 2] = row[x]![2];
+          px[i] = sorted[x]![0]; px[i + 1] = sorted[x]![1]; px[i + 2] = sorted[x]![2];
         }
       }
     } else {
@@ -64,10 +78,10 @@ export default function ImagePixelSorter() {
           const i = (y * w + x) * 4;
           col.push([px[i]!, px[i + 1]!, px[i + 2]!]);
         }
-        col.sort(cmp);
+        const sorted = sortWithThreshold(col, cmp, opts.minLuma, opts.maxLuma);
         for (let y = 0; y < h; y++) {
           const i = (y * w + x) * 4;
-          px[i] = col[y]![0]; px[i + 1] = col[y]![1]; px[i + 2] = col[y]![2];
+          px[i] = sorted[y]![0]; px[i + 1] = sorted[y]![1]; px[i + 2] = sorted[y]![2];
         }
       }
     }
@@ -76,8 +90,8 @@ export default function ImagePixelSorter() {
       if (!blob) return;
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(URL.createObjectURL(blob));
-    }, "image/png");
-  }, [image, key, direction, axis, threshold, previewUrl]);
+    }, format, format === "image/png" ? undefined : quality);
+  }, [image, opts, format, quality, previewUrl]);
 
   const download = useCallback(() => {
     if (!canvasRef.current) return;
@@ -88,8 +102,16 @@ export default function ImagePixelSorter() {
       a.href = url; a.download = fileName; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       toast.success("Image downloaded");
-    }, "image/png");
-  }, [fileName]);
+    }, format, format === "image/png" ? undefined : quality);
+  }, [fileName, format, quality]);
+
+  const applyPreset = useCallback((id: string) => {
+    const p = findPreset(id);
+    if (p) {
+      setOpts((o) => ({ ...o, ...p.options }));
+      toast.success(`Preset: ${p.label}`);
+    }
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -99,22 +121,55 @@ export default function ImagePixelSorter() {
       </CardContent></Card>
       {image && (
         <Card><CardContent className="p-4 space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {(["brightness", "hue", "saturation", "red", "green", "blue"] as SortKey[]).map((k) => (
-              <Button key={k} size="sm" variant={key === k ? "default" : "outline"} onClick={() => setKey(k)}>{k}</Button>
-            ))}
+          <div>
+            <Label className="text-xs text-muted-foreground">Sort key</Label>
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {KEYS.map((k) => (
+                <Button key={k} size="sm" variant={opts.key === k ? "default" : "outline"} onClick={() => setOpts({ ...opts, key: k })}>{k}</Button>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm" variant={direction === "asc" ? "default" : "outline"} onClick={() => setDirection("asc")}>Ascending</Button>
-            <Button size="sm" variant={direction === "desc" ? "default" : "outline"} onClick={() => setDirection("desc")}>Descending</Button>
-            <Button size="sm" variant={axis === "row" ? "default" : "outline"} onClick={() => setAxis("row")}>Rows</Button>
-            <Button size="sm" variant={axis === "column" ? "default" : "outline"} onClick={() => setAxis("column")}>Columns</Button>
+          <div>
+            <Label className="text-xs text-muted-foreground">Presets</Label>
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {SORT_PRESETS.map((p) => (
+                <Button key={p.id} variant="outline" size="sm" onClick={() => applyPreset(p.id)}>{p.label}</Button>
+              ))}
+            </div>
           </div>
-          <div><Label className="text-xs text-muted-foreground">Threshold: {threshold}</Label><input type="range" min={0} max={255} value={threshold} onChange={(e) => setThreshold(Number(e.target.value))} className="w-full" /></div>
+          <div className="flex gap-2 flex-wrap">
+            <Button size="sm" variant={opts.direction === "asc" ? "default" : "outline"} onClick={() => setOpts({ ...opts, direction: "asc" })}>Ascending</Button>
+            <Button size="sm" variant={opts.direction === "desc" ? "default" : "outline"} onClick={() => setOpts({ ...opts, direction: "desc" })}>Descending</Button>
+            <Button size="sm" variant={opts.axis === "row" ? "default" : "outline"} onClick={() => setOpts({ ...opts, axis: "row" })}>Rows</Button>
+            <Button size="sm" variant={opts.axis === "column" ? "default" : "outline"} onClick={() => setOpts({ ...opts, axis: "column" })}>Columns</Button>
+          </div>
+          <div><Label className="text-xs text-muted-foreground">Threshold: {opts.threshold}</Label><input type="range" min={0} max={255} value={opts.threshold} onChange={(e) => setOpts({ ...opts, threshold: Number(e.target.value) })} className="w-full" /></div>
+          <div><Label className="text-xs text-muted-foreground">Min luma: {opts.minLuma}</Label><input type="range" min={0} max={255} value={opts.minLuma} onChange={(e) => setOpts({ ...opts, minLuma: Number(e.target.value) })} className="w-full" /></div>
+          <div><Label className="text-xs text-muted-foreground">Max luma: {opts.maxLuma}</Label><input type="range" min={0} max={255} value={opts.maxLuma} onChange={(e) => setOpts({ ...opts, maxLuma: Number(e.target.value) })} className="w-full" /></div>
+          <div>
+            <Label className="text-xs text-muted-foreground">Edge mode</Label>
+            <div className="flex gap-1.5 mt-1">
+              {EDGES.map((e) => (
+                <Button key={e} size="sm" variant={opts.edge === e ? "default" : "outline"} onClick={() => setOpts({ ...opts, edge: e })}>{e}</Button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground">Format</Label>
+            <select value={format} onChange={(e) => setFormat(e.target.value as OutputFormat)} className="h-9 w-full rounded-md border bg-background px-3 text-sm">
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </div>
+          {format !== "image/png" && (
+            <div><Label className="text-xs text-muted-foreground">Quality: {Math.round(quality * 100)}%</Label><input type="range" min={10} max={100} value={Math.round(quality * 100)} onChange={(e) => setQuality(Number(e.target.value) / 100)} className="w-32" /></div>
+          )}
           <div className="flex gap-2 flex-wrap">
             <Button size="sm" onClick={apply}>Sort pixels</Button>
             <Button variant="outline" size="sm" onClick={download} disabled={!previewUrl}>Download</Button>
-            {previewUrl && <CopyButton getText={() => previewUrl} label="Copy URL" />}
+            <CopyButton getText={() => JSON.stringify(opts)} label="Copy settings" disabled={!previewUrl} />
+            <DownloadButton getText={() => previewUrl ?? ""} filename={fileName} disabled={!previewUrl} mime={format} />
           </div>
         </CardContent></Card>
       )}

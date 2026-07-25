@@ -6,8 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ErrorBanner } from "../../_shared";
-import { computeThumbnail, DEFAULT_SIZES, thumbnailFilename } from "./logic";
+import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
+import {
+  computeThumbnail,
+  thumbnailFilename,
+  thumbnailFilenameDims,
+  formatExtension,
+  estimateTotalBytes,
+  SIZE_PRESETS,
+  findSizePreset,
+  type OutputFormat,
+} from "./logic";
 import { toast } from "sonner";
 
 interface ThumbItem {
@@ -20,9 +29,12 @@ interface ThumbItem {
 export default function ImageThumbnailMaker() {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [baseName, setBaseName] = useState("thumbnail");
-  const [format, setFormat] = useState("image/png");
+  const [format, setFormat] = useState<OutputFormat>("image/png");
   const [quality, setQuality] = useState(0.85);
   const [square, setSquare] = useState(false);
+  const [stripMetadata, setStripMetadata] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState<number[]>([128, 256, 512]);
+  const [customSize, setCustomSize] = useState<number | "">("");
   const [items, setItems] = useState<ThumbItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -46,10 +58,28 @@ export default function ImageThumbnailMaker() {
     img.src = url;
   }, []);
 
+  const toggleSize = (size: number) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size].sort((a, b) => a - b),
+    );
+  };
+
+  const addCustomSize = () => {
+    if (typeof customSize !== "number") return;
+    if (customSize < 8 || customSize > 4096) {
+      setError("Custom size must be 8..4096");
+      return;
+    }
+    if (!selectedSizes.includes(customSize)) {
+      setSelectedSizes([...selectedSizes, customSize].sort((a, b) => a - b));
+    }
+    setCustomSize("");
+  };
+
   const generate = useCallback(() => {
-    if (!image || !canvasRef.current) return;
+    if (!image || !canvasRef.current || selectedSizes.length === 0) return;
     const newItems: ThumbItem[] = [];
-    for (const size of DEFAULT_SIZES) {
+    for (const size of selectedSizes) {
       const result = computeThumbnail({
         originalWidth: image.naturalWidth,
         originalHeight: image.naturalHeight,
@@ -82,18 +112,26 @@ export default function ImageThumbnailMaker() {
     setItems(newItems);
     setError(null);
     toast.success(`Generated ${newItems.length} thumbnails`);
-  }, [image, square, format, quality]);
+  }, [image, square, format, quality, selectedSizes]);
 
   const downloadAll = useCallback(() => {
-    const ext = format === "image/png" ? "png" : format === "image/jpeg" ? "jpg" : "webp";
+    const ext = formatExtension(format);
     for (const item of items) {
       const a = document.createElement("a");
       a.href = item.url;
-      a.download = thumbnailFilename(baseName, item.size, ext);
+      a.download = square
+        ? thumbnailFilename(baseName, item.size, ext)
+        : thumbnailFilenameDims(baseName, item.width, item.height, ext);
       a.click();
     }
     toast.success("Downloaded all thumbnails");
-  }, [items, baseName, format]);
+  }, [items, baseName, format, square]);
+
+  const totalBytes = estimateTotalBytes(
+    items.map((i) => ({ width: i.width, height: i.height, scale: 1 })),
+    format,
+    quality,
+  );
 
   return (
     <div className="space-y-4">
@@ -119,7 +157,38 @@ export default function ImageThumbnailMaker() {
 
       {image && (
         <Card>
-          <CardContent className="p-4 space-y-3">
+          <CardContent className="p-4 space-y-4">
+            <div>
+              <Label className="text-xs text-muted-foreground">Sizes</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {SIZE_PRESETS.map((p) => (
+                  <Button
+                    key={p.id}
+                    variant={selectedSizes.includes(p.size) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => toggleSize(p.size)}
+                  >
+                    {p.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-end gap-2">
+              <div>
+                <Label className="text-xs text-muted-foreground">Custom size</Label>
+                <Input
+                  type="number"
+                  min={8}
+                  max={4096}
+                  value={customSize}
+                  onChange={(e) => setCustomSize(e.target.value === "" ? "" : Number(e.target.value))}
+                  className="w-32"
+                />
+              </div>
+              <Button variant="outline" size="sm" onClick={addCustomSize}>Add</Button>
+            </div>
+
             <div className="flex flex-wrap gap-4 items-end">
               <div>
                 <Label className="text-xs text-muted-foreground">Base name</Label>
@@ -129,7 +198,7 @@ export default function ImageThumbnailMaker() {
                 <Label className="text-xs text-muted-foreground">Format</Label>
                 <select
                   value={format}
-                  onChange={(e) => setFormat(e.target.value)}
+                  onChange={(e) => setFormat(e.target.value as OutputFormat)}
                   className="h-9 rounded-md border bg-background px-3 text-sm"
                 >
                   <option value="image/png">PNG</option>
@@ -154,13 +223,27 @@ export default function ImageThumbnailMaker() {
                 <Switch checked={square} onCheckedChange={setSquare} id="square" />
                 <Label htmlFor="square" className="text-sm cursor-pointer">Square</Label>
               </div>
+              <div className="flex items-center gap-2 pb-1">
+                <Switch checked={stripMetadata} onCheckedChange={setStripMetadata} id="strip" />
+                <Label htmlFor="strip" className="text-sm cursor-pointer">Strip metadata</Label>
+              </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button size="sm" onClick={generate}>Generate thumbnails</Button>
               <Button variant="outline" size="sm" onClick={downloadAll} disabled={items.length === 0}>
                 Download all
               </Button>
+              <CopyButton
+                getText={() => JSON.stringify({ sizes: selectedSizes, format, quality, square })}
+                label="Copy settings"
+                disabled={items.length === 0}
+              />
             </div>
+            {items.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Estimated total: ~{(totalBytes / 1024).toFixed(1)} KB
+              </p>
+            )}
           </CardContent>
         </Card>
       )}
@@ -170,8 +253,8 @@ export default function ImageThumbnailMaker() {
         <Card>
           <CardContent className="p-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {items.map((item) => (
-                <div key={item.size} className="space-y-1">
+              {items.map((item, idx) => (
+                <div key={`${item.size}-${idx}`} className="space-y-1">
                   <img
                     src={item.url}
                     alt={`Thumbnail ${item.size}`}

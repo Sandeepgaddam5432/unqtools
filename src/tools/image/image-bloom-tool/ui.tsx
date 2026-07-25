@@ -4,8 +4,17 @@ import React, { useState, useCallback, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ErrorBanner, DownloadButton } from "../../_shared";
-import { validateBloom, luma, passesThreshold, addBloom } from "./logic";
+import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
+import {
+  validateBloom,
+  passesThreshold,
+  blendBloom,
+  PRESETS,
+  findPreset,
+  DEFAULT_OPTIONS,
+  type BloomOptions,
+  type BlendMode,
+} from "./logic";
 import { toast } from "sonner";
 
 function boxBlur(data: Uint8ClampedArray, w: number, h: number, r: number) {
@@ -29,27 +38,39 @@ function boxBlur(data: Uint8ClampedArray, w: number, h: number, r: number) {
 export default function ImageBloomTool() {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [fileName, setFileName] = useState("bloom.png");
-  const [threshold, setThreshold] = useState(180);
-  const [intensity, setIntensity] = useState(0.6);
-  const [radius, setRadius] = useState(8);
+  const [opts, setOpts] = useState<BloomOptions>(DEFAULT_OPTIONS);
+  const [format, setFormat] = useState<"image/png" | "image/jpeg" | "image/webp">("image/png");
+  const [quality, setQuality] = useState(0.9);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [delta, setDelta] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const onFile = useCallback((file: File | undefined) => {
     if (!file) return;
-    if (!file.type.startsWith("image/")) { setError("Please choose an image file"); return; }
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose an image file");
+      return;
+    }
     const img = new Image();
-    img.onload = () => { setImage(img); setFileName(file.name.replace(/\.[^.]+$/, "") + "-bloom.png"); setError(null); };
+    img.onload = () => {
+      setImage(img);
+      setFileName(file.name.replace(/\.[^.]+$/, "") + "-bloom.png");
+      setError(null);
+      setDelta(null);
+    };
     img.onerror = () => setError("Could not load image");
     img.src = URL.createObjectURL(file);
   }, []);
 
   const apply = useCallback(() => {
     if (!image || !canvasRef.current) return;
-    const v = validateBloom({ threshold, intensity, radius });
-    if ("error" in v) { setError(v.error); return; }
+    const v = validateBloom(opts);
+    if ("error" in v) {
+      setError(v.error);
+      return;
+    }
     setError(null);
     const canvas = canvasRef.current;
     canvas.width = image.naturalWidth;
@@ -69,58 +90,176 @@ export default function ImageBloomTool() {
       boxBlur(bloom, canvas.width, canvas.height, v.radius);
       boxBlur(bloom, canvas.width, canvas.height, v.radius);
     }
+    let sumDelta = 0;
     for (let i = 0; i < px.length; i += 4) {
-      const out = addBloom([px[i]!, px[i + 1]!, px[i + 2]!, px[i + 3]!], [bloom[i]!, bloom[i + 1]!, bloom[i + 2]!], v.intensity);
+      const out = blendBloom(
+        [px[i]!, px[i + 1]!, px[i + 2]!, px[i + 3]!],
+        [bloom[i]!, bloom[i + 1]!, bloom[i + 2]!],
+        v,
+      );
+      sumDelta += Math.abs(out[0] - px[i]!) + Math.abs(out[1] - px[i + 1]!) + Math.abs(out[2] - px[i + 2]!);
       px[i] = out[0]; px[i + 1] = out[1]; px[i + 2] = out[2];
     }
+    setDelta(sumDelta / (px.length / 4 * 3));
     ctx.putImageData(src, 0, 0);
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(URL.createObjectURL(blob));
-    }, "image/png");
-  }, [image, threshold, intensity, radius, previewUrl]);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(URL.createObjectURL(blob));
+      },
+      format,
+      format === "image/png" ? undefined : quality,
+    );
+  }, [image, opts, format, quality, previewUrl]);
 
   const download = useCallback(() => {
     if (!canvasRef.current) return;
-    canvasRef.current.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = fileName; a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      toast.success("Image downloaded");
-    }, "image/png");
-  }, [fileName]);
+    canvasRef.current.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast.success("Image downloaded");
+      },
+      format,
+      format === "image/png" ? undefined : quality,
+    );
+  }, [fileName, format, quality]);
+
+  const applyPreset = useCallback((id: string) => {
+    const p = findPreset(id);
+    if (p) {
+      setOpts(p.options);
+      toast.success(`Preset: ${p.label}`);
+    }
+  }, []);
 
   return (
     <div className="space-y-4">
       <Card>
         <CardContent className="p-4 space-y-3">
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => onFile(e.target.files?.[0])}
+          />
           <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>Choose image</Button>
         </CardContent>
       </Card>
       {image && (
         <Card>
-          <CardContent className="p-4 space-y-3">
+          <CardContent className="p-4 space-y-4">
             <div>
-              <Label className="text-xs text-muted-foreground">Threshold: {threshold}</Label>
-              <input type="range" min={0} max={255} value={threshold} onChange={(e) => setThreshold(Number(e.target.value))} className="w-full" />
+              <Label className="text-xs text-muted-foreground">Threshold: {opts.threshold}</Label>
+              <input
+                type="range"
+                min={0}
+                max={255}
+                value={opts.threshold}
+                onChange={(e) => setOpts({ ...opts, threshold: Number(e.target.value) })}
+                className="w-full"
+              />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Intensity: {Math.round(intensity * 100)}%</Label>
-              <input type="range" min={0} max={100} value={Math.round(intensity * 100)} onChange={(e) => setIntensity(Number(e.target.value) / 100)} className="w-full" />
+              <Label className="text-xs text-muted-foreground">Intensity: {Math.round(opts.intensity * 100)}%</Label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(opts.intensity * 100)}
+                onChange={(e) => setOpts({ ...opts, intensity: Number(e.target.value) / 100 })}
+                className="w-full"
+              />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Radius: {radius}px</Label>
-              <input type="range" min={0} max={30} value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="w-full" />
+              <Label className="text-xs text-muted-foreground">Radius: {opts.radius}px</Label>
+              <input
+                type="range"
+                min={0}
+                max={30}
+                value={opts.radius}
+                onChange={(e) => setOpts({ ...opts, radius: Number(e.target.value) })}
+                className="w-full"
+              />
             </div>
-            <div className="flex gap-2">
+            <div>
+              <Label className="text-xs text-muted-foreground">Blend mode</Label>
+              <select
+                value={opts.blendMode}
+                onChange={(e) => setOpts({ ...opts, blendMode: e.target.value as BlendMode })}
+                className="h-9 rounded-md border bg-background px-3 text-sm"
+              >
+                <option value="add">Add</option>
+                <option value="screen">Screen</option>
+                <option value="softLight">Soft light</option>
+                <option value="lighten">Lighten</option>
+              </select>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Tone mapping: {Math.round(opts.toneMap * 100)}%</Label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(opts.toneMap * 100)}
+                onChange={(e) => setOpts({ ...opts, toneMap: Number(e.target.value) / 100 })}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Presets</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {PRESETS.map((p) => (
+                  <Button key={p.id} variant="outline" size="sm" onClick={() => applyPreset(p.id)}>
+                    {p.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Format</Label>
+              <select
+                value={format}
+                onChange={(e) => setFormat(e.target.value as typeof format)}
+                className="h-9 rounded-md border bg-background px-3 text-sm"
+              >
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/webp">WebP</option>
+              </select>
+            </div>
+            {format !== "image/png" && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Quality: {Math.round(quality * 100)}%</Label>
+                <input
+                  type="range"
+                  min={10}
+                  max={100}
+                  value={Math.round(quality * 100)}
+                  onChange={(e) => setQuality(Number(e.target.value) / 100)}
+                  className="w-32"
+                />
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
               <Button size="sm" onClick={apply}>Apply bloom</Button>
               <Button variant="outline" size="sm" onClick={download} disabled={!previewUrl}>Download</Button>
-              <DownloadButton getText={() => previewUrl ?? ""} filename={fileName} disabled={!previewUrl} mime="image/png" />
+              <CopyButton
+                getText={() => JSON.stringify(opts)}
+                label="Copy settings JSON"
+                disabled={!previewUrl}
+              />
             </div>
+            {delta !== null && (
+              <p className="text-xs text-muted-foreground">Mean pixel delta: {delta.toFixed(2)}</p>
+            )}
           </CardContent>
         </Card>
       )}

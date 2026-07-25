@@ -1,7 +1,27 @@
 import { describe, it, expect } from "vitest";
-import { makeRng, rainbowHue, hsvToRgb, randomNoise, blendWithNoise, validateRainbowNoiseOptions } from "./logic";
+import {
+  makeRng,
+  rainbowHue,
+  hsvToRgb,
+  baseColor,
+  randomNoise,
+  blendWithNoise,
+  validateRainbowNoiseOptions,
+  isIdentity,
+  batchValidate,
+  preservesAlpha,
+  luma,
+  meanDelta,
+  findPreset,
+  PRESETS,
+  clampByte,
+  type RainbowNoiseOptions,
+} from "./logic";
 
-const OPTS = { strength: 0.5, hueOffset: 0, frequency: 100 };
+const OPTS: RainbowNoiseOptions = {
+  strength: 0.5, hueOffset: 0, frequency: 100, color: "rainbow",
+  pattern: "smooth", duotone: [[0, 0, 0], [255, 255, 255]], seed: 42,
+};
 
 describe("makeRng", () => {
   it("returns deterministic values for the same seed", () => {
@@ -35,6 +55,11 @@ describe("rainbowHue", () => {
     const b = rainbowHue(0, 0, { ...OPTS, hueOffset: 180 });
     expect(Math.abs(b - a)).toBeCloseTo(180, 0);
   });
+  it("striped pattern depends only on y", () => {
+    const h1 = rainbowHue(0, 10, { ...OPTS, pattern: "striped" });
+    const h2 = rainbowHue(100, 10, { ...OPTS, pattern: "striped" });
+    expect(h1).toBe(h2);
+  });
 });
 
 describe("hsvToRgb", () => {
@@ -43,6 +68,24 @@ describe("hsvToRgb", () => {
   });
   it("returns white for s=0, v=1", () => {
     expect(hsvToRgb(0, 0, 1)).toEqual({ r: 255, g: 255, b: 255 });
+  });
+});
+
+describe("baseColor", () => {
+  it("rainbow mode returns hsvToRgb of hue", () => {
+    const c = baseColor(10, 20, OPTS);
+    const h = rainbowHue(10, 20, OPTS);
+    const expected = hsvToRgb(h, 1, 1);
+    expect(c).toEqual(expected);
+  });
+  it("mono mode returns grayscale", () => {
+    const c = baseColor(10, 20, { ...OPTS, color: "mono" });
+    expect(c.r).toBe(c.g);
+    expect(c.g).toBe(c.b);
+  });
+  it("duotone mode interpolates between colors", () => {
+    const c = baseColor(0, 0, { ...OPTS, color: "duotone", duotone: [[10, 20, 30], [200, 100, 50]] });
+    expect(c.r).toBeGreaterThanOrEqual(10);
   });
 });
 
@@ -79,5 +122,48 @@ describe("validateRainbowNoiseOptions", () => {
   });
   it("rejects bad frequency", () => {
     expect(validateRainbowNoiseOptions({ ...OPTS, frequency: 0 })).toHaveProperty("error");
+  });
+  it("rejects bad color", () => {
+    expect(validateRainbowNoiseOptions({ ...OPTS, color: "bad" as never })).toHaveProperty("error");
+  });
+  it("rejects bad pattern", () => {
+    expect(validateRainbowNoiseOptions({ ...OPTS, pattern: "bad" as never })).toHaveProperty("error");
+  });
+  it("rejects bad duotone colors", () => {
+    expect(validateRainbowNoiseOptions({ ...OPTS, duotone: [[300, 0, 0], [0, 0, 0]] })).toHaveProperty("error");
+  });
+});
+
+describe("helpers + presets", () => {
+  it("isIdentity true when strength 0", () => {
+    expect(isIdentity({ ...OPTS, strength: 0 })).toBe(true);
+  });
+  it("isIdentity false for defaults", () => {
+    expect(isIdentity(OPTS)).toBe(false);
+  });
+  it("batchValidate validates each file", () => {
+    const r = batchValidate([{ name: "a.png" }], OPTS);
+    expect("ok" in r[0]!.result).toBe(true);
+  });
+  it("preservesAlpha correct", () => {
+    expect(preservesAlpha("image/png")).toBe(true);
+    expect(preservesAlpha("image/jpeg")).toBe(false);
+  });
+  it("luma of black is 0", () => {
+    expect(luma(0, 0, 0)).toBe(0);
+  });
+  it("meanDelta returns 0 for identical", () => {
+    const a = new Uint8ClampedArray([10, 20, 30, 255]);
+    expect(meanDelta(a, a)).toBe(0);
+  });
+  it("findPreset returns matching", () => {
+    expect(findPreset("vivid")?.options.strength).toBe(0.7);
+  });
+  it("has at least 5 presets", () => {
+    expect(PRESETS.length).toBeGreaterThanOrEqual(5);
+  });
+  it("clampByte rounds and clamps", () => {
+    expect(clampByte(-5)).toBe(0);
+    expect(clampByte(300)).toBe(255);
   });
 });
