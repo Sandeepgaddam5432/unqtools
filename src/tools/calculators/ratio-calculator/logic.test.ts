@@ -1,7 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { gcd, simplifyRatio, solveProportion, ratioToDecimal, formatRatio } from "./logic";
+import {
+  gcd, lcm, simplifyRatio, inverseRatio, scaleRatio, solveProportion,
+  ratioToDecimal, ratioToPercentage, compareRatios, continuedFraction,
+  partToWhole, simplifyBatch, batchToCsv, formatRatio, formatFraction,
+  closestAspect, validateRatio, ASPECT_PRESETS,
+} from "./logic";
 
-describe("gcd", () => {
+describe("gcd + lcm", () => {
   it("computes gcd", () => {
     expect(gcd(12, 18)).toBe(6);
     expect(gcd(7, 13)).toBe(1);
@@ -9,6 +14,10 @@ describe("gcd", () => {
   it("handles 0", () => {
     expect(gcd(0, 5)).toBe(5);
     expect(gcd(0, 0)).toBe(1);
+  });
+  it("computes lcm", () => {
+    expect(lcm(4, 6)).toBe(12);
+    expect(lcm(0, 5)).toBe(0);
   });
 });
 
@@ -27,6 +36,21 @@ describe("simplifyRatio", () => {
   });
   it("errors on non-finite", () => {
     expect(simplifyRatio(NaN, 5)).toHaveProperty("error");
+  });
+  it("simplifies with negatives (gcd is positive)", () => {
+    expect(simplifyRatio(-12, 18)).toEqual({ a: -2, b: 3 });
+  });
+});
+
+describe("inverseRatio + scaleRatio", () => {
+  it("inverts 2:3 → 3:2", () => {
+    expect(inverseRatio(2, 3)).toEqual({ a: 3, b: 2 });
+  });
+  it("scales 2:3 by 4 → 8:12", () => {
+    expect(scaleRatio(2, 3, 4)).toEqual({ a: 8, b: 12 });
+  });
+  it("errors on non-finite factor", () => {
+    expect(scaleRatio(2, 3, NaN)).toHaveProperty("error");
   });
 });
 
@@ -62,7 +86,7 @@ describe("solveProportion", () => {
   });
 });
 
-describe("ratioToDecimal", () => {
+describe("ratioToDecimal + ratioToPercentage", () => {
   it("returns a/b", () => {
     expect(ratioToDecimal(1, 2)).toBeCloseTo(0.5);
     expect(ratioToDecimal(3, 4)).toBeCloseTo(0.75);
@@ -70,11 +94,104 @@ describe("ratioToDecimal", () => {
   it("errors on divide by zero", () => {
     expect(ratioToDecimal(1, 0)).toHaveProperty("error");
   });
+  it("percentage converts 1:2 → 50.00%", () => {
+    expect(ratioToPercentage(1, 2)).toBe("50.00%");
+  });
+  it("percentage errors on zero denominator", () => {
+    expect(ratioToPercentage(1, 0)).toHaveProperty("error");
+  });
 });
 
-describe("formatRatio", () => {
+describe("compareRatios", () => {
+  it("returns -1 when left < right", () => {
+    expect(compareRatios(1, 4, 1, 2)).toBe(-1);
+  });
+  it("returns 1 when left > right", () => {
+    expect(compareRatios(3, 4, 1, 2)).toBe(1);
+  });
+  it("returns 0 when equal", () => {
+    expect(compareRatios(1, 2, 2, 4)).toBe(0);
+  });
+  it("errors on zero denominator", () => {
+    expect(compareRatios(1, 0, 1, 2)).toHaveProperty("error");
+  });
+});
+
+describe("continuedFraction", () => {
+  it("expands 355/113 to a few terms", () => {
+    const cf = continuedFraction(355, 113);
+    if (Array.isArray(cf)) {
+      expect(cf[0]).toBe(3);
+      expect(cf.length).toBeGreaterThan(2);
+    } else throw new Error("err");
+  });
+  it("expands 1/2 to [0; 2]", () => {
+    expect(continuedFraction(1, 2)).toEqual([0, 2]);
+  });
+  it("errors on zero denominator", () => {
+    expect(continuedFraction(1, 0)).toHaveProperty("error");
+  });
+});
+
+describe("partToWhole", () => {
+  it("returns fractions and total", () => {
+    const r = partToWhole(1, 3);
+    if ("error" in r) throw new Error("err");
+    expect(r.total).toBe(4);
+    expect(r.aFraction).toBeCloseTo(0.25);
+    expect(r.bFraction).toBeCloseTo(0.75);
+  });
+  it("errors on zero total", () => {
+    expect(partToWhole(0, 0)).toHaveProperty("error");
+  });
+});
+
+describe("simplifyBatch + batchToCsv", () => {
+  it("simplifies multiple ratios", () => {
+    const r = simplifyBatch([[12, 18], [3, 9]]);
+    expect(r.length).toBe(2);
+    expect(r[0]).toEqual({ a: 2, b: 3 });
+    expect(r[1]).toEqual({ a: 1, b: 3 });
+  });
+  it("batchToCsv emits header + rows", () => {
+    const ratios: [number, number][] = [[12, 18], [3, 9]];
+    const csv = batchToCsv(ratios, simplifyBatch(ratios));
+    expect(csv.split("\n")[0]).toBe("Input,Simplified,Decimal,Percentage");
+    expect(csv).toContain("12:18");
+    expect(csv).toContain("2:3");
+  });
+});
+
+describe("formatRatio + formatFraction", () => {
   it("formats a:b", () => {
     expect(formatRatio(2, 3)).toBe("2:3");
-    expect(formatRatio(1, 4)).toBe("1:4");
+  });
+  it("formats a/b", () => {
+    expect(formatFraction(2, 3)).toBe("2/3");
+  });
+});
+
+describe("closestAspect", () => {
+  it("finds 16:9 for 1920:1080", () => {
+    const a = closestAspect(1920, 1080);
+    expect(a?.label).toContain("16:9");
+  });
+  it("finds 4:3 for 800:600", () => {
+    const a = closestAspect(800, 600);
+    expect(a?.label).toContain("4:3");
+  });
+  it("returns null for zero denominator", () => {
+    expect(closestAspect(1, 0)).toBeNull();
+  });
+});
+
+describe("validateRatio", () => {
+  it("accepts valid", () => { expect(validateRatio(2, 3)).toEqual({ ok: true }); });
+  it("rejects NaN", () => { expect(validateRatio(NaN, 3)).toHaveProperty("error"); });
+});
+
+describe("constants", () => {
+  it("ASPECT_PRESETS has 7 entries", () => {
+    expect(ASPECT_PRESETS.length).toBe(7);
   });
 });

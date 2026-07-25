@@ -1,44 +1,74 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorBanner } from "../../_shared";
-import { generateXpsXml, summarizeResult, type ConvertResult, SOURCE_FORMAT, TARGET_FORMAT, SOURCE_EXT, TARGET_EXT } from "./logic";
+import {
+  parseXps, paginateText, validateOptions, summarizeResult, buildTitlePage,
+  formatMetadata, compressionRatio, quickStats,
+  type ConvertOptions, type ConvertResult,
+  SOURCE_FORMAT, TARGET_FORMAT, SOURCE_EXT, TARGET_EXT,
+} from "./logic";
 
 export default function XpsToPdfConverter() {
   const [file, setFile] = useState<File | null>(null);
+  const [options, setOptions] = useState<ConvertOptions>({
+    pageSize: "a4", margin: 50, fontSize: 12, fontFamily: "helvetica",
+    includePageNumbers: true, includeTitlePage: true,
+  });
   const [result, setResult] = useState<ConvertResult | null>(null);
-  const [outputBlob, setOutputBlob] = useState<Blob | null>(null);
+  const [outputUrl, setOutputUrl] = useState<string | null>(null);
+  const [stats, setStats] = useState<{ chars: number; words: number; lines: number; pages: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const convert = useCallback(async () => {
     if (!file) { setError("Pick a file first."); return; }
-    setBusy(true);
-    setError(null);
+    const v = validateOptions(options);
+    if ("error" in v) { setError(v.error); return; }
+    setBusy(true); setError(null);
     try {
-      const text = await file.text();
-      const xml = generateXpsXml(text.slice(0, 50000), file.name, "Unknown");
-      const blob = new Blob([xml], { type: "application/vnd.ms-xpsdocument" });
-      setOutputBlob(blob);
+      const xml = await file.text();
+      const xps = parseXps(xml);
+      const fullText = xps.pages.map((p) => p.lines.join("\n")).join("\n\n");
+      const pages = paginateText(fullText, options);
+      const { PDFDocument, StandardFonts } = await import("pdf-lib");
+      const pdf = await PDFDocument.create();
+      pdf.setTitle(xps.title); pdf.setAuthor(xps.author); pdf.setCreator("UnQTools");
+      const fontKey = options.fontFamily === "times-roman" ? StandardFonts.TimesRoman : options.fontFamily === "courier" ? StandardFonts.Courier : StandardFonts.Helvetica;
+      const font = await pdf.embedFont(fontKey);
+      const dims = { w: 595, h: 842 };
+      if (options.includeTitlePage) {
+        const tp = pdf.addPage([dims.w, dims.h]);
+        const titleLines = buildTitlePage(xps.title, xps.author, SOURCE_FORMAT, TARGET_FORMAT).split("\n");
+        titleLines.forEach((ln, i) => tp.drawText(ln, { x: options.margin ?? 50, y: dims.h - (options.margin ?? 50) - 20 - i * 18, size: i === 2 ? 24 : 12, font }));
+      }
+      for (let i = 0; i < pages.length; i++) {
+        const pg = pdf.addPage([dims.w, dims.h]);
+        pg.drawText(pages[i]!, { x: options.margin ?? 50, y: dims.h - (options.margin ?? 50) - (options.fontSize ?? 12), size: options.fontSize ?? 12, font, lineHeight: (options.fontSize ?? 12) * 1.4 });
+        if (options.includePageNumbers) pg.drawText(`${i + 1}`, { x: dims.w / 2 - 5, y: 20, size: 10, font });
+      }
+      const bytes = await pdf.save();
+      const blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
+      if (outputUrl) URL.revokeObjectURL(outputUrl);
+      setOutputUrl(URL.createObjectURL(blob));
       setResult({
-        success: true,
-        inputSize: file.size,
-        outputSize: blob.size,
-        warnings: ["Simplified XPS to PDF conversion (true binary conversion requires WASM library)"],
-        log: [`Read ${file.size} bytes from PDF`, `Generated XPS wrapper`],
-        pageCount: 1,
+        success: true, inputSize: file.size, outputSize: blob.size,
+        warnings: xps.warnings,
+        log: [`Parsed XPS XML (${xps.pages.length} pages)`, `Extracted ${fullText.length} chars`, `Generated PDF (${blob.size} bytes)`],
+        pageCount: pages.length + (options.includeTitlePage ? 1 : 0),
       });
+      setStats(quickStats(fullText, pages.length));
     } catch (e) {
       setError(`Conversion failed: ${(e as Error).message}`);
-    } finally {
-      setBusy(false);
-    }
-  }, [file]);
+    } finally { setBusy(false); }
+  }, [file, options, outputUrl]);
 
-  const downloadUrl = outputBlob ? URL.createObjectURL(outputBlob) : null;
+  const baseName = (file?.name ?? `converted${TARGET_EXT}`).replace(new RegExp(`${SOURCE_EXT}$`), TARGET_EXT);
 
   return (
     <div className="space-y-4">
@@ -47,27 +77,54 @@ export default function XpsToPdfConverter() {
           <div className="flex flex-wrap gap-2 items-center">
             <input type="file" accept={SOURCE_EXT} id="file-input" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="hidden" />
             <Button size="sm" onClick={() => document.getElementById("file-input")?.click()}>Pick {SOURCE_FORMAT} file</Button>
-            <Button size="sm" variant="ghost" onClick={() => { setFile(null); setResult(null); setOutputBlob(null); setError(null); }}>Clear</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setFile(null); setResult(null); setOutputUrl(null); setStats(null); setError(null); }}>Clear</Button>
             {file && <Badge variant="outline">{file.name} ({file.size} B)</Badge>}
           </div>
-          <Button size="sm" onClick={convert} disabled={!file || busy}>{busy ? "Converting..." : `Convert ${SOURCE_FORMAT} to ${TARGET_FORMAT}`}</Button>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Output page size</Label>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={options.pageSize} onChange={(e) => setOptions({ ...options, pageSize: e.target.value as "a4" | "letter" | "legal" })}>
+                <option value="a4">A4</option><option value="letter">Letter</option><option value="legal">Legal</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Margin (pt)</Label><Input type="number" value={options.margin} onChange={(e) => setOptions({ ...options, margin: Number(e.target.value) })} /></div>
+            <div className="flex flex-col gap-1.5"><Label className="text-xs text-muted-foreground">Font size (pt)</Label><Input type="number" value={options.fontSize} onChange={(e) => setOptions({ ...options, fontSize: Number(e.target.value) })} /></div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Font family</Label>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={options.fontFamily} onChange={(e) => setOptions({ ...options, fontFamily: e.target.value as "helvetica" | "times-roman" | "courier" })}>
+                <option value="helvetica">Helvetica</option><option value="times-roman">Times Roman</option><option value="courier">Courier</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <label className="flex items-center gap-2"><input type="checkbox" checked={options.includePageNumbers} onChange={(e) => setOptions({ ...options, includePageNumbers: e.target.checked })} /><span>Page numbers</span></label>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={options.includeTitlePage} onChange={(e) => setOptions({ ...options, includeTitlePage: e.target.checked })} /><span>Title page</span></label>
+          </div>
+          <Button size="sm" onClick={convert} disabled={!file || busy}>{busy ? "Converting…" : `Convert ${SOURCE_FORMAT} → ${TARGET_FORMAT}`}</Button>
         </CardContent>
       </Card>
+
       {error && <ErrorBanner message={error} />}
+
       {result && !error && (
-        <>
-          <Card><CardContent className="p-4"><pre className="text-xs"><code>{summarizeResult(result)}</code></pre></CardContent></Card>
-          {downloadUrl && (
-            <Card><CardContent className="p-4 flex items-center justify-between flex-wrap gap-2">
-              <p className="text-sm">{TARGET_FORMAT} ready ({result.outputSize} B)</p>
-              <a href={downloadUrl} download={(file?.name ?? `converted${TARGET_EXT}`).replace(new RegExp(`${SOURCE_EXT}$`), TARGET_EXT)}>
-                <Button size="sm">Download {TARGET_FORMAT}</Button>
-              </a>
-            </CardContent></Card>
-          )}
-        </>
+        <Card>
+          <CardHeader className="pb-3"><div className="flex items-center justify-between"><CardTitle className="text-sm">Result</CardTitle>{outputUrl && <a href={outputUrl} download={baseName}><Button size="sm">Download {TARGET_FORMAT}</Button></a>}</div></CardHeader>
+          <CardContent className="p-4 pt-0 space-y-3">
+            <pre className="text-xs"><code>{summarizeResult(result)}</code></pre>
+            {stats && (
+              <div className="flex flex-wrap gap-2 text-xs">
+                <Badge variant="outline">{stats.chars} chars</Badge>
+                <Badge variant="outline">{stats.words} words</Badge>
+                <Badge variant="outline">{stats.pages} pages</Badge>
+                <Badge variant="secondary">ratio {compressionRatio(result.inputSize, result.outputSize)}</Badge>
+              </div>
+            )}
+            <details className="text-xs"><summary className="cursor-pointer">PDF metadata</summary><pre className="mt-2 p-2 bg-muted/40 rounded">{formatMetadata(options)}</pre></details>
+          </CardContent>
+        </Card>
       )}
-      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> all conversion runs locally. No file leaves your browser. Note: true binary XPS to PDF conversion requires a WASM library — this tool provides a simplified text-based wrapper.</p></CardContent></Card>
+
+      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> all conversion runs locally. No file leaves your browser. {SOURCE_FORMAT} parsing is best-effort.</p></CardContent></Card>
     </div>
   );
 }
