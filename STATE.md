@@ -620,7 +620,7 @@ shipped 5 Net-Sec + 3 Text + 2 Calculators. v17.45 shipped
 |---|---|---:|---:|---:|---:|
 | 1 | pdf | 60 | 60 | 100 | 40 |
 | 2 | image | 57 | 57 | 100 | 43 |
-| 3 | audio-video | 20 | 20 | 100 | 80 |
+| 3 | audio-video | 25 | 25 | 100 | 75 |
 | 4 | developer | 144 | 144 | 500 | 356 |
 | 5 | seo | 100 | 100 | 100 | 0 ✅ |
 | 6 | calculators | 31 | 31 | 100 | 69 |

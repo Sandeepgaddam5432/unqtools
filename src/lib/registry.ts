@@ -803,6 +803,56 @@ import { manifest as hashtagDensityChecker } from "@/tools/social/hashtag-densit
 import { manifest as socialMediaInfluencerCalc } from "@/tools/social/social-media-influencer-calc/manifest";
 import { manifest as socialMediaAbTester } from "@/tools/social/social-media-ab-tester/manifest";
 import { manifest as socialMediaStoryTemplate } from "@/tools/social/social-media-story-template/manifest";
+import { manifest as imageClaheTool } from "@/tools/image/image-clahe-tool/manifest";
+import { manifest as imageStarryNight } from "@/tools/image/image-starry-night/manifest";
+import { manifest as imageDotPattern } from "@/tools/image/image-dot-pattern/manifest";
+import { manifest as imageScreenTone } from "@/tools/image/image-screen-tone/manifest";
+import { manifest as imageCrosshatch } from "@/tools/image/image-crosshatch/manifest";
+import { manifest as imagePlasmaEffect } from "@/tools/image/image-plasma-effect/manifest";
+import { manifest as imageFractalTool } from "@/tools/image/image-fractal-tool/manifest";
+import { manifest as imageRainbowNoise } from "@/tools/image/image-rainbow-noise/manifest";
+import { manifest as imageOldPhoto } from "@/tools/image/image-old-photo/manifest";
+import { manifest as imageTvStatic } from "@/tools/image/image-tv-static/manifest";
+import { manifest as textBinaryToOctal } from "@/tools/text/text-binary-to-octal/manifest";
+import { manifest as textOctalToBinary } from "@/tools/text/text-octal-to-binary/manifest";
+import { manifest as textHexToText } from "@/tools/text/text-hex-to-text/manifest";
+import { manifest as textTextToHex } from "@/tools/text/text-text-to-hex/manifest";
+import { manifest as textBase32Encoder } from "@/tools/text/text-base32-encoder/manifest";
+import { manifest as textBase58Encoder } from "@/tools/text/text-base58-encoder/manifest";
+import { manifest as textBase85Encoder } from "@/tools/text/text-base85-encoder/manifest";
+import { manifest as textUrlDecode } from "@/tools/text/text-url-decode/manifest";
+import { manifest as textHtmlDecode } from "@/tools/text/text-html-decode/manifest";
+import { manifest as textXmlEscape } from "@/tools/text/text-xml-escape/manifest";
+import { manifest as concentrationCalc } from "@/tools/calculators/concentration-calc/manifest";
+import { manifest as molarityCalc } from "@/tools/calculators/molarity-calc/manifest";
+import { manifest as dilutionCalc } from "@/tools/calculators/dilution-calc/manifest";
+import { manifest as enzymeActivityCalc } from "@/tools/calculators/enzyme-activity-calc/manifest";
+import { manifest as molecularWeightCalc } from "@/tools/calculators/molecular-weight-calc/manifest";
+import { manifest as subnetCidrMerger } from "@/tools/network-security/subnet-cidr-merger/manifest";
+import { manifest as ipv4RangeSplitter } from "@/tools/network-security/ipv4-range-splitter/manifest";
+import { manifest as portRangeScannerRef } from "@/tools/network-security/port-range-scanner-ref/manifest";
+import { manifest as wifiPasswordGen } from "@/tools/network-security/wifi-password-gen/manifest";
+import { manifest as pemKeyParser } from "@/tools/network-security/pem-key-parser/manifest";
+import { manifest as audioFormatReference } from "@/tools/audio-video/audio-format-reference/manifest";
+import { manifest as videoFormatReference } from "@/tools/audio-video/video-format-reference/manifest";
+import { manifest as codecComparison } from "@/tools/audio-video/codec-comparison/manifest";
+import { manifest as bitrateCalc } from "@/tools/audio-video/bitrate-calc/manifest";
+import { manifest as sampleRateConverter } from "@/tools/audio-video/sample-rate-converter/manifest";
+import { manifest as flashcardImporter } from "@/tools/education/flashcard-importer/manifest";
+import { manifest as lessonPlanGenerator } from "@/tools/education/lesson-plan-generator/manifest";
+import { manifest as gradeCalc } from "@/tools/education/grade-calc/manifest";
+import { manifest as gpaCalculator } from "@/tools/education/gpa-calculator/manifest";
+import { manifest as rubricMaker } from "@/tools/education/rubric-maker/manifest";
+import { manifest as socialMediaContestRunner } from "@/tools/social/social-media-contest-runner/manifest";
+import { manifest as socialMediaGiveaway } from "@/tools/social/social-media-giveaway/manifest";
+import { manifest as socialContentCalendar } from "@/tools/social/social-content-calendar/manifest";
+import { manifest as socialEngagementPredictor } from "@/tools/social/social-engagement-predictor/manifest";
+import { manifest as socialHashtagGenerator } from "@/tools/social/social-hashtag-generator/manifest";
+import { manifest as employeeShiftTrader } from "@/tools/business/employee-shift-trader/manifest";
+import { manifest as inventoryForecast } from "@/tools/business/inventory-forecast/manifest";
+import { manifest as markupCalcAdv } from "@/tools/business/markup-calc-adv/manifest";
+import { manifest as breakEvenAnalyzer } from "@/tools/business/break-even-analyzer/manifest";
+import { manifest as cashFlowProjector } from "@/tools/business/cash-flow-projector/manifest";
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -1566,6 +1616,56 @@ export const TOOLS: readonly ToolManifest[] = [
   socialMediaInfluencerCalc,
   socialMediaAbTester,
   socialMediaStoryTemplate,
+  imageClaheTool,
+  imageStarryNight,
+  imageDotPattern,
+  imageScreenTone,
+  imageCrosshatch,
+  imagePlasmaEffect,
+  imageFractalTool,
+  imageRainbowNoise,
+  imageOldPhoto,
+  imageTvStatic,
+  textBinaryToOctal,
+  textOctalToBinary,
+  textHexToText,
+  textTextToHex,
+  textBase32Encoder,
+  textBase58Encoder,
+  textBase85Encoder,
+  textUrlDecode,
+  textHtmlDecode,
+  textXmlEscape,
+  concentrationCalc,
+  molarityCalc,
+  dilutionCalc,
+  enzymeActivityCalc,
+  molecularWeightCalc,
+  subnetCidrMerger,
+  ipv4RangeSplitter,
+  portRangeScannerRef,
+  wifiPasswordGen,
+  pemKeyParser,
+  audioFormatReference,
+  videoFormatReference,
+  codecComparison,
+  bitrateCalc,
+  sampleRateConverter,
+  flashcardImporter,
+  lessonPlanGenerator,
+  gradeCalc,
+  gpaCalculator,
+  rubricMaker,
+  socialMediaContestRunner,
+  socialMediaGiveaway,
+  socialContentCalendar,
+  socialEngagementPredictor,
+  socialHashtagGenerator,
+  employeeShiftTrader,
+  inventoryForecast,
+  markupCalcAdv,
+  breakEvenAnalyzer,
+  cashFlowProjector,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

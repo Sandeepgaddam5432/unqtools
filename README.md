@@ -29,7 +29,7 @@ v17.49 shipped 20 tools (10 Image + 5 Text + 5 Calc).
 |---|------------------------|-----:|-------:|----:|
 | 1 | PDF & Document         |   60 |    100 |  40 |
 | 2 | Image & Graphics       |   57 |    100 |  43 |
-| 3 | Audio & Video          |   20 |    100 |  80 |
+| 3 | Audio & Video          |   25 |    100 |  75 |
 | 4 | Developer & Code       |  144 |    500 | 356 |
 | 5 | SEO & Marketing        |  100 |    100 |   0 ✅ |
 | 6 | Calculators            |   31 |    100 |  69 |
