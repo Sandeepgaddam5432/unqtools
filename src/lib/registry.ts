@@ -763,6 +763,46 @@ import { manifest as sslHttpsChecker } from "@/tools/seo/ssl-https-checker/manif
 import { manifest as openGraphSocialCardGenerator } from "@/tools/seo/open-graph-social-card-generator/manifest";
 import { manifest as twitterCardPreviewTool } from "@/tools/seo/twitter-card-preview-tool/manifest";
 
+import { manifest as imageLensFlare } from "@/tools/image/image-lens-flare/manifest";
+import { manifest as imageBloomTool } from "@/tools/image/image-bloom-tool/manifest";
+import { manifest as imageAsciiBw } from "@/tools/image/image-ascii-bw/manifest";
+import { manifest as imageCharcoalTool } from "@/tools/image/image-charcoal-tool/manifest";
+import { manifest as imageOilPaint } from "@/tools/image/image-oil-paint/manifest";
+import { manifest as imageWatercolor } from "@/tools/image/image-watercolor/manifest";
+import { manifest as imagePencilSketch } from "@/tools/image/image-pencil-sketch/manifest";
+import { manifest as imageNeonGlow } from "@/tools/image/image-neon-glow/manifest";
+import { manifest as imageDuotoneMaker } from "@/tools/image/image-duotone-maker/manifest";
+import { manifest as imageThermalCam } from "@/tools/image/image-thermal-cam/manifest";
+import { manifest as textReverseWords } from "@/tools/text/text-reverse-words/manifest";
+import { manifest as textScrambler } from "@/tools/text/text-scrambler/manifest";
+import { manifest as textMirrorText } from "@/tools/text/text-mirror-text/manifest";
+import { manifest as textRainbowText } from "@/tools/text/text-rainbow-text/manifest";
+import { manifest as textTypewriterEffect } from "@/tools/text/text-typewriter-effect/manifest";
+import { manifest as fractionCalculator } from "@/tools/calculators/fraction-calculator/manifest";
+import { manifest as ratioCalculator } from "@/tools/calculators/ratio-calculator/manifest";
+import { manifest as probabilityCalc } from "@/tools/calculators/probability-calc/manifest";
+import { manifest as oddsCalculator } from "@/tools/calculators/odds-calculator/manifest";
+import { manifest as scaleCalculator } from "@/tools/calculators/scale-calculator/manifest";
+import { manifest as subnetMaskValidator } from "@/tools/network-security/subnet-mask-validator/manifest";
+import { manifest as tlsVersionChecker } from "@/tools/network-security/tls-version-checker/manifest";
+import { manifest as certSigningRequestGen } from "@/tools/network-security/cert-signing-request-gen/manifest";
+import { manifest as passwordPolicyChecker } from "@/tools/network-security/password-policy-checker/manifest";
+import { manifest as hashIdentifier } from "@/tools/network-security/hash-identifier/manifest";
+import { manifest as meetingRoomBooker } from "@/tools/business/meeting-room-booker/manifest";
+import { manifest as businessCardMaker } from "@/tools/business/business-card-maker/manifest";
+import { manifest as inventoryTracker } from "@/tools/business/inventory-tracker/manifest";
+import { manifest as projectBudgetCalc } from "@/tools/business/project-budget-calc/manifest";
+import { manifest as contractDateCalc } from "@/tools/business/contract-date-calc/manifest";
+import { manifest as vocabularyTrainer } from "@/tools/education/vocabulary-trainer/manifest";
+import { manifest as quizMaker } from "@/tools/education/quiz-maker/manifest";
+import { manifest as mathDrillGenerator } from "@/tools/education/math-drill-generator/manifest";
+import { manifest as periodicTableLookup } from "@/tools/education/periodic-table-lookup/manifest";
+import { manifest as grammarCheckerBasic } from "@/tools/education/grammar-checker-basic/manifest";
+import { manifest as socialMediaPostScheduler } from "@/tools/social/social-media-post-scheduler/manifest";
+import { manifest as hashtagDensityChecker } from "@/tools/social/hashtag-density-checker/manifest";
+import { manifest as socialMediaInfluencerCalc } from "@/tools/social/social-media-influencer-calc/manifest";
+import { manifest as socialMediaAbTester } from "@/tools/social/social-media-ab-tester/manifest";
+import { manifest as socialMediaStoryTemplate } from "@/tools/social/social-media-story-template/manifest";
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -1486,6 +1526,46 @@ export const TOOLS: readonly ToolManifest[] = [
   sslHttpsChecker,
   openGraphSocialCardGenerator,
   twitterCardPreviewTool,
+  imageLensFlare,
+  imageBloomTool,
+  imageAsciiBw,
+  imageCharcoalTool,
+  imageOilPaint,
+  imageWatercolor,
+  imagePencilSketch,
+  imageNeonGlow,
+  imageDuotoneMaker,
+  imageThermalCam,
+  textReverseWords,
+  textScrambler,
+  textMirrorText,
+  textRainbowText,
+  textTypewriterEffect,
+  fractionCalculator,
+  ratioCalculator,
+  probabilityCalc,
+  oddsCalculator,
+  scaleCalculator,
+  subnetMaskValidator,
+  tlsVersionChecker,
+  certSigningRequestGen,
+  passwordPolicyChecker,
+  hashIdentifier,
+  meetingRoomBooker,
+  businessCardMaker,
+  inventoryTracker,
+  projectBudgetCalc,
+  contractDateCalc,
+  vocabularyTrainer,
+  quizMaker,
+  mathDrillGenerator,
+  periodicTableLookup,
+  grammarCheckerBasic,
+  socialMediaPostScheduler,
+  hashtagDensityChecker,
+  socialMediaInfluencerCalc,
+  socialMediaAbTester,
+  socialMediaStoryTemplate,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
