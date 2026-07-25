@@ -9,7 +9,7 @@ tool-collection sites.
 
 ## Status
 
-**v17.45 — 665 tools live across all 13 categories** (2026-07-24).
+**v17.46 — 685 tools live across all 13 categories** (2026-07-24).
 
 Recent waves: v17.0 → v17.37 shipped 144 Developer tools from blueprints
 (waves 1-16, zero skips). v17.38 registered 10 dangling tools + shipped
@@ -18,12 +18,13 @@ v17.40 added 6 new Calculators + 2 SEO upgrades. v17.41 fixed build
 errors (4 duplicate tools removed, 2 missing lucide-react exports).
 v17.42 shipped 14 new File tools → File 100/100 ✅. v17.43 shipped
 2 SEO + 3 Text tools → SEO 100/100 ✅. v17.44 shipped 10 tools across 5 Net-Sec + 3 Text + 2 Calc.
-v17.45 shipped 20 tools (10 Text + 5 Calculators + 5 Net-Sec).
+v17.45 shipped 20 tools (10 Text + 5 Calc + 5 Net-Sec).
+v17.46 shipped 20 Image tools (biggest visible gap → 7→27).
 
 | # | Category               | Live | Target | Gap |
 |---|------------------------|-----:|-------:|----:|
 | 1 | PDF & Document         |   60 |    100 |  40 |
-| 2 | Image & Graphics       |    7 |    100 |  93 |
+| 2 | Image & Graphics       |   27 |    100 |  73 |
 | 3 | Audio & Video          |   20 |    100 |  80 |
 | 4 | Developer & Code       |  144 |    500 | 356 |
 | 5 | SEO & Marketing        |  100 |    100 |   0 ✅ |
@@ -35,10 +36,10 @@ v17.45 shipped 20 tools (10 Text + 5 Calculators + 5 Net-Sec).
 | 11 | Education & Learning   |   20 |    100 |  80 |
 | 12 | Social Media           |   25 |    100 |  75 |
 | 13 | AI & Smart Tools       |  100 |    100 |   0 ✅ |
-| **Total** |                    | **665** | **1,700** | **1,035** |
+| **Total** |                    | **685** | **1,700** | **1,015** |
 
-40,092 unit tests passing. Three categories complete: AI (100/100),
-File (100/100), and SEO (100/100). Biggest visible gaps: Image (93),
+40,341 unit tests passing. Three categories complete: AI (100/100),
+File (100/100), and SEO (100/100). Biggest visible gaps: Image (73),
 Calculators (84), Network-Security (80), Text (72).
 
 See [`STATE.md`](./STATE.md) for the live resume point and
@@ -93,7 +94,7 @@ npm run dev      # http://localhost:3000
 ## CI gates (must pass on `ci.yml`)
 
 1. **Lint** — 0 ESLint errors
-2. **Unit tests** — Vitest (40,092 tests, includes per-tool logic tests)
+2. **Unit tests** — Vitest (40,341 tests, includes per-tool logic tests)
 3. **Build** — `next build` static export
 4. **Smoke E2E** — every route serves 200, no React errors
 5. **Tool E2E** — every registered tool works end-to-end

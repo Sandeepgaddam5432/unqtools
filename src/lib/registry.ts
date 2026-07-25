@@ -35,6 +35,26 @@ import { manifest as colorPicker } from "@/tools/image/color-picker/manifest";
 import { manifest as imageCompressor } from "@/tools/image/image-compressor/manifest";
 import { manifest as photoMosaicGenerator } from "@/tools/image/photo-mosaic-generator/manifest";
 import { manifest as pixelArtMaker } from "@/tools/image/pixel-art-maker/manifest";
+import { manifest as imageResizer } from "@/tools/image/image-resizer/manifest";
+import { manifest as imageCropper } from "@/tools/image/image-cropper/manifest";
+import { manifest as imageRotator } from "@/tools/image/image-rotator/manifest";
+import { manifest as imageFlipper } from "@/tools/image/image-flipper/manifest";
+import { manifest as imageToBase64 } from "@/tools/image/image-to-base64/manifest";
+import { manifest as base64ToImage } from "@/tools/image/base64-to-image/manifest";
+import { manifest as imageWatermarkAdder } from "@/tools/image/image-watermark-adder/manifest";
+import { manifest as imageColorInverter } from "@/tools/image/image-color-inverter/manifest";
+import { manifest as imageGrayscaleConverter } from "@/tools/image/image-grayscale-converter/manifest";
+import { manifest as imageSepiaFilter } from "@/tools/image/image-sepia-filter/manifest";
+import { manifest as imageBlurTool } from "@/tools/image/image-blur-tool/manifest";
+import { manifest as imageSharpener } from "@/tools/image/image-sharpener/manifest";
+import { manifest as imageBrightnessAdjuster } from "@/tools/image/image-brightness-adjuster/manifest";
+import { manifest as imageContrastAdjuster } from "@/tools/image/image-contrast-adjuster/manifest";
+import { manifest as imageSaturationAdjuster } from "@/tools/image/image-saturation-adjuster/manifest";
+import { manifest as imageHueRotator } from "@/tools/image/image-hue-rotator/manifest";
+import { manifest as imageThumbnailMaker } from "@/tools/image/image-thumbnail-maker/manifest";
+import { manifest as imageBgRemoverSimple } from "@/tools/image/image-bg-remover-simple/manifest";
+import { manifest as imageCollageMaker } from "@/tools/image/image-collage-maker/manifest";
+import { manifest as imageColorExtractor } from "@/tools/image/image-color-extractor/manifest";
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
 import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
 import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
@@ -702,6 +722,26 @@ export const TOOLS: readonly ToolManifest[] = [
   imageCompressor,
   photoMosaicGenerator,
   pixelArtMaker,
+  imageResizer,
+  imageCropper,
+  imageRotator,
+  imageFlipper,
+  imageToBase64,
+  base64ToImage,
+  imageWatermarkAdder,
+  imageColorInverter,
+  imageGrayscaleConverter,
+  imageSepiaFilter,
+  imageBlurTool,
+  imageSharpener,
+  imageBrightnessAdjuster,
+  imageContrastAdjuster,
+  imageSaturationAdjuster,
+  imageHueRotator,
+  imageThumbnailMaker,
+  imageBgRemoverSimple,
+  imageCollageMaker,
+  imageColorExtractor,
   bcryptHashGenerator,
   cspEvaluator,
   dataUrlConverter,

@@ -183,7 +183,7 @@ const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
 const stats = [
   { label: "Tools", value: toolCount, suffix: "" },
   { label: "Categories", value: allCategoryCards.length, suffix: "" },
-  { label: "Tests", value: "40.1K", suffix: "" },
+  { label: "Tests", value: "40.3K", suffix: "" },
   { label: "Privacy", value: 100, suffix: "%" },
 ];
 
