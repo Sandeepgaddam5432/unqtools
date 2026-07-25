@@ -361,11 +361,6 @@ import { manifest as brandMentionMonitor } from "@/tools/seo/brand-mention-monit
 import { manifest as internationalSeoPlanner } from "@/tools/seo/international-seo-planner/manifest";
 import { manifest as localeKeywordResearcher } from "@/tools/seo/locale-keyword-researcher/manifest";
 import { manifest as affiliateLinkCloaker } from "@/tools/seo/affiliate-link-cloaker/manifest";
-  timesheetCalc,
-  meetingDurationCalc,
-  payslipGenerator,
-  shiftScheduler,
-  workOrderGenerator,
 import { manifest as affiliateCommissionCalculator } from "@/tools/seo/affiliate-commission-calculator/manifest";
 import { manifest as productReviewSchemaGenerator } from "@/tools/seo/product-review-schema-generator/manifest";
 import { manifest as seoReportGenerator } from "@/tools/seo/seo-report-generator/manifest";
@@ -1155,6 +1150,11 @@ export const TOOLS: readonly ToolManifest[] = [
   physicsFormulaReference,
   studyNotesOrganizer,
   presentationSlideOutliner,
+  timesheetCalc,
+  meetingDurationCalc,
+  payslipGenerator,
+  shiftScheduler,
+  workOrderGenerator,
   socialMediaPostGenerator,
   hashtagGenerator,
   captionGenerator,
