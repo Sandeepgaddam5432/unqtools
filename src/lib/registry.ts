@@ -18,6 +18,11 @@ import { manifest as tipCalculator } from "@/tools/calculators/tip-calculator/ma
 import { manifest as unitConverterLength } from "@/tools/calculators/unit-converter-length/manifest";
 import { manifest as compoundInterestCalculator } from "@/tools/calculators/compound-interest-calculator/manifest";
 import { manifest as gstCalculator } from "@/tools/calculators/gst-calculator/manifest";
+import { manifest as percentageChangeCalc } from "@/tools/calculators/percentage-change-calc/manifest";
+import { manifest as loanPayoffCalc } from "@/tools/calculators/loan-payoff-calc/manifest";
+import { manifest as discountRateCalc } from "@/tools/calculators/discount-rate-calc/manifest";
+import { manifest as markupMarginCalc } from "@/tools/calculators/markup-margin-calc/manifest";
+import { manifest as paymentPlanCalc } from "@/tools/calculators/payment-plan-calc/manifest";
 import { manifest as scientificCalculator } from "@/tools/calculators/scientific-calculator/manifest";
 import { manifest as weightUnitConverter } from "@/tools/calculators/weight-unit-converter/manifest";
 import { manifest as temperatureConverter } from "@/tools/calculators/temperature-converter/manifest";
@@ -55,6 +60,16 @@ import { manifest as imageThumbnailMaker } from "@/tools/image/image-thumbnail-m
 import { manifest as imageBgRemoverSimple } from "@/tools/image/image-bg-remover-simple/manifest";
 import { manifest as imageCollageMaker } from "@/tools/image/image-collage-maker/manifest";
 import { manifest as imageColorExtractor } from "@/tools/image/image-color-extractor/manifest";
+import { manifest as imageEdgeDetector } from "@/tools/image/image-edge-detector/manifest";
+import { manifest as imageNoiseReducer } from "@/tools/image/image-noise-reducer/manifest";
+import { manifest as imageVignetteTool } from "@/tools/image/image-vignette-tool/manifest";
+import { manifest as imageGradientMaker } from "@/tools/image/image-gradient-maker/manifest";
+import { manifest as imageBorderAdder } from "@/tools/image/image-border-adder/manifest";
+import { manifest as imageRoundCorners } from "@/tools/image/image-round-corners/manifest";
+import { manifest as imagePixelateTool } from "@/tools/image/image-pixelate-tool/manifest";
+import { manifest as imagePosterizeTool } from "@/tools/image/image-posterize-tool/manifest";
+import { manifest as imageThresholdTool } from "@/tools/image/image-threshold-tool/manifest";
+import { manifest as imageChannelMixer } from "@/tools/image/image-channel-mixer/manifest";
 import { manifest as bcryptHashGenerator } from "@/tools/network-security/bcrypt-hash-generator/manifest";
 import { manifest as cspEvaluator } from "@/tools/network-security/csp-evaluator/manifest";
 import { manifest as dataUrlConverter } from "@/tools/network-security/data-url-converter/manifest";
@@ -133,6 +148,11 @@ import { manifest as textRepeater } from "@/tools/text/text-repeater/manifest";
 import { manifest as textSorter } from "@/tools/text/text-sorter/manifest";
 import { manifest as morseCodeTranslator } from "@/tools/text/morse-code-translator/manifest";
 import { manifest as loremIpsumGenerator } from "@/tools/text/lorem-ipsum-generator/manifest";
+import { manifest as textToBinary } from "@/tools/text/text-to-binary/manifest";
+import { manifest as binaryToText } from "@/tools/text/binary-to-text/manifest";
+import { manifest as textCaseAdvancer } from "@/tools/text/text-case-advancer/manifest";
+import { manifest as textStripper } from "@/tools/text/text-stripper/manifest";
+import { manifest as textWordsExtractor } from "@/tools/text/text-words-extractor/manifest";
 import { manifest as textFinderReplacer } from "@/tools/text/text-finder-replacer/manifest";
 import { manifest as textStatistics } from "@/tools/text/text-statistics/manifest";
 import { manifest as textDeduplicator } from "@/tools/text/text-deduplicator/manifest";
@@ -742,6 +762,16 @@ export const TOOLS: readonly ToolManifest[] = [
   imageBgRemoverSimple,
   imageCollageMaker,
   imageColorExtractor,
+  imageEdgeDetector,
+  imageNoiseReducer,
+  imageVignetteTool,
+  imageGradientMaker,
+  imageBorderAdder,
+  imageRoundCorners,
+  imagePixelateTool,
+  imagePosterizeTool,
+  imageThresholdTool,
+  imageChannelMixer,
   bcryptHashGenerator,
   cspEvaluator,
   dataUrlConverter,
