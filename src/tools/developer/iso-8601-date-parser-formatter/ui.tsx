@@ -455,13 +455,6 @@ export default function Iso8601ParserFormatter() {
   );
 }
 
-function pad2(n: number): string {
-  return String(Math.abs(n)).padStart(2, "0");
-}
-function pad3(n: number): string {
-  return String(Math.abs(n)).padStart(3, "0");
-}
-
 function CompCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded border bg-background px-3 py-2">
