@@ -102,6 +102,19 @@ are the single source of truth for what a tool does.
       (privacy note, "honesty clause" disclaimers, network-feature flags)
 - [ ] Test coverage includes the advanced features, not just happy path
 - [ ] Commit message lists any deferred features with reasons
+- [ ] **logic.ts is 150+ lines** (not 30-60 line stubs)
+- [ ] **logic.test.ts has 15+ tests** (not 5-10 superficial tests)
+- [ ] **ui.tsx is 120+ lines** (not 60-80 line stubs)
+- [ ] **If no matching blueprint exists**, implement 10+ features based on
+      the tool's description in manifest.ts + similar tools in the category
+- [ ] **All 10+ extras are genuinely useful** (not padding like "dark mode"
+      or "copy button" — those are baseline expectations)
+
+**STRICT ENFORCEMENT (owner directive 2026-07-25):**
+Any tool with logic.ts < 120 lines is considered NON-COMPLIANT and must
+be enhanced before the session ends. Subagent-generated tools that are
+thin (30-80 lines) MUST be enhanced to 150+ lines with full features
+before commit. This rule overrides any time pressure — quality > speed.
 
 **Existing tools grandfathered but tracked:**
 Tools built before 2026-07-14 (v6.0–v8.0 Batch 2) were shipped at ~40-50%

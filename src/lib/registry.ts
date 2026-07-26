@@ -853,6 +853,46 @@ import { manifest as inventoryForecast } from "@/tools/business/inventory-foreca
 import { manifest as markupCalcAdv } from "@/tools/business/markup-calc-adv/manifest";
 import { manifest as breakEvenAnalyzer } from "@/tools/business/break-even-analyzer/manifest";
 import { manifest as cashFlowProjector } from "@/tools/business/cash-flow-projector/manifest";
+import { manifest as imageHistogramViewer } from "@/tools/image/image-histogram-viewer/manifest";
+import { manifest as imageAnnotationTool } from "@/tools/image/image-annotation-tool/manifest";
+import { manifest as imageFrameMaker } from "@/tools/image/image-frame-maker/manifest";
+import { manifest as imageTextCaption } from "@/tools/image/image-text-caption/manifest";
+import { manifest as imageMemeGenerator } from "@/tools/image/image-meme-generator/manifest";
+import { manifest as imagePassportPhoto } from "@/tools/image/image-passport-photo/manifest";
+import { manifest as imageProfilePicCropper } from "@/tools/image/image-profile-pic-cropper/manifest";
+import { manifest as imagePlaceholderGen } from "@/tools/image/image-placeholder-gen/manifest";
+import { manifest as imageSolidColorGen } from "@/tools/image/image-solid-color-gen/manifest";
+import { manifest as imageUpscaler } from "@/tools/image/image-upscaler/manifest";
+import { manifest as textAcronymExpander } from "@/tools/text/text-acronym-expander/manifest";
+import { manifest as textOxfordCommaFixer } from "@/tools/text/text-oxford-comma-fixer/manifest";
+import { manifest as textSentenceSplitter } from "@/tools/text/text-sentence-splitter/manifest";
+import { manifest as textMorseEncoder } from "@/tools/text/text-morse-encoder/manifest";
+import { manifest as textPigLatinDecoder } from "@/tools/text/text-pig-latin-decoder/manifest";
+import { manifest as dataUnitConverter } from "@/tools/calculators/data-unit-converter/manifest";
+import { manifest as percentageOfCalc } from "@/tools/calculators/percentage-of-calc/manifest";
+import { manifest as mortgageInsuranceCalc } from "@/tools/calculators/mortgage-insurance-calc/manifest";
+import { manifest as stampDutyCalc } from "@/tools/calculators/stamp-duty-calc/manifest";
+import { manifest as capitalGainsCalc } from "@/tools/calculators/capital-gains-calc/manifest";
+import { manifest as audioReverbReference } from "@/tools/audio-video/audio-reverb-reference/manifest";
+import { manifest as audioNoiseFloorRef } from "@/tools/audio-video/audio-noise-floor-ref/manifest";
+import { manifest as videoFpsReference } from "@/tools/audio-video/video-fps-reference/manifest";
+import { manifest as videoBitrateGuide } from "@/tools/audio-video/video-bitrate-guide/manifest";
+import { manifest as audioLufsReference } from "@/tools/audio-video/audio-lufs-reference/manifest";
+import { manifest as flashcardDeckOrganizer } from "@/tools/education/flashcard-deck-organizer/manifest";
+import { manifest as classScheduleMaker } from "@/tools/education/class-schedule-maker/manifest";
+import { manifest as wordSearchMaker } from "@/tools/education/word-search-maker/manifest";
+import { manifest as crosswordClueGen } from "@/tools/education/crossword-clue-gen/manifest";
+import { manifest as assignmentRubricMaker } from "@/tools/education/assignment-rubric-maker/manifest";
+import { manifest as socialMediaBioOptimizer } from "@/tools/social/social-media-bio-optimizer/manifest";
+import { manifest as socialThreadGenerator } from "@/tools/social/social-thread-generator/manifest";
+import { manifest as socialPollCreator } from "@/tools/social/social-poll-creator/manifest";
+import { manifest as socialContentIdeas } from "@/tools/social/social-content-ideas/manifest";
+import { manifest as socialEngagementTracker2 } from "@/tools/social/social-engagement-tracker-2/manifest";
+import { manifest as invoiceTemplateGen } from "@/tools/business/invoice-template-gen/manifest";
+import { manifest as purchaseOrderGen } from "@/tools/business/purchase-order-gen/manifest";
+import { manifest as taxCalculatorPro } from "@/tools/business/tax-calculator-pro/manifest";
+import { manifest as depreciationCalc } from "@/tools/business/depreciation-calc/manifest";
+import { manifest as inventoryReorderCalc } from "@/tools/business/inventory-reorder-calc/manifest";
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -1666,6 +1706,46 @@ export const TOOLS: readonly ToolManifest[] = [
   markupCalcAdv,
   breakEvenAnalyzer,
   cashFlowProjector,
+  imageHistogramViewer,
+  imageAnnotationTool,
+  imageFrameMaker,
+  imageTextCaption,
+  imageMemeGenerator,
+  imagePassportPhoto,
+  imageProfilePicCropper,
+  imagePlaceholderGen,
+  imageSolidColorGen,
+  imageUpscaler,
+  textAcronymExpander,
+  textOxfordCommaFixer,
+  textSentenceSplitter,
+  textMorseEncoder,
+  textPigLatinDecoder,
+  dataUnitConverter,
+  percentageOfCalc,
+  mortgageInsuranceCalc,
+  stampDutyCalc,
+  capitalGainsCalc,
+  audioReverbReference,
+  audioNoiseFloorRef,
+  videoFpsReference,
+  videoBitrateGuide,
+  audioLufsReference,
+  flashcardDeckOrganizer,
+  classScheduleMaker,
+  wordSearchMaker,
+  crosswordClueGen,
+  assignmentRubricMaker,
+  socialMediaBioOptimizer,
+  socialThreadGenerator,
+  socialPollCreator,
+  socialContentIdeas,
+  socialEngagementTracker2,
+  invoiceTemplateGen,
+  purchaseOrderGen,
+  taxCalculatorPro,
+  depreciationCalc,
+  inventoryReorderCalc,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
