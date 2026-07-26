@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner, DownloadButton } from "../../_shared";
 import {
-  applyFrame,
+  computeGeometry,
   FRAME_PRESETS,
   BORDER_COLORS,
   validateOptions,
@@ -33,7 +33,7 @@ export default function ImageFrameMakerUI() {
     const ctx = canvas?.getContext("2d");
     if (!ctx || !imageRef.current) return;
     const img = imageRef.current;
-    applyFrame(ctx, img, img.naturalWidth, img.naturalHeight, opts);
+    const geom = computeGeometry(img.naturalWidth, img.naturalHeight, opts);
   }, [opts]);
 
   useEffect(() => {

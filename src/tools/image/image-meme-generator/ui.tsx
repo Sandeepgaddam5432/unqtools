@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner } from "../../_shared";
-import { calculateMemeLayout, generateMemeText, MEME_TEMPLATES } from "./logic";
+import { computeMemeLayout, formatMemeText, TEMPLATES, type MemeOptions } from "./logic";
 import { toast } from "sonner";
 
 export default function ImageMemeGenerator() {
@@ -32,8 +32,11 @@ export default function ImageMemeGenerator() {
 
   const generateMeme = useCallback(() => {
     if (!image || !canvasRef.current) return;
-    const layout = calculateMemeLayout({ width: image.naturalWidth, height: image.naturalHeight, topText, bottomText, fontSize, outlineWidth });
-    if ("error" in layout) { setError(layout.error); return; }
+    const opts: MemeOptions = {
+      topText, bottomText, fontSize, fontFamily: "Impact",
+      color: "#ffffff", outlineColor: "#000000", outlineWidth, uppercase: true,
+    };
+    const layout = computeMemeLayout(image.naturalWidth, image.naturalHeight, opts);
     setError(null);
     const canvas = canvasRef.current;
     canvas.width = image.naturalWidth;
@@ -41,29 +44,21 @@ export default function ImageMemeGenerator() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(image, 0, 0);
-    ctx.font = `bold ${fontSize}px Impact, Arial Black, sans-serif`;
+    ctx.font = `bold ${layout.topFontSize}px Impact, Arial Black, sans-serif`;
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.lineWidth = outlineWidth;
-
-    const topLines = generateMemeText(topText, image.naturalWidth, fontSize);
-    topLines.forEach((line, i) => {
-      const y = layout.topText.y + i * fontSize * 1.1;
-      ctx.strokeText(line, image.naturalWidth / 2, y);
-      ctx.fillText(line, image.naturalWidth / 2, y);
+    layout.topLines.forEach((line, i) => {
+      const pos = layout.topPositions[i];
+      if (pos) { ctx.strokeText(line, pos.x, pos.y); ctx.fillText(line, pos.x, pos.y); }
     });
-
     if (bottomText) {
-      const bottomLines = generateMemeText(bottomText, image.naturalWidth, fontSize);
-      const startY = layout.bottomText!.y - (bottomLines.length - 1) * fontSize * 1.1;
-      bottomLines.forEach((line, i) => {
-        const y = startY + i * fontSize * 1.1;
-        ctx.strokeText(line, image.naturalWidth / 2, y);
-        ctx.fillText(line, image.naturalWidth / 2, y);
+      layout.bottomLines.forEach((line, i) => {
+        const pos = layout.bottomPositions[i];
+        if (pos) { ctx.strokeText(line, pos.x, pos.y); ctx.fillText(line, pos.x, pos.y); }
       });
     }
-
     canvas.toBlob((blob) => {
       if (!blob) return;
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -111,7 +106,7 @@ export default function ImageMemeGenerator() {
       <canvas ref={canvasRef} className="hidden" />
       {previewUrl && <Card><CardContent className="p-4"><img src={previewUrl} alt="Meme preview" className="max-w-full rounded-md border" /></CardContent></Card>}
       {error && <ErrorBanner message={error} />}
-      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong>Privacy:</strong> all meme generation runs locally. No upload.</p></CardContent></Card>
+      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> all meme generation runs locally. No upload.</p></CardContent></Card>
     </div>
   );
 }

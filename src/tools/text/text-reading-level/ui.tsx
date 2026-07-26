@@ -35,7 +35,7 @@ export default function TextReadingLevel() {
           </div>
           <div className="flex gap-2">
             <Button size="sm" onClick={run}>Analyze</Button>
-            <Button size="sm" variant="ghost" onClick={() => setText("The multifaceted institutional apparatus necessitates comprehensive methodological considerations. Interdisciplinary frameworks require sophisticated analytical paradigms."))}>Hard sample</Button>
+            <Button size="sm" variant="ghost" onClick={() => setText("The multifaceted institutional apparatus necessitates comprehensive methodological considerations. Interdisciplinary frameworks require sophisticated analytical paradigms.")}>Hard sample</Button>
             <Button size="sm" variant="ghost" onClick={() => setText("The cat sat on the mat. The dog ran fast. It was a good day. The sun was bright. We had fun.")}>Easy sample</Button>
             <Button size="sm" variant="ghost" onClick={() => { setText(""); setResult(null); setError(null); }}>Clear</Button>
           </div>
