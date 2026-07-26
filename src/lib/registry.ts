@@ -1053,6 +1053,107 @@ import { manifest as arrowFunctionConverter } from "@/tools/developer/arrow-func
 import { manifest as cssAspectRatioHelper } from "@/tools/developer/css-aspect-ratio-helper/manifest";
 import { manifest as crc32Calculator } from "@/tools/developer/crc32-calculator/manifest";
 
+import { manifest as redirectGenerator } from "@/tools/seo/redirect-generator/manifest";
+import { manifest as serpFeatureDetector } from "@/tools/seo/serp-feature-detector/manifest";
+import { manifest as anchorTextOptimizerAnalyzer } from "@/tools/seo/anchor-text-optimizer-analyzer/manifest";
+import { manifest as canonicalTagChecker } from "@/tools/seo/canonical-tag-checker/manifest";
+import { manifest as contentWordCountTool } from "@/tools/seo/content-word-count-tool/manifest";
+import { manifest as imageSaturationHueEditor } from "@/tools/image/image-saturation-hue-editor/manifest";
+import { manifest as colorBlindnessSimulator } from "@/tools/image/color-blindness-simulator/manifest";
+import { manifest as aspectRatioCropPresets } from "@/tools/image/aspect-ratio-crop-presets/manifest";
+import { manifest as gifResizer } from "@/tools/image/gif-resizer/manifest";
+import { manifest as noiseTextureGenerator } from "@/tools/image/noise-texture-generator/manifest";
+import { manifest as bulkImageConverter } from "@/tools/image/bulk-image-converter/manifest";
+import { manifest as memeGenerator } from "@/tools/image/meme-generator/manifest";
+import { manifest as base64ToImageDecoder } from "@/tools/image/base64-to-image-decoder/manifest";
+import { manifest as imageSharpen } from "@/tools/image/image-sharpen/manifest";
+import { manifest as hexRgbHslConverter } from "@/tools/image/hex-rgb-hsl-converter/manifest";
+import { manifest as imageBackgroundChanger } from "@/tools/image/image-background-changer/manifest";
+import { manifest as roundCornersTool } from "@/tools/image/round-corners-tool/manifest";
+import { manifest as svgOptimizerMinifier } from "@/tools/image/svg-optimizer-minifier/manifest";
+import { manifest as photoGridMaker } from "@/tools/image/photo-grid-maker/manifest";
+import { manifest as complementaryColorFinder } from "@/tools/image/complementary-color-finder/manifest";
+import { manifest as imageSpriteSheetGenerator } from "@/tools/image/image-sprite-sheet-generator/manifest";
+import { manifest as imageBrightnessContrastEditor } from "@/tools/image/image-brightness-contrast-editor/manifest";
+import { manifest as imageTextCaptionAdder } from "@/tools/image/image-text-caption-adder/manifest";
+import { manifest as imagePlaceholderGenerator } from "@/tools/image/image-placeholder-generator/manifest";
+import { manifest as bulkImageResizer } from "@/tools/image/bulk-image-resizer/manifest";
+import { manifest as imageExifStripper } from "@/tools/image/image-exif-stripper/manifest";
+import { manifest as imageColorPicker } from "@/tools/image/image-color-picker/manifest";
+import { manifest as bulkWatermark } from "@/tools/image/bulk-watermark/manifest";
+import { manifest as screenshotBeautifier } from "@/tools/image/screenshot-beautifier/manifest";
+import { manifest as appIconGenerator } from "@/tools/image/app-icon-generator/manifest";
+import { manifest as imageDrawingMarkup } from "@/tools/image/image-drawing-markup/manifest";
+import { manifest as gifMaker } from "@/tools/image/gif-maker/manifest";
+import { manifest as imageToSvgVectorizer } from "@/tools/image/image-to-svg-vectorizer/manifest";
+import { manifest as spriteSheetSplitter } from "@/tools/image/sprite-sheet-splitter/manifest";
+import { manifest as browserFrameMockup } from "@/tools/image/browser-frame-mockup/manifest";
+import { manifest as qrCodeScanner } from "@/tools/image/qr-code-scanner/manifest";
+import { manifest as gradientImageGenerator } from "@/tools/image/gradient-image-generator/manifest";
+import { manifest as svgToPngConverter } from "@/tools/image/svg-to-png-converter/manifest";
+import { manifest as imageFilterEffects } from "@/tools/image/image-filter-effects/manifest";
+import { manifest as blobShapeGenerator } from "@/tools/image/blob-shape-generator/manifest";
+import { manifest as colorPaletteExtractor } from "@/tools/image/color-palette-extractor/manifest";
+import { manifest as webpAnimationMaker } from "@/tools/image/webp-animation-maker/manifest";
+import { manifest as pngToIcoConverter } from "@/tools/image/png-to-ico-converter/manifest";
+import { manifest as imageExifViewer } from "@/tools/image/image-exif-viewer/manifest";
+import { manifest as imageSteganographyDecoder } from "@/tools/image/image-steganography-decoder/manifest";
+import { manifest as solidColorImageGenerator } from "@/tools/image/solid-color-image-generator/manifest";
+import { manifest as imageFormatConverter } from "@/tools/image/image-format-converter/manifest";
+import { manifest as waveDividerSvgGenerator } from "@/tools/image/wave-divider-svg-generator/manifest";
+import { manifest as faviconGenerator } from "@/tools/image/favicon-generator/manifest";
+import { manifest as apngMaker } from "@/tools/image/apng-maker/manifest";
+import { manifest as qrCodeGeneratorImage } from "@/tools/image/qr-code-generator-image/manifest";
+import { manifest as photoVintageRetroFilter } from "@/tools/image/photo-vintage-retro-filter/manifest";
+import { manifest as deviceMockupGenerator } from "@/tools/image/device-mockup-generator/manifest";
+import { manifest as imageRotatorFlipper } from "@/tools/image/image-rotator-flipper/manifest";
+import { manifest as gifOptimizer } from "@/tools/image/gif-optimizer/manifest";
+import { manifest as duotoneImageMaker } from "@/tools/image/duotone-image-maker/manifest";
+import { manifest as profilePictureCropper } from "@/tools/image/profile-picture-cropper/manifest";
+import { manifest as colorShadesTintsGenerator } from "@/tools/image/color-shades-tints-generator/manifest";
+import { manifest as patternGeneratorSvgCss } from "@/tools/image/pattern-generator-svg-css/manifest";
+import { manifest as gifSplitter } from "@/tools/image/gif-splitter/manifest";
+import { manifest as passportIdPhotoMaker } from "@/tools/image/passport-id-photo-maker/manifest";
+import { manifest as dummyImageGenerator } from "@/tools/image/dummy-image-generator/manifest";
+import { manifest as imageSteganographyHide } from "@/tools/image/image-steganography-hide/manifest";
+import { manifest as bulkImageCompressor } from "@/tools/image/bulk-image-compressor/manifest";
+import { manifest as colorMixerBlender } from "@/tools/image/color-mixer-blender/manifest";
+import { manifest as imageToBase64Encoder } from "@/tools/image/image-to-base64-encoder/manifest";
+import { manifest as colorContrastChecker } from "@/tools/image/color-contrast-checker/manifest";
+import { manifest as virustotalStyleScanner } from "@/tools/network-security/virustotal-style-scanner/manifest";
+import { manifest as contentReadabilitySeoAnalyzer } from "@/tools/network-security/content-readability-seo-analyzer/manifest";
+import { manifest as keywordDensityAnalyzerSeo } from "@/tools/network-security/keyword-density-analyzer-seo/manifest";
+import { manifest as apiAuthenticationHeaderBuilder } from "@/tools/network-security/api-authentication-header-builder/manifest";
+import { manifest as cryptographicKeyGenerator } from "@/tools/network-security/cryptographic-key-generator/manifest";
+import { manifest as dmarcRecordAnalyzer } from "@/tools/network-security/dmarc-record-analyzer/manifest";
+import { manifest as corsTest } from "@/tools/network-security/cors-test/manifest";
+import { manifest as dnssecValidator } from "@/tools/network-security/dnssec-validator/manifest";
+import { manifest as tracerouteOnline } from "@/tools/network-security/traceroute-online/manifest";
+import { manifest as pingOnline } from "@/tools/network-security/ping-online/manifest";
+import { manifest as hstsPreloadChecker } from "@/tools/network-security/hsts-preload-checker/manifest";
+import { manifest as sslTlsCertificateValidator } from "@/tools/network-security/ssl-tls-certificate-validator/manifest";
+import { manifest as httpSecurityHeadersTest } from "@/tools/network-security/http-security-headers-test/manifest";
+import { manifest as sslTlsCipherSuiteAnalyzer } from "@/tools/network-security/ssl-tls-cipher-suite-analyzer/manifest";
+import { manifest as whoisDomainChecker } from "@/tools/network-security/whois-domain-checker/manifest";
+import { manifest as termsConditionsGenerator } from "@/tools/network-security/terms-conditions-generator/manifest";
+import { manifest as cookieConsentBannerGenerator } from "@/tools/network-security/cookie-consent-banner-generator/manifest";
+import { manifest as torNodeChecker } from "@/tools/network-security/tor-node-checker/manifest";
+import { manifest as dnsLeakTest } from "@/tools/network-security/dns-leak-test/manifest";
+import { manifest as spfRecordChecker } from "@/tools/network-security/spf-record-checker/manifest";
+import { manifest as portScan } from "@/tools/network-security/port-scan/manifest";
+import { manifest as subdomainFinder } from "@/tools/network-security/subdomain-finder/manifest";
+import { manifest as disclaimerGenerator } from "@/tools/network-security/disclaimer-generator/manifest";
+import { manifest as ipGeolocation } from "@/tools/network-security/ip-geolocation/manifest";
+import { manifest as proxyVpnDetection } from "@/tools/network-security/proxy-vpn-detection/manifest";
+import { manifest as webrtcLeakTest } from "@/tools/network-security/webrtc-leak-test/manifest";
+import { manifest as dkimRecordValidator } from "@/tools/network-security/dkim-record-validator/manifest";
+import { manifest as robotsTxtParserValidator } from "@/tools/network-security/robots-txt-parser-validator/manifest";
+import { manifest as myIpAddress } from "@/tools/network-security/my-ip-address/manifest";
+import { manifest as reverseIpLookup } from "@/tools/network-security/reverse-ip-lookup/manifest";
+import { manifest as urlSandboxLinkScanner } from "@/tools/network-security/url-sandbox-link-scanner/manifest";
+import { manifest as privacyPolicyGenerator } from "@/tools/network-security/privacy-policy-generator/manifest";
+import { manifest as breachPwnedEmailChecker } from "@/tools/network-security/breach-pwned-email-checker/manifest";
+
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -2066,6 +2167,107 @@ export const TOOLS: readonly ToolManifest[] = [
   arrowFunctionConverter,
   cssAspectRatioHelper,
   crc32Calculator,
+
+  redirectGenerator,
+  serpFeatureDetector,
+  anchorTextOptimizerAnalyzer,
+  canonicalTagChecker,
+  contentWordCountTool,
+  imageSaturationHueEditor,
+  colorBlindnessSimulator,
+  aspectRatioCropPresets,
+  gifResizer,
+  noiseTextureGenerator,
+  bulkImageConverter,
+  memeGenerator,
+  base64ToImageDecoder,
+  imageSharpen,
+  hexRgbHslConverter,
+  imageBackgroundChanger,
+  roundCornersTool,
+  svgOptimizerMinifier,
+  photoGridMaker,
+  complementaryColorFinder,
+  imageSpriteSheetGenerator,
+  imageBrightnessContrastEditor,
+  imageTextCaptionAdder,
+  imagePlaceholderGenerator,
+  bulkImageResizer,
+  imageExifStripper,
+  imageColorPicker,
+  bulkWatermark,
+  screenshotBeautifier,
+  appIconGenerator,
+  imageDrawingMarkup,
+  gifMaker,
+  imageToSvgVectorizer,
+  spriteSheetSplitter,
+  browserFrameMockup,
+  qrCodeScanner,
+  gradientImageGenerator,
+  svgToPngConverter,
+  imageFilterEffects,
+  blobShapeGenerator,
+  colorPaletteExtractor,
+  webpAnimationMaker,
+  pngToIcoConverter,
+  imageExifViewer,
+  imageSteganographyDecoder,
+  solidColorImageGenerator,
+  imageFormatConverter,
+  waveDividerSvgGenerator,
+  faviconGenerator,
+  apngMaker,
+  qrCodeGeneratorImage,
+  photoVintageRetroFilter,
+  deviceMockupGenerator,
+  imageRotatorFlipper,
+  gifOptimizer,
+  duotoneImageMaker,
+  profilePictureCropper,
+  colorShadesTintsGenerator,
+  patternGeneratorSvgCss,
+  gifSplitter,
+  passportIdPhotoMaker,
+  dummyImageGenerator,
+  imageSteganographyHide,
+  bulkImageCompressor,
+  colorMixerBlender,
+  imageToBase64Encoder,
+  colorContrastChecker,
+  virustotalStyleScanner,
+  contentReadabilitySeoAnalyzer,
+  keywordDensityAnalyzerSeo,
+  apiAuthenticationHeaderBuilder,
+  cryptographicKeyGenerator,
+  dmarcRecordAnalyzer,
+  corsTest,
+  dnssecValidator,
+  tracerouteOnline,
+  pingOnline,
+  hstsPreloadChecker,
+  sslTlsCertificateValidator,
+  httpSecurityHeadersTest,
+  sslTlsCipherSuiteAnalyzer,
+  whoisDomainChecker,
+  termsConditionsGenerator,
+  cookieConsentBannerGenerator,
+  torNodeChecker,
+  dnsLeakTest,
+  spfRecordChecker,
+  portScan,
+  subdomainFinder,
+  disclaimerGenerator,
+  ipGeolocation,
+  proxyVpnDetection,
+  webrtcLeakTest,
+  dkimRecordValidator,
+  robotsTxtParserValidator,
+  myIpAddress,
+  reverseIpLookup,
+  urlSandboxLinkScanner,
+  privacyPolicyGenerator,
+  breachPwnedEmailChecker,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
