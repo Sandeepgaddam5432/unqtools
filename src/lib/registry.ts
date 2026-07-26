@@ -893,6 +893,56 @@ import { manifest as purchaseOrderGen } from "@/tools/business/purchase-order-ge
 import { manifest as taxCalculatorPro } from "@/tools/business/tax-calculator-pro/manifest";
 import { manifest as depreciationCalc } from "@/tools/business/depreciation-calc/manifest";
 import { manifest as inventoryReorderCalc } from "@/tools/business/inventory-reorder-calc/manifest";
+import { manifest as imageHalftoneGenerator } from "@/tools/image/image-halftone-generator/manifest";
+import { manifest as imageCartoonizer } from "@/tools/image/image-cartoonizer/manifest";
+import { manifest as imageTransparentPngMaker } from "@/tools/image/image-transparent-png-maker/manifest";
+import { manifest as imageDpiChanger } from "@/tools/image/image-dpi-changer/manifest";
+import { manifest as imagePrintSizeCalc } from "@/tools/image/image-print-size-calc/manifest";
+import { manifest as imageTilingPattern } from "@/tools/image/image-tiling-pattern/manifest";
+import { manifest as imagePolaroidMaker } from "@/tools/image/image-polaroid-maker/manifest";
+import { manifest as imageInstagramGrid } from "@/tools/image/image-instagram-grid/manifest";
+import { manifest as imageGifMaker } from "@/tools/image/image-gif-maker/manifest";
+import { manifest as imageDiffCompare } from "@/tools/image/image-diff-compare/manifest";
+import { manifest as textAcronymGenerator } from "@/tools/text/text-acronym-generator/manifest";
+import { manifest as textHeadlineAnalyzer } from "@/tools/text/text-headline-analyzer/manifest";
+import { manifest as textHiddenCharsDetector } from "@/tools/text/text-hidden-chars-detector/manifest";
+import { manifest as textLetterCounter } from "@/tools/text/text-letter-counter/manifest";
+import { manifest as textPalindromeChecker } from "@/tools/text/text-palindrome-checker/manifest";
+import { manifest as textSyllableCounter } from "@/tools/text/text-syllable-counter/manifest";
+import { manifest as textReducer } from "@/tools/text/text-reducer/manifest";
+import { manifest as textAntonymFinder } from "@/tools/text/text-antonym-finder/manifest";
+import { manifest as textClicheFinder } from "@/tools/text/text-cliche-finder/manifest";
+import { manifest as textReadingLevel } from "@/tools/text/text-reading-level/manifest";
+import { manifest as binaryCalculator } from "@/tools/calculators/binary-calculator/manifest";
+import { manifest as hexadecimalCalculator } from "@/tools/calculators/hexadecimal-calculator/manifest";
+import { manifest as fibonacciGenerator } from "@/tools/calculators/fibonacci-generator/manifest";
+import { manifest as standardDeviationCalc } from "@/tools/calculators/standard-deviation-calc/manifest";
+import { manifest as scientificNotationConverter } from "@/tools/calculators/scientific-notation-converter/manifest";
+import { manifest as audioConverterRef } from "@/tools/audio-video/audio-converter-ref/manifest";
+import { manifest as videoCompressionGuide } from "@/tools/audio-video/video-compression-guide/manifest";
+import { manifest as audioTrimmerRef } from "@/tools/audio-video/audio-trimmer-ref/manifest";
+import { manifest as videoMergerRef } from "@/tools/audio-video/video-merger-ref/manifest";
+import { manifest as audioEqualizerRef } from "@/tools/audio-video/audio-equalizer-ref/manifest";
+import { manifest as batesNumberingTool } from "@/tools/pdf/bates-numbering-tool/manifest";
+import { manifest as pdfDeskewTool } from "@/tools/pdf/pdf-deskew-tool/manifest";
+import { manifest as pdfCombinePages } from "@/tools/pdf/pdf-combine-pages/manifest";
+import { manifest as pdfCropToContent } from "@/tools/pdf/pdf-crop-to-content/manifest";
+import { manifest as pdfScanOptimizer } from "@/tools/pdf/pdf-scan-optimizer/manifest";
+import { manifest as burnRateCalc } from "@/tools/business/burn-rate-calc/manifest";
+import { manifest as churnRateCalc } from "@/tools/business/churn-rate-calc/manifest";
+import { manifest as annuityCalculator } from "@/tools/business/annuity-calculator/manifest";
+import { manifest as bondYieldCalc } from "@/tools/business/bond-yield-calc/manifest";
+import { manifest as checklistCreator } from "@/tools/business/checklist-creator/manifest";
+import { manifest as anagramSolver } from "@/tools/education/anagram-solver/manifest";
+import { manifest as brailleTranslator } from "@/tools/education/braille-translator/manifest";
+import { manifest as chemicalEquationBalancer } from "@/tools/education/chemical-equation-balancer/manifest";
+import { manifest as bibliographyGenerator } from "@/tools/education/bibliography-generator/manifest";
+import { manifest as binaryDecimalHexConverter } from "@/tools/education/binary-decimal-hex-converter/manifest";
+import { manifest as argon2ParamCalculator } from "@/tools/network-security/argon2-param-calculator/manifest";
+import { manifest as rsaEncryptionTool } from "@/tools/network-security/rsa-encryption-tool/manifest";
+import { manifest as xssSanitizer } from "@/tools/network-security/xss-sanitizer/manifest";
+import { manifest as sslExpiryTracker } from "@/tools/network-security/ssl-expiry-tracker/manifest";
+import { manifest as nslookupReference } from "@/tools/network-security/nslookup-reference/manifest";
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -1746,6 +1796,56 @@ export const TOOLS: readonly ToolManifest[] = [
   taxCalculatorPro,
   depreciationCalc,
   inventoryReorderCalc,
+  imageHalftoneGenerator,
+  imageCartoonizer,
+  imageTransparentPngMaker,
+  imageDpiChanger,
+  imagePrintSizeCalc,
+  imageTilingPattern,
+  imagePolaroidMaker,
+  imageInstagramGrid,
+  imageGifMaker,
+  imageDiffCompare,
+  textAcronymGenerator,
+  textHeadlineAnalyzer,
+  textHiddenCharsDetector,
+  textLetterCounter,
+  textPalindromeChecker,
+  textSyllableCounter,
+  textReducer,
+  textAntonymFinder,
+  textClicheFinder,
+  textReadingLevel,
+  binaryCalculator,
+  hexadecimalCalculator,
+  fibonacciGenerator,
+  standardDeviationCalc,
+  scientificNotationConverter,
+  audioConverterRef,
+  videoCompressionGuide,
+  audioTrimmerRef,
+  videoMergerRef,
+  audioEqualizerRef,
+  batesNumberingTool,
+  pdfDeskewTool,
+  pdfCombinePages,
+  pdfCropToContent,
+  pdfScanOptimizer,
+  burnRateCalc,
+  churnRateCalc,
+  annuityCalculator,
+  bondYieldCalc,
+  checklistCreator,
+  anagramSolver,
+  brailleTranslator,
+  chemicalEquationBalancer,
+  bibliographyGenerator,
+  binaryDecimalHexConverter,
+  argon2ParamCalculator,
+  rsaEncryptionTool,
+  xssSanitizer,
+  sslExpiryTracker,
+  nslookupReference,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
