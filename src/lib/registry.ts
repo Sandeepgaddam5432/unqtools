@@ -943,6 +943,56 @@ import { manifest as rsaEncryptionTool } from "@/tools/network-security/rsa-encr
 import { manifest as xssSanitizer } from "@/tools/network-security/xss-sanitizer/manifest";
 import { manifest as sslExpiryTracker } from "@/tools/network-security/ssl-expiry-tracker/manifest";
 import { manifest as nslookupReference } from "@/tools/network-security/nslookup-reference/manifest";
+import { manifest as imageColorContrastChecker } from "@/tools/image/image-color-contrast-checker/manifest";
+import { manifest as imageColorMixer } from "@/tools/image/image-color-mixer/manifest";
+import { manifest as imageFaviconGenerator } from "@/tools/image/image-favicon-generator/manifest";
+import { manifest as imageAppIconGenerator } from "@/tools/image/image-app-icon-generator/manifest";
+import { manifest as imageGifOptimizer } from "@/tools/image/image-gif-optimizer/manifest";
+import { manifest as imageGifSplitter } from "@/tools/image/image-gif-splitter/manifest";
+import { manifest as imageDimensionsInspector } from "@/tools/image/image-dimensions-inspector/manifest";
+import { manifest as imageNoiseTextureGen } from "@/tools/image/image-noise-texture-gen/manifest";
+import { manifest as imagePhotoGrid } from "@/tools/image/image-photo-grid/manifest";
+import { manifest as imageVintageFilter } from "@/tools/image/image-vintage-filter/manifest";
+import { manifest as toneGenerator } from "@/tools/audio-video/tone-generator/manifest";
+import { manifest as noiseGenerator } from "@/tools/audio-video/noise-generator/manifest";
+import { manifest as metronome } from "@/tools/audio-video/metronome/manifest";
+import { manifest as bpmDetector } from "@/tools/audio-video/bpm-detector/manifest";
+import { manifest as subtitleEditor } from "@/tools/audio-video/subtitle-editor/manifest";
+import { manifest as videoAspectRatioChanger } from "@/tools/audio-video/video-aspect-ratio-changer/manifest";
+import { manifest as videoLoopMaker } from "@/tools/audio-video/video-loop-maker/manifest";
+import { manifest as slowMotionMaker } from "@/tools/audio-video/slow-motion-maker/manifest";
+import { manifest as timeLapseMaker } from "@/tools/audio-video/time-lapse-maker/manifest";
+import { manifest as audiogramMaker } from "@/tools/audio-video/audiogram-maker/manifest";
+import { manifest as textActiveVoiceSuggester } from "@/tools/text/text-active-voice-suggester/manifest";
+import { manifest as textDefinitionLookup } from "@/tools/text/text-definition-lookup/manifest";
+import { manifest as textBibliographyCitation } from "@/tools/text/text-bibliography-citation/manifest";
+import { manifest as textAbstractGenerator } from "@/tools/text/text-abstract-generator/manifest";
+import { manifest as textReadingTimeEstimator } from "@/tools/text/text-reading-time-estimator/manifest";
+import { manifest as textWordCloudData } from "@/tools/text/text-word-cloud-data/manifest";
+import { manifest as textGrammarFixer } from "@/tools/text/text-grammar-fixer/manifest";
+import { manifest as textPlagiarismChecker } from "@/tools/text/text-plagiarism-checker/manifest";
+import { manifest as textToneAnalyzer } from "@/tools/text/text-tone-analyzer/manifest";
+import { manifest as textKeywordExtractor } from "@/tools/text/text-keyword-extractor/manifest";
+import { manifest as calorieCalculator } from "@/tools/calculators/calorie-calculator/manifest";
+import { manifest as salaryTaxCalculator } from "@/tools/calculators/salary-tax-calculator/manifest";
+import { manifest as stepsToMilesConverter } from "@/tools/calculators/steps-to-miles-converter/manifest";
+import { manifest as speedConverter } from "@/tools/calculators/speed-converter/manifest";
+import { manifest as areaConverter } from "@/tools/calculators/area-converter/manifest";
+import { manifest as accelerationForceCalc } from "@/tools/education/acceleration-force-calc/manifest";
+import { manifest as threeDShapeConstructor } from "@/tools/education/3d-shape-constructor/manifest";
+import { manifest as audiobookPlayerRef } from "@/tools/education/audiobook-player-ref/manifest";
+import { manifest as periodicTableQuiz } from "@/tools/education/periodic-table-quiz/manifest";
+import { manifest as unitConversionTutor } from "@/tools/education/unit-conversion-tutor/manifest";
+import { manifest as arrCalculator } from "@/tools/business/arr-calculator/manifest";
+import { manifest as cryptoPriceWidget } from "@/tools/business/crypto-price-widget/manifest";
+import { manifest as stockTickerWidget } from "@/tools/business/stock-ticker-widget/manifest";
+import { manifest as emailSignatureGenerator } from "@/tools/business/email-signature-generator/manifest";
+import { manifest as meetingMinutesTemplate } from "@/tools/business/meeting-minutes-template/manifest";
+import { manifest as htaccessRulesGenerator } from "@/tools/network-security/htaccess-rules-generator/manifest";
+import { manifest as freeProxyVerifier } from "@/tools/network-security/free-proxy-verifier/manifest";
+import { manifest as mxBlacklistChecker } from "@/tools/network-security/mx-blacklist-checker/manifest";
+import { manifest as blacklistIpChecker } from "@/tools/network-security/blacklist-ip-checker/manifest";
+import { manifest as userAgentGenerator } from "@/tools/network-security/user-agent-generator/manifest";
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -1846,6 +1896,56 @@ export const TOOLS: readonly ToolManifest[] = [
   xssSanitizer,
   sslExpiryTracker,
   nslookupReference,
+  imageColorContrastChecker,
+  imageColorMixer,
+  imageFaviconGenerator,
+  imageAppIconGenerator,
+  imageGifOptimizer,
+  imageGifSplitter,
+  imageDimensionsInspector,
+  imageNoiseTextureGen,
+  imagePhotoGrid,
+  imageVintageFilter,
+  toneGenerator,
+  noiseGenerator,
+  metronome,
+  bpmDetector,
+  subtitleEditor,
+  videoAspectRatioChanger,
+  videoLoopMaker,
+  slowMotionMaker,
+  timeLapseMaker,
+  audiogramMaker,
+  textActiveVoiceSuggester,
+  textDefinitionLookup,
+  textBibliographyCitation,
+  textAbstractGenerator,
+  textReadingTimeEstimator,
+  textWordCloudData,
+  textGrammarFixer,
+  textPlagiarismChecker,
+  textToneAnalyzer,
+  textKeywordExtractor,
+  calorieCalculator,
+  salaryTaxCalculator,
+  stepsToMilesConverter,
+  speedConverter,
+  areaConverter,
+  accelerationForceCalc,
+  threeDShapeConstructor,
+  audiobookPlayerRef,
+  periodicTableQuiz,
+  unitConversionTutor,
+  arrCalculator,
+  cryptoPriceWidget,
+  stockTickerWidget,
+  emailSignatureGenerator,
+  meetingMinutesTemplate,
+  htaccessRulesGenerator,
+  freeProxyVerifier,
+  mxBlacklistChecker,
+  blacklistIpChecker,
+  userAgentGenerator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
