@@ -1154,6 +1154,102 @@ import { manifest as urlSandboxLinkScanner } from "@/tools/network-security/url-
 import { manifest as privacyPolicyGenerator } from "@/tools/network-security/privacy-policy-generator/manifest";
 import { manifest as breachPwnedEmailChecker } from "@/tools/network-security/breach-pwned-email-checker/manifest";
 
+import { manifest as htmlFormBuilder } from "@/tools/developer/html-form-builder/manifest";
+import { manifest as jsonSchemaValidator } from "@/tools/developer/json-schema-validator/manifest";
+import { manifest as html5SemanticChecker } from "@/tools/developer/html5-semantic-checker/manifest";
+import { manifest as htmlEmailCssInliner } from "@/tools/developer/html-email-css-inliner/manifest";
+import { manifest as jsonValidator } from "@/tools/developer/json-validator/manifest";
+import { manifest as htmlEscapeUnescape } from "@/tools/developer/html-escape-unescape/manifest";
+import { manifest as jsonSchemaGenerator } from "@/tools/developer/json-schema-generator/manifest";
+import { manifest as hmacGenerator } from "@/tools/developer/hmac-generator/manifest";
+import { manifest as dataUriGenerator } from "@/tools/developer/data-uri-generator/manifest";
+import { manifest as csvColumnReorder } from "@/tools/developer/csv-column-reorder/manifest";
+import { manifest as hexEncodeDecode } from "@/tools/developer/hex-encode-decode/manifest";
+import { manifest as jsonFlattener } from "@/tools/developer/json-flattener/manifest";
+import { manifest as jsonToCsv } from "@/tools/developer/json-to-csv/manifest";
+import { manifest as jsonDiffCompare } from "@/tools/developer/json-diff-compare/manifest";
+import { manifest as regexTester } from "@/tools/developer/regex-tester/manifest";
+import { manifest as csvToJson } from "@/tools/developer/csv-to-json/manifest";
+import { manifest as htmlToPlainText } from "@/tools/developer/html-to-plain-text/manifest";
+import { manifest as cronExpressionBuilder } from "@/tools/developer/cron-expression-builder/manifest";
+import { manifest as fileHashCalculator } from "@/tools/developer/file-hash-calculator/manifest";
+import { manifest as htmlLivePreviewEditor } from "@/tools/developer/html-live-preview-editor/manifest";
+import { manifest as htmlToJsxConverter } from "@/tools/developer/html-to-jsx-converter/manifest";
+import { manifest as urlEncodeDecode } from "@/tools/developer/url-encode-decode/manifest";
+import { manifest as regexGenerator } from "@/tools/developer/regex-generator/manifest";
+import { manifest as htmlValidator } from "@/tools/developer/html-validator/manifest";
+import { manifest as uuidGeneratorV2 } from "@/tools/developer/uuid-generator-v2/manifest";
+import { manifest as jsonViewerTree } from "@/tools/developer/json-viewer-tree/manifest";
+import { manifest as htmlImageExtractor } from "@/tools/developer/html-image-extractor/manifest";
+import { manifest as dataUriDecoder } from "@/tools/developer/data-uri-decoder/manifest";
+import { manifest as markdownPreview } from "@/tools/developer/markdown-preview/manifest";
+import { manifest as htmlToPugConverter } from "@/tools/developer/html-to-pug-converter/manifest";
+import { manifest as checksumVerifier } from "@/tools/developer/checksum-verifier/manifest";
+import { manifest as htmlToMarkdown } from "@/tools/developer/html-to-markdown/manifest";
+import { manifest as htmlMinifier } from "@/tools/developer/html-minifier/manifest";
+import { manifest as jsonToCClass } from "@/tools/developer/json-to-c-class/manifest";
+import { manifest as base64DecodeImage } from "@/tools/developer/base64-decode-image/manifest";
+import { manifest as htmlEntityEncodeDecode } from "@/tools/developer/html-entity-encode-decode/manifest";
+import { manifest as htmlBoilerplateGenerator } from "@/tools/developer/html-boilerplate-generator/manifest";
+import { manifest as jsonMinifier } from "@/tools/developer/json-minifier/manifest";
+import { manifest as htmlLinkExtractor } from "@/tools/developer/html-link-extractor/manifest";
+import { manifest as jsonToGoStruct } from "@/tools/developer/json-to-go-struct/manifest";
+import { manifest as jsonKeySorter } from "@/tools/developer/json-key-sorter/manifest";
+import { manifest as gzipDeflateText } from "@/tools/developer/gzip-deflate-text/manifest";
+import { manifest as htmlBeautifier } from "@/tools/developer/html-beautifier/manifest";
+import { manifest as markdownToHtml } from "@/tools/developer/markdown-to-html/manifest";
+import { manifest as htmlTableToCsv } from "@/tools/developer/html-table-to-csv/manifest";
+import { manifest as htmlTableGenerator } from "@/tools/developer/html-table-generator/manifest";
+import { manifest as hexToBase64Converter } from "@/tools/developer/hex-to-base64-converter/manifest";
+import { manifest as pdfExtractImages } from "@/tools/pdf/pdf-extract-images/manifest";
+import { manifest as pdfCrop } from "@/tools/pdf/pdf-crop/manifest";
+import { manifest as pdfToMarkdown } from "@/tools/pdf/pdf-to-markdown/manifest";
+import { manifest as pdfToImages } from "@/tools/pdf/pdf-to-images/manifest";
+import { manifest as pdfToSingleImage } from "@/tools/pdf/pdf-to-single-image/manifest";
+import { manifest as pdfToWord } from "@/tools/pdf/pdf-to-word/manifest";
+import { manifest as pdfToHtml } from "@/tools/pdf/pdf-to-html/manifest";
+import { manifest as pdfAddMargins } from "@/tools/pdf/pdf-add-margins/manifest";
+import { manifest as pdfToJson } from "@/tools/pdf/pdf-to-json/manifest";
+import { manifest as pdfUnlock } from "@/tools/pdf/pdf-unlock/manifest";
+import { manifest as pdfAddBorder } from "@/tools/pdf/pdf-add-border/manifest";
+import { manifest as pdfPageLabels } from "@/tools/pdf/pdf-page-labels/manifest";
+import { manifest as pdfAddStamp } from "@/tools/pdf/pdf-add-stamp/manifest";
+import { manifest as pdfExtractAttachments } from "@/tools/pdf/pdf-extract-attachments/manifest";
+import { manifest as pdfCompress } from "@/tools/pdf/pdf-compress/manifest";
+import { manifest as pdfAddBackground } from "@/tools/pdf/pdf-add-background/manifest";
+import { manifest as pdfBwOptimize } from "@/tools/pdf/pdf-bw-optimize/manifest";
+import { manifest as pdfToPowerpoint } from "@/tools/pdf/pdf-to-powerpoint/manifest";
+import { manifest as pdfPermissions } from "@/tools/pdf/pdf-permissions/manifest";
+import { manifest as pdfToGif } from "@/tools/pdf/pdf-to-gif/manifest";
+import { manifest as pdfDownsampleImages } from "@/tools/pdf/pdf-downsample-images/manifest";
+import { manifest as pdfTocGenerator } from "@/tools/pdf/pdf-toc-generator/manifest";
+import { manifest as pdfAddAttachment } from "@/tools/pdf/pdf-add-attachment/manifest";
+import { manifest as pdfRotate } from "@/tools/pdf/pdf-rotate/manifest";
+import { manifest as pdfAddPageNumbers } from "@/tools/pdf/pdf-add-page-numbers/manifest";
+import { manifest as pdfMetadata } from "@/tools/pdf/pdf-metadata/manifest";
+import { manifest as pdfAddHeaderFooter } from "@/tools/pdf/pdf-add-header-footer/manifest";
+import { manifest as pdfToXml } from "@/tools/pdf/pdf-to-xml/manifest";
+import { manifest as pdfToSvg } from "@/tools/pdf/pdf-to-svg/manifest";
+import { manifest as pdfDespeckle } from "@/tools/pdf/pdf-despeckle/manifest";
+import { manifest as pdfBookmarks } from "@/tools/pdf/pdf-bookmarks/manifest";
+import { manifest as pdfExtractText } from "@/tools/pdf/pdf-extract-text/manifest";
+import { manifest as pdfSplit } from "@/tools/pdf/pdf-split/manifest";
+import { manifest as pdfMerge } from "@/tools/pdf/pdf-merge/manifest";
+import { manifest as pdfDeskew } from "@/tools/pdf/pdf-deskew/manifest";
+import { manifest as pdfExtractPages } from "@/tools/pdf/pdf-extract-pages/manifest";
+import { manifest as pdfToRtf } from "@/tools/pdf/pdf-to-rtf/manifest";
+import { manifest as pdfToExcel } from "@/tools/pdf/pdf-to-excel/manifest";
+import { manifest as pdfLinearize } from "@/tools/pdf/pdf-linearize/manifest";
+import { manifest as pdfAddWatermark } from "@/tools/pdf/pdf-add-watermark/manifest";
+import { manifest as pdfOcr } from "@/tools/pdf/pdf-ocr/manifest";
+import { manifest as pdfRemoveWatermark } from "@/tools/pdf/pdf-remove-watermark/manifest";
+import { manifest as pdfDeletePages } from "@/tools/pdf/pdf-delete-pages/manifest";
+import { manifest as pdfProtect } from "@/tools/pdf/pdf-protect/manifest";
+import { manifest as pdfToTiff } from "@/tools/pdf/pdf-to-tiff/manifest";
+import { manifest as pdfToEpub } from "@/tools/pdf/pdf-to-epub/manifest";
+import { manifest as pdfReorderPages } from "@/tools/pdf/pdf-reorder-pages/manifest";
+import { manifest as pdfRepair } from "@/tools/pdf/pdf-repair/manifest";
+
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -2268,6 +2364,102 @@ export const TOOLS: readonly ToolManifest[] = [
   urlSandboxLinkScanner,
   privacyPolicyGenerator,
   breachPwnedEmailChecker,
+
+  htmlFormBuilder,
+  jsonSchemaValidator,
+  html5SemanticChecker,
+  htmlEmailCssInliner,
+  jsonValidator,
+  htmlEscapeUnescape,
+  jsonSchemaGenerator,
+  hmacGenerator,
+  dataUriGenerator,
+  csvColumnReorder,
+  hexEncodeDecode,
+  jsonFlattener,
+  jsonToCsv,
+  jsonDiffCompare,
+  regexTester,
+  csvToJson,
+  htmlToPlainText,
+  cronExpressionBuilder,
+  fileHashCalculator,
+  htmlLivePreviewEditor,
+  htmlToJsxConverter,
+  urlEncodeDecode,
+  regexGenerator,
+  htmlValidator,
+  uuidGeneratorV2,
+  jsonViewerTree,
+  htmlImageExtractor,
+  dataUriDecoder,
+  markdownPreview,
+  htmlToPugConverter,
+  checksumVerifier,
+  htmlToMarkdown,
+  htmlMinifier,
+  jsonToCClass,
+  base64DecodeImage,
+  htmlEntityEncodeDecode,
+  htmlBoilerplateGenerator,
+  jsonMinifier,
+  htmlLinkExtractor,
+  jsonToGoStruct,
+  jsonKeySorter,
+  gzipDeflateText,
+  htmlBeautifier,
+  markdownToHtml,
+  htmlTableToCsv,
+  htmlTableGenerator,
+  hexToBase64Converter,
+  pdfExtractImages,
+  pdfCrop,
+  pdfToMarkdown,
+  pdfToImages,
+  pdfToSingleImage,
+  pdfToWord,
+  pdfToHtml,
+  pdfAddMargins,
+  pdfToJson,
+  pdfUnlock,
+  pdfAddBorder,
+  pdfPageLabels,
+  pdfAddStamp,
+  pdfExtractAttachments,
+  pdfCompress,
+  pdfAddBackground,
+  pdfBwOptimize,
+  pdfToPowerpoint,
+  pdfPermissions,
+  pdfToGif,
+  pdfDownsampleImages,
+  pdfTocGenerator,
+  pdfAddAttachment,
+  pdfRotate,
+  pdfAddPageNumbers,
+  pdfMetadata,
+  pdfAddHeaderFooter,
+  pdfToXml,
+  pdfToSvg,
+  pdfDespeckle,
+  pdfBookmarks,
+  pdfExtractText,
+  pdfSplit,
+  pdfMerge,
+  pdfDeskew,
+  pdfExtractPages,
+  pdfToRtf,
+  pdfToExcel,
+  pdfLinearize,
+  pdfAddWatermark,
+  pdfOcr,
+  pdfRemoveWatermark,
+  pdfDeletePages,
+  pdfProtect,
+  pdfToTiff,
+  pdfToEpub,
+  pdfReorderPages,
+  pdfRepair,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
