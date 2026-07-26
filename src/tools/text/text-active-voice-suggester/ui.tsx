@@ -88,7 +88,7 @@ export default function TextActiveVoiceSuggesterUI() {
                   <p className="text-xs text-muted-foreground">{m.sentence}</p>
                   <p className="text-xs">
                     <span className="text-muted-foreground">Passive: </span>
-                    <code className="font-mono bg-muted/30 px-1 rounded">{m.passivePhrase}</span>
+                    <code className="font-mono bg-muted/30 px-1 rounded">{m.passivePhrase}</code>
                     {m.byAgent && <span className="text-muted-foreground"> · by <strong>{m.byAgent}</strong></span>}
                   </p>
                   <div className="space-y-1">

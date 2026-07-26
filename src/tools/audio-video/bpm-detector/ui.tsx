@@ -138,7 +138,7 @@ export default function BpmDetectorUI() {
       <Card>
         <CardContent className="p-4">
           <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> detection runs locally using only tap timestamps. Outliers (>2× median) are rejected; confidence is 1 - 2·(std/mean).
+            <strong className="text-foreground">Privacy:</strong> detection runs locally using only tap timestamps. Outliers ({">"}2× median) are rejected; confidence is 1 − 2·(std/mean).
           </p>
         </CardContent>
       </Card>
