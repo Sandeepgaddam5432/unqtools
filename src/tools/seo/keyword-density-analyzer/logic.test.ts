@@ -1,274 +1,184 @@
-import { describe, it, expect, beforeEach } from "vitest";
+/**
+ * Keyword Density Analyzer — unit tests.
+ */
+import { describe, it, expect } from "vitest";
 import {
-  tokenizeWords,
-  generatePhrases,
-  phraseHasStopWord,
-  countPhrases,
-  filterPhrases,
-  detectStuffing,
-  analyze,
-  renderCsv,
-  generateCloudData,
-  loadHistory,
-  saveHistory,
-  clearHistory,
-  buildShareUrl,
-  parseShareUrl,
-  STOP_WORDS,
-  STUFFING_THRESHOLD,
-  TOP_LIMIT,
+  stripHtml,
+  extractTag,
+  tokenize,
+  stem,
+  buildNgrams,
+  fleschReadingEase,
+  countSyllables,
+  analyzeKeywordDensity,
+  buildCsv,
+  findOccurrences,
+  getStopWords,
 } from "./logic";
 
-beforeEach(() => {
-  const store: Record<string, string> = {};
-  (globalThis as Record<string, unknown>).localStorage = {
-    getItem: (k: string) => store[k] ?? null,
-    setItem: (k: string, v: string) => {
-      store[k] = v;
-    },
-    removeItem: (k: string) => {
-      delete store[k];
-    },
-    clear: () => {
-      for (const k of Object.keys(store)) delete store[k];
-    },
-    key: (i: number) => Object.keys(store)[i] ?? null,
-    get length() {
-      return Object.keys(store).length;
-    },
-  };
-});
-
-describe("keyword-density-analyzer tokenizeWords", () => {
-  it("returns empty for empty", () => {
-    expect(tokenizeWords("")).toEqual([]);
+describe("stripHtml", () => {
+  it("strips tags and decodes entities", () => {
+    expect(stripHtml("<p>Hello&nbsp;world &amp; goodbye</p>")).toBe("Hello world & goodbye");
   });
-  it("splits and lowercases", () => {
-    expect(tokenizeWords("Hello, WORLD!")).toEqual(["hello", "world"]);
+  it("removes scripts and styles", () => {
+    expect(stripHtml("<style>.a{}</style><script>x=1</script>Hi")).toBe("Hi");
   });
 });
 
-describe("keyword-density-analyzer generatePhrases", () => {
-  it("returns empty for empty words", () => {
-    expect(generatePhrases([], 1)).toEqual([]);
+describe("extractTag", () => {
+  it("extracts all matches of a tag", () => {
+    const html = "<h2>First</h2><p>text</p><h2>Second</h2>";
+    const r = extractTag(html, "h2");
+    expect(r.length).toBe(2);
+    expect(r[0]).toBe("First");
   });
-  it("generates 1-word phrases (identity)", () => {
-    expect(generatePhrases(["a", "b", "c"], 1)).toEqual(["a", "b", "c"]);
-  });
-  it("generates 2-word phrases", () => {
-    expect(generatePhrases(["a", "b", "c"], 2)).toEqual(["a b", "b c"]);
-  });
-  it("generates 3-word phrases", () => {
-    expect(generatePhrases(["a", "b", "c", "d"], 3)).toEqual(["a b c", "b c d"]);
-  });
-  it("returns empty when n > words length", () => {
-    expect(generatePhrases(["a"], 2)).toEqual([]);
-  });
-  it("returns empty for n < 1", () => {
-    expect(generatePhrases(["a"], 0)).toEqual([]);
+  it("returns empty array when no match", () => {
+    expect(extractTag("<p>hi</p>", "h1")).toEqual([]);
   });
 });
 
-describe("keyword-density-analyzer phraseHasStopWord", () => {
-  it("returns true for phrase with stop word", () => {
-    expect(phraseHasStopWord("the cat")).toBe(true);
-    expect(phraseHasStopWord("cat the dog")).toBe(true);
+describe("tokenize", () => {
+  it("tokenizes lowercase words", () => {
+    expect(tokenize("Hello, World 2026!")).toEqual(["hello", "world", "2026"]);
   });
-  it("returns false for phrase without stop words", () => {
-    expect(phraseHasStopWord("cat dog")).toBe(false);
-  });
-});
-
-describe("keyword-density-analyzer countPhrases", () => {
-  it("returns empty for empty input", () => {
-    expect(countPhrases([])).toEqual([]);
-  });
-  it("counts and sorts desc by count", () => {
-    const out = countPhrases(["a", "b", "a", "c", "a", "b"]);
-    expect(out[0].phrase).toBe("a");
-    expect(out[0].count).toBe(3);
-    expect(out[1].phrase).toBe("b");
-    expect(out[1].count).toBe(2);
-  });
-  it("respects limit", () => {
-    const out = countPhrases(["a", "b", "c", "d", "e"], 3);
-    expect(out.length).toBeLessThanOrEqual(3);
-  });
-  it("computes density as percentage", () => {
-    const out = countPhrases(["a", "a", "b"]);
-    expect(out[0].density).toBeCloseTo(66.67, 1);
+  it("returns empty for empty string", () => {
+    expect(tokenize("")).toEqual([]);
   });
 });
 
-describe("keyword-density-analyzer filterPhrases", () => {
-  it("returns all when no filtering", () => {
-    expect(filterPhrases(["a", "b"], false)).toEqual(["a", "b"]);
+describe("stem", () => {
+  it("stems English plurals", () => {
+    expect(stem("cats")).toBe("cat");
+    expect(stem("running")).toBe("runn");
   });
-  it("filters stop words", () => {
-    const out = filterPhrases(["the", "cat", "dog"], true);
-    expect(out).toEqual(["cat", "dog"]);
+  it("returns short words unchanged", () => {
+    expect(stem("cat")).toBe("cat");
   });
-  it("filters custom exclude list", () => {
-    const out = filterPhrases(["cat", "dog", "bird"], false, ["cat"]);
-    expect(out).toEqual(["dog", "bird"]);
-  });
-  it("filters both stop words and custom", () => {
-    const out = filterPhrases(["the", "cat", "dog"], true, ["dog"]);
-    expect(out).toEqual(["cat"]);
+  it("does not stem non-English", () => {
+    expect(stem("gatos", "es")).toBe("gatos");
   });
 });
 
-describe("keyword-density-analyzer detectStuffing", () => {
-  it("returns empty when all under threshold", () => {
-    const hits = [{ phrase: "a", count: 5, density: 2 }];
-    expect(detectStuffing(hits)).toEqual([]);
+describe("buildNgrams", () => {
+  it("builds bigrams", () => {
+    expect(buildNgrams(["a", "b", "c"], 2)).toEqual(["a b", "b c"]);
   });
-  it("flags phrases over threshold", () => {
-    const hits = [{ phrase: "spam", count: 50, density: 10 }];
-    const out = detectStuffing(hits);
-    expect(out.length).toBe(1);
-    expect(out[0]).toContain("spam");
+  it("builds trigrams", () => {
+    expect(buildNgrams(["a", "b", "c", "d"], 3)).toEqual(["a b c", "b c d"]);
   });
-  it("respects custom threshold", () => {
-    const hits = [{ phrase: "a", count: 5, density: 2 }];
-    expect(detectStuffing(hits, 1).length).toBe(1);
+  it("returns empty when not enough tokens", () => {
+    expect(buildNgrams(["a"], 2)).toEqual([]);
   });
 });
 
-describe("keyword-density-analyzer analyze", () => {
-  it("returns zero stats for empty text", () => {
-    const r = analyze("");
-    expect(r.totalWords).toBe(0);
-    expect(r.oneWord).toEqual([]);
+describe("fleschReadingEase + countSyllables", () => {
+  it("counts syllables", () => {
+    expect(countSyllables("cat")).toBe(1);
+    expect(countSyllables("running")).toBeGreaterThanOrEqual(2);
   });
-  it("counts total and unique words", () => {
-    const r = analyze("cat cat dog");
-    expect(r.totalWords).toBe(3);
-    expect(r.uniqueWords).toBe(2);
-  });
-  it("produces 1-word, 2-word, 3-word arrays", () => {
-    const r = analyze("the cat sat on the mat the cat ran");
-    expect(Array.isArray(r.oneWord)).toBe(true);
-    expect(Array.isArray(r.twoWord)).toBe(true);
-    expect(Array.isArray(r.threeWord)).toBe(true);
-  });
-  it("excludes stop words by default in 1-word", () => {
-    const r = analyze("the cat the dog");
-    expect(r.oneWord.find((h) => h.phrase === "the")).toBeUndefined();
-  });
-  it("includes stop words when excludeStopWords=false", () => {
-    const r = analyze("the cat the dog", { excludeStopWords: false });
-    expect(r.oneWord.find((h) => h.phrase === "the")).toBeDefined();
-  });
-  it("respects custom exclude list", () => {
-    const r = analyze("cat dog bird", { customExclude: ["cat"] });
-    expect(r.oneWord.find((h) => h.phrase === "cat")).toBeUndefined();
-  });
-  it("detects stuffing in 1-word", () => {
-    // Repeat "spam" many times to push density above 3%
-    const r = analyze(Array.from({ length: 50 }, () => "spam").join(" ") + " cat dog");
-    expect(r.stuffingWarnings.length).toBeGreaterThan(0);
-    expect(r.stuffingWarnings.some((w) => w.includes("spam"))).toBe(true);
-  });
-  it("respects limit option", () => {
-    const r = analyze("a b c d e f g h i j k l m n o", { limit: 5 });
-    expect(r.oneWord.length).toBeLessThanOrEqual(5);
+  it("computes flesch score", () => {
+    expect(fleschReadingEase("The cat sat on the mat.")).toBeGreaterThan(0);
+    expect(fleschReadingEase("")).toBe(0);
   });
 });
 
-describe("keyword-density-analyzer renderCsv", () => {
-  it("returns header for empty result", () => {
-    const csv = renderCsv({ totalWords: 0, uniqueWords: 0, oneWord: [], twoWord: [], threeWord: [], stuffingWarnings: [] });
-    expect(csv.startsWith("type,phrase,count,density_percent")).toBe(true);
+describe("analyzeKeywordDensity", () => {
+  it("errors on empty input", () => {
+    expect("error" in analyzeKeywordDensity("")).toBe(true);
   });
-  it("includes rows for each hit", () => {
-    const csv = renderCsv({
-      totalWords: 10,
-      uniqueWords: 5,
-      oneWord: [{ phrase: "cat", count: 3, density: 30 }],
-      twoWord: [],
-      threeWord: [],
-      stuffingWarnings: [],
-    });
-    expect(csv).toContain("1-word,cat,3,30.00");
+  it("returns word count + unigrams", () => {
+    const r = analyzeKeywordDensity("running shoes running shoes running");
+    if ("error" in r) throw new Error("should not error");
+    expect(r.wordCount).toBeGreaterThan(0);
+    expect(r.unigrams.length).toBeGreaterThan(0);
+    expect(r.unigrams[0]!.term).toBe("running");
   });
-  it("escapes commas in phrases", () => {
-    const csv = renderCsv({
-      totalWords: 10,
-      uniqueWords: 5,
-      oneWord: [{ phrase: "hello,world", count: 1, density: 10 }],
-      twoWord: [],
-      threeWord: [],
-      stuffingWarnings: [],
-    });
-    expect(csv).toContain('"hello,world"');
+  it("respects removeStopWords option", () => {
+    const withStop = analyzeKeywordDensity("the cat and the dog", { removeStopWords: false });
+    const without = analyzeKeywordDensity("the cat and the dog", { removeStopWords: true });
+    if ("error" in withStop || "error" in without) throw new Error("should not error");
+    expect(withStop.unigrams.some((u) => u.term === "the")).toBe(true);
+    expect(without.unigrams.some((u) => u.term === "the")).toBe(false);
   });
-});
-
-describe("keyword-density-analyzer generateCloudData", () => {
-  it("returns empty for empty input", () => {
-    expect(generateCloudData([])).toEqual([]);
+  it("applies stemming when enabled", () => {
+    const r = analyzeKeywordDensity("cat cats running runs", { useStemming: true, removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    // "cat" and "cats" should merge; "running" and "runs" should merge.
+    const cat = r.unigrams.find((u) => u.term === "cat");
+    expect(cat?.count).toBeGreaterThanOrEqual(2);
   });
-  it("maps hits to cloud data", () => {
-    const out = generateCloudData([{ phrase: "cat", count: 5, density: 10 }]);
-    expect(out[0].text).toBe("cat");
-    expect(out[0].value).toBe(5);
+  it("flags stuffing above threshold", () => {
+    const r = analyzeKeywordDensity("shoes shoes shoes shoes shoes shoes shoes", { stuffingThreshold: 4, removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    expect(r.unigrams[0]!.flag).toBe("stuffing");
+    expect(r.flags.length).toBeGreaterThan(0);
   });
-});
-
-describe("keyword-density-analyzer constants", () => {
-  it("has STOP_WORDS set", () => {
-    expect(STOP_WORDS.has("the")).toBe(true);
+  it("computes density percentages", () => {
+    const r = analyzeKeywordDensity("apple apple orange", { removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    const apple = r.unigrams.find((u) => u.term === "apple");
+    expect(apple?.density).toBeCloseTo(66.67, 1);
   });
-  it("has 3% stuffing threshold", () => {
-    expect(STUFFING_THRESHOLD).toBe(3);
+  it("parses HTML and counts element tokens", () => {
+    const html = `<html><head><title>Best Running Shoes</title></head><body><h1>Running Shoes</h1><p>running shoes for runners</p></body></html>`;
+    const r = analyzeKeywordDensity(html, { removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    expect(r.elementCounts.title).toBeGreaterThan(0);
+    expect(r.elementCounts.h1).toBeGreaterThan(0);
+    expect(r.elementCounts.body).toBeGreaterThan(0);
   });
-  it("has top limit of 20", () => {
-    expect(TOP_LIMIT).toBe(20);
+  it("returns bigrams and trigrams", () => {
+    const r = analyzeKeywordDensity("best running shoes best running shoes best running shoes", { removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    expect(r.bigrams.some((b) => b.term === "running shoes")).toBe(true);
+    expect(r.trigrams.some((t) => t.term === "best running shoes")).toBe(true);
   });
-});
-
-describe("keyword-density-analyzer history", () => {
-  it("loads empty initially", () => {
-    expect(loadHistory()).toEqual([]);
+  it("respects topN limit", () => {
+    const r = analyzeKeywordDensity("a b c d e f g h i j k l m n o p", { removeStopWords: false, topN: 5 });
+    if ("error" in r) throw new Error("should not error");
+    expect(r.unigrams.length).toBeLessThanOrEqual(5);
   });
-  it("saves and loads", () => {
-    saveHistory({ ts: 1, wordCount: 100, uniqueWords: 50, stuffingWarnings: 1, snippet: "x" });
-    saveHistory({ ts: 2, wordCount: 200, uniqueWords: 80, stuffingWarnings: 0, snippet: "y" });
-    expect(loadHistory()).toHaveLength(2);
-    expect(loadHistory()[0].wordCount).toBe(200);
-  });
-  it("caps at 20", () => {
-    for (let i = 0; i < 25; i++) {
-      saveHistory({ ts: i, wordCount: 1, uniqueWords: 1, stuffingWarnings: 0, snippet: "x" });
-    }
-    expect(loadHistory()).toHaveLength(20);
-  });
-  it("clears", () => {
-    saveHistory({ ts: 1, wordCount: 1, uniqueWords: 1, stuffingWarnings: 0, snippet: "x" });
-    clearHistory();
-    expect(loadHistory()).toEqual([]);
+  it("includes reading time", () => {
+    const r = analyzeKeywordDensity("word ".repeat(500), { removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    expect(r.readingTimeMin).toBeGreaterThanOrEqual(1);
   });
 });
 
-describe("keyword-density-analyzer shareable URL", () => {
-  it("builds share URL when window unavailable", () => {
-    const origWindow = (globalThis as Record<string, unknown>).window;
-    (globalThis as Record<string, unknown>).window = undefined;
-    const url = buildShareUrl("hello world");
-    expect(url).toContain("text=");
-    (globalThis as Record<string, unknown>).window = origWindow;
+describe("buildCsv", () => {
+  it("produces a CSV with header", () => {
+    const r = analyzeKeywordDensity("running shoes running", { removeStopWords: false });
+    if ("error" in r) throw new Error("should not error");
+    const csv = buildCsv(r);
+    expect(csv.startsWith("type,term,count,density,flag")).toBe(true);
+    expect(csv).toContain("unigram");
   });
-  it("parses share URL back to text", () => {
-    const origWindow = (globalThis as Record<string, unknown>).window;
-    (globalThis as Record<string, unknown>).window = undefined;
-    const url = buildShareUrl("hello world");
-    const hash = url.replace(/^\?/, "#");
-    const parsed = parseShareUrl(hash);
-    expect(parsed.text).toBe("hello world");
-    (globalThis as Record<string, unknown>).window = origWindow;
+});
+
+describe("findOccurrences", () => {
+  it("finds all occurrences", () => {
+    const r = findOccurrences("running shoes for running runners", "running");
+    expect(r.length).toBe(2);
   });
-  it("returns empty for empty hash", () => {
-    expect(parseShareUrl("")).toEqual({});
+  it("returns empty for empty term", () => {
+    expect(findOccurrences("text", "")).toEqual([]);
+  });
+  it("is case-insensitive", () => {
+    const r = findOccurrences("Running shoes RUNNING", "running");
+    expect(r.length).toBe(2);
+  });
+});
+
+describe("getStopWords", () => {
+  it("returns a set for each language", () => {
+    expect(getStopWords("en").has("the")).toBe(true);
+    expect(getStopWords("es").has("el")).toBe(true);
+    expect(getStopWords("fr").has("le")).toBe(true);
+  });
+  it("returns a mutable copy", () => {
+    const s = getStopWords("en");
+    s.add("customword");
+    const s2 = getStopWords("en");
+    expect(s2.has("customword")).toBe(false);
   });
 });

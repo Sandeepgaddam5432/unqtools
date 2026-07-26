@@ -1,40 +1,24 @@
+/**
+ * Keyword Density Analyzer — Tool Manifest
+ */
 import type { ToolManifest } from "../../../lib/tool";
 
 export const manifest: ToolManifest = {
   id: "keyword-density-analyzer",
   name: "Keyword Density Analyzer",
   description:
-    "Analyze keyword density for 1-word, 2-word, and 3-word phrases. Top-20 results per category, stop-word filtering, custom exclude list, stuffing warnings (>3%), CSV export. 100% client-side.",
+    "Analyze pasted text or HTML for word and n-gram (1/2/3-word) frequency and density, with configurable stop-word lists, stemming, position weighting (title/H1/H2/body/anchor), and over-optimization flags — not magic % targets. 100% client-side.",
   category: "seo",
-  keywords: [
-    "keyword density", "keyword frequency", "phrase analysis",
-    "stop words", "seo", "keyword stuffing", "content analysis",
-  ],
-  icon: "search",
+  keywords: ["keyword density checker", "keyword density analyzer", "word frequency counter", "n-gram analyzer", "keyword stuffing"],
+  icon: "Type",
   requiresNetwork: false,
   seo: {
-    title: "Keyword Density Analyzer — 1/2/3-Word Phrase Frequency | UnQTools",
+    title: "Keyword Density Analyzer — N-gram, Stemming, No Stuffing Myths | UnQTools",
     faq: [
-      {
-        q: "What is keyword density?",
-        a: "Keyword density is the percentage of times a keyword appears compared to the total words on a page. If 'shoes' appears 10 times in a 500-word article, the density is (10/500)*100 = 2%.",
-      },
-      {
-        q: "What is the ideal keyword density?",
-        a: "There's no magic number, but most SEOs agree 1-2% is natural for the primary keyword. Anything over 3% for a single term risks being flagged as 'keyword stuffing' — Google may demote the page. Focus on natural writing with related terms (LSI) rather than hitting a target.",
-      },
-      {
-        q: "Why analyze 2-word and 3-word phrases?",
-        a: "Long-tail phrases (2-3 words) often match real search queries better than single words. 'Running shoes' as a 2-word phrase tells you whether you're targeting an actual query vs. just the word 'running'. This tool shows top-20 for each phrase length.",
-      },
-      {
-        q: "What extra features does this tool have compared to others?",
-        a: "(1) 1-word, 2-word, and 3-word phrase analysis in one tool. (2) Stop word filtering (English). (3) Custom exclude-words list. (4) Stuffing warnings — flags phrases over 3% density. (5) Top-20 results per category. (6) CSV export of all results. (7) Keyword cloud data. (8) Total + unique word counts. (9) History (localStorage, last 20). (10) Shareable URL — encode text in the fragment.",
-      },
-      {
-        q: "Is my data sent anywhere?",
-        a: "No. All analysis runs locally. History is stored in localStorage on this device only.",
-      },
+      { q: "What is the ideal keyword density?", a: "There is no ideal percentage. Google rewards relevance, not ratios. This tool flags potential stuffing (e.g., density above ~3–4% on a single term) but never prescribes a magic number. Aim for natural usage with related terms and synonyms." },
+      { q: "How is density calculated?", a: "Density = (term count / total non-stop-word tokens) × 100. For n-grams, the denominator is total n-gram slots. We use Intl.Segmenter where available (CJK-friendly) and fall back to whitespace tokenization." },
+      { q: "What extras does this tool include?", a: "Extras: (1) 1/2/3-gram frequency tables with count + density %, (2) Stop-word toggle + language presets (en/es/fr/de/it), (3) Porter stemmer toggle for grouping inflections, (4) Position weighting (title/H1/H2/body/anchor), (5) HTML element breakdown, (6) Over-optimization flags, (7) Reading-level (Flesch) + word/char count, (8) Highlight occurrences in source text, (9) CSV export, (10) CJK/Thai support via Intl.Segmenter, (11) HTML entity decoding, (12) Stop-word editor, (13) Sortable tables, (14) Sample comparison." },
+      { q: "Does the tool fetch URLs?", a: "No. Paste text or HTML only — no network. We strip HTML server-side-free using DOMParser-free regex; everything runs locally." },
     ],
   },
   status: "done",

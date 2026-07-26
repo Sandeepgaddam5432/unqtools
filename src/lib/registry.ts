@@ -993,6 +993,66 @@ import { manifest as freeProxyVerifier } from "@/tools/network-security/free-pro
 import { manifest as mxBlacklistChecker } from "@/tools/network-security/mx-blacklist-checker/manifest";
 import { manifest as blacklistIpChecker } from "@/tools/network-security/blacklist-ip-checker/manifest";
 import { manifest as userAgentGenerator } from "@/tools/network-security/user-agent-generator/manifest";
+import { manifest as jwtDebugger } from "@/tools/network-security/jwt-debugger/manifest";
+import { manifest as fileHashValidator } from "@/tools/network-security/file-hash-validator/manifest";
+import { manifest as macAddressVendorLookup } from "@/tools/network-security/mac-address-vendor-lookup/manifest";
+import { manifest as passwordStrengthMeter } from "@/tools/network-security/password-strength-meter/manifest";
+import { manifest as strongPasswordGenerator } from "@/tools/network-security/strong-password-generator/manifest";
+import { manifest as hashingTool } from "@/tools/network-security/hashing-tool/manifest";
+import { manifest as emailHeaderAnalyzer } from "@/tools/network-security/email-header-analyzer/manifest";
+import { manifest as userAgentParser } from "@/tools/network-security/user-agent-parser/manifest";
+import { manifest as cspGenerator } from "@/tools/network-security/csp-generator/manifest";
+import { manifest as cidrIpCalculator } from "@/tools/network-security/cidr-ip-calculator/manifest";
+import { manifest as seoContentScorecardAudit } from "@/tools/seo/seo-content-scorecard-audit/manifest";
+import { manifest as titleTagCtrEstimator } from "@/tools/seo/title-tag-ctr-estimator/manifest";
+import { manifest as googleSerpSnippetPreview } from "@/tools/seo/google-serp-snippet-preview/manifest";
+import { manifest as metaDescriptionAbTester } from "@/tools/seo/meta-description-ab-tester/manifest";
+import { manifest as addLineNumbers } from "@/tools/developer/add-line-numbers/manifest";
+import { manifest as cssTransformGenerator } from "@/tools/developer/css-transform-generator/manifest";
+import { manifest as cssFontFaceGenerator } from "@/tools/developer/css-font-face-generator/manifest";
+import { manifest as cssTextShadowGenerator } from "@/tools/developer/css-text-shadow-generator/manifest";
+import { manifest as argon2HashGenerator } from "@/tools/developer/argon2-hash-generator/manifest";
+import { manifest as cssBorderRadiusGenerator } from "@/tools/developer/css-border-radius-generator/manifest";
+import { manifest as cssBlendModePreviewer } from "@/tools/developer/css-blend-mode-previewer/manifest";
+import { manifest as cssTriangleGenerator } from "@/tools/developer/css-triangle-generator/manifest";
+import { manifest as cssSpecificityCalculator } from "@/tools/developer/css-specificity-calculator/manifest";
+import { manifest as cssSelectorTester } from "@/tools/developer/css-selector-tester/manifest";
+import { manifest as atbashCipher } from "@/tools/developer/atbash-cipher/manifest";
+import { manifest as cssTransitionGenerator } from "@/tools/developer/css-transition-generator/manifest";
+import { manifest as cssButtonGenerator } from "@/tools/developer/css-button-generator/manifest";
+import { manifest as autoprefixer } from "@/tools/developer/autoprefixer/manifest";
+import { manifest as bcryptGeneratorVerifier } from "@/tools/developer/bcrypt-generator-verifier/manifest";
+import { manifest as cssBeautifier } from "@/tools/developer/css-beautifier/manifest";
+import { manifest as cssColorFormatConverter } from "@/tools/developer/css-color-format-converter/manifest";
+import { manifest as cssGlassmorphismGenerator } from "@/tools/developer/css-glassmorphism-generator/manifest";
+import { manifest as base58EncodeDecode } from "@/tools/developer/base58-encode-decode/manifest";
+import { manifest as base64ImageEncodeDecode } from "@/tools/developer/base64-image-encode-decode/manifest";
+import { manifest as cssNeumorphismGenerator } from "@/tools/developer/css-neumorphism-generator/manifest";
+import { manifest as cssBackgroundPatternGenerator } from "@/tools/developer/css-background-pattern-generator/manifest";
+import { manifest as cssFilterGenerator } from "@/tools/developer/css-filter-generator/manifest";
+import { manifest as cssCubicBezierEditor } from "@/tools/developer/css-cubic-bezier-editor/manifest";
+import { manifest as cssScrollbarStyler } from "@/tools/developer/css-scrollbar-styler/manifest";
+import { manifest as cssClipPathGenerator } from "@/tools/developer/css-clip-path-generator/manifest";
+import { manifest as aesEncryptDecrypt } from "@/tools/developer/aes-encrypt-decrypt/manifest";
+import { manifest as cssUnitsConverter } from "@/tools/developer/css-units-converter/manifest";
+import { manifest as cssAnimationKeyframesGenerator } from "@/tools/developer/css-animation-keyframes-generator/manifest";
+import { manifest as corsTesterConfigGenerator } from "@/tools/developer/cors-tester-config-generator/manifest";
+import { manifest as base64ToHexConverter } from "@/tools/developer/base64-to-hex-converter/manifest";
+import { manifest as base32EncodeDecode } from "@/tools/developer/base32-encode-decode/manifest";
+import { manifest as cssLoaderSpinnerGenerator } from "@/tools/developer/css-loader-spinner-generator/manifest";
+import { manifest as cssMinifier } from "@/tools/developer/css-minifier/manifest";
+import { manifest as cssBoxShadowGenerator } from "@/tools/developer/css-box-shadow-generator/manifest";
+import { manifest as cssFlexboxPlayground } from "@/tools/developer/css-flexbox-playground/manifest";
+import { manifest as cssGridGenerator } from "@/tools/developer/css-grid-generator/manifest";
+import { manifest as base64EncodeDecode } from "@/tools/developer/base64-encode-decode/manifest";
+import { manifest as cssGradientGenerator } from "@/tools/developer/css-gradient-generator/manifest";
+import { manifest as binaryEncodeDecode } from "@/tools/developer/binary-encode-decode/manifest";
+import { manifest as cssMediaQueryGenerator } from "@/tools/developer/css-media-query-generator/manifest";
+import { manifest as cssTooltipGenerator } from "@/tools/developer/css-tooltip-generator/manifest";
+import { manifest as arrowFunctionConverter } from "@/tools/developer/arrow-function-converter/manifest";
+import { manifest as cssAspectRatioHelper } from "@/tools/developer/css-aspect-ratio-helper/manifest";
+import { manifest as crc32Calculator } from "@/tools/developer/crc32-calculator/manifest";
+
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -1946,6 +2006,66 @@ export const TOOLS: readonly ToolManifest[] = [
   mxBlacklistChecker,
   blacklistIpChecker,
   userAgentGenerator,
+
+  jwtDebugger,
+  fileHashValidator,
+  macAddressVendorLookup,
+  passwordStrengthMeter,
+  strongPasswordGenerator,
+  hashingTool,
+  emailHeaderAnalyzer,
+  userAgentParser,
+  cspGenerator,
+  cidrIpCalculator,
+  seoContentScorecardAudit,
+  titleTagCtrEstimator,
+  googleSerpSnippetPreview,
+  metaDescriptionAbTester,
+  addLineNumbers,
+  cssTransformGenerator,
+  cssFontFaceGenerator,
+  cssTextShadowGenerator,
+  argon2HashGenerator,
+  cssBorderRadiusGenerator,
+  cssBlendModePreviewer,
+  cssTriangleGenerator,
+  cssSpecificityCalculator,
+  cssSelectorTester,
+  atbashCipher,
+  cssTransitionGenerator,
+  cssButtonGenerator,
+  autoprefixer,
+  bcryptGeneratorVerifier,
+  cssBeautifier,
+  cssColorFormatConverter,
+  cssGlassmorphismGenerator,
+  base58EncodeDecode,
+  base64ImageEncodeDecode,
+  cssNeumorphismGenerator,
+  cssBackgroundPatternGenerator,
+  cssFilterGenerator,
+  cssCubicBezierEditor,
+  cssScrollbarStyler,
+  cssClipPathGenerator,
+  aesEncryptDecrypt,
+  cssUnitsConverter,
+  cssAnimationKeyframesGenerator,
+  corsTesterConfigGenerator,
+  base64ToHexConverter,
+  base32EncodeDecode,
+  cssLoaderSpinnerGenerator,
+  cssMinifier,
+  cssBoxShadowGenerator,
+  cssFlexboxPlayground,
+  cssGridGenerator,
+  base64EncodeDecode,
+  cssGradientGenerator,
+  binaryEncodeDecode,
+  cssMediaQueryGenerator,
+  cssTooltipGenerator,
+  arrowFunctionConverter,
+  cssAspectRatioHelper,
+  crc32Calculator,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
