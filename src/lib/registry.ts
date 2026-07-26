@@ -1250,6 +1250,220 @@ import { manifest as pdfToEpub } from "@/tools/pdf/pdf-to-epub/manifest";
 import { manifest as pdfReorderPages } from "@/tools/pdf/pdf-reorder-pages/manifest";
 import { manifest as pdfRepair } from "@/tools/pdf/pdf-repair/manifest";
 
+import { manifest as cssVariablesGenerator } from "@/tools/developer/css-variables-generator/manifest";
+import { manifest as slugGeneratorTool } from "@/tools/developer/slug-generator-tool/manifest";
+import { manifest as punycodeConverter } from "@/tools/developer/punycode-converter/manifest";
+import { manifest as lessToCss } from "@/tools/developer/less-to-css/manifest";
+import { manifest as jsLinter } from "@/tools/developer/js-linter/manifest";
+import { manifest as countOccurrences } from "@/tools/developer/count-occurrences/manifest";
+import { manifest as totpGeneratorTool } from "@/tools/developer/totp-generator-tool/manifest";
+import { manifest as wordCharCounter } from "@/tools/developer/word-char-counter/manifest";
+import { manifest as removeDuplicateLines } from "@/tools/developer/remove-duplicate-lines/manifest";
+import { manifest as cssSpriteTool } from "@/tools/developer/css-sprite-tool/manifest";
+import { manifest as commonjsToEsm } from "@/tools/developer/commonjs-to-esm/manifest";
+import { manifest as jsonToGraphqlSchema } from "@/tools/developer/json-to-graphql-schema/manifest";
+import { manifest as sortLinesTool } from "@/tools/developer/sort-lines-tool/manifest";
+import { manifest as jwtVerifier } from "@/tools/developer/jwt-verifier/manifest";
+import { manifest as rateLimitCalculator } from "@/tools/developer/rate-limit-calculator/manifest";
+import { manifest as randomStringGenerator } from "@/tools/developer/random-string-generator/manifest";
+import { manifest as percentEncoding } from "@/tools/developer/percent-encoding/manifest";
+import { manifest as stringReverser } from "@/tools/developer/string-reverser/manifest";
+import { manifest as stringEscape } from "@/tools/developer/string-escape/manifest";
+import { manifest as pbkdf2Generator } from "@/tools/developer/pbkdf2-generator/manifest";
+import { manifest as openGraphTagGenerator } from "@/tools/developer/open-graph-tag-generator/manifest";
+import { manifest as sha3HashGenerator } from "@/tools/developer/sha3-hash-generator/manifest";
+import { manifest as findReplaceMulti } from "@/tools/developer/find-replace-multi/manifest";
+import { manifest as cssToScss } from "@/tools/developer/css-to-scss/manifest";
+import { manifest as mockApiGenerator } from "@/tools/developer/mock-api-generator/manifest";
+import { manifest as jsBundleAnalyzer } from "@/tools/developer/js-bundle-analyzer/manifest";
+import { manifest as secretKeyGenerator } from "@/tools/developer/secret-key-generator/manifest";
+import { manifest as graphqlExplorer } from "@/tools/developer/graphql-explorer/manifest";
+import { manifest as jsonToKotlin } from "@/tools/developer/json-to-kotlin/manifest";
+import { manifest as jsonToRust } from "@/tools/developer/json-to-rust/manifest";
+import { manifest as removeLineBreaks } from "@/tools/developer/remove-line-breaks/manifest";
+import { manifest as jsonToTypescript } from "@/tools/developer/json-to-typescript/manifest";
+import { manifest as jsxToJs } from "@/tools/developer/jsx-to-js/manifest";
+import { manifest as utf8Viewer } from "@/tools/developer/utf8-viewer/manifest";
+import { manifest as sseTester } from "@/tools/developer/sse-tester/manifest";
+import { manifest as openapiViewer } from "@/tools/developer/openapi-viewer/manifest";
+import { manifest as jsonToYaml } from "@/tools/developer/json-to-yaml/manifest";
+import { manifest as quotedPrintable } from "@/tools/developer/quoted-printable/manifest";
+import { manifest as htmlEntityReference } from "@/tools/developer/html-entity-reference/manifest";
+import { manifest as jsonRpcBuilder } from "@/tools/developer/json-rpc-builder/manifest";
+import { manifest as scssToCss } from "@/tools/developer/scss-to-css/manifest";
+import { manifest as typescriptPlayground } from "@/tools/developer/typescript-playground/manifest";
+import { manifest as cssGridBuilder } from "@/tools/developer/css-grid-builder/manifest";
+import { manifest as sha1HashGenerator } from "@/tools/developer/sha1-hash-generator/manifest";
+import { manifest as jsToTypescript } from "@/tools/developer/js-to-typescript/manifest";
+import { manifest as nanoidGenerator } from "@/tools/developer/nanoid-generator/manifest";
+import { manifest as jsonToQueryString } from "@/tools/developer/json-to-query-string/manifest";
+import { manifest as jsUnitTestRunner } from "@/tools/developer/js-unit-test-runner/manifest";
+import { manifest as faviconLinkGenerator } from "@/tools/developer/favicon-link-generator/manifest";
+import { manifest as iframeGenerator } from "@/tools/developer/iframe-generator/manifest";
+import { manifest as jsonpathEvaluator } from "@/tools/developer/jsonpath-evaluator/manifest";
+import { manifest as curlBuilder } from "@/tools/developer/curl-builder/manifest";
+import { manifest as ecdsaKeyGenerator } from "@/tools/developer/ecdsa-key-generator/manifest";
+import { manifest as removeConsoleLog } from "@/tools/developer/remove-console-log/manifest";
+import { manifest as randomBytesGenerator } from "@/tools/developer/random-bytes-generator/manifest";
+import { manifest as cssResetGenerator } from "@/tools/developer/css-reset-generator/manifest";
+import { manifest as urlSafeBase64Tool } from "@/tools/developer/url-safe-base64-tool/manifest";
+import { manifest as xorCipher } from "@/tools/developer/xor-cipher/manifest";
+import { manifest as jsMinifier } from "@/tools/developer/js-minifier/manifest";
+import { manifest as rsaKeyGenerator } from "@/tools/developer/rsa-key-generator/manifest";
+import { manifest as jsPlayground } from "@/tools/developer/js-playground/manifest";
+import { manifest as jsObfuscator } from "@/tools/developer/js-obfuscator/manifest";
+import { manifest as jwtGenerator } from "@/tools/developer/jwt-generator/manifest";
+import { manifest as trimWhitespace } from "@/tools/developer/trim-whitespace/manifest";
+import { manifest as tsToJs } from "@/tools/developer/ts-to-js/manifest";
+import { manifest as cacheControlBuilder } from "@/tools/developer/cache-control-builder/manifest";
+import { manifest as jsonToPython } from "@/tools/developer/json-to-python/manifest";
+import { manifest as textToArray } from "@/tools/developer/text-to-array/manifest";
+import { manifest as jsonToJava } from "@/tools/developer/json-to-java/manifest";
+import { manifest as tailwindToCss } from "@/tools/developer/tailwind-to-css/manifest";
+import { manifest as webhookTester } from "@/tools/developer/webhook-tester/manifest";
+import { manifest as whitespaceDetector } from "@/tools/developer/whitespace-detector/manifest";
+import { manifest as ndjsonViewer } from "@/tools/developer/ndjson-viewer/manifest";
+import { manifest as rsaEncryptDecryptTool } from "@/tools/developer/rsa-encrypt-decrypt-tool/manifest";
+import { manifest as varToLetConst } from "@/tools/developer/var-to-let-const/manifest";
+import { manifest as passphraseGenerator } from "@/tools/developer/passphrase-generator/manifest";
+import { manifest as sha256HashGenerator } from "@/tools/developer/sha256-hash-generator/manifest";
+import { manifest as openapiToClient } from "@/tools/developer/openapi-to-client/manifest";
+import { manifest as contentNegotiationHelper } from "@/tools/developer/content-negotiation-helper/manifest";
+import { manifest as textDiff } from "@/tools/developer/text-diff/manifest";
+import { manifest as jsonEscapeUnescape } from "@/tools/developer/json-escape-unescape/manifest";
+import { manifest as morseCodeConverter } from "@/tools/developer/morse-code-converter/manifest";
+import { manifest as jsonToJsObject } from "@/tools/developer/json-to-js-object/manifest";
+import { manifest as semverCalculator } from "@/tools/developer/semver-calculator/manifest";
+import { manifest as websocketTester } from "@/tools/developer/websocket-tester/manifest";
+import { manifest as curlToCode } from "@/tools/developer/curl-to-code/manifest";
+import { manifest as jsComplexityAnalyzer } from "@/tools/developer/js-complexity-analyzer/manifest";
+import { manifest as jsonToSql } from "@/tools/developer/json-to-sql/manifest";
+import { manifest as reverseLines } from "@/tools/developer/reverse-lines/manifest";
+import { manifest as jsDeobfuscator } from "@/tools/developer/js-deobfuscator/manifest";
+import { manifest as callbackToPromise } from "@/tools/developer/callback-to-promise/manifest";
+import { manifest as jsonToToml } from "@/tools/developer/json-to-toml/manifest";
+import { manifest as unicodeEscape } from "@/tools/developer/unicode-escape/manifest";
+import { manifest as multiToSingleLine } from "@/tools/developer/multi-to-single-line/manifest";
+import { manifest as jsdocGenerator } from "@/tools/developer/jsdoc-generator/manifest";
+import { manifest as jsBeautifier } from "@/tools/developer/js-beautifier/manifest";
+import { manifest as jsonToXml } from "@/tools/developer/json-to-xml/manifest";
+import { manifest as restApiClient } from "@/tools/developer/rest-api-client/manifest";
+import { manifest as esmToCommonjs } from "@/tools/developer/esm-to-commonjs/manifest";
+import { manifest as uuidV1Tool } from "@/tools/developer/uuid-v1-tool/manifest";
+import { manifest as sha512HashGenerator } from "@/tools/developer/sha512-hash-generator/manifest";
+import { manifest as cssUnusedRules } from "@/tools/developer/css-unused-rules/manifest";
+import { manifest as uuidV4Tool } from "@/tools/developer/uuid-v4-tool/manifest";
+import { manifest as ulidGenerator } from "@/tools/developer/ulid-generator/manifest";
+import { manifest as uuidV5Tool } from "@/tools/developer/uuid-v5-tool/manifest";
+import { manifest as md5HashGenerator } from "@/tools/developer/md5-hash-generator/manifest";
+import { manifest as rot13Rot47 } from "@/tools/developer/rot13-rot47/manifest";
+import { manifest as scryptGenerator } from "@/tools/developer/scrypt-generator/manifest";
+import { manifest as httpHeadersAnalyzer } from "@/tools/developer/http-headers-analyzer/manifest";
+import { manifest as pdfSanitize } from "@/tools/pdf/pdf-sanitize/manifest";
+import { manifest as pdfWordCount } from "@/tools/pdf/pdf-word-count/manifest";
+import { manifest as pdfMergeBookmarks } from "@/tools/pdf/pdf-merge-bookmarks/manifest";
+import { manifest as pdfNUp } from "@/tools/pdf/pdf-n-up/manifest";
+import { manifest as pdfSplitAdvanced } from "@/tools/pdf/pdf-split-advanced/manifest";
+import { manifest as pdfAutoRotate } from "@/tools/pdf/pdf-auto-rotate/manifest";
+import { manifest as officeToPdf } from "@/tools/pdf/office-to-pdf/manifest";
+import { manifest as pdfInsertPages } from "@/tools/pdf/pdf-insert-pages/manifest";
+import { manifest as pdfScaleFit } from "@/tools/pdf/pdf-scale-fit/manifest";
+import { manifest as pdfSpellCheck } from "@/tools/pdf/pdf-spell-check/manifest";
+import { manifest as pdfRenameContent } from "@/tools/pdf/pdf-rename-content/manifest";
+import { manifest as pdfGrayscale } from "@/tools/pdf/pdf-grayscale/manifest";
+import { manifest as pdfMetadataViewer } from "@/tools/pdf/pdf-metadata-viewer/manifest";
+import { manifest as pdfSummarizeAi } from "@/tools/pdf/pdf-summarize-ai/manifest";
+import { manifest as pdfPageLabelEditor } from "@/tools/pdf/pdf-page-label-editor/manifest";
+import { manifest as pdfPageReorderCustom } from "@/tools/pdf/pdf-page-reorder-custom/manifest";
+import { manifest as pdfStampDocument } from "@/tools/pdf/pdf-stamp-document/manifest";
+import { manifest as pdfFindReplace } from "@/tools/pdf/pdf-find-replace/manifest";
+import { manifest as pdfPageSize } from "@/tools/pdf/pdf-page-size/manifest";
+import { manifest as pdfOcrSearchable } from "@/tools/pdf/pdf-ocr-searchable/manifest";
+import { manifest as pdfBatchProcessor } from "@/tools/pdf/pdf-batch-processor/manifest";
+import { manifest as pdfPageBlankInsert } from "@/tools/pdf/pdf-page-blank-insert/manifest";
+import { manifest as pdfAttachmentEmbed } from "@/tools/pdf/pdf-attachment-embed/manifest";
+import { manifest as pdfPageDeleteRange } from "@/tools/pdf/pdf-page-delete-range/manifest";
+import { manifest as pdfBorderFrame } from "@/tools/pdf/pdf-border-frame/manifest";
+import { manifest as pdfTocFromHeadings } from "@/tools/pdf/pdf-toc-from-headings/manifest";
+import { manifest as pdfExtractAnnotations } from "@/tools/pdf/pdf-extract-annotations/manifest";
+import { manifest as pdfToOdt } from "@/tools/pdf/pdf-to-odt/manifest";
+import { manifest as pdfVisualDiff } from "@/tools/pdf/pdf-visual-diff/manifest";
+import { manifest as pdfCompareDiff } from "@/tools/pdf/pdf-compare-diff/manifest";
+import { manifest as pdfPermanentRedact } from "@/tools/pdf/pdf-permanent-redact/manifest";
+import { manifest as pdfFontLister } from "@/tools/pdf/pdf-font-lister/manifest";
+import { manifest as pdfMarginPadding } from "@/tools/pdf/pdf-margin-padding/manifest";
+import { manifest as pdfTranslate } from "@/tools/pdf/pdf-translate/manifest";
+import { manifest as pdfOrganize } from "@/tools/pdf/pdf-organize/manifest";
+import { manifest as pdfUaAccessibility } from "@/tools/pdf/pdf-ua-accessibility/manifest";
+import { manifest as pdfAutoRedactPii } from "@/tools/pdf/pdf-auto-redact-pii/manifest";
+import { manifest as pdfToPdfa } from "@/tools/pdf/pdf-to-pdfa/manifest";
+import { manifest as pdfPortfolioBuilder } from "@/tools/pdf/pdf-portfolio-builder/manifest";
+import { manifest as pdfHyperlinkEditor } from "@/tools/pdf/pdf-hyperlink-editor/manifest";
+import { manifest as pdfHighlightExtractor } from "@/tools/pdf/pdf-highlight-extractor/manifest";
+import { manifest as pdfDigitalSignature } from "@/tools/pdf/pdf-digital-signature/manifest";
+import { manifest as pdfThumbnailSheet } from "@/tools/pdf/pdf-thumbnail-sheet/manifest";
+import { manifest as pdf2upJoin } from "@/tools/pdf/pdf-2up-join/manifest";
+import { manifest as pdfProtectEncrypt } from "@/tools/pdf/pdf-protect-encrypt/manifest";
+import { manifest as pdfAnnotate } from "@/tools/pdf/pdf-annotate/manifest";
+import { manifest as pdfSplitByBookmarks } from "@/tools/pdf/pdf-split-by-bookmarks/manifest";
+import { manifest as pdfFontEmbedder } from "@/tools/pdf/pdf-font-embedder/manifest";
+import { manifest as pdfExtractTextBulk } from "@/tools/pdf/pdf-extract-text-bulk/manifest";
+import { manifest as pdfBatchPipeline } from "@/tools/pdf/pdf-batch-pipeline/manifest";
+import { manifest as pdfDuplicatePages } from "@/tools/pdf/pdf-duplicate-pages/manifest";
+import { manifest as pdfBackgroundImage } from "@/tools/pdf/pdf-background-image/manifest";
+import { manifest as pdfExportFormData } from "@/tools/pdf/pdf-export-form-data/manifest";
+import { manifest as pdfPosterSplit } from "@/tools/pdf/pdf-poster-split/manifest";
+import { manifest as pdfMeasureCalibrate } from "@/tools/pdf/pdf-measure-calibrate/manifest";
+import { manifest as pdfAnnotationSummary } from "@/tools/pdf/pdf-annotation-summary/manifest";
+import { manifest as pdfSplitSpreads } from "@/tools/pdf/pdf-split-spreads/manifest";
+import { manifest as pdfMeasureTool } from "@/tools/pdf/pdf-measure-tool/manifest";
+import { manifest as pdfExtractAttachmentsBulk } from "@/tools/pdf/pdf-extract-attachments-bulk/manifest";
+import { manifest as pdfDocumentAssembler } from "@/tools/pdf/pdf-document-assembler/manifest";
+import { manifest as pdfImportFormData } from "@/tools/pdf/pdf-import-form-data/manifest";
+import { manifest as pdfXExport } from "@/tools/pdf/pdf-x-export/manifest";
+import { manifest as pdfLayersEditor } from "@/tools/pdf/pdf-layers-editor/manifest";
+import { manifest as pdfPageRotateRange } from "@/tools/pdf/pdf-page-rotate-range/manifest";
+import { manifest as pdfHighlightMarkup } from "@/tools/pdf/pdf-highlight-markup/manifest";
+import { manifest as pdfBookmarksFromText } from "@/tools/pdf/pdf-bookmarks-from-text/manifest";
+import { manifest as webpageToPdf } from "@/tools/pdf/webpage-to-pdf/manifest";
+import { manifest as pdfStampConfidential } from "@/tools/pdf/pdf-stamp-confidential/manifest";
+import { manifest as pdfLayersManager } from "@/tools/pdf/pdf-layers-manager/manifest";
+import { manifest as pdfReadability } from "@/tools/pdf/pdf-readability/manifest";
+import { manifest as pdfStampAdvanced } from "@/tools/pdf/pdf-stamp-advanced/manifest";
+import { manifest as pdfTablesCsv } from "@/tools/pdf/pdf-tables-csv/manifest";
+import { manifest as pdfSplitBySize } from "@/tools/pdf/pdf-split-by-size/manifest";
+import { manifest as pdfAiChat } from "@/tools/pdf/pdf-ai-chat/manifest";
+import { manifest as pdfRedactPattern } from "@/tools/pdf/pdf-redact-pattern/manifest";
+import { manifest as pdfReverseOrder } from "@/tools/pdf/pdf-reverse-order/manifest";
+import { manifest as pdfAddPageNumbersAdvanced } from "@/tools/pdf/pdf-add-page-numbers-advanced/manifest";
+import { manifest as pdfFlipbook } from "@/tools/pdf/pdf-flipbook/manifest";
+import { manifest as pdfCompressTarget } from "@/tools/pdf/pdf-compress-target/manifest";
+import { manifest as pdfFullTextSearch } from "@/tools/pdf/pdf-full-text-search/manifest";
+import { manifest as pdfMergeCombineMultiple } from "@/tools/pdf/pdf-merge-combine-multiple/manifest";
+import { manifest as pdfDrawSignature } from "@/tools/pdf/pdf-draw-signature/manifest";
+import { manifest as pdfExtractImagesBulk } from "@/tools/pdf/pdf-extract-images-bulk/manifest";
+import { manifest as pdfInvertColors } from "@/tools/pdf/pdf-invert-colors/manifest";
+import { manifest as pdfWatermarkAdvanced } from "@/tools/pdf/pdf-watermark-advanced/manifest";
+import { manifest as pdfTranslateDevice } from "@/tools/pdf/pdf-translate-device/manifest";
+import { manifest as epubToPdfTool } from "@/tools/pdf/epub-to-pdf-tool/manifest";
+import { manifest as pdfCleanMetadata } from "@/tools/pdf/pdf-clean-metadata/manifest";
+import { manifest as pdfPageExtractRange } from "@/tools/pdf/pdf-page-extract-range/manifest";
+import { manifest as pdfBookletPrint } from "@/tools/pdf/pdf-booklet-print/manifest";
+import { manifest as imageToPdfTool } from "@/tools/pdf/image-to-pdf-tool/manifest";
+import { manifest as pdfRepairTool } from "@/tools/pdf/pdf-repair-tool/manifest";
+import { manifest as pdfToPdfx } from "@/tools/pdf/pdf-to-pdfx/manifest";
+import { manifest as pdfRotatePermanent } from "@/tools/pdf/pdf-rotate-permanent/manifest";
+import { manifest as pdfSummarizer } from "@/tools/pdf/pdf-summarizer/manifest";
+import { manifest as pdfFillForm } from "@/tools/pdf/pdf-fill-form/manifest";
+import { manifest as pdfInterleaveMerge } from "@/tools/pdf/pdf-interleave-merge/manifest";
+import { manifest as pdfChat } from "@/tools/pdf/pdf-chat/manifest";
+import { manifest as pdfPageResizeIndividual } from "@/tools/pdf/pdf-page-resize-individual/manifest";
+import { manifest as pdfRedactSearch } from "@/tools/pdf/pdf-redact-search/manifest";
+import { manifest as pdfTextToSpeech } from "@/tools/pdf/pdf-text-to-speech/manifest";
+import { manifest as pdfHeaderFooterAdvanced } from "@/tools/pdf/pdf-header-footer-advanced/manifest";
+import { manifest as pdfRemoveBlankPages } from "@/tools/pdf/pdf-remove-blank-pages/manifest";
+import { manifest as pdfFormBuilder } from "@/tools/pdf/pdf-form-builder/manifest";
+
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -2460,6 +2674,220 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfToEpub,
   pdfReorderPages,
   pdfRepair,
+
+  cssVariablesGenerator,
+  slugGeneratorTool,
+  punycodeConverter,
+  lessToCss,
+  jsLinter,
+  countOccurrences,
+  totpGeneratorTool,
+  wordCharCounter,
+  removeDuplicateLines,
+  cssSpriteTool,
+  commonjsToEsm,
+  jsonToGraphqlSchema,
+  sortLinesTool,
+  jwtVerifier,
+  rateLimitCalculator,
+  randomStringGenerator,
+  percentEncoding,
+  stringReverser,
+  stringEscape,
+  pbkdf2Generator,
+  openGraphTagGenerator,
+  sha3HashGenerator,
+  findReplaceMulti,
+  cssToScss,
+  mockApiGenerator,
+  jsBundleAnalyzer,
+  secretKeyGenerator,
+  graphqlExplorer,
+  jsonToKotlin,
+  jsonToRust,
+  removeLineBreaks,
+  jsonToTypescript,
+  jsxToJs,
+  utf8Viewer,
+  sseTester,
+  openapiViewer,
+  jsonToYaml,
+  quotedPrintable,
+  htmlEntityReference,
+  jsonRpcBuilder,
+  scssToCss,
+  typescriptPlayground,
+  cssGridBuilder,
+  sha1HashGenerator,
+  jsToTypescript,
+  nanoidGenerator,
+  jsonToQueryString,
+  jsUnitTestRunner,
+  faviconLinkGenerator,
+  iframeGenerator,
+  jsonpathEvaluator,
+  curlBuilder,
+  ecdsaKeyGenerator,
+  removeConsoleLog,
+  randomBytesGenerator,
+  cssResetGenerator,
+  urlSafeBase64Tool,
+  xorCipher,
+  jsMinifier,
+  rsaKeyGenerator,
+  jsPlayground,
+  jsObfuscator,
+  jwtGenerator,
+  trimWhitespace,
+  tsToJs,
+  cacheControlBuilder,
+  jsonToPython,
+  textToArray,
+  jsonToJava,
+  tailwindToCss,
+  webhookTester,
+  whitespaceDetector,
+  ndjsonViewer,
+  rsaEncryptDecryptTool,
+  varToLetConst,
+  passphraseGenerator,
+  sha256HashGenerator,
+  openapiToClient,
+  contentNegotiationHelper,
+  textDiff,
+  jsonEscapeUnescape,
+  morseCodeConverter,
+  jsonToJsObject,
+  semverCalculator,
+  websocketTester,
+  curlToCode,
+  jsComplexityAnalyzer,
+  jsonToSql,
+  reverseLines,
+  jsDeobfuscator,
+  callbackToPromise,
+  jsonToToml,
+  unicodeEscape,
+  multiToSingleLine,
+  jsdocGenerator,
+  jsBeautifier,
+  jsonToXml,
+  restApiClient,
+  esmToCommonjs,
+  uuidV1Tool,
+  sha512HashGenerator,
+  cssUnusedRules,
+  uuidV4Tool,
+  ulidGenerator,
+  uuidV5Tool,
+  md5HashGenerator,
+  rot13Rot47,
+  scryptGenerator,
+  httpHeadersAnalyzer,
+  pdfSanitize,
+  pdfWordCount,
+  pdfMergeBookmarks,
+  pdfNUp,
+  pdfSplitAdvanced,
+  pdfAutoRotate,
+  officeToPdf,
+  pdfInsertPages,
+  pdfScaleFit,
+  pdfSpellCheck,
+  pdfRenameContent,
+  pdfGrayscale,
+  pdfMetadataViewer,
+  pdfSummarizeAi,
+  pdfPageLabelEditor,
+  pdfPageReorderCustom,
+  pdfStampDocument,
+  pdfFindReplace,
+  pdfPageSize,
+  pdfOcrSearchable,
+  pdfBatchProcessor,
+  pdfPageBlankInsert,
+  pdfAttachmentEmbed,
+  pdfPageDeleteRange,
+  pdfBorderFrame,
+  pdfTocFromHeadings,
+  pdfExtractAnnotations,
+  pdfToOdt,
+  pdfVisualDiff,
+  pdfCompareDiff,
+  pdfPermanentRedact,
+  pdfFontLister,
+  pdfMarginPadding,
+  pdfTranslate,
+  pdfOrganize,
+  pdfUaAccessibility,
+  pdfAutoRedactPii,
+  pdfToPdfa,
+  pdfPortfolioBuilder,
+  pdfHyperlinkEditor,
+  pdfHighlightExtractor,
+  pdfDigitalSignature,
+  pdfThumbnailSheet,
+  pdf2upJoin,
+  pdfProtectEncrypt,
+  pdfAnnotate,
+  pdfSplitByBookmarks,
+  pdfFontEmbedder,
+  pdfExtractTextBulk,
+  pdfBatchPipeline,
+  pdfDuplicatePages,
+  pdfBackgroundImage,
+  pdfExportFormData,
+  pdfPosterSplit,
+  pdfMeasureCalibrate,
+  pdfAnnotationSummary,
+  pdfSplitSpreads,
+  pdfMeasureTool,
+  pdfExtractAttachmentsBulk,
+  pdfDocumentAssembler,
+  pdfImportFormData,
+  pdfXExport,
+  pdfLayersEditor,
+  pdfPageRotateRange,
+  pdfHighlightMarkup,
+  pdfBookmarksFromText,
+  webpageToPdf,
+  pdfStampConfidential,
+  pdfLayersManager,
+  pdfReadability,
+  pdfStampAdvanced,
+  pdfTablesCsv,
+  pdfSplitBySize,
+  pdfAiChat,
+  pdfRedactPattern,
+  pdfReverseOrder,
+  pdfAddPageNumbersAdvanced,
+  pdfFlipbook,
+  pdfCompressTarget,
+  pdfFullTextSearch,
+  pdfMergeCombineMultiple,
+  pdfDrawSignature,
+  pdfExtractImagesBulk,
+  pdfInvertColors,
+  pdfWatermarkAdvanced,
+  pdfTranslateDevice,
+  epubToPdfTool,
+  pdfCleanMetadata,
+  pdfPageExtractRange,
+  pdfBookletPrint,
+  imageToPdfTool,
+  pdfRepairTool,
+  pdfToPdfx,
+  pdfRotatePermanent,
+  pdfSummarizer,
+  pdfFillForm,
+  pdfInterleaveMerge,
+  pdfChat,
+  pdfPageResizeIndividual,
+  pdfRedactSearch,
+  pdfTextToSpeech,
+  pdfHeaderFooterAdvanced,
+  pdfRemoveBlankPages,
+  pdfFormBuilder,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
