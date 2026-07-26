@@ -15,8 +15,10 @@ export interface JwtHeader {
   [k: string]: unknown;
 }
 
+export type Severity = "high" | "medium" | "low" | "info";
+
 export interface JwtLintIssue {
-  severity: "high" | "medium" | "low" | "info";
+  severity: Severity;
   code: string;
   message: string;
   recommendation: string;

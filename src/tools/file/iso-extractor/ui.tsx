@@ -13,6 +13,7 @@ import {
   formatBytes,
   loadHistory, saveToHistory, clearHistory,
   buildZipFromEntries,
+  buildShareUrl,
   type IsoEntry, type IsoStats, type TreeNode, type IsoFilter,
   type IsoParseResult, type HistoryEntry,
 } from "./logic";

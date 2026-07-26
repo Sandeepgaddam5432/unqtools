@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CopyButton, DownloadButton, ErrorBanner } from "../../_shared";
 import {
   binaryToOctal, validateOptions, octalToBinary, autoDetectBits,
-  binaryGroupToDecimal, binaryGroupToHex, batchConvert, batchToCsv,
+  binaryGroupToDecimal, binaryGroupToHex, binaryGroupToOctal, batchConvert, batchToCsv,
   normalizeBinary, splitGroups,
 } from "./logic";
 

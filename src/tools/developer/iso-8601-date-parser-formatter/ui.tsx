@@ -34,6 +34,8 @@ import {
   clearHistory,
   buildShareUrl,
   parseShareUrl,
+  pad2,
+  pad3,
   type IsoKind,
   type ParsedDate,
   type HistoryEntry,
