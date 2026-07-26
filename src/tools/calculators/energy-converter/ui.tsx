@@ -23,10 +23,10 @@ export default function EnergyConverter() {
 
   const result = useMemo(() => {
     const v = validateOptions({ from, to });
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     const r = process(value, { from, to });
-    if ("error" in r) { setError(r.error); return null; }
-    setError(null);
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
+    queueMicrotask(() => setError(null));
     return r;
   }, [value, from, to]);
 

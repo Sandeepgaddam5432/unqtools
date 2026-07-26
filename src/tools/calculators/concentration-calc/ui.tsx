@@ -36,11 +36,11 @@ export default function ConcentrationCalc() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const volL = convertVolume(Number(volume), volUnit, "L");
     const massKg = convertMass(Number(mass), massUnit, "kg");
     if (typeof volL !== "number" || typeof massKg !== "number") {
-      setError("Unit conversion error");
+      queueMicrotask(() => setError("Unit conversion error"));
       return null;
     }
     const input = {
@@ -50,9 +50,9 @@ export default function ConcentrationCalc() {
       precision: 4,
     };
     const v = validateInput(input);
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     const r = calculateConcentration(input);
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [mode, moles, volume, mass, equivalents, soluteMass, solutionMass, volUnit, massUnit]);
 

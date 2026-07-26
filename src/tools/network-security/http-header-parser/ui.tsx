@@ -17,8 +17,8 @@ export default function HttpHeaderParser() {
   const [error, setError] = useState<string | null>(null);
 
   const analysis = useMemo(() => {
-    try { setError(null); return analyzeHeaders(parseHeaders(raw)); }
-    catch (e) { setError((e as Error).message); return null; }
+    try { queueMicrotask(() => setError(null)); return analyzeHeaders(parseHeaders(raw)); }
+    catch (e) { queueMicrotask(() => setError((e as Error).message)); return null; }
   }, [raw]);
 
   const report = analysis ? formatReport(analysis) : "";

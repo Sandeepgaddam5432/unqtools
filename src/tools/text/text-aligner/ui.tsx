@@ -29,12 +29,12 @@ export default function TextAligner() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const opts = { width: Number(width), alignment, fillChar, justifyLastLine };
     const v = validateOptions(opts);
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     const r = process(input, opts);
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [input, width, alignment, fillChar, justifyLastLine]);
 

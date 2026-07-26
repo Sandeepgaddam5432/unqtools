@@ -25,7 +25,7 @@ export default function XssSanitizer() {
   const [error, setError] = useState("");
 
   const result = useMemo(() => {
-    setError("");
+    queueMicrotask(() => setError(""));
     try {
       return sanitize(html, {
         allowedTags: allowedTags.split(",").map((s) => s.trim()).filter(Boolean),
@@ -33,7 +33,7 @@ export default function XssSanitizer() {
         allowDataUris,
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Sanitize failed");
+      queueMicrotask(() => setError(e instanceof Error ? e.message : "Sanitize failed"));
       return null;
     }
   }, [html, allowedTags, allowedAttrs, allowDataUris]);

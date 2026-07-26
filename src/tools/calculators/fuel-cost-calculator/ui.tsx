@@ -33,13 +33,13 @@ export default function FuelCostCalculator() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const r = process({
       distance: Number(distance), fuelPricePerLiter: Number(price),
       consumption: Number(consumption), consumptionUnit: unit,
       co2PerLiter: CO2_BY_FUEL[fuelType],
     });
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [distance, price, consumption, unit, fuelType]);
 

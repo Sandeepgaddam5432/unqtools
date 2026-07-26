@@ -30,8 +30,8 @@ export default function TextRainbowText() {
 
   const html = useMemo(() => {
     const v = validateRainbow(opts);
-    if ("error" in v) { setError(v.error); return ""; }
-    setError(null);
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return ""; }
+    queueMicrotask(() => setError(null));
     return rainbowHtml(input, opts);
   }, [input, opts]);
   const stats = useMemo(() => (input ? rainbowStats(input, opts) : null), [input, opts]);

@@ -20,9 +20,9 @@ export default function TextHtmlDecode() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const v = validateInput(input);
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     if (mode === "decode") return { kind: "decode" as const, value: htmlDecode(input) };
     if (mode === "encode") return { kind: "encode" as const, value: htmlEncode(input) };
     return { kind: "encode-all" as const, value: htmlEncodeAll(input) };

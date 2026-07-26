@@ -108,10 +108,10 @@ export default function SqlResultToCsvJsonExporter() {
   const parsed = useMemo(() => {
     if (!input.trim()) return null;
     try {
-      setError("");
+      queueMicrotask(() => setError(""));
       return parseInput(input, parseOpts);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      queueMicrotask(() => setError(e instanceof Error ? e.message : String(e)));
       return null;
     }
   }, [input, parseOpts]);
@@ -149,7 +149,7 @@ export default function SqlResultToCsvJsonExporter() {
     try {
       return convert(input, parseOpts, exportOpts);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      queueMicrotask(() => setError(e instanceof Error ? e.message : String(e)));
       return null;
     }
   }, [input, parsed, parseOpts, exportOpts]);

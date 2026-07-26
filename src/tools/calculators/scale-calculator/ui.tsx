@@ -25,11 +25,11 @@ export default function ScaleCalculator() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const r = Number(real);
     const m = Number(model);
     const v = validateScale({ real: r, model: m });
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     const factor = scaleFactor(r, m);
     const scaleStr = formatScale(factor);
     let realDimOut: number | null = null;

@@ -21,10 +21,10 @@ export default function ForceConverter() {
 
   const value = Number(raw);
   const result = useMemo(() => {
-    setError(null);
-    if (!Number.isFinite(value)) { setError("Input must be a finite number"); return null; }
+    queueMicrotask(() => setError(null));
+    if (!Number.isFinite(value)) { queueMicrotask(() => setError("Input must be a finite number")); return null; }
     const r = process(value, { from, to });
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [value, from, to]);
 

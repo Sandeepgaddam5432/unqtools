@@ -15,10 +15,10 @@ export default function TextPigLatin() {
 
   const output = useMemo(() => {
     try {
-      setError(null);
+      queueMicrotask(() => setError(null));
       return direction === "to" ? toPigLatin(input, suffix) : fromPigLatinText(input);
     } catch (e) {
-      setError((e as Error).message);
+      queueMicrotask(() => setError((e as Error).message));
       return "";
     }
   }, [input, direction, suffix]);

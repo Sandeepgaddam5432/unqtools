@@ -52,7 +52,7 @@ export default function WorkOrderGenerator() {
 
   const result = useMemo(() => {
     const r = computeWorkOrder(input);
-    setError("error" in r ? r.error : null);
+    queueMicrotask(() => setError("error" in r ? r.error : null));
     return r;
   }, [input]);
 

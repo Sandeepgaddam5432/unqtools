@@ -23,19 +23,20 @@ export default function TextOctalToBinary() {
   const [customPrefix, setCustomPrefix] = useState("");
   const [direction, setDirection] = useState<Direction>("oct2bin");
   const [batchText, setBatchText] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
   const opts: OctalToBinaryOptions = { separator, digitsPerGroup, prefix: prefixMode, customPrefix };
 
   const result = useMemo(() => {
-    setError(null);
     const v = validateOptions(opts);
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) return { kind: "error" as const, error: v.error };
     if (direction === "oct2bin") return { kind: "oct2bin" as const, value: octalToBinary(input, opts) };
     const r = binaryToOctal(input);
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) return { kind: "error" as const, error: r.error };
     return { kind: "bin2oct" as const, value: r };
   }, [input, opts, direction]);
+
+  // Derive error from result (no setState inside useMemo — would cause infinite re-render)
+  const error = result?.kind === "error" ? result.error : null;
 
   const batchLines = useMemo(() => batchText.split(/\r?\n/).filter((l) => l.length > 0), [batchText]);
   const batchResults = useMemo(() => octalToBinaryBatch(batchLines, opts), [batchLines, opts]);
@@ -43,7 +44,7 @@ export default function TextOctalToBinary() {
   const rt = useMemo(() => direction === "oct2bin" ? roundTrip(input, opts) : null, [input, opts, direction]);
   const refTable = useMemo(() => referenceTable(), []);
 
-  const outputText = result ? (result.kind === "oct2bin" ? result.value.output : result.value.output) : "";
+  const outputText = result && (result.kind === "oct2bin" || result.kind === "bin2oct") ? result.value.output : "";
   const groupCount = result?.kind === "oct2bin" ? result.value.groupCount : 0;
   const invalidCount = result?.kind === "oct2bin" ? result.value.invalidGroups : 0;
 
@@ -101,7 +102,7 @@ export default function TextOctalToBinary() {
 
       {error && <ErrorBanner message={error} />}
 
-      {result && !error && (
+      {result && result.kind !== "error" && (
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">

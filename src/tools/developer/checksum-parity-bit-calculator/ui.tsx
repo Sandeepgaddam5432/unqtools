@@ -94,10 +94,10 @@ export default function ChecksumParityBitCalculator() {
     if (!input) return [];
     try {
       const b = parseInput(input, format);
-      setParseError(null);
+      queueMicrotask(() => setParseError(null));
       return b;
     } catch (e) {
-      setParseError(e instanceof Error ? e.message : "Parse error");
+      queueMicrotask(() => setParseError(e instanceof Error ? e.message : "Parse error"));
       return [];
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

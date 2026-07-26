@@ -29,10 +29,10 @@ export default function BinaryToText() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const opts = { bits, utf8, strict };
     const v = validateOptions(opts);
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     return binaryToText(input, opts);
   }, [input, bits, utf8, strict]);
 

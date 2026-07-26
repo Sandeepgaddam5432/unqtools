@@ -24,10 +24,10 @@ export default function RatioCalculator() {
 
   const an = Number(a); const bn = Number(b);
   const simplified = useMemo(() => {
-    setError(null);
-    if (!Number.isFinite(an) || !Number.isFinite(bn)) { setError("A and B must be numbers"); return null; }
+    queueMicrotask(() => setError(null));
+    if (!Number.isFinite(an) || !Number.isFinite(bn)) { queueMicrotask(() => setError("A and B must be numbers")); return null; }
     const r = simplifyRatio(an, bn);
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [an, bn]);
 

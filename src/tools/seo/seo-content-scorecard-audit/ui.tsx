@@ -48,8 +48,8 @@ export default function SeoContentScorecardAudit() {
   const input: AuditInput = useMemo(() => ({ content, keyword, competitor: competitor || undefined, minWords }), [content, keyword, competitor, minWords]);
   const result = useMemo(() => {
     const r = auditContent(input);
-    if ("error" in r) { setError(r.error); return null; }
-    setError(null);
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
+    queueMicrotask(() => setError(null));
     return r;
   }, [input]);
 

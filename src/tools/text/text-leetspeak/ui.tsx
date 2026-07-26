@@ -28,10 +28,10 @@ export default function TextLeetspeak() {
 
   const output = useMemo(() => {
     try {
-      setError(null);
+      queueMicrotask(() => setError(null));
       return direction === "to" ? toLeet(input, level) : fromLeet(input, level);
     } catch (e) {
-      setError((e as Error).message);
+      queueMicrotask(() => setError((e as Error).message));
       return "";
     }
   }, [input, direction, level]);

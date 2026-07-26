@@ -15,8 +15,8 @@ export default function CronExpressionParser() {
   const { description, runs } = useMemo(() => {
     const desc = describeCron(expr);
     const r = nextRuns(expr, new Date(), count);
-    if ("error" in r) { setError(r.error); return { description: desc, runs: [] as Date[] }; }
-    setError(null);
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return { description: desc, runs: [] as Date[] }; }
+    queueMicrotask(() => setError(null));
     return { description: desc, runs: r };
   }, [expr, count]);
 

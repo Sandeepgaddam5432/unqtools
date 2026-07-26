@@ -29,13 +29,13 @@ export default function EnzymeActivityCalc() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const r = calculateEnzymeActivity({
       deltaA: Number(deltaA), deltaTime: Number(deltaTime),
       totalVolume: Number(totalVolume), extinction: Number(extinction),
       pathLength: Number(pathLength), sampleVolume: Number(sampleVolume),
     });
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [deltaA, deltaTime, totalVolume, extinction, pathLength, sampleVolume]);
 

@@ -31,7 +31,7 @@ export default function NslookupReference() {
   const csv = useMemo(() => renderQueryTypesCsv(), []);
 
   const batch = useMemo(() => {
-    setError("");
+    queueMicrotask(() => setError(""));
     const lookups: BatchLookup[] = [];
     for (const line of batchInput.split("\n")) {
       const trimmed = line.trim();
@@ -39,7 +39,7 @@ export default function NslookupReference() {
       const [d, t] = trimmed.split(/\s+/);
       if (!d || !t) continue;
       if (!lookupQueryType(t as QueryType)) {
-        setError(`Unknown query type '${t}' in batch input.`);
+        queueMicrotask(() => setError(`Unknown query type '${t}' in batch input.`));
         return null;
       }
       lookups.push({ domain: d, type: t as QueryType });

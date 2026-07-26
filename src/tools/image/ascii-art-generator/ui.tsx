@@ -607,7 +607,7 @@ function ImageTab() {
     });
     if (res.ok) return res.output;
     // Surface the error via a layout effect so we don't call setState during render.
-    queueMicrotask(() => setError(res.error));
+    queueMicrotask(() => queueMicrotask(() => setError(res.error)));
     return "";
   }, [croppedImage, width, ramp, dithering, brightness, contrast, gamma, invert, mode, aspectCorrection]);
 

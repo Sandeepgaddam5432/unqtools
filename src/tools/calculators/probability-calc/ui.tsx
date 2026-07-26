@@ -26,11 +26,11 @@ export default function ProbabilityCalc() {
   const [error, setError] = useState<string | null>(null);
 
   const summary = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const a = Number(pA); const b = Number(pB);
     const ab = pAB === "" ? undefined : Number(pAB);
     const v = validateInput({ pA: a, pB: b, pAB: ab });
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     return summarize(v);
   }, [pA, pB, pAB]);
 

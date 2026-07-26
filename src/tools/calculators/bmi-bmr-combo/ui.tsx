@@ -39,8 +39,8 @@ export default function BmiBmrCombo() {
   const result = useMemo(() => {
     const input = { weightKg, heightCm: heightCmVal, ageYears: Number(age), sex, activity };
     const v = validateInput(input);
-    if ("error" in v) { setError(v.error); return null; }
-    setError(null);
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
+    queueMicrotask(() => setError(null));
     try {
       const r = compute(input);
       // Recompute macros with custom percentages
@@ -53,7 +53,7 @@ export default function BmiBmrCombo() {
       }
       return { ...r, macros: { protein: { grams: (total * p) / 4, kcal: total * p }, carbs: { grams: (total * c) / 4, kcal: total * c }, fat: { grams: (total * f) / 9, kcal: total * f } } };
     } catch (e) {
-      setError((e as Error).message);
+      queueMicrotask(() => setError((e as Error).message));
       return null;
     }
   }, [weightKg, heightCmVal, age, sex, activity, proteinPct, carbPct, fatPct]);

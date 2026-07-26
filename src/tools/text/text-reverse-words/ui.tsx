@@ -30,7 +30,7 @@ export default function TextReverseWords() {
     try {
       return charMode ? reverseCharsInWords(input, validOpts) : reverseWords(input, validOpts);
     } catch (e) {
-      setError(String(e));
+      queueMicrotask(() => setError(String(e)));
       return "";
     }
   }, [input, validOpts, charMode]);

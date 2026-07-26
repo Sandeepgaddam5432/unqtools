@@ -35,7 +35,7 @@ export default function TextRedactor() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const useOpts: RedactOptions = {
       ...opts,
       replacement,
@@ -48,7 +48,7 @@ export default function TextRedactor() {
         : undefined,
     };
     const r = process(input, useOpts);
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [input, opts, customWords, replacement, customPatterns]);
 

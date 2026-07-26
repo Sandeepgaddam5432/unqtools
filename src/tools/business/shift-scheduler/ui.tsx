@@ -22,17 +22,17 @@ export default function ShiftScheduler() {
   const summary = useMemo(() => {
     const hrs = totalHours(shifts);
     const cov = computeCoverage(shifts);
-    if (typeof hrs === "object" && "error" in hrs) { setError(hrs.error); return null; }
-    if ("error" in cov) { setError(cov.error); return null; }
+    if (typeof hrs === "object" && "error" in hrs) { queueMicrotask(() => setError(hrs.error)); return null; }
+    if ("error" in cov) { queueMicrotask(() => setError(cov.error)); return null; }
     const gaps = detectGaps(shifts, 1);
-    if ("error" in gaps) { setError(gaps.error); return null; }
+    if ("error" in gaps) { queueMicrotask(() => setError(gaps.error)); return null; }
     const empHours = perEmployeeHours(shifts);
-    if ("error" in empHours) { setError(empHours.error); return null; }
+    if ("error" in empHours) { queueMicrotask(() => setError(empHours.error)); return null; }
     const conflicts = detectConflicts(shifts);
-    if ("error" in conflicts) { setError(conflicts.error); return null; }
+    if ("error" in conflicts) { queueMicrotask(() => setError(conflicts.error)); return null; }
     const overtime = detectOvertime(shifts, 8);
-    if ("error" in overtime) { setError(overtime.error); return null; }
-    setError(null);
+    if ("error" in overtime) { queueMicrotask(() => setError(overtime.error)); return null; }
+    queueMicrotask(() => setError(null));
     return { hours: hrs as number, coverage: cov, gaps, empHours, conflicts, overtime, stats: coverageStats(cov) };
   }, [shifts]);
 

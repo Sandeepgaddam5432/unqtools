@@ -69,7 +69,7 @@ export default function ImageDiffCompare() {
     try {
       return runDiff({ a: imgA, b: imgB, opts: { threshold, ignoreAlpha } });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Diff failed");
+      queueMicrotask(() => setError(e instanceof Error ? e.message : "Diff failed"));
       return null;
     }
   }, [imgA, imgB, threshold, ignoreAlpha]);

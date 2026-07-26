@@ -25,8 +25,8 @@ export default function PerimeterCalculator() {
   const params = PARAMS[shape];
   const result = useMemo(() => {
     const v = validatePerimeterInput({ shape, values, unit });
-    if ("error" in v) { setError(v.error); return null; }
-    setError(null);
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
+    queueMicrotask(() => setError(null));
     return computePerimeter({ shape, values, unit });
   }, [shape, values, unit]);
 

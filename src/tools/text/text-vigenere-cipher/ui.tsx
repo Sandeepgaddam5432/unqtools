@@ -28,8 +28,8 @@ export default function VigenereCipher() {
   const validation = useMemo(() => validateOptions(opts), [opts]);
   const output = useMemo(() => {
     if (!input) return "";
-    if ("error" in validation) { setError(validation.error); return ""; }
-    setError(null);
+    if ("error" in validation) { queueMicrotask(() => setError(validation.error)); return ""; }
+    queueMicrotask(() => setError(null));
     return vigenereWithOptions(input, opts);
   }, [input, opts, validation]);
   const stats = useMemo(() => textStats(input), [input]);

@@ -29,7 +29,7 @@ export default function BibliographyGenerator() {
     try {
       return planBibliography({ style, sources });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed");
+      queueMicrotask(() => setError(e instanceof Error ? e.message : "Failed"));
       return null;
     }
   }, [style, sources]);

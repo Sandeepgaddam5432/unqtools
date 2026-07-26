@@ -16,24 +16,24 @@ export default function OddsCalculator() {
   const [error, setError] = useState<string | null>(null);
 
   const result: OddsResult | null = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const v = Number(value);
-    if (!Number.isFinite(v)) { setError("Please enter a valid number"); return null; }
+    if (!Number.isFinite(v)) { queueMicrotask(() => setError("Please enter a valid number")); return null; }
     if (mode === "probability") {
       const r = fromProbability(v);
-      if ("error" in r) { setError(r.error); return null; }
+      if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
       return r;
     }
     if (mode === "decimal") {
       const r = fromDecimal(v);
-      if ("error" in r) { setError(r.error); return null; }
+      if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
       return r;
     }
     // american
     const p = americanToProb(v);
-    if (typeof p === "object" && p !== null) { setError(p.error); return null; }
+    if (typeof p === "object" && p !== null) { queueMicrotask(() => setError(p.error)); return null; }
     const r = fromProbability(p);
-    if ("error" in r) { setError(r.error); return null; }
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
     return r;
   }, [mode, value]);
 

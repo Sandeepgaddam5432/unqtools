@@ -25,18 +25,18 @@ export default function FractionCalculator() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const fa = parseFraction(a);
-    if ("error" in fa) { setError(fa.error); return null; }
+    if ("error" in fa) { queueMicrotask(() => setError(fa.error)); return null; }
     const fb = parseFraction(b);
-    if ("error" in fb) { setError(fb.error); return null; }
+    if ("error" in fb) { queueMicrotask(() => setError(fb.error)); return null; }
     let r: Fraction;
     if (op === "add") r = add(fa, fb);
     else if (op === "sub") r = sub(fa, fb);
     else if (op === "mul") r = mul(fa, fb);
     else {
       const d = div(fa, fb);
-      if ("error" in d) { setError(d.error); return null; }
+      if ("error" in d) { queueMicrotask(() => setError(d.error)); return null; }
       r = d;
     }
     return { r, fa, fb };

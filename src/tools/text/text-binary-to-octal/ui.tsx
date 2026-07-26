@@ -33,10 +33,10 @@ export default function TextBinaryToOctal() {
   const [error, setError] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    setError(null);
+    queueMicrotask(() => setError(null));
     const opts = { separator, bits, prefix, strict };
     const v = validateOptions(opts);
-    if ("error" in v) { setError(v.error); return null; }
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
     return binaryToOctal(input, opts);
   }, [input, bits, separator, prefix, strict]);
 

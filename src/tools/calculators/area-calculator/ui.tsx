@@ -37,8 +37,8 @@ export default function AreaCalculator() {
   const params = SHAPE_PARAMS[shape];
   const result = useMemo(() => {
     const v = validateAreaInput({ shape, values });
-    if ("error" in v) { setError(v.error); return null; }
-    setError(null);
+    if ("error" in v) { queueMicrotask(() => setError(v.error)); return null; }
+    queueMicrotask(() => setError(null));
     return computeAreaWithUnit({ shape, values }, unit);
   }, [shape, values, unit]);
 

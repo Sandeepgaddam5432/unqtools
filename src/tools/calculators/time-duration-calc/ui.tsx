@@ -25,8 +25,8 @@ export default function TimeDurationCalc() {
 
   const result = useMemo(() => {
     const r = computeDuration({ start, end, breaks });
-    if ("error" in r) { setError(r.error); return null; }
-    setError(null);
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
+    queueMicrotask(() => setError(null));
     return r;
   }, [start, end, breaks]);
 

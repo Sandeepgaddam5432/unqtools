@@ -13,8 +13,8 @@ export default function Ipv6SubnetCalc() {
 
   const result = useMemo(() => {
     const r = computeSubnet(cidr);
-    if ("error" in r) { setError(r.error); return null; }
-    setError(null);
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
+    queueMicrotask(() => setError(null));
     return r;
   }, [cidr]);
 

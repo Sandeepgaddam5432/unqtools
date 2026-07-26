@@ -102,8 +102,8 @@ export default function GoogleSerpSnippetPreview() {
 
   const result = useMemo(() => {
     const r = buildSerpPreview(input);
-    if ("error" in r) { setError(r.error); return null; }
-    setError(null);
+    if ("error" in r) { queueMicrotask(() => setError(r.error)); return null; }
+    queueMicrotask(() => setError(null));
     return r;
   }, [input]);
 
