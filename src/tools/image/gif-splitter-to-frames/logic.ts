@@ -1,113 +1,108 @@
 /**
  * GIF Splitter (to Frames) — pure logic.
+ * GIF parsing, frame extraction utilities.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface GifFrame {
+  index: number;
+  delay: number; // milliseconds
+  disposal: number;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+  dataUrl?: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface GifInfo {
+  width: number;
+  height: number;
+  frameCount: number;
+  loopCount: number;
+  totalDuration: number;
+  frames: GifFrame[];
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+export function parseGifHeader(bytes: Uint8Array): { valid: boolean; version: string } {
+  if (bytes.length < 6) return { valid: false, version: "" };
+  const sig = String.fromCharCode(bytes[0], bytes[1], bytes[2]);
+  const ver = String.fromCharCode(bytes[3], bytes[4], bytes[5]);
+  if (sig !== "GIF") return { valid: false, version: "" };
+  return { valid: true, version: ver };
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
+export function parseLogicalScreenDescriptor(bytes: Uint8Array): { width: number; height: number; hasGlobalColorTable: boolean; colorResolution: number } {
+  if (bytes.length < 13) return { width: 0, height: 0, hasGlobalColorTable: false, colorResolution: 0 };
+  const width = bytes[6] | (bytes[7] << 8);
+  const height = bytes[8] | (bytes[9] << 8);
+  const packed = bytes[10];
+  return {
+    width, height,
+    hasGlobalColorTable: (packed & 0x80) !== 0,
+    colorResolution: ((packed & 0x70) >> 4) + 1,
+  };
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+export function extractFrameInfo(bytes: Uint8Array): GifFrame[] {
+  const frames: GifFrame[] = [];
+  let i = 13;
+  // Skip global color table if present
+  const packed = bytes[10];
+  if (packed & 0x80) {
+    const tableSize = 3 * Math.pow(2, (packed & 0x07) + 1);
+    i += tableSize;
+  }
+  let frameIndex = 0;
+  while (i < bytes.length - 1) {
+    if (bytes[i] === 0x21 && bytes[i + 1] === 0xF9) {
+      // Graphic Control Extension
+      const blockSize = bytes[i + 2];
+      if (blockSize === 4 && i + 7 < bytes.length) {
+        const packed2 = bytes[i + 3];
+        const delay = (bytes[i + 4] | (bytes[i + 5] << 8)) * 10;
+        const disposal = (packed2 >> 2) & 0x07;
+        frames.push({ index: frameIndex++, delay, disposal, width: 0, height: 0, left: 0, top: 0 });
+      }
+      i += 8;
+    } else if (bytes[i] === 0x2C) {
+      // Image Descriptor
+      if (frames.length > 0) {
+        const lastFrame = frames[frames.length - 1];
+        lastFrame.left = bytes[i + 1] | (bytes[i + 2] << 8);
+        lastFrame.top = bytes[i + 3] | (bytes[i + 4] << 8);
+        lastFrame.width = bytes[i + 5] | (bytes[i + 6] << 8);
+        lastFrame.height = bytes[i + 7] | (bytes[i + 8] << 8);
+      }
+      i += 10;
+    } else if (bytes[i] === 0x3B) {
+      break; // Trailer
+    } else {
+      i++;
+    }
+  }
+  return frames;
+}
+
+export function getGifInfo(bytes: Uint8Array): GifInfo {
+  const header = parseGifHeader(bytes);
+  if (!header.valid) return { width: 0, height: 0, frameCount: 0, loopCount: 0, totalDuration: 0, frames: [] };
+  const screen = parseLogicalScreenDescriptor(bytes);
+  const frames = extractFrameInfo(bytes);
+  const totalDuration = frames.reduce((sum, f) => sum + f.delay, 0);
+  return { width: screen.width, height: screen.height, frameCount: frames.length, loopCount: 0, totalDuration, frames };
+}
+
+export function calculateFps(frames: GifFrame[]): number {
+  if (frames.length === 0) return 0;
+  const avgDelay = frames.reduce((sum, f) => sum + f.delay, 0) / frames.length;
+  return avgDelay > 0 ? Math.round(1000 / avgDelay) : 0;
+}
+
+export function exportFrameManifest(frames: GifFrame[], gifInfo: GifInfo): string {
+  return JSON.stringify({ ...gifInfo, fps: calculateFps(frames) }, null, 2);
 }
 
 export function formatDuration(ms: number): string {
   if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+  return `${(ms / 1000).toFixed(2)}s`;
 }

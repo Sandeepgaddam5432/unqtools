@@ -2,112 +2,69 @@
  * App Icon Generator (iOS/Android) — pure logic.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface IconSize {
+  platform: "iOS" | "Android";
+  size: number;
+  name: string;
+  context: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export const IOS_SIZES: IconSize[] = [
+  { platform: "iOS", size: 29, name: "Icon-29.png", context: "Settings (1x)" },
+  { platform: "iOS", size: 40, name: "Icon-40.png", context: "Spotlight (2x)" },
+  { platform: "iOS", size: 58, name: "Icon-58.png", context: "Settings (2x)" },
+  { platform: "iOS", size: 60, name: "Icon-60.png", context: "iPhone (2x)" },
+  { platform: "iOS", size: 76, name: "Icon-76.png", context: "iPad (1x)" },
+  { platform: "iOS", size: 80, name: "Icon-80.png", context: "Spotlight (3x)" },
+  { platform: "iOS", size: 87, name: "Icon-87.png", context: "Settings (3x)" },
+  { platform: "iOS", size: 120, name: "Icon-120.png", context: "iPhone (3x) / iPad (2x)" },
+  { platform: "iOS", size: 152, name: "Icon-152.png", context: "iPad (2x)" },
+  { platform: "iOS", size: 167, name: "Icon-167.png", context: "iPad Pro (2x)" },
+  { platform: "iOS", size: 180, name: "Icon-180.png", context: "iPhone (3x)" },
+  { platform: "iOS", size: 1024, name: "Icon-1024.png", context: "App Store" },
+];
+
+export const ANDROID_SIZES: IconSize[] = [
+  { platform: "Android", size: 48, name: "mdpi.png", context: "mdpi (1x)" },
+  { platform: "Android", size: 72, name: "hdpi.png", context: "hdpi (1.5x)" },
+  { platform: "Android", size: 96, name: "xhdpi.png", context: "xhdpi (2x)" },
+  { platform: "Android", size: 144, name: "xxhdpi.png", context: "xxhdpi (3x)" },
+  { platform: "Android", size: 192, name: "xxxhdpi.png", context: "xxxhdpi (4x)" },
+  { platform: "Android", size: 512, name: "play-store.png", context: "Google Play Store" },
+];
+
+export function getAllSizes(): IconSize[] {
+  return [...IOS_SIZES, ...ANDROID_SIZES];
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+export function getSizesByPlatform(platform: "iOS" | "Android"): IconSize[] {
+  return getAllSizes().filter((s) => s.platform === platform);
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
+export function generateAssetCatalog(name: string): string {
+  return `{
+  "images" : [
+    ${IOS_SIZES.map((s) => `{
+      "size" : "${s.size}x${s.size}",
+      "idiom" : "universal",
+      "filename" : "${s.name}",
+      "scale" : "1x"
+    }`).join(",\n    ")}
+  ],
+  "info" : { "version" : 1, "author" : "xcode" }
+}`;
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+export function generateAndroidManifestEntries(): string {
+  return ANDROID_SIZES.filter((s) => s.size <= 192).map((s) => {
+    const density = { 48: "mdpi", 72: "hdpi", 96: "xhdpi", 144: "xxhdpi", 192: "xxxhdpi" }[s.size] || "";
+    return `<icon density="${density}" src="res/mipmap-${density}/ic_launcher.png" />`;
+  }).join("\n");
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function calculateTotalIcons(includeIOS: boolean, includeAndroid: boolean): number {
+  let count = 0;
+  if (includeIOS) count += IOS_SIZES.length;
+  if (includeAndroid) count += ANDROID_SIZES.length;
+  return count;
 }

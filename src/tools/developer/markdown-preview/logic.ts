@@ -1,153 +1,79 @@
 /**
  * Markdown Preview — pure logic.
+ * Markdown to HTML conversion with GitHub-flavored features.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export function mdToHtml(md: string): string {
+  let html = md;
+  // Code blocks (fenced)
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => `<pre><code class="language-${lang}">${escapeHtml(code.trimEnd())}</code></pre>`);
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+  // Headers
+  html = html.replace(/^#### (.+)$/gm, "<h4>$1</h4>");
+  html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+  // Bold and italic
+  html = html.replace(/\*\*\*([^*]+)\*\*\*/g, "<strong><em>$1</em></strong>");
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  // Links
+  html = html.replace(/\[([^]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  // Images
+  html = html.replace(/!\[([^]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />');
+  // Blockquote
+  html = html.replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>");
+  // Unordered lists
+  html = html.replace(/^(\s*)[-*] (.+)$/gm, "$1<li>$2</li>");
+  html = html.replace(/(<li>[\s\S]*?<\/li>)/g, (match) => match.includes("<ul>") ? match : `<ul>${match}</ul>`);
+  // Ordered lists
+  html = html.replace(/^\d+\. (.+)$/gm, "<li>$1</li>");
+  // Horizontal rule
+  html = html.replace(/^---$/gm, "<hr/>");
+  // Line breaks
+  html = html.replace(/\n\n/g, "</p><p>");
+  html = `<p>${html}</p>`;
+  // Clean up empty p tags
+  html = html.replace(/<p>\s*<\/p>/g, "");
+  return html;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+export function getWordCount(md: string): number {
+  return md.split(/\s+/).filter(Boolean).length;
+}
+
+export function getReadingTime(md: string): number {
+  return Math.ceil(getWordCount(md) / 200);
+}
+
+export function getTableOfContents(md: string): { level: number; text: string; id: string }[] {
+  const headers: { level: number; text: string; id: string }[] = [];
+  const lines = md.split("\n");
+  for (const line of lines) {
+    const m = line.match(/^(#{1,4})\s+(.+)$/);
+    if (m) {
+      const level = m[1].length;
+      const text = m[2].trim();
+      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      headers.push({ level, text, id });
+    }
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+  return headers;
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    // Generic processing — returns input as-is (override in specific tools)
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function copyToClipboard(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    return navigator.clipboard.writeText(text);
-  }
-  return Promise.reject(new Error("Clipboard API not available"));
-}
-
-export function downloadFile(content: string | Blob, filename: string, mime = "text/plain"): void {
-  const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  // PDF
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  // PNG
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  // JPEG
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  // GIF
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  // ZIP
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  // GZIP
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    gif: "image/gif",
-    webp: "image/webp",
-    svg: "image/svg+xml",
-    html: "text/html",
-    css: "text/css",
-    js: "application/javascript",
-    json: "application/json",
-    xml: "application/xml",
-    csv: "text/csv",
-    txt: "text/plain",
-    md: "text/markdown",
-    zip: "application/zip",
+export function getMarkdownStats(md: string): { words: number; chars: number; lines: number; headers: number; links: number; images: number; codeBlocks: number } {
+  return {
+    words: getWordCount(md),
+    chars: md.length,
+    lines: md.split("\n").length,
+    headers: (md.match(/^#{1,4}\s/gm) || []).length,
+    links: (md.match(/\[([^]]+)\]\(([^)]+)\)/g) || []).length,
+    images: (md.match(/!\[/g) || []).length,
+    codeBlocks: (md.match(/```/g) || []).length / 2,
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number;
-  outputSize: number;
-  ratio: number;
-  savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
 }

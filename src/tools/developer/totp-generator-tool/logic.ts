@@ -1,113 +1,72 @@
 /**
  * TOTP/2FA Code Generator — pure logic.
+ * RFC 6238 TOTP implementation.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export async function generateTOTP(secret: string, period: number = 30, digits: number = 6, algorithm: string = "SHA-1"): Promise<string> {
+  const key = base32Decode(secret);
+  const counter = Math.floor(Date.now() / 1000 / period);
+  const counterBytes = new ArrayBuffer(8);
+  const view = new DataView(counterBytes);
+  view.setUint32(4, counter);
+  if (!crypto?.subtle) throw new Error("WebCrypto not available");
+  const cryptoKey = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: algorithm }, false, ["sign"]);
+  const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBytes));
+  const offset = hmac[hmac.length - 1] & 0x0f;
+  const code = ((hmac[offset] & 0x7f) << 24) | ((hmac[offset + 1] & 0xff) << 16) | ((hmac[offset + 2] & 0xff) << 8) | (hmac[offset + 3] & 0xff);
+  return (code % Math.pow(10, digits)).toString().padStart(digits, "0");
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
-}
-
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+export function base32Decode(secret: string): Uint8Array {
+  const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  const cleaned = secret.replace(/\s+/g, "").toUpperCase().replace(/=/g, "");
+  let bits = 0, value = 0;
+  const bytes: number[] = [];
+  for (const ch of cleaned) {
+    const idx = alpha.indexOf(ch);
+    if (idx === -1) continue;
+    value = (value << 5) | idx;
+    bits += 5;
+    if (bits >= 8) { bytes.push((value >>> (bits - 8)) & 0xff); bits -= 8; }
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
+  return new Uint8Array(bytes);
+}
+
+export function base32Encode(bytes: Uint8Array): string {
+  const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0, value = 0, output = "";
+  for (const byte of bytes) {
+    value = (value << 8) | byte;
+    bits += 8;
+    while (bits >= 5) { output += alpha[(value >>> (bits - 5)) & 0x1f]; bits -= 5; }
   }
-  return issues;
+  if (bits > 0) output += alpha[(value << (5 - bits)) & 0x1f];
+  return output;
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
+export function getRemainingSeconds(period: number = 30): number {
+  return period - (Math.floor(Date.now() / 1000) % period);
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+export function generateSecret(length: number = 20): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  return base32Encode(bytes);
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
+export function parseOtpAuthUri(uri: string): { secret: string; issuer: string; account: string; period: number; digits: number } | null {
+  const m = uri.match(/^otpauth:\/\/totp\/([^:?]+)(?:\?([^]*))?$/);
+  if (!m) return null;
+  const account = decodeURIComponent(m[1]);
+  const params = new URLSearchParams(m[2] || "");
+  const secret = params.get("secret") || "";
+  const issuer = params.get("issuer") || "";
+  const period = parseInt(params.get("period") || "30", 10);
+  const digits = parseInt(params.get("digits") || "6", 10);
+  return { secret, issuer, account, period, digits };
 }
 
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function buildOtpAuthUri(secret: string, account: string, issuer: string = "", period: number = 30, digits: number = 6): string {
+  const params = new URLSearchParams({ secret, period: String(period), digits: String(digits) });
+  if (issuer) params.set("issuer", issuer);
+  return `otpauth://totp/${encodeURIComponent(account)}?${params.toString()}`;
 }

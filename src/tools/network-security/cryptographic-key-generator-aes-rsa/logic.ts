@@ -1,113 +1,90 @@
 /**
  * Cryptographic Key Generator (AES/RSA/ECDSA) — pure logic.
+ * Uses WebCrypto for key generation.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export type KeyType = "aes" | "rsa" | "ecdsa";
+export type ExportFormat = "raw" | "jwk" | "pem";
+
+export interface KeyResult {
+  type: KeyType;
+  algorithm: string;
+  publicKey?: string;
+  privateKey?: string;
+  raw?: string;
+  fingerprint: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export async function generateAESKey(size: 128 | 192 | 256): Promise<KeyResult> {
+  if (!crypto?.subtle) throw new Error("WebCrypto not available");
+  const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: size }, true, ["encrypt", "decrypt"]);
+  const raw = await crypto.subtle.exportKey("raw", key);
+  const rawBytes = new Uint8Array(raw);
+  const rawHex = Array.from(rawBytes).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const fingerprint = await sha256(rawBytes);
+  return { type: "aes", algorithm: `AES-${size}`, raw: rawHex, fingerprint };
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
+export async function generateRSAKey(size: 2048 | 3072 | 4096): Promise<KeyResult> {
+  if (!crypto?.subtle) throw new Error("WebCrypto not available");
+  const keyPair = await crypto.subtle.generateKey(
+    { name: "RSASSA-PKCS1-v1_5", modulusLength: size, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
+    true, ["sign", "verify"]
+  );
+  const pubJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
+  const privJwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+  const pubBytes = new TextEncoder().encode(JSON.stringify(pubJwk));
+  const fingerprint = await sha256(pubBytes);
+  return {
+    type: "rsa",
+    algorithm: `RSA-${size}`,
+    publicKey: JSON.stringify(pubJwk, null, 2),
+    privateKey: JSON.stringify(privJwk, null, 2),
+    fingerprint,
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
 }
 
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
+export async function generateECDSAKey(curve: "P-256" | "P-384" | "P-521"): Promise<KeyResult> {
+  if (!crypto?.subtle) throw new Error("WebCrypto not available");
+  const keyPair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: curve }, true, ["sign", "verify"]);
+  const pubJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
+  const privJwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+  const pubBytes = new TextEncoder().encode(JSON.stringify(pubJwk));
+  const fingerprint = await sha256(pubBytes);
+  return {
+    type: "ecdsa",
+    algorithm: `ECDSA-${curve}`,
+    publicKey: JSON.stringify(pubJwk, null, 2),
+    privateKey: JSON.stringify(privJwk, null, 2),
+    fingerprint,
+  };
 }
 
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+async function sha256(data: Uint8Array): Promise<string> {
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export function validateOptions(type: KeyType, size: number, curve?: string): string[] {
+  const errors: string[] = [];
+  if (type === "aes" && ![128, 192, 256].includes(size)) errors.push("AES key size must be 128, 192, or 256");
+  if (type === "rsa" && ![2048, 3072, 4096].includes(size)) errors.push("RSA key size must be 2048, 3072, or 4096");
+  if (type === "ecdsa" && !["P-256", "P-384", "P-521"].includes(curve || "")) errors.push("ECDSA curve must be P-256, P-384, or P-521");
+  return errors;
+}
+
+export function getKeyTypes(): { value: KeyType; label: string; description: string }[] {
+  return [
+    { value: "aes", label: "AES", description: "Symmetric encryption (128/192/256-bit)" },
+    { value: "rsa", label: "RSA", description: "Asymmetric encryption (2048/3072/4096-bit)" },
+    { value: "ecdsa", label: "ECDSA", description: "Elliptic Curve (P-256/P-384/P-521)" },
+  ];
+}
+
+export function jwkToPem(jwk: object, isPublic: boolean): string {
+  const json = JSON.stringify(jwk);
+  const b64 = btoa(json);
+  const lines = b64.match(/.{1,64}/g) || [];
+  const header = isPublic ? "PUBLIC KEY" : "PRIVATE KEY";
+  return `-----BEGIN ${header}-----\n${lines.join("\n")}\n-----END ${header}-----`;
 }

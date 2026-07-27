@@ -2,112 +2,141 @@
  * Privacy Policy Generator (GDPR/CCPA) — pure logic.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface PolicyOptions {
+  companyName: string;
+  websiteUrl: string;
+  contactEmail: string;
+  jurisdiction: "gdpr" | "ccpa" | "both";
+  dataCollected: string[];
+  thirdPartyServices: string[];
+  cookieUsage: boolean;
+  analyticsUsed: boolean;
+  advertisingUsed: boolean;
+  hasUserAccounts: boolean;
+  dataRetentionPeriod: string;
+  effectiveDate: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
-}
-
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
+export function defaultOptions(): PolicyOptions {
+  return {
+    companyName: "Your Company Name",
+    websiteUrl: "https://example.com",
+    contactEmail: "privacy@example.com",
+    jurisdiction: "gdpr",
+    dataCollected: ["Email address", "Name", "IP address"],
+    thirdPartyServices: [],
+    cookieUsage: true,
+    analyticsUsed: false,
+    advertisingUsed: false,
+    hasUserAccounts: false,
+    dataRetentionPeriod: "12 months",
+    effectiveDate: new Date().toISOString().split("T")[0],
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
 }
 
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
+export function generatePolicy(opts: PolicyOptions): string {
+  const year = new Date().getFullYear();
+  let policy = `# Privacy Policy\n\n`;
+  policy += `**Last updated:** ${opts.effectiveDate}\n\n`;
+  policy += `This Privacy Policy describes how ${opts.companyName} ("we", "us", or "our") collects, uses, and discloses your information when you use our website at ${opts.websiteUrl} (the "Service").\n\n`;
+
+  policy += `## 1. Information We Collect\n\n`;
+  policy += `### Personal Information\n`;
+  policy += `We may collect the following personal information:\n`;
+  for (const data of opts.dataCollected) policy += `- ${data}\n`;
+  policy += `\n`;
+
+  if (opts.cookieUsage) {
+    policy += `### Cookies and Tracking Technologies\n`;
+    policy += `We use cookies and similar tracking technologies to track the activity on our Service and store certain information.\n\n`;
+    if (opts.analyticsUsed) policy += `We use analytics cookies to understand how you interact with our Service.\n`;
+    if (opts.advertisingUsed) policy += `We use advertising cookies to deliver relevant advertisements.\n`;
+    policy += `\n`;
+  }
+
+  policy += `## 2. How We Use Your Information\n\n`;
+  policy += `We use your information to:\n`;
+  policy += `- Provide, maintain, and improve our Service\n`;
+  policy += `- Notify you about changes to our Service\n`;
+  if (opts.hasUserAccounts) policy += `- Create and manage your account\n`;
+  if (opts.analyticsUsed) policy += `- Analyze usage patterns and trends\n`;
+  policy += `- Respond to your comments and questions\n`;
+  policy += `- Process transactions\n\n`;
+
+  policy += `## 3. Data Retention\n\n`;
+  policy += `We retain your personal information for ${opts.dataRetentionPeriod} or as long as needed to provide our Service.\n\n`;
+
+  if (opts.thirdPartyServices.length > 0) {
+    policy += `## 4. Third-Party Services\n\n`;
+    policy += `We may share your information with the following third-party services:\n`;
+    for (const svc of opts.thirdPartyServices) policy += `- ${svc}\n`;
+    policy += `\n`;
+  }
+
+  if (opts.jurisdiction === "gdpr" || opts.jurisdiction === "both") {
+    policy += `## 5. Your GDPR Rights\n\n`;
+    policy += `If you are a resident of the European Economic Area (EEA), you have certain data protection rights under the General Data Protection Regulation (GDPR):\n\n`;
+    policy += `- **Right to access:** You can request copies of your personal data\n`;
+    policy += `- **Right to rectification:** You can request correction of inaccurate data\n`;
+    policy += `- **Right to erasure:** You can request deletion of your personal data\n`;
+    policy += `- **Right to restrict processing:** You can request restriction of processing\n`;
+    policy += `- **Right to data portability:** You can receive a copy of your data in a structured format\n`;
+    policy += `- **Right to object:** You can object to our processing of your personal data\n\n`;
+  }
+
+  if (opts.jurisdiction === "ccpa" || opts.jurisdiction === "both") {
+    policy += `## 6. Your CCPA Rights\n\n`;
+    policy += `If you are a California resident, you have certain rights under the California Consumer Privacy Act (CCPA):\n\n`;
+    policy += `- **Right to know:** You can request what personal information we collect\n`;
+    policy += `- **Right to delete:** You can request deletion of your personal information\n`;
+    policy += `- **Right to opt-out:** You can opt-out of the sale of your personal information\n`;
+    policy += `- **Right to non-discrimination:** We will not discriminate against you for exercising your rights\n\n`;
+  }
+
+  policy += `## 7. Contact Us\n\n`;
+  policy += `If you have questions about this Privacy Policy, contact us at:\n`;
+  policy += `- Email: ${opts.contactEmail}\n`;
+  policy += `- Website: ${opts.websiteUrl}\n\n`;
+  policy += `© ${year} ${opts.companyName}. All rights reserved.\n`;
+
+  return policy;
 }
 
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function generateHTML(opts: PolicyOptions): string {
+  const md = generatePolicy(opts);
+  return md
+    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/(<li>.+<\/li>)/s, "<ul>$1</ul>")
+    .replace(/\n\n/g, "</p><p>")
+    .replace(/^/, "<p>")
+    .replace(/$/, "</p>");
+}
+
+export function validate(opts: PolicyOptions): string[] {
+  const errors: string[] = [];
+  if (!opts.companyName || opts.companyName.trim().length < 2) errors.push("Company name is required (min 2 chars)");
+  if (!opts.websiteUrl || !/^https?:\/\//.test(opts.websiteUrl)) errors.push("Valid URL is required (must start with http:// or https://)");
+  if (!opts.contactEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(opts.contactEmail)) errors.push("Valid email is required");
+  return errors;
+}
+
+export function getDataTypes(): string[] {
+  return [
+    "Email address", "Name", "Phone number", "IP address", "Browser type",
+    "Device information", "Location data", "Usage data", "Cookies",
+    "Payment information", "Mailing address", "Date of birth",
+    "User-generated content", "Search queries", "Communication preferences",
+  ];
+}
+
+export function getThirdPartyServices(): string[] {
+  return [
+    "Google Analytics", "Google AdSense", "Facebook Pixel", "Stripe",
+    "PayPal", "Mailchimp", "SendGrid", "Cloudflare", "AWS",
+    "Hotjar", "Mixpanel", "Segment", "Intercom", "Zendesk",
+  ];
 }

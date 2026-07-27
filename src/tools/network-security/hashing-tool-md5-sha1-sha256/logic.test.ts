@@ -1,105 +1,39 @@
 import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { md5, detectAlgorithm, verifyHash, getAlgorithms } from "./logic";
 
-describe("Hashing Tool (MD5, SHA-1, SHA-256)", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+describe("Hashing Tool", () => {
+  it("computes MD5 of empty string", () => {
+    expect(md5(new TextEncoder().encode(""))).toBe("d41d8cd98f00b204e9800998ecf8427e");
   });
-
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("computes MD5 of 'abc'", () => {
+    expect(md5(new TextEncoder().encode("abc"))).toBe("900150983cd24fb0d6963f7d28e17f72");
   });
-
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("computes MD5 of 'message digest'", () => {
+    expect(md5(new TextEncoder().encode("message digest"))).toBe("f96b697d7cb7938d525a2f31aaf161d0");
   });
-
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("detects algorithm from hash length", () => {
+    expect(detectAlgorithm("d41d8cd98f00b204e9800998ecf8427e")).toBe("MD5");
+    expect(detectAlgorithm("aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d")).toBe("SHA-1");
+    expect(detectAlgorithm("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")).toBe("SHA-256");
   });
-
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  it("verifies matching hashes", () => {
+    expect(verifyHash("d41d8cd98f00b204e9800998ecf8427e", "D41D8CD98F00B204E9800998ECF8427E")).toBe(true);
   });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
+  it("verifies non-matching hashes", () => {
+    expect(verifyHash("abc", "def")).toBe(false);
   });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
+  it("lists all algorithms", () => {
+    expect(getAlgorithms()).toContain("MD5");
+    expect(getAlgorithms()).toContain("SHA-256");
   });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
+  it("handles single byte input", () => {
+    expect(md5(new TextEncoder().encode("a"))).toBe("0cc175b9c0f1b6a831c399e269772661");
   });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
+  it("handles long input", () => {
+    const bytes = new TextEncoder().encode("a".repeat(100));
+    expect(md5(bytes)).toHaveLength(32);
   });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("returns Unknown for wrong length", () => {
+    expect(detectAlgorithm("abc")).toBe("Unknown");
   });
 });

@@ -2,112 +2,142 @@
  * MAC Address Vendor (OUI) Lookup — pure logic.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface VendorInfo {
+  input: string;
+  normalized: string;
+  oui: string;
+  vendor: string;
+  country: string;
+  registry: string;
+  isLocallyAdministered: boolean;
+  isMulticast: boolean;
+  isUniversal: boolean;
+  found: boolean;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+const OUI_DB: Record<string, { vendor: string; country: string; registry: string }> = {
+  "00:1A:11": { vendor: "Dell Inc.", country: "US", registry: "MA-L" },
+  "00:1B:44": { vendor: "Apple, Inc.", country: "US", registry: "MA-L" },
+  "00:50:56": { vendor: "VMware, Inc.", country: "US", registry: "MA-L" },
+  "00:0C:29": { vendor: "VMware, Inc.", country: "US", registry: "MA-L" },
+  "00:1C:42": { vendor: "Parallels, Inc.", country: "US", registry: "MA-L" },
+  "00:15:5D": { vendor: "Microsoft Corporation", country: "US", registry: "MA-L" },
+  "00:03:FF": { vendor: "Microsoft Corporation", country: "US", registry: "MA-L" },
+  "00:50:F2": { vendor: "Microsoft Corporation", country: "US", registry: "MA-L" },
+  "F8:8A:5E": { vendor: "Google, Inc.", country: "US", registry: "MA-L" },
+  "FC:FB:FB": { vendor: "Google, Inc.", country: "US", registry: "MA-L" },
+  "3C:5A:B4": { vendor: "Google, Inc.", country: "US", registry: "MA-L" },
+  "00:1B:54": { vendor: "Cisco Systems, Inc", country: "US", registry: "MA-L" },
+  "00:1F:9E": { vendor: "Cisco Systems, Inc", country: "US", registry: "MA-L" },
+  "00:25:84": { vendor: "Cisco Systems, Inc", country: "US", registry: "MA-L" },
+  "00:12:FB": { vendor: "Samsung Electronics", country: "KR", registry: "MA-L" },
+  "00:09:18": { vendor: "Samsung Electronics", country: "KR", registry: "MA-L" },
+  "00:02:B3": { vendor: "Intel Corporate", country: "US", registry: "MA-L" },
+  "00:0F:1F": { vendor: "Intel Corporate", country: "US", registry: "MA-L" },
+  "00:13:02": { vendor: "Intel Corporate", country: "US", registry: "MA-L" },
+  "00:1F:33": { vendor: "Netgear", country: "US", registry: "MA-L" },
+  "00:1B:2F": { vendor: "Netgear", country: "US", registry: "MA-L" },
+  "00:0F:B5": { vendor: "Netgear", country: "US", registry: "MA-L" },
+  "00:0A:EB": { vendor: "TP-Link Technologies", country: "CN", registry: "MA-L" },
+  "00:13:46": { vendor: "TP-Link Technologies", country: "CN", registry: "MA-L" },
+  "00:25:9E": { vendor: "Huawei Technologies", country: "CN", registry: "MA-L" },
+  "00:18:82": { vendor: "Huawei Technologies", country: "CN", registry: "MA-L" },
+  "00:01:AE": { vendor: "Sony Corporation", country: "JP", registry: "MA-L" },
+  "00:09:BF": { vendor: "Nintendo Co., Ltd.", country: "JP", registry: "MA-L" },
+  "00:17:AB": { vendor: "Nintendo Co., Ltd.", country: "JP", registry: "MA-L" },
+  "08:00:20": { vendor: "Sun Microsystems, Inc", country: "US", registry: "MA-L" },
+  "00:80:5F": { vendor: "IBM", country: "US", registry: "MA-L" },
+};
+
+export function normalizeMac(mac: string): string {
+  return mac.replace(/[^0-9A-Fa-f]/g, "").toUpperCase();
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+export function formatMac(mac: string, format: "colon" | "dash" | "dot" | "none"): string {
+  const hex = normalizeMac(mac);
+  if (hex.length < 6) return mac;
+  const pairs: string[] = [];
+  for (let i = 0; i < hex.length; i += 2) pairs.push(hex.slice(i, i + 2));
+  switch (format) {
+    case "colon": return pairs.join(":");
+    case "dash": return pairs.join("-");
+    case "dot": return [hex.slice(0, 4), hex.slice(4, 8), hex.slice(8, 12)].filter(Boolean).join(".");
+    case "none": return hex;
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
+export function extractOui(mac: string): string {
+  const hex = normalizeMac(mac);
+  if (hex.length < 6) return "";
+  return `${hex.slice(0, 2)}:${hex.slice(2, 4)}:${hex.slice(4, 6)}`;
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+export function isLocallyAdministered(mac: string): boolean {
+  const hex = normalizeMac(mac);
+  if (hex.length < 2) return false;
+  return (parseInt(hex.slice(0, 2), 16) & 0x02) !== 0;
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
+export function isMulticast(mac: string): boolean {
+  const hex = normalizeMac(mac);
+  if (hex.length < 2) return false;
+  return (parseInt(hex.slice(0, 2), 16) & 0x01) !== 0;
 }
 
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
+export function lookupMac(mac: string): VendorInfo {
+  const normalized = normalizeMac(mac);
+  const oui = extractOui(mac);
+  const record = OUI_DB[oui];
+  return {
+    input: mac,
+    normalized,
+    oui,
+    vendor: record?.vendor || "Unknown",
+    country: record?.country || "",
+    registry: record?.registry || "",
+    isLocallyAdministered: isLocallyAdministered(mac),
+    isMulticast: isMulticast(mac),
+    isUniversal: !isLocallyAdministered(mac),
+    found: !!record,
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
 }
 
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
+export function bulkLookup(macs: string): VendorInfo[] {
+  return macs.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map(lookupMac);
 }
 
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function reverseLookup(vendor: string): string[] {
+  const v = vendor.toLowerCase();
+  return Object.entries(OUI_DB).filter(([, info]) => info.vendor.toLowerCase().includes(v)).map(([oui]) => oui);
+}
+
+export function generateRandomMac(locallyAdministered: boolean = false): string {
+  const prefix = "00:00:00";
+  const suffix = Array.from({ length: 6 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, "0").toUpperCase()).join("");
+  let hex = normalizeMac(prefix) + suffix;
+  if (locallyAdministered) {
+    const firstByte = parseInt(hex.slice(0, 2), 16);
+    hex = (firstByte | 0x02).toString(16).padStart(2, "0").toUpperCase() + hex.slice(2);
+  }
+  return formatMac(hex, "colon");
+}
+
+export function isValidMac(mac: string): boolean {
+  const hex = normalizeMac(mac);
+  return hex.length >= 12 && /^[0-9A-F]{12}$/i.test(hex);
+}
+
+export function exportResults(results: VendorInfo[], format: "json" | "csv"): string {
+  if (format === "json") return JSON.stringify(results, null, 2);
+  const rows = [["MAC", "OUI", "Vendor", "Country", "Registry"]];
+  for (const r of results) rows.push([r.input, r.oui, r.vendor, r.country, r.registry]);
+  return rows.map((r) => r.join(",")).join("\n");
+}
+
+export function getAllVendors(): { name: string; oui: string }[] {
+  const seen = new Map<string, string>();
+  for (const [oui, info] of Object.entries(OUI_DB)) {
+    if (!seen.has(info.vendor)) seen.set(info.vendor, oui);
+  }
+  return Array.from(seen.entries()).map(([name, oui]) => ({ name, oui })).sort((a, b) => a.name.localeCompare(b.name));
 }

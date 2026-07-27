@@ -2,112 +2,49 @@
  * Device Mockup Generator (Phone/Laptop) — pure logic.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export type DeviceType = "iphone" | "pixel" | "macbook" | "ipad" | "surface";
+
+export interface DeviceMockup {
+  type: DeviceType;
+  name: string;
+  width: number;
+  height: number;
+  bezelTop: number;
+  bezelBottom: number;
+  bezelSide: number;
+  borderRadius: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export const DEVICES: DeviceMockup[] = [
+  { type: "iphone", name: "iPhone 15 Pro", width: 393, height: 852, bezelTop: 50, bezelBottom: 50, bezelSide: 12, borderRadius: 55 },
+  { type: "pixel", name: "Pixel 8 Pro", width: 412, height: 892, bezelTop: 40, bezelBottom: 40, bezelSide: 10, borderRadius: 40 },
+  { type: "macbook", name: "MacBook Pro 14", width: 1512, height: 982, bezelTop: 30, bezelBottom: 80, bezelSide: 30, borderRadius: 20 },
+  { type: "ipad", name: "iPad Pro 12.9", width: 1024, height: 1366, bezelTop: 40, bezelBottom: 40, bezelSide: 40, borderRadius: 30 },
+  { type: "surface", name: "Surface Pro", width: 960, height: 720, bezelTop: 25, bezelBottom: 25, bezelSide: 25, borderRadius: 10 },
+];
+
+export function getDevice(type: DeviceType): DeviceMockup | undefined {
+  return DEVICES.find((d) => d.type === type);
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+export function generateMockupHtml(type: DeviceType, imageUrl: string, shadow: boolean = true): string {
+  const device = getDevice(type);
+  if (!device) return "";
+  const totalWidth = device.width + device.bezelSide * 2;
+  const totalHeight = device.height + device.bezelTop + device.bezelBottom;
+  return `<div style="width:${totalWidth}px;height:${totalHeight}px;background:#1a1a1a;border-radius:${device.borderRadius}px;padding:${device.bezelTop}px ${device.bezelSide}px ${device.bezelBottom}px;${shadow ? "box-shadow:0 20px 60px rgba(0,0,0,0.3);" : ""}overflow:hidden;">
+  <img src="${imageUrl}" alt="Screenshot" style="width:${device.width}px;height:${device.height}px;object-fit:cover;display:block;border-radius:${Math.max(0, device.borderRadius - 10)}px;"/>
+</div>`;
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
+export function getDevicesByCategory(category: "phone" | "tablet" | "laptop"): DeviceMockup[] {
+  const phoneTypes: DeviceType[] = ["iphone", "pixel"];
+  const tabletTypes: DeviceType[] = ["ipad", "surface"];
+  const laptopTypes: DeviceType[] = ["macbook"];
+  const types = category === "phone" ? phoneTypes : category === "tablet" ? tabletTypes : laptopTypes;
+  return DEVICES.filter((d) => types.includes(d.type));
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function getDeviceList(): { value: DeviceType; label: string }[] {
+  return DEVICES.map((d) => ({ value: d.type, label: d.name }));
 }

@@ -1,105 +1,42 @@
 import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { normalizeMac, formatMac, extractOui, isLocallyAdministered, isMulticast, lookupMac, isValidMac, generateRandomMac, getAllVendors } from "./logic";
 
-describe("MAC Address Vendor (OUI) Lookup", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+describe("MAC Address Vendor Lookup", () => {
+  it("normalizes MAC addresses", () => {
+    expect(normalizeMac("AA:BB:CC:DD:EE:FF")).toBe("AABBCCDDEEFF");
+    expect(normalizeMac("aa-bb-cc-dd-ee-ff")).toBe("AABBCCDDEEFF");
   });
-
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("formats MAC in colon style", () => {
+    expect(formatMac("aabbccddeeff", "colon")).toBe("AA:BB:CC:DD:EE:FF");
   });
-
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("extracts OUI prefix", () => {
+    expect(extractOui("00:1B:44:00:00:00")).toBe("00:1B:44");
   });
-
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("detects locally administered bit", () => {
+    expect(isLocallyAdministered("02:00:00:00:00:00")).toBe(true);
+    expect(isLocallyAdministered("00:00:00:00:00:00")).toBe(false);
   });
-
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  it("detects multicast bit", () => {
+    expect(isMulticast("01:00:00:00:00:00")).toBe(true);
+    expect(isMulticast("00:00:00:00:00:00")).toBe(false);
   });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
+  it("looks up Apple OUI", () => {
+    const r = lookupMac("00:1B:44:00:00:00");
+    expect(r.found).toBe(true);
+    expect(r.vendor).toBe("Apple, Inc.");
   });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
+  it("returns Unknown for unregistered OUI", () => {
+    const r = lookupMac("FF:FF:FF:00:00:00");
+    expect(r.found).toBe(false);
   });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
+  it("validates MAC address", () => {
+    expect(isValidMac("AA:BB:CC:DD:EE:FF")).toBe(true);
+    expect(isValidMac("AA:BB:CC")).toBe(false);
   });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
+  it("generates random MAC", () => {
+    expect(isValidMac(generateRandomMac())).toBe(true);
   });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("lists all vendors", () => {
+    expect(getAllVendors().length).toBeGreaterThan(5);
   });
 });
