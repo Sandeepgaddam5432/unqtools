@@ -1714,6 +1714,8 @@ import { manifest as privacyPolicyGeneratorGdprCcpa } from "@/tools/network-secu
 import { manifest as hstsPreloadCheckerHeader } from "@/tools/network-security/hsts-preload-checker-header/manifest";
 import { manifest as macAddressVendorOui } from "@/tools/network-security/mac-address-vendor-oui/manifest";
 
+import { manifest as aiChatWithPdf } from "@/tools/pdf/ai-chat-with-pdf/manifest";
+
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -3388,6 +3390,8 @@ export const TOOLS: readonly ToolManifest[] = [
   privacyPolicyGeneratorGdprCcpa,
   hstsPreloadCheckerHeader,
   macAddressVendorOui,
+
+  aiChatWithPdf,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
