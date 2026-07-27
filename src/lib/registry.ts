@@ -1696,6 +1696,24 @@ import { manifest as dockerignoreGenerator } from "@/tools/developer/dockerignor
 import { manifest as quotedPrintableTool } from "@/tools/developer/quoted-printable-tool/manifest";
 import { manifest as sha256HashTool } from "@/tools/developer/sha256-hash-tool/manifest";
 
+import { manifest as deviceMockupGeneratorPhoneLaptop } from "@/tools/image/device-mockup-generator-phone-laptop/manifest";
+import { manifest as faviconGeneratorMultiSize } from "@/tools/image/favicon-generator-multi-size/manifest";
+import { manifest as colorContrastCheckerWcag } from "@/tools/image/color-contrast-checker-wcag/manifest";
+import { manifest as gifMakerFromImages } from "@/tools/image/gif-maker-from-images/manifest";
+import { manifest as browserFrameMockupMaker } from "@/tools/image/browser-frame-mockup-maker/manifest";
+import { manifest as blobShapeGeneratorSvg } from "@/tools/image/blob-shape-generator-svg/manifest";
+import { manifest as appIconGeneratorIosAndroid } from "@/tools/image/app-icon-generator-ios-android/manifest";
+import { manifest as gifOptimizerCompressor } from "@/tools/image/gif-optimizer-compressor/manifest";
+import { manifest as gifSplitterToFrames } from "@/tools/image/gif-splitter-to-frames/manifest";
+import { manifest as portScannerTool } from "@/tools/network-security/port-scanner-tool/manifest";
+import { manifest as cryptographicKeyGeneratorAesRsa } from "@/tools/network-security/cryptographic-key-generator-aes-rsa/manifest";
+import { manifest as hashingToolMd5Sha1Sha256 } from "@/tools/network-security/hashing-tool-md5-sha1-sha256/manifest";
+import { manifest as myIpAddressLookup } from "@/tools/network-security/my-ip-address-lookup/manifest";
+import { manifest as cspContentSecurityPolicy } from "@/tools/network-security/csp-content-security-policy/manifest";
+import { manifest as privacyPolicyGeneratorGdprCcpa } from "@/tools/network-security/privacy-policy-generator-gdpr-ccpa/manifest";
+import { manifest as hstsPreloadCheckerHeader } from "@/tools/network-security/hsts-preload-checker-header/manifest";
+import { manifest as macAddressVendorOui } from "@/tools/network-security/mac-address-vendor-oui/manifest";
+
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
   discountCalculator,
@@ -3352,6 +3370,24 @@ export const TOOLS: readonly ToolManifest[] = [
   dockerignoreGenerator,
   quotedPrintableTool,
   sha256HashTool,
+
+  deviceMockupGeneratorPhoneLaptop,
+  faviconGeneratorMultiSize,
+  colorContrastCheckerWcag,
+  gifMakerFromImages,
+  browserFrameMockupMaker,
+  blobShapeGeneratorSvg,
+  appIconGeneratorIosAndroid,
+  gifOptimizerCompressor,
+  gifSplitterToFrames,
+  portScannerTool,
+  cryptographicKeyGeneratorAesRsa,
+  hashingToolMd5Sha1Sha256,
+  myIpAddressLookup,
+  cspContentSecurityPolicy,
+  privacyPolicyGeneratorGdprCcpa,
+  hstsPreloadCheckerHeader,
+  macAddressVendorOui,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

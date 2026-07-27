@@ -1741,6 +1741,23 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "dockerignore-generator": () => import("@/tools/developer/dockerignore-generator/ui"),
   "quoted-printable-tool": () => import("@/tools/developer/quoted-printable-tool/ui"),
   "sha256-hash-tool": () => import("@/tools/developer/sha256-hash-tool/ui"),
+  "device-mockup-generator-phone-laptop": () => import("@/tools/image/device-mockup-generator-phone-laptop/ui"),
+  "favicon-generator-multi-size": () => import("@/tools/image/favicon-generator-multi-size/ui"),
+  "color-contrast-checker-wcag": () => import("@/tools/image/color-contrast-checker-wcag/ui"),
+  "gif-maker-from-images": () => import("@/tools/image/gif-maker-from-images/ui"),
+  "browser-frame-mockup-maker": () => import("@/tools/image/browser-frame-mockup-maker/ui"),
+  "blob-shape-generator-svg": () => import("@/tools/image/blob-shape-generator-svg/ui"),
+  "app-icon-generator-ios-android": () => import("@/tools/image/app-icon-generator-ios-android/ui"),
+  "gif-optimizer-compressor": () => import("@/tools/image/gif-optimizer-compressor/ui"),
+  "gif-splitter-to-frames": () => import("@/tools/image/gif-splitter-to-frames/ui"),
+  "port-scanner-tool": () => import("@/tools/network-security/port-scanner-tool/ui"),
+  "cryptographic-key-generator-aes-rsa": () => import("@/tools/network-security/cryptographic-key-generator-aes-rsa/ui"),
+  "hashing-tool-md5-sha1-sha256": () => import("@/tools/network-security/hashing-tool-md5-sha1-sha256/ui"),
+  "my-ip-address-lookup": () => import("@/tools/network-security/my-ip-address-lookup/ui"),
+  "csp-content-security-policy": () => import("@/tools/network-security/csp-content-security-policy/ui"),
+  "privacy-policy-generator-gdpr-ccpa": () => import("@/tools/network-security/privacy-policy-generator-gdpr-ccpa/ui"),
+  "hsts-preload-checker-header": () => import("@/tools/network-security/hsts-preload-checker-header/ui"),
+  "mac-address-vendor-oui": () => import("@/tools/network-security/mac-address-vendor-oui/ui"),
 };
 
 interface ToolPageClientProps {
