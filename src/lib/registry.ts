@@ -1594,7 +1594,7 @@ import { manifest as pdfPosterTileSplit } from "@/tools/pdf/pdf-poster-tile-spli
 import { manifest as pdfBorderFrameTool } from "@/tools/pdf/pdf-border-frame-tool/manifest";
 import { manifest as pdfAddPageNumbersAdv } from "@/tools/pdf/pdf-add-page-numbers-adv/manifest";
 import { manifest as pdfPageBlankInsertTool } from "@/tools/pdf/pdf-page-blank-insert-tool/manifest";
-import { manifest as epubToPdfConverter } from "@/tools/pdf/epub-to-pdf-converter/manifest";
+import { manifest as epubToPdfConverterDev } from "@/tools/pdf/epub-to-pdf-converter/manifest";
 import { manifest as imageToPdfJpgPng } from "@/tools/pdf/image-to-pdf-jpg-png/manifest";
 import { manifest as pdfProtectUnlock } from "@/tools/pdf/pdf-protect-unlock/manifest";
 import { manifest as pdfPageSizeChange } from "@/tools/pdf/pdf-page-size-change/manifest";
@@ -1649,7 +1649,7 @@ import { manifest as queryStringParser } from "@/tools/developer/query-string-pa
 import { manifest as websocketClient } from "@/tools/developer/websocket-client/manifest";
 import { manifest as sortLinesToolV2 } from "@/tools/developer/sort-lines-tool-v2/manifest";
 import { manifest as textToArrayConverter } from "@/tools/developer/text-to-array-converter/manifest";
-import { manifest as xmlToJsonConverter } from "@/tools/developer/xml-to-json-converter/manifest";
+import { manifest as xmlToJsonConverterDev } from "@/tools/developer/xml-to-json-converter/manifest";
 import { manifest as wordCharLineCounter } from "@/tools/developer/word-char-line-counter/manifest";
 import { manifest as cssGridTemplateBuilder } from "@/tools/developer/css-grid-template-builder/manifest";
 import { manifest as editorconfigGenerator } from "@/tools/developer/editorconfig-generator/manifest";
@@ -3269,7 +3269,7 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfBorderFrameTool,
   pdfAddPageNumbersAdv,
   pdfPageBlankInsertTool,
-  epubToPdfConverter,
+  epubToPdfConverterDev,
   imageToPdfJpgPng,
   pdfProtectUnlock,
   pdfPageSizeChange,
@@ -3324,7 +3324,7 @@ export const TOOLS: readonly ToolManifest[] = [
   websocketClient,
   sortLinesToolV2,
   textToArrayConverter,
-  xmlToJsonConverter,
+  xmlToJsonConverterDev,
   wordCharLineCounter,
   cssGridTemplateBuilder,
   editorconfigGenerator,
