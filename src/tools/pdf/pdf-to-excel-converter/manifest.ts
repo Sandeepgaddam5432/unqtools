@@ -1,7 +1,7 @@
 import type { ToolManifest } from "../../../lib/tool";
 
 export const manifest: ToolManifest = {
-  id: "pdf-to-excel-converter",
+  id: "pdf-to-excel-converter-pdf",
   name: "PDF to Excel Converter",
   description:
     "Extract tables from PDF and convert to Excel (.xlsx), CSV, HTML, or JSON in your browser. Detects tables by clustering text on a y/x grid, handles multiple tables per page, detects headers, infers cell types (number/date/text/currency), and builds a minimal valid .xlsx (OOXML ZIP) entirely client-side. Includes history, shareable URL, summary stats, and table quality scoring. 100% private — no uploads.",

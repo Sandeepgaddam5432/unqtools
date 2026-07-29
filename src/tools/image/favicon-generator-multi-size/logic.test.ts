@@ -8,7 +8,7 @@ describe("Favicon Generator", () => {
   });
   it("generates HTML tags", () => {
     const tags = generateHtmlTags();
-    expect(tags).toContain("rel="icon"");
+    expect(tags).toContain('rel="icon"');
     expect(tags).toContain("apple-touch-icon");
   });
   it("generates webmanifest", () => {

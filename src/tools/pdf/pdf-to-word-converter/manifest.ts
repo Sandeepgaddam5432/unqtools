@@ -1,7 +1,7 @@
 import type { ToolManifest } from "../../../lib/tool";
 
 export const manifest: ToolManifest = {
-  id: "pdf-to-word-converter",
+  id: "pdf-to-word-converter-pdf",
   name: "PDF to Word Converter",
   description:
     "Convert PDF to DOCX, HTML, Markdown, or plain text in your browser. Extracts text and structure, detects headings via font-size analysis, preserves paragraphs and page breaks, and builds a minimal valid .docx (OOXML ZIP) entirely client-side. Includes history, shareable URL, summary stats, and document-structure analyzer. 100% private — no uploads.",

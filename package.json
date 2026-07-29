@@ -1,6 +1,6 @@
 {
   "name": "unqtools",
-  "version": "7.0.0",
+  "version": "17.63.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",

@@ -1,7 +1,7 @@
 import type { ToolManifest } from "../../../lib/tool";
 
 export const manifest: ToolManifest = {
-  id: "pdf-to-powerpoint-converter",
+  id: "pdf-to-powerpoint-converter-pdf",
   name: "PDF to PowerPoint Converter",
   description:
     "Convert PDF pages into presentation slides — one slide per page — and export as a minimal valid .pptx (OOXML ZIP), a navigable HTML slide deck, or Marp-compatible Markdown. Choose from 4 slide layouts, preserve PDF aspect ratio, extract speaker notes from page text, and auto-generate slide titles from headings. Includes a pure-JS ZIP builder, copy + download, history, and shareable URL. 100% client-side — no uploads.",

@@ -11,7 +11,7 @@ describe("Markdown Preview", () => {
     expect(mdToHtml("*italic*")).toContain("<em>italic</em>");
   });
   it("converts links", () => {
-    expect(mdToHtml("[text](url)")).toContain("<a href="url">text</a>");
+    expect(mdToHtml("[text](url)")).toContain('<a href="url">text</a>');
   });
   it("counts words", () => {
     expect(getWordCount("hello world")).toBe(2);
