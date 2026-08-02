@@ -82,3 +82,127 @@ export function batchToCsv(rows: BatchRow[]): string {
   }
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Advanced find-and-replace with regex support.
+ */
+export function findReplaceAdvanced(
+  text: string,
+  find: string,
+  replace: string,
+  options: { useRegex?: boolean; caseSensitive?: boolean; wholeWord?: boolean; multiline?: boolean } = {},
+): { output: string; replacements: number; matches: Array<{ index: number; matched: string; replaced: string }> } {
+  const { useRegex = false, caseSensitive = false, wholeWord = false, multiline = false } = options;
+  let pattern: RegExp;
+  try {
+    if (useRegex) {
+      const flags = caseSensitive ? (multiline ? "gm" : "g") : (multiline ? "gim" : "gi");
+      pattern = new RegExp(find, flags);
+    } else {
+      const escaped = find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const prefix = wholeWord ? "\\b" : "";
+      const suffix = wholeWord ? "\\b" : "";
+      const flags = caseSensitive ? (multiline ? "gm" : "g") : (multiline ? "gim" : "gi");
+      pattern = new RegExp(prefix + escaped + suffix, flags);
+    }
+  } catch {
+    return { output: text, replacements: 0, matches: [] };
+  }
+  const matches: Array<{ index: number; matched: string; replaced: string }> = [];
+  let replacementCount = 0;
+  const output = text.replace(pattern, (matched, ...args) => {
+    const index = args[args.length - 2] as number;
+    const replaced = replace.replace(/\$&/g, matched);
+    matches.push({ index, matched, replaced });
+    replacementCount++;
+    return replaced;
+  });
+  return { output, replacements: replacementCount, matches };
+}
+
+/**
+ * Highlight matches without replacing.
+ */
+export function highlightMatches(
+  text: string,
+  find: string,
+  options: { useRegex?: boolean; caseSensitive?: boolean } = {},
+): Array<{ start: number; end: number; text: string }> {
+  const { useRegex = false, caseSensitive = false } = options;
+  let pattern: RegExp;
+  try {
+    if (useRegex) {
+      pattern = new RegExp(find, caseSensitive ? "g" : "gi");
+    } else {
+      const escaped = find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      pattern = new RegExp(escaped, caseSensitive ? "g" : "gi");
+    }
+  } catch {
+    return [];
+  }
+  const results: Array<{ start: number; end: number; text: string }> = [];
+  let m: RegExpExecArray | null;
+  while ((m = pattern.exec(text)) !== null) {
+    results.push({ start: m.index, end: m.index + m[0].length, text: m[0] });
+    if (m.index === pattern.lastIndex) pattern.lastIndex++;
+  }
+  return results;
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateFindReplaceInput(find: string, replace: string, options: { useRegex?: boolean } = {}): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!find) {
+    reports.push({ level: "fail", code: "EMPTY_FIND", message: "Find pattern is empty." });
+    return reports;
+  }
+  if (options.useRegex) {
+    try {
+      new RegExp(find);
+      reports.push({ level: "pass", code: "VALID_REGEX", message: "Regular expression is valid." });
+    } catch (e) {
+      reports.push({ level: "fail", code: "INVALID_REGEX", message: `Invalid regex: ${(e as Error).message}` });
+    }
+  }
+  if (find.length > 10000) {
+    reports.push({ level: "warn", code: "LONG_PATTERN", message: "Find pattern is very long — may be slow." });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(find: string, replace: string): Receipt {
+  const s = find.length + ":" + replace.length;
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "text-finder-replacer",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "MDN-RegExp", citation: "MDN Web Docs: RegExp", summary: "JavaScript regular expression reference." },
+  { id: "ECMA-262", citation: "ECMA-262 §21.2", summary: "RegExp Objects — the ECMAScript specification." },
+];

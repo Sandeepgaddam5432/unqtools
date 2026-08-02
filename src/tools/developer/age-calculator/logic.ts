@@ -723,3 +723,186 @@ export function parseShareUrl(hash: string): ShareState | null {
   if (!birth && !reference && !gapA && !gapB) return null;
   return { birth, birthTime, reference, referenceTime, feb29Policy, gapA, gapB };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Calculate age in various units.
+ */
+export function ageInUnits(birthDate: Date, asOfDate: Date = new Date()): {
+  seconds: number;
+  minutes: number;
+  hours: number;
+  days: number;
+  weeks: number;
+  months: number;
+  years: number;
+} {
+  const ms = asOfDate.getTime() - birthDate.getTime();
+  return {
+    seconds: Math.floor(ms / MS_PER_SECOND),
+    minutes: Math.floor(ms / MS_PER_MINUTE),
+    hours: Math.floor(ms / MS_PER_HOUR),
+    days: Math.floor(ms / MS_PER_DAY),
+    weeks: Math.floor(ms / MS_PER_WEEK),
+    months: Math.floor(ms / (MS_PER_DAY * 30.4375)),
+    years: Math.floor(ms / (MS_PER_DAY * 365.25)),
+  };
+}
+
+/**
+ * Calculate days until next birthday.
+ */
+export function daysUntilNextBirthday(birthDate: Date, asOfDate: Date = new Date()): number {
+  const next = calculateNextBirthday(birthDate, asOfDate);
+  return Math.ceil((next.getTime() - asOfDate.getTime()) / MS_PER_DAY);
+}
+
+/**
+ * Calculate age milestones (when user reaches round numbers).
+ */
+export function calculateMilestones(birthDate: Date): Array<{ age: number; date: Date; label: string }> {
+  const milestones: Array<{ age: number; date: Date; label: string }> = [];
+  const milestoneAges = [
+    { age: 16, label: "Can drive (most US states)" },
+    { age: 18, label: "Legal adult (most countries)" },
+    { age: 21, label: "Can drink (US)" },
+    { age: 25, label: "Car insurance rates drop (US)" },
+    { age: 30, label: "Round birthday" },
+    { age: 40, label: "Round birthday" },
+    { age: 50, label: "Half century" },
+    { age: 60, label: "Senior discounts begin" },
+    { age: 65, label: "Retirement age (traditional)" },
+    { age: 70, label: "Full Social Security (US, born 1960+)" },
+    { age: 75, label: "Round birthday" },
+    { age: 100, label: "Centenarian!" },
+  ];
+  for (const m of milestoneAges) {
+    const date = new Date(birthDate);
+    date.setFullYear(birthDate.getFullYear() + m.age);
+    milestones.push({ age: m.age, date, label: m.label });
+  }
+  return milestones;
+}
+
+/**
+ * Calculate the day of week the person was born.
+ */
+export function bornOnDayOfWeek(birthDate: Date): string {
+  return weekdayLabel(birthDate);
+}
+
+/**
+ * Calculate zodiac sign (Western astrology).
+ */
+export function westernZodiac(birthDate: Date): { sign: string; symbol: string; dateRange: string } {
+  const month = birthDate.getMonth() + 1;
+  const day = birthDate.getDate();
+  const signs = [
+    { sign: "Capricorn", symbol: "♑", from: [12, 22], to: [1, 19] },
+    { sign: "Aquarius", symbol: "♒", from: [1, 20], to: [2, 18] },
+    { sign: "Pisces", symbol: "♓", from: [2, 19], to: [3, 20] },
+    { sign: "Aries", symbol: "♈", from: [3, 21], to: [4, 19] },
+    { sign: "Taurus", symbol: "♉", from: [4, 20], to: [5, 20] },
+    { sign: "Gemini", symbol: "♊", from: [5, 21], to: [6, 20] },
+    { sign: "Cancer", symbol: "♋", from: [6, 21], to: [7, 22] },
+    { sign: "Leo", symbol: "♌", from: [7, 23], to: [8, 22] },
+    { sign: "Virgo", symbol: "♍", from: [8, 23], to: [9, 22] },
+    { sign: "Libra", symbol: "♎", from: [9, 23], to: [10, 22] },
+    { sign: "Scorpio", symbol: "♏", from: [10, 23], to: [11, 21] },
+    { sign: "Sagittarius", symbol: "♐", from: [11, 22], to: [12, 21] },
+  ];
+  for (const s of signs) {
+    const [fm, fd] = s.from;
+    const [tm, td] = s.to;
+    if ((month === fm && day >= fd) || (month === tm && day <= td) ||
+        (fm > tm && ((month === fm && day >= fd) || (month <= tm && day <= td)))) {
+      return { sign: s.sign, symbol: s.symbol, dateRange: `${s.from.join("/")}-${s.to.join("/")}` };
+    }
+  }
+  return { sign: "Capricorn", symbol: "♑", dateRange: "12/22-1/19" };
+}
+
+/**
+ * Chinese zodiac (12-year cycle).
+ */
+export function chineseZodiac(birthDate: Date): { sign: string; element: string } {
+  const year = birthDate.getFullYear();
+  const animals = ["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"];
+  const elements = ["Metal", "Water", "Wood", "Fire", "Earth"];
+  const animalIndex = (year - 4) % 12;
+  const elementIndex = Math.floor((year - 4) / 2) % 5;
+  return {
+    sign: animals[animalIndex >= 0 ? animalIndex : animalIndex + 12] ?? "Rat",
+    element: elements[elementIndex >= 0 ? elementIndex : elementIndex + 5] ?? "Wood",
+  };
+}
+
+/**
+ * Calculate generation label based on birth year.
+ */
+export function generationLabel(birthYear: number): string {
+  if (birthYear >= 2013) return "Generation Alpha";
+  if (birthYear >= 1997) return "Generation Z";
+  if (birthYear >= 1981) return "Millennial (Gen Y)";
+  if (birthYear >= 1965) return "Generation X";
+  if (birthYear >= 1946) return "Baby Boomer";
+  if (birthYear >= 1928) return "Silent Generation";
+  if (birthYear >= 1901) return "Greatest Generation";
+  return "Pre-1900";
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateAgeInput(birthDate: Date, asOfDate: Date = new Date()): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!isValidDate(birthDate)) {
+    reports.push({ level: "fail", code: "INVALID_DATE", message: "Birth date is not a valid date." });
+    return reports;
+  }
+  if (birthDate > asOfDate) {
+    reports.push({ level: "fail", code: "FUTURE_DATE", message: "Birth date is in the future." });
+  }
+  const ageYears = (asOfDate.getTime() - birthDate.getTime()) / (MS_PER_DAY * 365.25);
+  if (ageYears > 125) {
+    reports.push({ level: "warn", code: "VERY_OLD", message: `Age ${Math.floor(ageYears)} exceeds 125 — verify the date.` });
+  } else {
+    reports.push({ level: "pass", code: "VALID_AGE", message: `Age: ${Math.floor(ageYears)} years.` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(birthDate: Date, asOfDate: Date): Receipt {
+  const s = birthDate.toISOString() + "|" + asOfDate.toISOString();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "age-calculator",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "ISO-8601", citation: "ISO 8601:2004", summary: "Date and time representation standard." },
+  { id: "Pew-Generations", citation: "Pew Research Center (2015)", summary: "Generational cohort definitions." },
+  { id: "WHO-LifeExpectancy", citation: "WHO Global Health Observatory", summary: "Life expectancy data by country." },
+];

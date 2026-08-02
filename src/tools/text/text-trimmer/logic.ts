@@ -155,3 +155,136 @@ export function diffStatsToCsv(results: TrimResult[], inputs: string[]): string 
   }
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Trim options with all possible trim modes.
+ */
+export interface AdvancedTrimOptions {
+  trimStart?: boolean;
+  trimEnd?: boolean;
+  trimLines?: boolean;
+  collapseSpaces?: boolean;
+  collapseBlankLines?: boolean;
+  removeBlankLines?: boolean;
+  trimTrailingWhitespace?: boolean;
+  trimLeadingWhitespace?: boolean;
+}
+
+/**
+ * Advanced trim with per-option control.
+ */
+export function trimAdvanced(text: string, options: AdvancedTrimOptions = {}): string {
+  let result = text;
+  if (options.trimLines) {
+    result = result.split("\n").map((l) => l.trim()).join("\n");
+  }
+  if (options.collapseSpaces) {
+    result = result.replace(/[^\S\n]+/g, " ");
+  }
+  if (options.removeBlankLines) {
+    result = result.split("\n").filter((l) => l.trim().length > 0).join("\n");
+  } else if (options.collapseBlankLines) {
+    result = result.replace(/\n{3,}/g, "\n\n");
+  }
+  if (options.trimTrailingWhitespace) {
+    result = result.replace(/[^\S\n]+$/gm, "");
+  }
+  if (options.trimLeadingWhitespace) {
+    result = result.replace(/^\s+/gm, "");
+  }
+  if (options.trimStart) {
+    result = result.replace(/^\s+/, "");
+  }
+  if (options.trimEnd) {
+    result = result.replace(/\s+$/, "");
+  }
+  return result;
+}
+
+/**
+ * Count whitespace statistics.
+ */
+export function whitespaceStats(text: string): {
+  leadingSpaces: number;
+  trailingSpaces: number;
+  trailingNewlines: number;
+  blankLines: number;
+  tabs: number;
+  totalWhitespace: number;
+} {
+  const lines = text.split("\n");
+  let leadingSpaces = 0;
+  let trailingSpaces = 0;
+  let blankLines = 0;
+  let tabs = (text.match(/\t/g) ?? []).length;
+  let totalWhitespace = (text.match(/\s/g) ?? []).length;
+  let trailingNewlines = (text.match(/\n+$/) ?? [""])[0]!.length;
+  for (const line of lines) {
+    if (line.trim().length === 0) blankLines++;
+    const lead = line.match(/^\s+/);
+    const trail = line.match(/\s+$/);
+    if (lead) leadingSpaces += lead[0].length;
+    if (trail) trailingSpaces += trail[0].length;
+  }
+  return { leadingSpaces, trailingSpaces, trailingNewlines, blankLines, tabs, totalWhitespace };
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateTrimInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) {
+    reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." });
+    return reports;
+  }
+  const stats = whitespaceStats(text);
+  if (stats.trailingSpaces > 0) {
+    reports.push({ level: "warn", code: "TRAILING_SPACES", message: `${stats.trailingSpaces} trailing space characters detected.` });
+  }
+  if (stats.blankLines > 5) {
+    reports.push({ level: "warn", code: "MANY_BLANK_LINES", message: `${stats.blankLines} blank lines detected.` });
+  }
+  if (stats.tabs > 0) {
+    reports.push({ level: "info" as "pass", code: "TABS_FOUND", message: `${stats.tabs} tab characters detected.` });
+  }
+  if (stats.trailingSpaces === 0 && stats.blankLines <= 5) {
+    reports.push({ level: "pass", code: "CLEAN", message: "Text appears clean — minimal whitespace issues." });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + text.charCodeAt(0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "text-trimmer",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Unicode-White_Space", citation: "Unicode Standard §5.7", summary: "White space characters and normalization." },
+  { id: "ECMA-262-String", citation: "ECMA-262 §22.1", summary: "String.prototype.trim and related methods." },
+];

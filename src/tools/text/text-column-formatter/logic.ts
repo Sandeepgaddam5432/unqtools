@@ -191,3 +191,193 @@ export function validateOptions(opts: ColumnOptions): { ok: true } | { error: st
   if (!opts.separator && !opts.border) return { error: "Separator is required (or enable border)" };
   return { ok: true };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// Note: the `Alignment` type is already exported above (left/right/center).
+// We extend it to include "decimal" only in the alignColumns function signature
+// by using a local type alias.
+// ============================================================================
+
+/**
+ * Extended alignment including decimal point alignment.
+ */
+type ExtendedAlignment = Alignment | "decimal";
+
+export function alignColumns(
+  text: string,
+  options: {
+    delimiter?: string;
+    alignment?: Alignment | Alignment[];
+    padding?: number;
+    minWidth?: number;
+  } = {},
+): string {
+  const { delimiter = "\t", alignment = "left", padding = 1, minWidth = 0 } = options;
+  const lines = text.split("\n");
+  const rows = lines.map((l) => l.split(delimiter));
+  const colCount = Math.max(...rows.map((r) => r.length));
+  const widths: number[] = [];
+  for (let c = 0; c < colCount; c++) {
+    const w = Math.max(minWidth, ...rows.map((r) => (r[c] ?? "").length));
+    widths[c] = w;
+  }
+  const aligns: ExtendedAlignment[] = Array.isArray(alignment) ? alignment : new Array(colCount).fill(alignment);
+  return rows
+    .map((r) =>
+      r
+        .map((cell, c) => {
+          const width = widths[c] ?? 0;
+          const a = aligns[c] ?? "left";
+          return padCell(cell ?? "", width, a, padding);
+        })
+        .join(" ".repeat(padding)),
+    )
+    .join("\n");
+}
+
+function padCell(text: string, width: number, align: ExtendedAlignment, padding: number): string {
+  const pad = " ".repeat(padding);
+  const totalWidth = width + padding * 2;
+  if (align === "right") {
+    return `${pad}${text.padStart(width)}${pad}`;
+  }
+  if (align === "center") {
+    const extra = width - text.length;
+    const left = Math.floor(extra / 2);
+    const right = extra - left;
+    return `${pad}${" ".repeat(left)}${text}${" ".repeat(right)}${pad}`;
+  }
+  if (align === "decimal") {
+    const dotIdx = text.indexOf(".");
+    if (dotIdx === -1) {
+      return `${pad}${text.padStart(width)}${pad}`;
+    }
+    const intPart = text.slice(0, dotIdx);
+    const decPart = text.slice(dotIdx);
+    const intWidth = width - decPart.length;
+    return `${pad}${intPart.padStart(intWidth)}${decPart}${pad}`;
+  }
+  return `${pad}${text.padEnd(width)}${pad}`;
+}
+
+/**
+ * Convert tab-separated to aligned table.
+ */
+export function tabToTable(text: string, alignment: Alignment = "left"): string {
+  return alignColumns(text, { delimiter: "\t", alignment });
+}
+
+/**
+ * Convert CSV to aligned table.
+ */
+export function csvToTable(text: string, alignment: Alignment = "left"): string {
+  return alignColumns(text, { delimiter: ",", alignment });
+}
+
+/**
+ * Wrap text to a fixed width.
+ */
+export function wrapText(text: string, width: number = 80): string {
+  if (width <= 0) return text;
+  const lines = text.split("\n");
+  return lines
+    .map((line) => {
+      if (line.length <= width) return line;
+      const words = line.split(" ");
+      const wrapped: string[] = [];
+      let current = "";
+      for (const word of words) {
+        if ((current + " " + word).trim().length > width && current) {
+          wrapped.push(current.trim());
+          current = word;
+        } else {
+          current = (current + " " + word).trim();
+        }
+      }
+      if (current) wrapped.push(current);
+      return wrapped.join("\n");
+    })
+    .join("\n");
+}
+
+/**
+ * Statistics about column data.
+ */
+export function columnStats(text: string, delimiter: string = "\t"): Array<{ column: number; minWidth: number; maxWidth: number; avgWidth: number; numeric: boolean }> {
+  const lines = text.split("\n");
+  const rows = lines.map((l) => l.split(delimiter));
+  const colCount = Math.max(...rows.map((r) => r.length));
+  const stats: Array<{ column: number; minWidth: number; maxWidth: number; avgWidth: number; numeric: boolean }> = [];
+  for (let c = 0; c < colCount; c++) {
+    const cells = rows.map((r) => r[c] ?? "").filter((c) => c.length > 0);
+    if (cells.length === 0) {
+      stats.push({ column: c, minWidth: 0, maxWidth: 0, avgWidth: 0, numeric: false });
+      continue;
+    }
+    const widths = cells.map((c) => c.length);
+    const numeric = cells.every((c) => /^-?\d+(?:\.\d+)?$/.test(c.trim()));
+    stats.push({
+      column: c,
+      minWidth: Math.min(...widths),
+      maxWidth: Math.max(...widths),
+      avgWidth: Math.round(widths.reduce((a, b) => a + b, 0) / widths.length),
+      numeric,
+    });
+  }
+  return stats;
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateFormatInput(text: string, delimiter: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) {
+    reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." });
+    return reports;
+  }
+  if (!delimiter) {
+    reports.push({ level: "fail", code: "NO_DELIMITER", message: "Delimiter is required." });
+  }
+  const lines = text.split("\n");
+  const colCounts = lines.map((l) => l.split(delimiter).length);
+  const uniqueCounts = new Set(colCounts);
+  if (uniqueCounts.size > 1) {
+    reports.push({ level: "warn", code: "INCONSISTENT_COLUMNS", message: `Column counts vary: ${Array.from(uniqueCounts).join(", ")}` });
+  } else {
+    reports.push({ level: "pass", code: "CONSISTENT", message: `${colCounts[0]} columns in all ${lines.length} rows.` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string, delimiter: string): Receipt {
+  const s = text.length + ":" + delimiter;
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "text-column-formatter",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "RFC-4180", citation: "RFC 4180 (2005)", summary: "Common Format and MIME Type for Comma-Separated Values (CSV) Files." },
+  { id: "Unicode-LineBreaking", citation: "Unicode Standard Annex #14", summary: "Unicode Line Breaking Algorithm." },
+];

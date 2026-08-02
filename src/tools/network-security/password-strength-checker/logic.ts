@@ -237,3 +237,126 @@ export function batchToCsv(results: PasswordAnalysis[]): string {
   }
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// F075 SENSITIVE MODE: no history, no drafts, no URL state for passwords.
+// ============================================================================
+
+/**
+ * Password strength score 0-100 based on multiple factors.
+ */
+export function scorePassword(password: string): {
+  score: number;
+  grade: "F" | "D" | "C" | "B" | "A";
+  label: string;
+} {
+  if (!password) return { score: 0, grade: "F", label: "Empty" };
+  let score = 0;
+  // Length scoring (up to 40)
+  score += Math.min(40, password.length * 2);
+  // Character variety (up to 30)
+  const hasLower = /[a-z]/.test(password);
+  const hasUpper = /[A-Z]/.test(password);
+  const hasDigit = /[0-9]/.test(password);
+  const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+  score += [hasLower, hasUpper, hasDigit, hasSymbol].filter(Boolean).length * 7.5;
+  // Entropy bonus (up to 30)
+  const pool = (hasLower ? 26 : 0) + (hasUpper ? 26 : 0) + (hasDigit ? 10 : 0) + (hasSymbol ? 32 : 0);
+  const entropy = password.length * Math.log2(Math.max(2, pool));
+  score += Math.min(30, entropy / 3);
+  // Penalize common patterns
+  if (/(.)\1{2,}/.test(password)) score -= 10; // repeated chars
+  if (/^(123|abc|qwe|password|admin|letmein)/i.test(password)) score -= 20;
+  score = Math.max(0, Math.min(100, Math.round(score)));
+  let grade: "F" | "D" | "C" | "B" | "A";
+  let label: string;
+  if (score >= 90) { grade = "A"; label = "Very strong"; }
+  else if (score >= 75) { grade = "B"; label = "Strong"; }
+  else if (score >= 50) { grade = "C"; label = "Fair"; }
+  else if (score >= 25) { grade = "D"; label = "Weak"; }
+  else { grade = "F"; label = "Very weak"; }
+  return { score, grade, label };
+}
+
+/**
+ * Common password patterns to detect.
+ * Note: the original `detectPatterns` is a private function above; this
+ * is a new exported version that returns a richer structure.
+ */
+export function detectPasswordPatterns(password: string): Array<{ pattern: string; matched: boolean; severity: "info" | "warn" | "fail" }> {
+  return [
+    { pattern: "Sequential digits (1234)", matched: /(?:0123|1234|2345|3456|4567|5678|6789)/.test(password), severity: "warn" },
+    { pattern: "Sequential letters (abcd)", matched: /(?:abcd|bcde|cdef|wxyz|zyxw)/i.test(password), severity: "warn" },
+    { pattern: "Keyboard walk (qwerty)", matched: /(?:qwerty|asdf|zxcv|qazwsx)/i.test(password), severity: "warn" },
+    { pattern: "Repeated characters (aaa)", matched: /(.)\1{2,}/.test(password), severity: "warn" },
+    { pattern: "Common word: password", matched: /password/i.test(password), severity: "fail" },
+    { pattern: "Common word: admin", matched: /admin/i.test(password), severity: "fail" },
+    { pattern: "Common word: letmein", matched: /letmein/i.test(password), severity: "fail" },
+    { pattern: "Year (1900-2099)", matched: /(?:19|20)\d{2}/.test(password), severity: "info" },
+    { pattern: "All digits", matched: /^\d+$/.test(password), severity: "warn" },
+    { pattern: "All letters", matched: /^[a-zA-Z]+$/.test(password), severity: "info" },
+  ];
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validatePasswordInput(password: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!password) {
+    reports.push({ level: "fail", code: "EMPTY", message: "Password is empty." });
+    return reports;
+  }
+  const { score, grade, label } = scorePassword(password);
+  if (grade === "F" || grade === "D") {
+    reports.push({ level: "fail", code: "WEAK", message: `Password is ${label.toLowerCase()} (score ${score}/100).` });
+  } else if (grade === "C") {
+    reports.push({ level: "warn", code: "FAIR", message: `Password is fair (score ${score}/100) — consider strengthening.` });
+  } else {
+    reports.push({ level: "pass", code: "STRONG", message: `Password is ${label.toLowerCase()} (score ${score}/100).` });
+  }
+  const patterns = detectPasswordPatterns(password);
+  for (const p of patterns) {
+    if (p.matched) {
+      reports.push({
+        level: p.severity === "fail" ? "fail" : p.severity === "warn" ? "warn" : "pass",
+        code: "PATTERN",
+        message: `Detected: ${p.pattern}`,
+      });
+    }
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(password: string): Receipt {
+  const s = password.length + ":" + password.length * password.charCodeAt(0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "password-strength-checker",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "NIST-800-63B", citation: "NIST SP 800-63B (2017)", summary: "Digital Identity Guidelines — password strength metrics." },
+  { id: "zxcvbn", citation: "Dropbox zxcvbn (2012)", summary: "Low-budget password strength estimation." },
+  { id: "OWASP-Auth", citation: "OWASP Authentication Cheat Sheet", summary: "Password storage and strength guidelines." },
+];

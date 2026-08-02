@@ -792,3 +792,146 @@ export function formatBytes(bytes: number): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${(bytes / Math.pow(k, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// F075 SENSITIVE MODE: no history, no drafts, no URL state for passwords.
+// ============================================================================
+
+/**
+ * Calculate password entropy in bits.
+ * Entropy = log2(poolSize^length) = length * log2(poolSize)
+ */
+export function calculateEntropy(length: number, poolSize: number): number {
+  if (length <= 0 || poolSize <= 0) return 0;
+  return length * Math.log2(poolSize);
+}
+
+/**
+ * Estimate crack time in seconds at a given guesses-per-second rate.
+ * Average case = poolSize^length / 2 (half the keyspace).
+ */
+export function estimateCrackTime(length: number, poolSize: number, guessesPerSecond: number = 1e10): number {
+  if (length <= 0 || poolSize <= 0 || guessesPerSecond <= 0) return 0;
+  const totalCombination = Math.pow(poolSize, length);
+  const avgGuesses = totalCombination / 2;
+  return avgGuesses / guessesPerSecond;
+}
+
+/**
+ * Format crack time as human-readable string.
+ */
+export function formatCrackTime(seconds: number): string {
+  if (seconds < 1) return "instant";
+  if (seconds < 60) return `${Math.round(seconds)} seconds`;
+  if (seconds < 3600) return `${Math.round(seconds / 60)} minutes`;
+  if (seconds < 86400) return `${Math.round(seconds / 3600)} hours`;
+  if (seconds < 31536000) return `${Math.round(seconds / 86400)} days`;
+  if (seconds < 31536000 * 100) return `${Math.round(seconds / 31536000)} years`;
+  if (seconds < 31536000 * 1e6) return `${Math.round(seconds / (31536000 * 1000))} thousand years`;
+  if (seconds < 31536000 * 1e9) return `${Math.round(seconds / (31536000 * 1e6))} million years`;
+  return "billions of years";
+}
+
+/**
+ * Common crack-time benchmarks for reference.
+ */
+export const CRACK_BENCHMARKS: ReadonlyArray<{ label: string; guessesPerSecond: number }> = [
+  { label: "Online attack (throttled)", guessesPerSecond: 100 },
+  { label: "Online attack (unthrottled)", guessesPerSecond: 10000 },
+  { label: "Offline slow hash (bcrypt)", guessesPerSecond: 10000 },
+  { label: "Offline fast hash (MD5/SHA1)", guessesPerSecond: 1e10 },
+  { label: "GPU cluster (modern)", guessesPerSecond: 1e12 },
+  { label: "Large botnet", guessesPerSecond: 1e14 },
+];
+
+/**
+ * Character pool sizes for entropy calculation.
+ */
+export const POOL_SIZES = {
+  lowercase: 26,
+  uppercase: 26,
+  digits: 10,
+  symbols: 32,
+  ambiguous: 12, // 0 O 1 l I | etc.
+} as const;
+
+/**
+ * Calculate pool size from options.
+ */
+export function poolSizeFromOptions(opts: { lowercase?: boolean; uppercase?: boolean; digits?: boolean; symbols?: boolean; avoidAmbiguous?: boolean }): number {
+  let size = 0;
+  if (opts.lowercase) size += POOL_SIZES.lowercase;
+  if (opts.uppercase) size += POOL_SIZES.uppercase;
+  if (opts.digits) size += POOL_SIZES.digits;
+  if (opts.symbols) size += POOL_SIZES.symbols;
+  if (opts.avoidAmbiguous) size -= POOL_SIZES.ambiguous;
+  return Math.max(1, size);
+}
+
+/**
+ * Validation report.
+ */
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validatePasswordStrength(password: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!password || password.length === 0) {
+    reports.push({ level: "fail", code: "EMPTY", message: "Password is empty." });
+    return reports;
+  }
+  if (password.length < 8) {
+    reports.push({ level: "fail", code: "TOO_SHORT", message: "Password is shorter than 8 characters." });
+  } else if (password.length < 12) {
+    reports.push({ level: "warn", code: "SHORT", message: "Password is shorter than 12 characters — consider using a longer password." });
+  } else {
+    reports.push({ level: "pass", code: "LENGTH", message: `Password length (${password.length}) is adequate.` });
+  }
+  const hasLower = /[a-z]/.test(password);
+  const hasUpper = /[A-Z]/.test(password);
+  const hasDigit = /[0-9]/.test(password);
+  const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+  const variety = [hasLower, hasUpper, hasDigit, hasSymbol].filter(Boolean).length;
+  if (variety < 3) {
+    reports.push({ level: "warn", code: "LOW_VARIETY", message: `Only ${variety}/4 character types used — add more variety.` });
+  } else {
+    reports.push({ level: "pass", code: "VARIETY", message: `${variety}/4 character types used.` });
+  }
+  return reports;
+}
+
+/**
+ * Reproducibility receipt (NO password content — only metadata).
+ */
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(options: Record<string, unknown>): Receipt {
+  const s = JSON.stringify(options);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "password-generator",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "NIST-800-63B", citation: "NIST SP 800-63B (2017)", summary: "Digital Identity Guidelines — password length over complexity." },
+  { id: "OWASP-Auth", citation: "OWASP Authentication Cheat Sheet", summary: "Password storage, length minimums, and composition rules." },
+  { id: "EFF-Diceware", citation: "EFF Diceware Word List (2016)", summary: "Passphrase generation using dice and a word list." },
+];

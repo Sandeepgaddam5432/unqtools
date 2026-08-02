@@ -867,3 +867,152 @@ export function extractTokenFromUrl(): string | null {
   const match = hash.match(/[#&]token=([^&]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// F075 SENSITIVE MODE: no history, no drafts, no URL state for JWTs.
+// ============================================================================
+
+/**
+ * JWT algorithm registry with key requirements.
+ */
+export const ALGORITHM_REGISTRY: ReadonlyArray<{
+  alg: string;
+  keyType: "HMAC" | "RSA" | "EC" | "none";
+  minKeyBits: number;
+  description: string;
+}> = [
+  { alg: "HS256", keyType: "HMAC", minKeyBits: 256, description: "HMAC with SHA-256" },
+  { alg: "HS384", keyType: "HMAC", minKeyBits: 384, description: "HMAC with SHA-384" },
+  { alg: "HS512", keyType: "HMAC", minKeyBits: 512, description: "HMAC with SHA-512" },
+  { alg: "RS256", keyType: "RSA", minKeyBits: 2048, description: "RSASSA-PKCS1-v1_5 with SHA-256" },
+  { alg: "RS384", keyType: "RSA", minKeyBits: 2048, description: "RSASSA-PKCS1-v1_5 with SHA-384" },
+  { alg: "RS512", keyType: "RSA", minKeyBits: 2048, description: "RSASSA-PKCS1-v1_5 with SHA-512" },
+  { alg: "ES256", keyType: "EC", minKeyBits: 256, description: "ECDSA with P-256 and SHA-256" },
+  { alg: "ES384", keyType: "EC", minKeyBits: 384, description: "ECDSA with P-384 and SHA-384" },
+  { alg: "ES512", keyType: "EC", minKeyBits: 521, description: "ECDSA with P-521 and SHA-512" },
+  { alg: "none", keyType: "none", minKeyBits: 0, description: "No digital signature (INSECURE)" },
+];
+
+/**
+ * Get algorithm info from registry.
+ */
+export function getAlgorithmInfo(alg: string): { alg: string; keyType: string; minKeyBits: number; description: string } | null {
+  return ALGORITHM_REGISTRY.find((a) => a.alg === alg) ?? null;
+}
+
+/**
+ * Check if a JWT uses the insecure "none" algorithm.
+ */
+export function isInsecureAlgorithm(jwt: string): boolean {
+  try {
+    const parts = jwt.split(".");
+    if (parts.length < 2) return false;
+    const header = JSON.parse(base64UrlDecode(parts[0]!));
+    return header.alg === "none";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Extract all claim names from a JWT payload.
+ */
+export function extractClaimNames(jwt: string): string[] {
+  try {
+    const decoded = decodeJwtSafe(jwt);
+    if (!decoded.payload) return [];
+    return Object.keys(decoded.payload as Record<string, unknown>);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Standard JWT claim descriptions.
+ */
+export const STANDARD_CLAIMS: ReadonlyArray<{ name: string; description: string }> = [
+  { name: "iss", description: "Issuer — identifies the principal that issued the JWT" },
+  { name: "sub", description: "Subject — identifies the principal that is the subject of the JWT" },
+  { name: "aud", description: "Audience — identifies the recipients that the JWT is intended for" },
+  { name: "exp", description: "Expiration time — the time after which the JWT must not be accepted" },
+  { name: "nbf", description: "Not before — the time before which the JWT must not be accepted" },
+  { name: "iat", description: "Issued at — the time at which the JWT was issued" },
+  { name: "jti", description: "JWT ID — unique identifier for the JWT" },
+];
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateJwt(jwt: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!jwt || jwt.trim().length === 0) {
+    reports.push({ level: "fail", code: "EMPTY", message: "JWT is empty." });
+    return reports;
+  }
+  const parts = jwt.trim().split(".");
+  if (parts.length < 2) {
+    reports.push({ level: "fail", code: "MALFORMED", message: "JWT must have at least 2 parts separated by dots." });
+    return reports;
+  }
+  reports.push({ level: "pass", code: "STRUCTURE", message: `JWT has ${parts.length} parts.` });
+  if (isInsecureAlgorithm(jwt)) {
+    reports.push({ level: "fail", code: "INSECURE_ALG", message: "JWT uses 'none' algorithm — no signature verification. INSECURE." });
+  }
+  try {
+    const decoded = decodeJwtSafe(jwt);
+    if (decoded.payload) {
+      const payload = decoded.payload as Record<string, unknown>;
+      if (payload.exp !== undefined) {
+        const exp = typeof payload.exp === "number" ? payload.exp * 1000 : Date.parse(String(payload.exp));
+        if (exp < Date.now()) {
+          reports.push({ level: "fail", code: "EXPIRED", message: "JWT has expired." });
+        } else {
+          reports.push({ level: "pass", code: "NOT_EXPIRED", message: "JWT is not expired." });
+        }
+      }
+      if (payload.nbf !== undefined) {
+        const nbf = typeof payload.nbf === "number" ? payload.nbf * 1000 : Date.parse(String(payload.nbf));
+        if (nbf > Date.now()) {
+          reports.push({ level: "warn", code: "NOT_YET_VALID", message: "JWT is not yet valid (nbf in the future)." });
+        }
+      }
+    }
+  } catch {
+    reports.push({ level: "fail", code: "DECODE_ERROR", message: "Failed to decode JWT payload." });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(jwt: string): Receipt {
+  const s = jwt.length + ":" + (jwt.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "jwt-decoder",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "RFC-7519", citation: "RFC 7519 (2015)", summary: "JSON Web Token (JWT) — the standard specification." },
+  { id: "RFC-7515", citation: "RFC 7515 (2015)", summary: "JSON Web Signature (JWS) — signing algorithms." },
+  { id: "RFC-7517", citation: "RFC 7517 (2015)", summary: "JSON Web Key (JWK) — key format." },
+  { id: "JWT-Best-Practices", citation: "IETF JWT Best Current Practices (RFC 8725)", summary: "Security recommendations for JWT usage." },
+];

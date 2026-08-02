@@ -91,3 +91,187 @@ export function batchToCsv(results: DedupeResult[], labels: string[]): string {
   });
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Advanced deduplication with multiple modes.
+ */
+export type DedupeMode = "exact" | "caseInsensitive" | "trimmed" | "normalized";
+
+export function deduplicateAdvanced(
+  text: string,
+  options: {
+    mode?: DedupeMode;
+    unit?: "lines" | "words" | "paragraphs";
+    keep?: "first" | "last" | "longest" | "shortest";
+    caseSensitive?: boolean;
+    trimWhitespace?: boolean;
+    normalizeUnicode?: boolean;
+  } = {},
+): { output: string; originalCount: number; uniqueCount: number; removedCount: number; duplicates: string[] } {
+  const {
+    mode = "exact",
+    unit = "lines",
+    keep = "first",
+    caseSensitive = true,
+    trimWhitespace = false,
+    normalizeUnicode = false,
+  } = options;
+
+  const separator = unit === "words" ? /\s+/ : unit === "paragraphs" ? /\n{2,}/ : /\n/;
+  const items = text.split(separator);
+  const originalCount = items.length;
+
+  const normalize = (s: string): string => {
+    let r = s;
+    if (trimWhitespace) r = r.trim();
+    if (!caseSensitive) r = r.toLowerCase();
+    if (normalizeUnicode) r = r.normalize("NFC");
+    return r;
+  };
+
+  const seen = new Map<string, { index: number; value: string }>();
+  const result: string[] = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]!;
+    const key = normalize(item);
+    if (!seen.has(key)) {
+      seen.set(key, { index: i, value: item });
+      result.push(item);
+    } else {
+      const existing = seen.get(key)!;
+      if (keep === "last") {
+        result[existing.index] = item;
+        existing.value = item;
+      } else if (keep === "longest" && item.length > existing.value.length) {
+        result[existing.index] = item;
+        existing.value = item;
+      } else if (keep === "shortest" && item.length < existing.value.length) {
+        result[existing.index] = item;
+        existing.value = item;
+      }
+    }
+  }
+
+  const uniqueCount = result.length;
+  const removedCount = originalCount - uniqueCount;
+  const duplicates = items.filter((item, i) => {
+    const key = normalize(item);
+    const firstIdx = items.findIndex((it) => normalize(it) === key);
+    return firstIdx !== i;
+  });
+
+  return {
+    output: result.join(unit === "words" ? " " : unit === "paragraphs" ? "\n\n" : "\n"),
+    originalCount,
+    uniqueCount,
+    removedCount,
+    duplicates,
+  };
+}
+
+/**
+ * Find near-duplicates using Levenshtein distance.
+ */
+export function findNearDuplicates(
+  lines: string[],
+  threshold: number = 0.8,
+): Array<{ a: number; b: number; similarity: number }> {
+  const result: Array<{ a: number; b: number; similarity: number }> = [];
+  for (let i = 0; i < lines.length; i++) {
+    for (let j = i + 1; j < lines.length; j++) {
+      const sim = levenshteinSimilarity(lines[i]!, lines[j]!);
+      if (sim >= threshold) {
+        result.push({ a: i, b: j, similarity: sim });
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Levenshtein distance-based similarity (0-1).
+ */
+export function levenshteinSimilarity(a: string, b: string): number {
+  if (a.length === 0 && b.length === 0) return 1;
+  const maxLen = Math.max(a.length, b.length);
+  if (maxLen === 0) return 1;
+  const distance = levenshteinDistance(a, b);
+  return 1 - distance / maxLen;
+}
+
+/**
+ * Levenshtein edit distance.
+ */
+export function levenshteinDistance(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  const d: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) d[i]![0] = i;
+  for (let j = 0; j <= n; j++) d[0]![j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i]![j] = Math.min(d[i - 1]![j]! + 1, d[i]![j - 1]! + 1, d[i - 1]![j - 1]! + cost);
+    }
+  }
+  return d[m]![n]!;
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateDedupeInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) {
+    reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." });
+    return reports;
+  }
+  const lines = text.split("\n");
+  if (lines.length > 10000) {
+    reports.push({ level: "warn", code: "LARGE_INPUT", message: `${lines.length} lines — processing may be slow.` });
+  }
+  const unique = new Set(lines.map((l) => l.trim().toLowerCase()));
+  const dupRatio = 1 - unique.size / lines.length;
+  if (dupRatio > 0.5) {
+    reports.push({ level: "warn", code: "MANY_DUPES", message: `${Math.round(dupRatio * 100)}% of lines appear to be duplicates.` });
+  } else {
+    reports.push({ level: "pass", code: "INPUT_OK", message: `${lines.length} lines, ${unique.size} unique.` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + text.charCodeAt(0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "text-deduplicator",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Levenshtein-1966", citation: "Levenshtein V.I. (1966)", summary: "Binary codes capable of correcting deletions, insertions, and reversals." },
+  { id: "Unicode-NFC", citation: "Unicode Standard Annex #15", summary: "Unicode Normalization Forms." },
+];
