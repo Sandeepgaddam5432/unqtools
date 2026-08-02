@@ -1253,8 +1253,9 @@ export default function BmiCalculator() {
 
   // ----- Error from V2 path -----
   useEffect(() => {
-    if (resultV2 && !resultV2.ok) {
-      setError(resultV2.error.message + (resultV2.error.hint ? " " + resultV2.error.hint : ""));
+    if (resultV2 && !resultV2.ok && resultV2.error) {
+      const e = resultV2.error;
+      setError(e.message + (e.hint ? " " + e.hint : ""));
     } else {
       setError(null);
     }
