@@ -224,3 +224,176 @@ export function formatMoney(amount: number, currency = "USD", locale = "en-US"):
     return `${currency} ${amount.toFixed(2)}`;
   }
 }
+
+// ============================================================================
+// 100x features — added while preserving all existing exports
+// ============================================================================
+
+/**
+ * Calculate the future value of a single lump sum with continuous compounding.
+ * A = P * e^(r*t)
+ */
+export function futureValueContinuous(principal: number, annualRatePct: number, years: number): number {
+  return principal * Math.exp((annualRatePct / 100) * years);
+}
+
+/**
+ * Calculate present value: PV = FV / (1 + r)^t
+ */
+export function presentValue(futureValue: number, annualRatePct: number, years: number): number {
+  return futureValue / Math.pow(1 + annualRatePct / 100, years);
+}
+
+/**
+ * Calculate the number of years to reach a target amount.
+ * Returns the number of years, or Infinity if the target is unreachable.
+ */
+export function yearsToReach(principal: number, annualRatePct: number, targetAmount: number): number | { error: string } {
+  if (annualRatePct <= 0) return { error: "Annual rate must be positive to calculate time to reach a target." };
+  if (targetAmount <= principal) return { error: "Target must be greater than principal." };
+  return Math.log(targetAmount / principal) / Math.log(1 + annualRatePct / 100);
+}
+
+/**
+ * Calculate the required interest rate to reach a target in a given time.
+ */
+export function requiredRate(principal: number, targetAmount: number, years: number): number | { error: string } {
+  if (years <= 0) return { error: "Years must be positive." };
+  if (principal <= 0) return { error: "Principal must be positive." };
+  if (targetAmount <= principal) return { error: "Target must be greater than principal." };
+  return (Math.pow(targetAmount / principal, 1 / years) - 1) * 100;
+}
+
+/**
+ * Rule of 72: years to double = 72 / rate.
+ */
+export function ruleOf72(annualRatePct: number): number | { error: string } {
+  if (annualRatePct <= 0) return { error: "Rate must be positive for Rule of 72." };
+  return 72 / annualRatePct;
+}
+
+/**
+ * Rule of 114: years to triple = 114 / rate.
+ */
+export function ruleOf114(annualRatePct: number): number | { error: string } {
+  if (annualRatePct <= 0) return { error: "Rate must be positive for Rule of 114." };
+  return 114 / annualRatePct;
+}
+
+/**
+ * Rule of 144: years to quadruple = 144 / rate.
+ */
+export function ruleOf144(annualRatePct: number): number | { error: string } {
+  if (annualRatePct <= 0) return { error: "Rate must be positive for Rule of 144." };
+  return 144 / annualRatePct;
+}
+
+/**
+ * Compare simple vs compound interest side by side.
+ */
+export function compareSimpleVsCompound(
+  principal: number,
+  annualRatePct: number,
+  years: number,
+  compoundingN: number = 12,
+): {
+  simpleInterest: number;
+  compoundInterest: number;
+  difference: number;
+  simpleTotal: number;
+  compoundTotal: number;
+} | { error: string } {
+  if (principal < 0) return { error: "Principal cannot be negative." };
+  if (years < 0) return { error: "Years cannot be negative." };
+  const r = annualRatePct / 100;
+  const simpleInterest = principal * r * years;
+  const compoundInterest = principal * (Math.pow(1 + r / compoundingN, compoundingN * years) - 1);
+  return {
+    simpleInterest: r2(simpleInterest),
+    compoundInterest: r2(compoundInterest),
+    difference: r2(compoundInterest - simpleInterest),
+    simpleTotal: r2(principal + simpleInterest),
+    compoundTotal: r2(principal + compoundInterest),
+  };
+}
+
+/**
+ * Predefined compounding frequency presets.
+ */
+export const COMPOUNDING_PRESETS: ReadonlyArray<{
+  freq: CompoundingFrequency;
+  label: string;
+  n: number;
+  description: string;
+}> = [
+  { freq: "annually", label: "Annually", n: 1, description: "1 time per year" },
+  { freq: "semi-annually", label: "Semi-annually", n: 2, description: "2 times per year" },
+  { freq: "quarterly", label: "Quarterly", n: 4, description: "4 times per year" },
+  { freq: "monthly", label: "Monthly", n: 12, description: "12 times per year (most common)" },
+  { freq: "bi-weekly", label: "Bi-weekly", n: 26, description: "Every 2 weeks" },
+  { freq: "weekly", label: "Weekly", n: 52, description: "52 times per year" },
+  { freq: "daily", label: "Daily", n: 365, description: "365 times per year" },
+  { freq: "continuously", label: "Continuously", n: Infinity, description: "Continuous compounding (mathematical limit)" },
+];
+
+/**
+ * Validation report.
+ */
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateInput(input: CompoundInput): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (input.principal < 0) {
+    reports.push({ level: "fail", code: "NEGATIVE_PRINCIPAL", message: "Principal cannot be negative." });
+    return reports;
+  }
+  reports.push({ level: "pass", code: "VALID_PRINCIPAL", message: "Principal is valid." });
+  if (input.annualRatePct < 0) {
+    reports.push({ level: "warn", code: "NEGATIVE_RATE", message: "Negative interest rate — balance will decrease." });
+  }
+  if (input.annualRatePct > 100) {
+    reports.push({ level: "warn", code: "VERY_HIGH_RATE", message: "Rate above 100% is unusual — verify this is correct." });
+  }
+  if (input.years > 100) {
+    reports.push({ level: "warn", code: "LONG_TERM", message: "Period over 100 years — results are theoretical." });
+  }
+  return reports;
+}
+
+/**
+ * Reproducibility receipt.
+ */
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(input: CompoundInput): Receipt {
+  const s = JSON.stringify(input);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return {
+    tool: "compound-interest-calculator",
+    version: "100x.1.0",
+    timestamp: new Date().toISOString(),
+    inputFingerprint: (h >>> 0).toString(16).padStart(8, "0"),
+  };
+}
+
+/**
+ * References.
+ */
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Investopedia-Compound", citation: "Investopedia: Compound Interest", summary: "A = P(1 + r/n)^(nt). Standard compound interest formula." },
+  { id: "RuleOf72", citation: "Investopedia: Rule of 72", summary: "Years to double = 72 / annual rate (%)." },
+  { id: "BLS-CPI", citation: "BLS Consumer Price Index", summary: "Source for inflation rate data (US)." },
+];
