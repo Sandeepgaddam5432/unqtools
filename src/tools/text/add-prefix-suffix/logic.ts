@@ -139,3 +139,80 @@ export function addPrefixSuffix(input: string, opts: PrefixSuffixOptions): strin
 
   return result.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function addPrefixSuffixNumbered(
+  text: string,
+  prefix: string,
+  suffix: string,
+  options: { startNum?: number; padLength?: number; separator?: string; skipBlank?: boolean } = {},
+): string {
+  const { startNum = 1, padLength = 0, separator = "", skipBlank = true } = options;
+  const lines = text.split("\n");
+  let counter = startNum;
+  return lines.map((line) => {
+    if (skipBlank && line.trim().length === 0) return line;
+    const num = String(counter).padStart(padLength, "0");
+    counter++;
+    return `${prefix}${separator}${num}${separator}${line}${separator}${suffix}`;
+  }).join("\n");
+}
+
+export function addPrefixSuffixToWords(text: string, prefix: string, suffix: string): string {
+  return text.split(/(\s+)/).map((part) => /\s/.test(part) ? part : `${prefix}${part}${suffix}`).join("");
+}
+
+export function addPrefixSuffixToSentences(text: string, prefix: string, suffix: string): string {
+  return text.split(/(?<=[.!?])\s+/).map((s) => `${prefix}${s}${suffix}`).join(" ");
+}
+
+export function addPrefixSuffixToParagraphs(text: string, prefix: string, suffix: string): string {
+  return text.split(/\n{2,}/).map((p) => `${prefix}${p}${suffix}`).join("\n\n");
+}
+
+export function removePrefixSuffix(text: string, prefix: string, suffix: string): string {
+  return text.split("\n").map((line) => {
+    let result = line;
+    if (prefix && result.startsWith(prefix)) result = result.slice(prefix.length);
+    if (suffix && result.endsWith(suffix)) result = result.slice(0, -suffix.length);
+    return result;
+  }).join("\n");
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validatePrefixSuffix(prefix: string, suffix: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!prefix && !suffix) {
+    reports.push({ level: "warn", code: "BOTH_EMPTY", message: "Both prefix and suffix are empty." });
+  } else {
+    reports.push({ level: "pass", code: "VALID", message: `Prefix: "${prefix || "(none)"}", Suffix: "${suffix || "(none)"}".` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(prefix: string, suffix: string): Receipt {
+  const s = prefix + "|" + suffix;
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "add-prefix-suffix", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "String-Methods", citation: "MDN: String.prototype", summary: "JavaScript string manipulation." },
+];

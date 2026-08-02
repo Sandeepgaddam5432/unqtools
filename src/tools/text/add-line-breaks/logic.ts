@@ -302,3 +302,80 @@ export function addLineBreaks(input: string, opts: AddLineBreaksOptions): string
   result = lines.join(o.lineEnding === "crlf" ? "\r\n" : "\n");
   return result;
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function removeLineBreaks(text: string, separator: string = " "): string {
+  return text.replace(/\r?\n/g, separator);
+}
+
+export function breakAtSentences(text: string, maxLines: number = 0): string {
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const result = sentences.join("\n");
+  if (maxLines > 0) {
+    return result.split("\n").slice(0, maxLines).join("\n");
+  }
+  return result;
+}
+
+export function breakAtDelimiter(text: string, delimiter: string, keepDelimiter: boolean = true): string {
+  if (!delimiter) return text;
+  const escaped = delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return text.replace(new RegExp(escaped, "g"), (m) => keepDelimiter ? m + "\n" : "\n");
+}
+
+export function collapseLineBreaks(text: string, maxConsecutive: number = 1): string {
+  const pattern = new RegExp(`\\n{${maxConsecutive + 1},}`, "g");
+  return text.replace(pattern, "\n".repeat(maxConsecutive));
+}
+
+export function normalizeLineEndings(text: string, target: "lf" | "crlf" | "cr" = "lf"): string {
+  const targetStr = target === "lf" ? "\n" : target === "crlf" ? "\r\n" : "\r";
+  return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").replace(/\n/g, targetStr);
+}
+
+export function lineBreakStats(text: string): { total: number; lf: number; crlf: number; cr: number; consecutive: number } {
+  const crlf = (text.match(/\r\n/g) ?? []).length;
+  const cr = (text.match(/\r(?!\n)/g) ?? []).length;
+  const lf = (text.match(/\n/g) ?? []).length - crlf;
+  const consecutive = (text.match(/\n{2,}/g) ?? []).length;
+  return { total: lf + cr + crlf, lf, crlf, cr, consecutive };
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateLineBreakInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const stats = lineBreakStats(text);
+  if (stats.crlf > 0 && stats.lf > 0) {
+    reports.push({ level: "warn", code: "MIXED_ENDINGS", message: `Mixed line endings: ${stats.lf} LF, ${stats.crlf} CRLF.` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "add-line-breaks", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Unicode-UAX14", citation: "Unicode Standard Annex #14", summary: "Unicode Line Breaking Algorithm." },
+  { id: "POSIX-Lines", citation: "POSIX Standard", summary: "Line ending conventions." },
+];

@@ -152,3 +152,103 @@ export function diffWords(original: string, scrambled: string): { original: stri
   }
   return out;
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function scrambleWithSeed(text: string, seed: number): string {
+  const rng = mulberry32(seed);
+  return scrambleText(text, { rng });
+}
+
+export type ScrambleAlgorithm = "random" | "reverse" | "sort" | "rotate" | "interleave";
+
+export function scrambleWithAlgorithm(text: string, algorithm: ScrambleAlgorithm, seed?: number): string {
+  const words = text.split(/(\s+)/);
+  const rng = seed !== undefined ? mulberry32(seed) : Math.random;
+  return words.map((part) => {
+    if (/\s/.test(part) || !isWord(part)) return part;
+    switch (algorithm) {
+      case "random": return scrambleWord(part, { rng });
+      case "reverse": return reverseChars(part);
+      case "sort": return sortChars(part);
+      case "rotate": {
+        const chars = [...part];
+        const rot = Math.floor(rng() * chars.length);
+        return [...chars.slice(rot), ...chars.slice(0, rot)].join("");
+      }
+      case "interleave": {
+        const chars = [...part];
+        const mid = Math.floor(chars.length / 2);
+        const first = chars.slice(0, mid);
+        const second = chars.slice(mid);
+        let result = "";
+        for (let i = 0; i < Math.max(first.length, second.length); i++) {
+          if (first[i]) result += first[i];
+          if (second[i]) result += second[i];
+        }
+        return result;
+      }
+      default: return part;
+    }
+  }).join("");
+}
+
+export function scrambleReadabilityMetrics(original: string, scrambled: string): {
+  originalWords: number;
+  scrambledWords: number;
+  changedWords: number;
+  changeRate: number;
+  avgWordLength: number;
+} {
+  const origWords = original.split(/\s+/).filter(Boolean);
+  const scramWords = scrambled.split(/\s+/).filter(Boolean);
+  let changed = 0;
+  for (let i = 0; i < Math.min(origWords.length, scramWords.length); i++) {
+    if (origWords[i] !== scramWords[i]) changed++;
+  }
+  const avgLen = scramWords.length > 0 ? scramWords.reduce((a, w) => a + w.length, 0) / scramWords.length : 0;
+  return {
+    originalWords: origWords.length,
+    scrambledWords: scramWords.length,
+    changedWords: changed,
+    changeRate: origWords.length > 0 ? changed / origWords.length : 0,
+    avgWordLength: Math.round(avgLen * 100) / 100,
+  };
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateScrambleInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const wordCount = (text.match(/[a-zA-Z]+/g) ?? []).length;
+  if (wordCount === 0) reports.push({ level: "warn", code: "NO_WORDS", message: "No alphabetic words found." });
+  else reports.push({ level: "pass", code: "VALID", message: `${wordCount} words can be scrambled.` });
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string, seed?: number): Receipt {
+  const s = text.length + ":" + (seed ?? "random");
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-scrambler", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "PRNG-Mulberry32", citation: "Mulberry32 PRNG", summary: "Fast seeded pseudo-random number generator." },
+  { id: "Typoglycemia", citation: "Cambridge University (2003)", summary: "Letter position scrambling and reading." },
+];

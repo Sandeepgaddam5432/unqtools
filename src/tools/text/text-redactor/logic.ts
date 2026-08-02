@@ -157,3 +157,104 @@ export function fmt(n: number, p = 2): string {
   const f = Math.pow(10, p);
   return String(Math.round((n + Number.EPSILON) * f) / f);
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// F075 SENSITIVE MODE: handles redacted content — no history/drafts/URL state.
+// ============================================================================
+
+export function redactEmails(text: string, replacement: string = "[EMAIL]"): string {
+  return text.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement);
+}
+
+export function redactPhoneNumbers(text: string, replacement: string = "[PHONE]"): string {
+  return text.replace(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g, replacement);
+}
+
+export function redactCreditCards(text: string, replacement: string = "[CARD]"): string {
+  return text.replace(/\b(?:\d[ -]*?){13,16}\b/g, replacement);
+}
+
+export function redactSSNs(text: string, replacement: string = "[SSN]"): string {
+  return text.replace(/\b\d{3}-\d{2}-\d{4}\b/g, replacement);
+}
+
+export function redactIPs(text: string, replacement: string = "[IP]"): string {
+  return text.replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, replacement);
+}
+
+export function redactUrls(text: string, replacement: string = "[URL]"): string {
+  return text.replace(/https?:\/\/(?:[-\w.]|(?:%[\da-fA-F]{2}))+/g, replacement);
+}
+
+export function redactAllPII(text: string, replacement: string = "[REDACTED]"): string {
+  let result = text;
+  result = redactEmails(result, replacement);
+  result = redactPhoneNumbers(result, replacement);
+  result = redactCreditCards(result, replacement);
+  result = redactSSNs(result, replacement);
+  result = redactIPs(result, replacement);
+  result = redactUrls(result, replacement);
+  return result;
+}
+
+export function partialRedact(text: string, pattern: RegExp, keepFirst: number = 2, keepLast: number = 2, maskChar: string = "*"): string {
+  return text.replace(pattern, (match) => {
+    if (match.length <= keepFirst + keepLast) return match;
+    const first = match.slice(0, keepFirst);
+    const last = match.slice(-keepLast);
+    const middle = maskChar.repeat(match.length - keepFirst - keepLast);
+    return first + middle + last;
+  });
+}
+
+export function countRedactions(original: string, redacted: string): number {
+  const origWords = original.split(/\s+/);
+  const redWords = redacted.split(/\s+/);
+  let count = 0;
+  for (let i = 0; i < Math.min(origWords.length, redWords.length); i++) {
+    if (origWords[i] !== redWords[i]) count++;
+  }
+  return count;
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateRedactInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const hasEmail = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(text);
+  const hasPhone = /(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/.test(text);
+  const hasSSN = /\b\d{3}-\d{2}-\d{4}\b/.test(text);
+  if (hasEmail || hasPhone || hasSSN) {
+    reports.push({ level: "warn", code: "PII_DETECTED", message: "PII detected — ensure redaction before sharing." });
+  } else {
+    reports.push({ level: "pass", code: "NO_PII", message: "No common PII patterns detected." });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-redactor", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "NIST-SP-800-122", citation: "NIST SP 800-122 (2010)", summary: "Protecting PII confidentiality." },
+  { id: "GDPR-Article-4", citation: "GDPR Article 4 (2016)", summary: "Personal data definition and pseudonymisation." },
+  { id: "PCI-DSS", citation: "PCI DSS v4.0 (2022)", summary: "Cardholder data protection." },
+];

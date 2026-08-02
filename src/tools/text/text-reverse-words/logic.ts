@@ -157,3 +157,78 @@ export function reverseCharsInWords(input: string, opts: ReverseWordsOptions): s
     return tokens.map((t) => (/\S/.test(t) ? t.split("").reverse().join("") : t)).join("");
   }).join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function reverseWordsInParagraphs(text: string): string {
+  return text.split(/\n{2,}/).map((p) => reverseWords(p)).join("\n\n");
+}
+
+export function reverseMatchingWords(text: string, pattern: RegExp): string {
+  return text.split(/(\s+)/).map((part) => {
+    if (/\s/.test(part)) return part;
+    return pattern.test(part) ? part.split("").reverse().join("") : part;
+  }).join("");
+}
+
+export function rotateWords(text: string, shift: number): string {
+  const words = text.split(/\s+/);
+  const n = words.length;
+  if (n === 0) return text;
+  const effectiveShift = ((shift % n) + n) % n;
+  return [...words.slice(effectiveShift), ...words.slice(0, effectiveShift)].join(" ");
+}
+
+export function swapFirstLastWords(text: string): string {
+  return text.split("\n").map((line) => {
+    const words = line.split(/\s+/);
+    if (words.length < 2) return line;
+    const first = words[0]!;
+    const last = words[words.length - 1]!;
+    words[0] = last;
+    words[words.length - 1] = first;
+    return words.join(" ");
+  }).join("\n");
+}
+
+export function sortByWordLength(text: string, descending: boolean = true): string {
+  const words = text.split(/\s+/);
+  words.sort((a, b) => descending ? b.length - a.length : a.length - b.length);
+  return words.join(" ");
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateReverseWordsInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const wordCount = (text.match(/\S+/g) ?? []).length;
+  reports.push({ level: "pass", code: "WORD_COUNT", message: `${wordCount} words detected.` });
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-reverse-words", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Unicode-UAX29", citation: "Unicode Standard Annex #29", summary: "Word boundaries in Unicode text." },
+  { id: "NLP-Tokenization", citation: "NLP Fundamentals", summary: "Tokenization and word segmentation." },
+];

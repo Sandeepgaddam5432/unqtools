@@ -170,3 +170,101 @@ export function generateBarcodePattern(text: string): string {
     return bars.join(" ");
   }).join("  ");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export type RepeatJoin = "none" | "space" | "newline" | "comma" | "tab" | "custom";
+
+export function repeatWithJoin(text: string, count: number, join: RepeatJoin = "newline", customSeparator: string = ""): string {
+  if (count <= 0) return "";
+  const separator = join === "none" ? "" : join === "space" ? " " : join === "newline" ? "\n" : join === "comma" ? ", " : join === "tab" ? "\t" : customSeparator;
+  return Array.from({ length: count }, () => text).join(separator);
+}
+
+export function repeatWithNumber(text: string, count: number, options: { start?: number; padLength?: number; position?: "prefix" | "suffix" } = {}): string {
+  const { start = 1, padLength = 0, position = "suffix" } = options;
+  const lines: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const num = String(start + i).padStart(padLength, "0");
+    lines.push(position === "prefix" ? `${num}${text}` : `${text}${num}`);
+  }
+  return lines.join("\n");
+}
+
+export function repeatWithPattern(pattern: string, count: number, options: { start?: number; padLength?: number } = {}): string {
+  const { start = 1, padLength = 0 } = options;
+  const lines: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const num = String(start + i).padStart(padLength, "0");
+    lines.push(pattern.replace(/\{n\}/g, num).replace(/\{i\}/g, String(i + 1)));
+  }
+  return lines.join("\n");
+}
+
+export function repeatPyramid(text: string, maxHeight: number): string {
+  const lines: string[] = [];
+  for (let i = 1; i <= maxHeight; i++) {
+    lines.push(Array.from({ length: i }, () => text).join(" "));
+  }
+  for (let i = maxHeight - 1; i >= 1; i--) {
+    lines.push(Array.from({ length: i }, () => text).join(" "));
+  }
+  return lines.join("\n");
+}
+
+export function repeatTriangle(text: string, height: number, inverted: boolean = false): string {
+  const lines: string[] = [];
+  for (let i = 1; i <= height; i++) {
+    lines.push(Array.from({ length: i }, () => text).join(" "));
+  }
+  if (inverted) lines.reverse();
+  return lines.join("\n");
+}
+
+export function estimateRepeatSize(text: string, count: number, separator: string = "\n"): { bytes: number; characters: number; lines: number } {
+  const sepLen = separator.length;
+  const textLen = text.length;
+  const totalChars = textLen * count + sepLen * Math.max(0, count - 1);
+  const totalBytes = new TextEncoder().encode(text + separator).length * count;
+  return { bytes: totalBytes, characters: totalChars, lines: separator === "\n" ? count : 1 };
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateRepeatInput(text: string, count: number): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  if (count <= 0) { reports.push({ level: "fail", code: "INVALID_COUNT", message: "Count must be positive." }); return reports; }
+  const size = estimateRepeatSize(text, count);
+  if (size.bytes > 10 * 1024 * 1024) {
+    reports.push({ level: "warn", code: "LARGE_OUTPUT", message: `Output will be ~${Math.round(size.bytes / 1024 / 1024)} MB.` });
+  } else {
+    reports.push({ level: "pass", code: "VALID", message: `Will produce ${size.characters} characters.` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string, count: number): Receipt {
+  const s = text.length + ":" + count;
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-repeater", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "ECMA-262-String-Repeat", citation: "ECMA-262 §22.1.3.15", summary: "String.prototype.repeat specification." },
+];

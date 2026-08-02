@@ -100,3 +100,98 @@ export function process(input: string, options: IndentOptions): IndentResult | {
     warnings,
   };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function normalizeIndentation(
+  text: string,
+  targetStyle: "tabs" | "spaces" | "2spaces" | "4spaces" = "4spaces",
+): { output: string; tabCount: number; spaceCount: number; converted: number } {
+  const lines = text.split("\n");
+  let tabCount = 0;
+  let spaceCount = 0;
+  let converted = 0;
+  const targetStr = targetStyle === "tabs" ? "\t" : targetStyle === "2spaces" ? "  " : targetStyle === "4spaces" ? "    " : " ";
+  const result = lines.map((line) => {
+    const match = line.match(/^(\s*)/);
+    const indent = match ? match[0] : "";
+    if (indent.includes("\t")) tabCount++;
+    if (indent.includes(" ")) spaceCount++;
+    const newIndent = indent.replace(/\t/g, targetStr);
+    if (newIndent !== indent) converted++;
+    return newIndent + line.slice(indent.length);
+  });
+  return { output: result.join("\n"), tabCount, spaceCount, converted };
+}
+
+export function detectDominantStyle(text: string): { style: string; confidence: number; tabLines: number; spaceLines: number } {
+  const lines = text.split("\n");
+  let tabLines = 0;
+  let spaceLines = 0;
+  for (const line of lines) {
+    if (/^\t/.test(line)) tabLines++;
+    else if (/^ +/.test(line)) spaceLines++;
+  }
+  const total = tabLines + spaceLines;
+  if (total === 0) return { style: "none", confidence: 1, tabLines: 0, spaceLines: 0 };
+  const style = tabLines > spaceLines ? "tabs" : "spaces";
+  const confidence = Math.max(tabLines, spaceLines) / total;
+  return { style, confidence, tabLines, spaceLines };
+}
+
+export function stripIndentation(text: string): string {
+  return text.split("\n").map((l) => l.replace(/^\s+/, "")).join("\n");
+}
+
+export function reindent(text: string, targetIndent: string = "  "): string {
+  const lines = text.split("\n");
+  const indentedLines = lines.filter((l) => l.trim().length > 0);
+  if (indentedLines.length === 0) return text;
+  const minIndent = Math.min(...indentedLines.map((l) => l.match(/^ */)?.[0].length ?? 0));
+  return lines.map((line) => {
+    if (line.trim().length === 0) return "";
+    const currentIndent = line.match(/^ */)?.[0].length ?? 0;
+    const stripped = line.slice(Math.min(currentIndent, minIndent));
+    return targetIndent + stripped;
+  }).join("\n");
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateIndentation(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const { style, confidence, tabLines, spaceLines } = detectDominantStyle(text);
+  if (tabLines > 0 && spaceLines > 0) {
+    reports.push({ level: "warn", code: "MIXED_INDENT", message: `Mixed indentation: ${tabLines} tab lines, ${spaceLines} space lines.` });
+  } else {
+    reports.push({ level: "pass", code: "CONSISTENT", message: `Consistent ${style} indentation.` });
+  }
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-indentation-fixer", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "EditorConfig", citation: "EditorConfig.org", summary: "Standard for consistent coding styles." },
+  { id: "Prettier", citation: "Prettier Code Formatter", summary: "Opinionated code formatter." },
+];

@@ -153,3 +153,87 @@ export function batchToCsv(results: ReverseResult[], inputs: string[]): string {
   }
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function reverseCharsSimple(text: string): string {
+  return [...text].reverse().join("");
+}
+
+export function reverseGraphemes(text: string): string {
+  try {
+    const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+    const segments = Array.from(segmenter.segment(text));
+    return segments.reverse().map((s) => s.segment).join("");
+  } catch {
+    return [...text].reverse().join("");
+  }
+}
+
+export function reverseLinesSimple(text: string): string {
+  return text.split("\n").reverse().join("\n");
+}
+
+export function reverseParagraphs(text: string): string {
+  return text.split(/\n{2,}/).reverse().join("\n\n");
+}
+
+export function reverseSentencesSimple(text: string): string {
+  return text.split(/(?<=[.!?])\s+/).reverse().join(" ");
+}
+
+export function reverseAlphaOnly(text: string): string {
+  const alpha = text.match(/[a-zA-Z]/g) ?? [];
+  const reversed = alpha.reverse();
+  let idx = 0;
+  return text.replace(/[a-zA-Z]/g, () => reversed[idx++]!);
+}
+
+export function reverseCaseSimple(text: string): string {
+  return text.split("").map((c) => c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()).join("");
+}
+
+export function mirrorText(text: string): string {
+  const mirrorMap: Record<string, string> = {
+    "(": ")", ")": "(", "[": "]", "]": "[", "{": "}", "}": "{",
+    "<": ">", ">": "<", "/": "\\", "\\": "/",
+  };
+  return [...text].reverse().map((c) => mirrorMap[c] ?? c).join("");
+}
+
+export interface ValidationReport {
+  level: "pass" | "warn" | "fail";
+  code: string;
+  message: string;
+}
+
+export function validateReverseInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const hasEmoji = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}]/u.test(text);
+  if (hasEmoji) reports.push({ level: "warn", code: "EMOJI", message: "Text contains emoji — use grapheme reversal." });
+  else reports.push({ level: "pass", code: "VALID", message: "Text is valid for reversal." });
+  return reports;
+}
+
+export interface Receipt {
+  tool: string;
+  version: string;
+  timestamp: string;
+  inputFingerprint: string;
+}
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-reverser", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Unicode-UAX29", citation: "Unicode Standard Annex #29", summary: "Unicode Text Segmentation." },
+  { id: "Intl-Segmenter", citation: "MDN: Intl.Segmenter", summary: "Locale-aware text segmentation." },
+];
