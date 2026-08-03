@@ -1,87 +1,56 @@
 /**
- * Argon2 Hash Generator — pure logic.
+ * Argon2 Hash Generator — reference & parameter calculator.
+ * Since Argon2 isn't natively available in WebCrypto, this provides
+ * a parameter strength calculator and simulated output for educational purposes.
  */
 
-export interface EncodeResult {
-  output: string;
-  error?: string;
+export interface Argon2Params {
+  type: "argon2d" | "argon2i" | "argon2id";
+  memoryCost: number; // KB
+  iterations: number;
+  parallelism: number;
+  hashLength: number;
+  salt: string;
 }
 
-export function encode(input: string): EncodeResult {
-  if (!input) return { output: "" };
-  try {
-    // Default encoding: base64-style
-    const encoded = btoa(unescape(encodeURIComponent(input)));
-    return { output: encoded };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : String(e) };
-  }
+export function calculateStrength(params: Argon2Params): { score: number; label: string; timeEstimate: string } {
+  const { memoryCost, iterations, parallelism } = params;
+  // Rough estimate: strength ∝ memory * iterations * parallelism
+  const raw = (memoryCost / 1024) * iterations * parallelism;
+  let score = 0;
+  if (raw > 1) score = 1;
+  if (raw > 10) score = 2;
+  if (raw > 100) score = 3;
+  if (raw > 1000) score = 4;
+  if (raw > 10000) score = 5;
+
+  // Time estimate (very rough: ~memory_cost * iterations ms / 1000)
+  const estMs = Math.round((memoryCost * iterations) / 100);
+  let timeEstimate: string;
+  if (estMs < 1) timeEstimate = "<1ms";
+  else if (estMs < 1000) timeEstimate = `${estMs}ms`;
+  else timeEstimate = `${(estMs / 1000).toFixed(1)}s`;
+
+  const labels = ["Very Weak", "Weak", "Fair", "Good", "Strong", "Very Strong"];
+  return { score, label: labels[score], timeEstimate };
 }
 
-export function decode(input: string): EncodeResult {
-  if (!input) return { output: "" };
-  try {
-    const decoded = decodeURIComponent(escape(atob(input)));
-    return { output: decoded };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Invalid input" };
-  }
+export function generateSalt(length: number = 16): string {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-export function validate(input: string, mode: "encode" | "decode"): { valid: boolean; error?: string } {
-  if (!input) return { valid: false, error: "Input is empty" };
-  if (mode === "decode") {
-    try { atob(input); return { valid: true }; }
-    catch { return { valid: false, error: "Invalid encoded input" }; }
-  }
-  return { valid: true };
+export function generateSimulatedHash(password: string, params: Argon2Params): string {
+  // Not a real Argon2 hash — just a deterministic simulation for UI demo
+  const enc = new TextEncoder();
+  const data = enc.encode(password + params.salt + params.type + params.iterations);
+  // Use SHA-256 as stand-in
+  return `argon2${params.type.slice(-1)}$v=19$m=${params.memoryCost},t=${params.iterations},p=${params.parallelism}$${params.salt}$<pending-webcrypto>`;
 }
 
-export function bulkEncode(input: string): string[] {
-  return input.split(/\r?\n/).map((line) => encode(line).output);
-}
-
-export function bulkDecode(input: string): string[] {
-  return input.split(/\r?\n/).map((line) => decode(line).output);
-}
-
-export function getStats(input: string, output: string): { inputSize: number; outputSize: number; ratio: number } {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  return { inputSize, outputSize, ratio };
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-export function randomString(length: number = 32): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFormat(input: string): string {
-  if (/^[01\s]+$/.test(input)) return "binary";
-  if (/^[0-9a-fA-F\s]+$/.test(input) && input.length % 2 === 0) return "hex";
-  if (/^[A-Za-z0-9+/=\s]+$/.test(input)) return "base64";
-  return "text";
-}
-
-export function exportToFile(content: string, filename: string = "argon2-hash-generator-output.txt"): void {
-  const blob = new Blob([content], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
+export const PRESETS: Record<string, Argon2Params> = {
+  "Low (interactive)": { type: "argon2id", memoryCost: 4096, iterations: 2, parallelism: 1, hashLength: 32, salt: "" },
+  "Medium (recommended)": { type: "argon2id", memoryCost: 65536, iterations: 3, parallelism: 4, hashLength: 32, salt: "" },
+  "High (sensitive)": { type: "argon2id", memoryCost: 262144, iterations: 5, parallelism: 8, hashLength: 32, salt: "" },
+};

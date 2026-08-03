@@ -1,144 +1,78 @@
 "use client";
-
 import React, { useState, useCallback, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
-import { encode, decode, validate, bulkEncode, getStats, formatBytes, randomString } from "./logic";
+import { CopyButton } from "../../_shared";
+import { toast } from "sonner";
+import { atbashEncode, atbashEncodeGrouped, getStats, ALPHABET, ATBASH_MAP } from "./logic";
+import { ArrowLeftRight, Group } from "lucide-react";
 
 export default function AtbashCipher() {
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [mode, setMode] = useState<"encode" | "decode">("encode");
-  const [history, setHistory] = useState<string[]>([]);
+  const [grouped, setGrouped] = useState(false);
+  const [groupSize, setGroupSize] = useState(5);
 
-  const handleProcess = useCallback(() => {
-    setError(null);
-    if (!input.trim()) {
-      setOutput("");
-      return;
-    }
-    const result = mode === "encode" ? encode(input) : decode(input);
-    if (result.error) {
-      setError(result.error);
-      setOutput("");
-    } else {
-      setOutput(result.output);
-      setHistory((prev) => [input.slice(0, 50), ...prev].slice(0, 10));
-    }
-  }, [input, mode]);
-
-  const swap = useCallback(() => {
-    setInput(output);
-    setOutput(input);
-    setMode((m) => (m === "encode" ? "decode" : "encode"));
-  }, [input, output]);
-
-  const clear = useCallback(() => {
-    setInput("");
-    setOutput("");
-    setError(null);
-  }, []);
-
-  const loadExample = useCallback(() => {
-    setInput("Hello World");
-    setMode("encode");
-  }, []);
-
-  const loadRandom = useCallback(() => {
-    setInput(randomString(32));
-    setMode("encode");
-  }, []);
+  const output = useMemo(() => {
+    if (!input) return "";
+    return grouped ? atbashEncodeGrouped(input, groupSize) : atbashEncode(input);
+  }, [input, grouped, groupSize]);
 
   const stats = useMemo(() => getStats(input, output), [input, output]);
+  const swap = useCallback(() => { setInput(output); }, [output]);
 
   return (
     <div className="space-y-4">
       <Card>
-        <CardContent className="p-4 space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex gap-2">
-              <Button variant={mode === "encode" ? "default" : "outline"} size="sm" onClick={() => setMode("encode")}>Encode</Button>
-              <Button variant={mode === "decode" ? "default" : "outline"} size="sm" onClick={() => setMode("decode")}>Decode</Button>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={loadExample}>Example</Button>
-              <Button variant="ghost" size="sm" onClick={loadRandom}>Random</Button>
-              <Button variant="ghost" size="sm" onClick={clear}>Clear</Button>
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="input">Input <span className="text-muted-foreground">({formatBytes(stats.inputSize)})</span></Label>
-            <Textarea
-              id="input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={mode === "encode" ? "Enter text to encode..." : "Enter encoded text to decode..."}
-              rows={4}
-              className="font-mono text-sm"
-            />
-          </div>
-          <Button onClick={handleProcess} disabled={!input.trim()}>{mode === "encode" ? "Encode →" : "Decode →"}</Button>
-        </CardContent>
-      </Card>
-
-      {error && <ErrorBanner message={error} />}
-
-      {output && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center justify-between">
-              <span>Output</span>
-              <Badge variant="outline">{formatBytes(stats.outputSize)} ({stats.ratio.toFixed(2)}×)</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-3">
-            <div className="rounded-md border bg-muted/30 p-3 font-mono text-xs whitespace-pre-wrap break-all max-h-96 overflow-y-auto">
-              {output}
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <CopyButton getText={() => output} label="Copy output" />
-              <Button variant="outline" size="sm" onClick={swap}>Use as input</Button>
-              <DownloadButton getText={() => output} filename="{slug}-output.txt" />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {history.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center justify-between">
-              <span>Recent</span>
-              <Button variant="ghost" size="sm" onClick={() => setHistory([])}>Clear</Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-1">
-            {history.map((h, i) => (
-              <button
-                key={i}
-                onClick={() => setInput(h)}
-                className="block w-full text-left text-xs px-2 py-1 rounded hover:bg-muted/50 font-mono truncate"
-              >
-                {h}
-              </button>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
         <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> All processing happens 100% in your browser. Nothing is uploaded, tracked, or stored remotely. Works offline as a PWA.
-          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch checked={grouped} onCheckedChange={setGrouped} id="grouped" />
+              <Label htmlFor="grouped" className="text-sm cursor-pointer">Group output</Label>
+            </div>
+            {grouped && (
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Group size:</Label>
+                <input type="range" min={3} max={10} value={groupSize} onChange={e => setGroupSize(Number(e.target.value))} className="w-24" />
+                <span className="text-sm font-mono">{groupSize}</span>
+              </div>
+            )}
+            <Button variant="outline" size="sm" onClick={swap} className="gap-1.5 ml-auto"><ArrowLeftRight className="h-3.5 w-3.5" />Use output as input</Button>
+          </div>
+          {/* Reference table */}
+          <div className="mt-3 overflow-x-auto">
+            <div className="flex gap-0 text-[10px] font-mono">
+              {ALPHABET.split("").map((c, i) => (
+                <div key={c} className="flex flex-col items-center w-6 text-center">
+                  <span className="text-primary font-bold">{c}</span>
+                  <span className="text-muted-foreground">↕</span>
+                  <span className="text-emerald-600 font-bold">{ATBASH_MAP[i]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </CardContent>
       </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs">Input (plaintext or cipher)</Label>
+            <Badge variant="outline" className="text-xs">{stats.alphaChars} alpha chars</Badge>
+          </div>
+          <Textarea value={input} onChange={e => setInput(e.target.value)} placeholder="Type text to encode/decode…" className="min-h-[240px] font-mono text-sm resize-y" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs">Output</Label>
+            {output && <CopyButton getText={() => output} />}
+          </div>
+          <pre className="min-h-[240px] overflow-auto whitespace-pre-wrap rounded-md border bg-muted/30 p-3 font-mono text-sm break-all">{output || <span className="text-muted-foreground">Output appears here…</span>}</pre>
+        </div>
+      </div>
+      <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground"><strong className="text-foreground">Privacy:</strong> 100% client-side. Atbash is self-inverse — the same operation encodes and decodes.</p></CardContent></Card>
     </div>
   );
 }

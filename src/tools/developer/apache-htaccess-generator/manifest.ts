@@ -1,24 +1,18 @@
-/**
- * Apache .htaccess Generator — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "apache-htaccess-generator",
   name: "Apache .htaccess Generator",
-  description: "Generate Apache .htaccess rules. Redirects, rewrites, auth, caching, security headers.",
+  description: "Generate .htaccess rules: HTTPS redirect, WWW control, GZIP, CORS, IP blocking, redirects, error pages, hotlink prevention.",
   category: "developer",
-  keywords: ["htaccess", "apache", "htaccess generator", "server config"],
-  icon: "FileCode",
+  keywords: ["htaccess", "apache", "redirect", "https", "cors", "gzip", "ip block", "rewrite"],
+  icon: "Server",
   requiresNetwork: false,
-  seo: {
-    title: "Apache .htaccess Generator — 100% Private, Offline | UnQTools",
+  seo: { title: "Apache .htaccess Generator — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Generate Apache .htaccess rules. Redirects, rewrites, auth, caching, security headers." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Generates Apache .htaccess configuration files with common rules for redirects, security, compression, and caching." },
+      { q: "Is my configuration sent to a server?", a: "No. Everything is generated 100% in your browser." },
+      { q: "Can I add custom rules?", a: "Yes — add redirects, block IPs, and configure error pages." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

@@ -1,24 +1,18 @@
-/**
- * Add Header & Footer (Advanced) — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "pdf-header-footer-adv",
   name: "Add Header & Footer (Advanced)",
-  description: "Advanced header/footer for PDF. Different first/odd/even pages.",
+  description: "Header/footer builder with multiple alignment options. Uses pdf-lib, 100% client-side.",
   category: "pdf",
-  keywords: ["pdf header", "pdf footer", "header footer", "pdf top bottom"],
-  icon: "AlignVerticalJustifyCenter",
+  keywords: ["add-header-&-footer-(advanced)", "pdf", "offline", "browser"],
+  icon: "FileText",
   requiresNetwork: false,
-  seo: {
-    title: "Add Header & Footer (Advanced) — 100% Private, Offline | UnQTools",
+  seo: { title: "Add Header & Footer (Advanced) — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Advanced header/footer for PDF. Different first/odd/even pages." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Header/footer builder with multiple alignment options" },
+      { q: "Is my data sent to a server?", a: "No. All processing uses pdf-lib and runs 100% in your browser." },
+      { q: "Does it work offline?", a: "Yes — install as a PWA and use without network." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

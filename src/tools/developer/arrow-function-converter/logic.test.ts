@@ -1,99 +1,31 @@
 import { describe, it, expect } from "vitest";
-import { encode, decode, validate, bulkEncode, bulkDecode, getStats, formatBytes, randomString, detectFormat } from "./logic";
+import { convert, getStats } from "./logic";
 
 describe("Arrow Function Converter", () => {
-  it("encodes empty string", () => {
-    expect(encode("").output).toBe("");
+  it("converts function declaration to arrow", () => {
+    const r = convert("function add(a, b) {", "to-arrow");
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.output).toContain("=>");
+    expect(r.output).toContain("const add");
   });
-
-  it("encodes a simple string", () => {
-    const result = encode("hello");
-    expect(result.output).toBeTruthy();
-    expect(result.error).toBeUndefined();
+  it("converts arrow to function declaration", () => {
+    const r = convert("const add = (a, b) => {", "to-function");
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.output).toContain("function add");
   });
-
-  it("decodes the encoded string back to original", () => {
-    const original = "Hello World";
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
+  it("fails on empty input", () => {
+    expect(convert("", "to-arrow").ok).toBe(false);
   });
-
-  it("round-trips unicode", () => {
-    const original = "héllo wörld";
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
+  it("handles no-params", () => {
+    const r = convert("function init() {", "to-arrow");
+    if (!r.ok) return;
+    expect(r.output).toContain("() =>");
   });
-
-  it("round-trips with newlines", () => {
-    const original = "line1\nline2\nline3";
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
-  });
-
-  it("returns error for invalid decode input", () => {
-    const result = decode("!!!invalid-base64!!!");
-    expect(result.error).toBeDefined();
-  });
-
-  it("validates encode mode", () => {
-    expect(validate("hello", "encode").valid).toBe(true);
-    expect(validate("", "encode").valid).toBe(false);
-  });
-
-  it("validates decode mode", () => {
-    expect(validate(encode("test").output, "decode").valid).toBe(true);
-    expect(validate("!!!invalid", "decode").valid).toBe(false);
-  });
-
-  it("bulk encodes multiple lines", () => {
-    const result = bulkEncode("hello\nworld");
-    expect(result).toHaveLength(2);
-    expect(result[0]).toBeTruthy();
-  });
-
-  it("bulk decodes multiple lines", () => {
-    const encoded = bulkEncode("hello\nworld");
-    const decoded = bulkDecode(encoded.join("\n"));
-    expect(decoded).toEqual(["hello", "world"]);
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "aGVsbG8=");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(8);
-    expect(stats.ratio).toBeGreaterThan(1);
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1024 * 1024)).toBe("1.0 MB");
-  });
-
-  it("generates random string of given length", () => {
-    const result = randomString(16);
-    expect(result).toHaveLength(16);
-  });
-
-  it("detects binary format", () => {
-    expect(detectFormat("01001000 01101001")).toBe("binary");
-  });
-
-  it("detects hex format", () => {
-    expect(detectFormat("48656c6c6f")).toBe("hex");
-  });
-
-  it("detects base64 format", () => {
-    expect(detectFormat("aGVsbG8=")).toBe("base64");
-  });
-
-  it("detects text format fallback", () => {
-    expect(detectFormat("Hello World!")).toBe("text");
-  });
-
-  it("handles long input", () => {
-    const original = "a".repeat(1000);
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
+  it("gets stats", () => {
+    const s = getStats("function foo() {}\nconst bar = () => {}");
+    expect(s.functionCount).toBeGreaterThanOrEqual(1);
+    expect(s.arrowCount).toBe(1);
   });
 });
