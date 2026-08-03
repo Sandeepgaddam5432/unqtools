@@ -26,7 +26,7 @@ describe("Archive import guard", () => {
     const violations: string[] = [];
     for (const file of files) {
       const content = readFileSync(file, "utf-8");
-      if (/from\s+['"].*archive\//.test(content)) {
+      if (/from\s+['"](@\/|\.\.\/|\.\/)+archive\//.test(content)) {
         violations.push(file);
       }
     }

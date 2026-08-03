@@ -260,9 +260,16 @@ export default function ToolsPage() {
                             {tool.description}
                           </p>
                           <div className="flex items-center justify-between">
-                            <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
-                              {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
-                            </Badge>
+                            <div className="flex items-center gap-1.5">
+                              <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
+                                {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
+                              </Badge>
+                              {tool.status === "planned" && (
+                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
+                                  Coming Soon
+                                </Badge>
+                              )}
+                            </div>
                             <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                               <span>Open</span>
                               <ArrowRight className="h-3.5 w-3.5 ml-1" />

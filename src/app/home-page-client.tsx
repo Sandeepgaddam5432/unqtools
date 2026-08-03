@@ -349,8 +349,15 @@ export default function Home() {
                   <motion.div key={tool.id} variants={staggerItem}>
                     <Link href={`/tools/${tool.id}`} className="block group">
                       <div className="rounded-xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md">
-                        <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
-                          <Icon className="h-4.5 w-4.5 text-primary" />
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                            <Icon className="h-4.5 w-4.5 text-primary" />
+                          </div>
+                          {tool.status === "planned" && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
+                              Coming Soon
+                            </Badge>
+                          )}
                         </div>
                         <h3 className="font-semibold text-sm mb-1.5 leading-tight">{tool.name}</h3>
                         <p className="text-xs text-muted-foreground line-clamp-2 mb-3">

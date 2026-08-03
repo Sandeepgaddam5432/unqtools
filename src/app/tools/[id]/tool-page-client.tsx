@@ -24,6 +24,7 @@ import {
   Layers,
   ShieldCheck,
   ChevronRight,
+  Clock,
 } from "lucide-react";
 import type { ToolManifest, ToolCategory } from "@/lib/tool";
 
@@ -1853,11 +1854,27 @@ export function ToolPageClient({
               <Badge variant="outline" className="gap-1">
                 <Zap className="h-3 w-3" /> Instant
               </Badge>
+              {tool.status === "planned" && (
+                <Badge variant="outline" className="gap-1 bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold">
+                  <Clock className="h-3 w-3" /> Coming Soon
+                </Badge>
+              )}
             </motion.div>
 
             {/* Tool UI */}
             <Card className="mb-8">
               <CardContent className="p-6">
+                {tool.status === "planned" && (
+                  <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200 flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold mb-0.5">Tool Upgrade Coming Soon</p>
+                      <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                        This tool is currently a preview template. We are actively upgrading it to 100% blueprint compliance with 10 extra features. Like all UnQTools features, the upgraded version will run 100% locally in your browser with zero network requests.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {ToolUI ? (
                   <Suspense fallback={<ToolSkeleton />}>
                     <ToolUI />

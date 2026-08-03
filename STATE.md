@@ -28,6 +28,7 @@ _Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt wit
 
 | Commit | Description |
 |--------|-------------|
+| tbd | feat: mark 565 generic template/mock tools as Coming Soon (status: planned) + add Coming Soon UI badges |
 | c4c82d0 | feat: v17.63 — Rebuild 30 tools with 100% blueprint compliance + audit report |
 | 57f10c5 | feat: v17.62 — AI Chat with PDF (1 tool, full blueprint compliance) |
 | c2dd8e4 | fix: v17.61.1 — fix duplicate import variable names in registry.ts |
@@ -51,5 +52,5 @@ _Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt wit
 
 ### Known issues
 
-- **555 tools** built in v17.56–v17.61 used generic template logic instead of implementing actual blueprint features. 30 have been rebuilt in v17.63. Remaining 525 need rebuilding in future sessions. See `BLUEPRINT-COMPLIANCE-AUDIT.md` for the full list.
+- **555 tools** built in v17.56–v17.61 used generic template logic instead of implementing actual blueprint features. 30 have been rebuilt in v17.63. The remaining 565 generic template/mock tools across developer, pdf, and network-security categories are now explicitly marked with `status: "planned"` (Coming Soon) in their manifest.ts and display "Coming Soon" badges and alert notices in the UI until they are rebuilt. See `BLUEPRINT-COMPLIANCE-AUDIT.md` for the full list.
 - Build OOMs in 4GB sandbox (local `next build` fails) but Cloudflare 7GB runners handle it successfully.
