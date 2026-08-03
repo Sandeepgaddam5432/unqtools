@@ -1,105 +1,110 @@
 import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { tokenize, buildAst, parseCode, formatTokenTable, formatAstJson } from "./logic";
 
-describe("AST Explorer (JS/TS)", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+describe("AST Explorer", () => {
+  describe("tokenize", () => {
+    it("tokenizes simple variable declaration", () => {
+      const tokens = tokenize("const x = 42;");
+      expect(tokens.length).toBeGreaterThan(0);
+      expect(tokens.find(t => t.value === "const")).toBeDefined();
+      expect(tokens.find(t => t.value === "x")).toBeDefined();
+      expect(tokens.find(t => t.value === "42")).toBeDefined();
+    });
+
+    it("tokenizes strings", () => {
+      const tokens = tokenize('"hello"');
+      expect(tokens.find(t => t.type === "string")).toBeDefined();
+    });
+
+    it("tokenizes comments", () => {
+      const tokens = tokenize("// this is a comment\nconst x = 1;");
+      expect(tokens.find(t => t.type === "comment")).toBeDefined();
+    });
+
+    it("tokenizes multiline comments", () => {
+      const tokens = tokenize("/* block\ncomment */\nconst x = 1;");
+      expect(tokens.find(t => t.type === "multiline-comment")).toBeDefined();
+    });
+
+    it("tokenizes operators", () => {
+      const tokens = tokenize("a === b");
+      expect(tokens.find(t => t.type === "operator")).toBeDefined();
+    });
+
+    it("tracks line numbers", () => {
+      const tokens = tokenize("const a = 1;\nconst b = 2;");
+      const bToken = tokens.find(t => t.value === "b" && t.type === "identifier");
+      expect(bToken?.line).toBe(2);
+    });
+
+    it("handles empty input", () => {
+      expect(tokenize("")).toHaveLength(0);
+    });
+
+    it("handles arrow functions", () => {
+      const tokens = tokenize("const fn = () => {}");
+      expect(tokens.find(t => t.type === "arrow")).toBeDefined();
+    });
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  describe("buildAst", () => {
+    it("builds AST from tokens", () => {
+      const tokens = tokenize("const x = 1;");
+      const ast = buildAst(tokens);
+      expect(ast.type).toBe("Program");
+      expect(ast.children.length).toBeGreaterThan(0);
+    });
+
+    it("handles nested blocks", () => {
+      const tokens = tokenize("function foo() { if (true) { return 1; } }");
+      const ast = buildAst(tokens);
+      expect(ast.children.length).toBeGreaterThan(0);
+    });
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  describe("parseCode", () => {
+    it("parses code successfully", () => {
+      const result = parseCode("const x = 42;");
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.tokens.length).toBeGreaterThan(0);
+      expect(result.stats.lineCount).toBe(1);
+    });
+
+    it("fails on empty code", () => {
+      const result = parseCode("");
+      expect(result.ok).toBe(false);
+    });
+
+    it("parses class declarations", () => {
+      const result = parseCode("class Foo extends Bar { constructor() {} }");
+      expect(result.ok).toBe(true);
+    });
+
+    it("provides correct stats", () => {
+      const result = parseCode("const a = 1;\nconst b = 2;\nconst c = 3;");
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.stats.lineCount).toBe(3);
+      expect(result.stats.tokenCount).toBeGreaterThan(0);
+    });
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  describe("formatTokenTable", () => {
+    it("formats tokens as table", () => {
+      const tokens = tokenize("const x = 1;");
+      const table = formatTokenTable(tokens);
+      expect(table).toContain("Line");
+      expect(table).toContain("Type");
+    });
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
-  });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  describe("formatAstJson", () => {
+    it("formats AST as JSON", () => {
+      const tokens = tokenize("const x = 1;");
+      const ast = buildAst(tokens);
+      const json = formatAstJson(ast);
+      expect(JSON.parse(json)).toBeDefined();
+    });
   });
 });

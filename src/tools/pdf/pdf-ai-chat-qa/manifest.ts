@@ -6,19 +6,19 @@ import type { ToolManifest } from "../../../lib/tool";
 export const manifest: ToolManifest = {
   id: "pdf-ai-chat-qa",
   name: "AI Chat with PDF (Q&A)",
-  description: "AI-powered Q&A with PDF. Natural language queries, cited answers.",
+  description: "Advanced PDF Q&A: auto-summary generation, keyword search, passage relevance scoring, and document analysis — all client-side.",
   category: "pdf",
-  keywords: ["pdf ai", "pdf chat", "ai qa", "chat with pdf"],
-  icon: "MessageCircle",
+  keywords: ["pdf qa", "pdf summary", "pdf search", "pdf analysis", "document qa", "keyword search pdf"],
+  icon: "Sparkles",
   requiresNetwork: false,
   seo: {
-    title: "AI Chat with PDF (Q&A) — 100% Private, Offline | UnQTools",
+    title: "AI Chat with PDF (Q&A) — Summarize & Search | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "AI-powered Q&A with PDF. Natural language queries, cited answers." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
+      { q: "What does this tool do?", a: "Analyzes PDF content, generates auto-summaries, searches for relevant passages, and scores relevance — all in your browser." },
+      { q: "Is my data sent to a server?", a: "No. All processing is 100% client-side using pdf-lib and custom algorithms." },
+      { q: "How does auto-summary work?", a: "It scores sentences by position and keyword density, then selects the most important ones to form a concise summary." },
       { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

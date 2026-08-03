@@ -1,24 +1,19 @@
-/**
- * Add Background Image to PDF — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "pdf-background-image-tool",
   name: "Add Background Image to PDF",
-  description: "Add image background to PDF pages. Cover/contain, opacity.",
+  description: "Enhanced PDF background tool with image preview, rotation control, opacity slider, and advanced positioning. All client-side.",
   category: "pdf",
-  keywords: ["pdf background", "background image", "pdf bg", "watermark image"],
-  icon: "Image",
+  keywords: ["pdf background", "background image", "watermark", "pdf watermark image", "pdf background tool"],
+  icon: "ImageIcon",
   requiresNetwork: false,
   seo: {
-    title: "Add Background Image to PDF — 100% Private, Offline | UnQTools",
+    title: "Add Background Image to PDF — Enhanced Tool | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Add image background to PDF pages. Cover/contain, opacity." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Adds background images to PDF pages with advanced controls for rotation, opacity, scaling, and positioning." },
+      { q: "What formats are supported?", a: "PNG and JPEG images, applied to any PDF document." },
+      { q: "Is it offline?", a: "Yes — 100% client-side with pdf-lib." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

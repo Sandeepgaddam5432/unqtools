@@ -1,99 +1,182 @@
 import { describe, it, expect } from "vitest";
-import { encode, decode, validate, bulkEncode, bulkDecode, getStats, formatBytes, randomString, detectFormat } from "./logic";
+import {
+  encryptText,
+  decryptText,
+  generatePassword,
+  estimateStrength,
+  getStats,
+  formatBytes,
+} from "./logic";
 
 describe("AES Encrypt/Decrypt", () => {
-  it("encodes empty string", () => {
-    expect(encode("").output).toBe("");
+  const defaultOpts = {
+    mode: "AES-GCM" as const,
+    keySize: 256 as const,
+    password: "test-password-123",
+    iterations: 100000,
+    outputFormat: "base64" as const,
+  };
+
+  it("encrypts and decrypts with AES-GCM", async () => {
+    const plaintext = "Hello, World!";
+    const enc = await encryptText(plaintext, defaultOpts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+    expect(enc.fullOutput).toBeTruthy();
+
+    const dec = await decryptText(enc.fullOutput, {
+      ...defaultOpts,
+      inputFormat: "base64",
+    });
+    expect(dec.ok).toBe(true);
+    if (!dec.ok) return;
+    expect(dec.plaintext).toBe(plaintext);
   });
 
-  it("encodes a simple string", () => {
-    const result = encode("hello");
-    expect(result.output).toBeTruthy();
-    expect(result.error).toBeUndefined();
+  it("encrypts and decrypts with AES-CBC", async () => {
+    const plaintext = "Secret message for CBC mode";
+    const opts = { ...defaultOpts, mode: "AES-CBC" as const };
+    const enc = await encryptText(plaintext, opts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+
+    const dec = await decryptText(enc.fullOutput, {
+      ...opts,
+      inputFormat: "base64",
+    });
+    expect(dec.ok).toBe(true);
+    if (!dec.ok) return;
+    expect(dec.plaintext).toBe(plaintext);
   });
 
-  it("decodes the encoded string back to original", () => {
-    const original = "Hello World";
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
+  it("supports hex output format", async () => {
+    const plaintext = "Hex test";
+    const opts = { ...defaultOpts, outputFormat: "hex" as const };
+    const enc = await encryptText(plaintext, opts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+    expect(/^[0-9a-f]+$/.test(enc.fullOutput)).toBe(true);
+
+    const dec = await decryptText(enc.fullOutput, {
+      ...opts,
+      inputFormat: "hex",
+    });
+    expect(dec.ok).toBe(true);
+    if (!dec.ok) return;
+    expect(dec.plaintext).toBe(plaintext);
   });
 
-  it("round-trips unicode", () => {
-    const original = "héllo wörld";
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
+  it("handles unicode text", async () => {
+    const plaintext = "Héllo wörld 日本語 🎉";
+    const enc = await encryptText(plaintext, defaultOpts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+
+    const dec = await decryptText(enc.fullOutput, {
+      ...defaultOpts,
+      inputFormat: "base64",
+    });
+    expect(dec.ok).toBe(true);
+    if (!dec.ok) return;
+    expect(dec.plaintext).toBe(plaintext);
   });
 
-  it("round-trips with newlines", () => {
-    const original = "line1\nline2\nline3";
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
+  it("fails with wrong password", async () => {
+    const enc = await encryptText("secret", defaultOpts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+
+    const dec = await decryptText(enc.fullOutput, {
+      ...defaultOpts,
+      password: "wrong-password",
+      inputFormat: "base64",
+    });
+    expect(dec.ok).toBe(false);
   });
 
-  it("returns error for invalid decode input", () => {
-    const result = decode("!!!invalid-base64!!!");
-    expect(result.error).toBeDefined();
+  it("fails with empty plaintext", async () => {
+    const enc = await encryptText("", defaultOpts);
+    expect(enc.ok).toBe(false);
   });
 
-  it("validates encode mode", () => {
-    expect(validate("hello", "encode").valid).toBe(true);
-    expect(validate("", "encode").valid).toBe(false);
+  it("fails with empty password", async () => {
+    const enc = await encryptText("test", { ...defaultOpts, password: "" });
+    expect(enc.ok).toBe(false);
   });
 
-  it("validates decode mode", () => {
-    expect(validate(encode("test").output, "decode").valid).toBe(true);
-    expect(validate("!!!invalid", "decode").valid).toBe(false);
+  it("fails with too-short input for decryption", async () => {
+    const dec = await decryptText("YQ==", {
+      ...defaultOpts,
+      inputFormat: "base64",
+    });
+    expect(dec.ok).toBe(false);
   });
 
-  it("bulk encodes multiple lines", () => {
-    const result = bulkEncode("hello\nworld");
-    expect(result).toHaveLength(2);
-    expect(result[0]).toBeTruthy();
+  it("supports 128-bit key size", async () => {
+    const opts = { ...defaultOpts, keySize: 128 as const };
+    const enc = await encryptText("128-bit test", opts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+
+    const dec = await decryptText(enc.fullOutput, { ...opts, inputFormat: "base64" });
+    expect(dec.ok).toBe(true);
+    if (!dec.ok) return;
+    expect(dec.plaintext).toBe("128-bit test");
   });
 
-  it("bulk decodes multiple lines", () => {
-    const encoded = bulkEncode("hello\nworld");
-    const decoded = bulkDecode(encoded.join("\n"));
-    expect(decoded).toEqual(["hello", "world"]);
+  it("supports 192-bit key size", async () => {
+    const opts = { ...defaultOpts, keySize: 192 as const };
+    const enc = await encryptText("192-bit test", opts);
+    expect(enc.ok).toBe(true);
+    if (!enc.ok) return;
+
+    const dec = await decryptText(enc.fullOutput, { ...opts, inputFormat: "base64" });
+    expect(dec.ok).toBe(true);
+    if (!dec.ok) return;
+    expect(dec.plaintext).toBe("192-bit test");
   });
 
-  it("calculates stats", () => {
-    const stats = getStats("hello", "aGVsbG8=");
+  it("produces different ciphertexts for same plaintext (random IV)", async () => {
+    const enc1 = await encryptText("same text", defaultOpts);
+    const enc2 = await encryptText("same text", defaultOpts);
+    expect(enc1.ok && enc2.ok).toBe(true);
+    if (!enc1.ok || !enc2.ok) return;
+    expect(enc1.fullOutput).not.toBe(enc2.fullOutput);
+  });
+
+  it("generatePassword returns correct length", () => {
+    const pw = generatePassword(32);
+    expect(pw.length).toBe(32);
+  });
+
+  it("generatePassword without symbols", () => {
+    const pw = generatePassword(20, false);
+    expect(pw.length).toBe(20);
+    expect(/[^a-zA-Z0-9]/.test(pw)).toBe(false);
+  });
+
+  it("estimateStrength rates weak passwords", () => {
+    expect(estimateStrength("abc").label).toBe("Weak");
+  });
+
+  it("estimateStrength rates strong passwords", () => {
+    const result = estimateStrength("MyStr0ng!Pass#2024$Secure");
+    expect(result.label).toBe("Strong");
+  });
+
+  it("estimateStrength handles empty password", () => {
+    expect(estimateStrength("").score).toBe(0);
+  });
+
+  it("getStats calculates sizes correctly", () => {
+    const stats = getStats("hello", "encrypted-output-longer");
     expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(8);
     expect(stats.ratio).toBeGreaterThan(1);
   });
 
-  it("formats bytes correctly", () => {
+  it("formatBytes works correctly", () => {
     expect(formatBytes(500)).toBe("500 B");
     expect(formatBytes(1024)).toBe("1.0 KB");
     expect(formatBytes(1024 * 1024)).toBe("1.0 MB");
-  });
-
-  it("generates random string of given length", () => {
-    const result = randomString(16);
-    expect(result).toHaveLength(16);
-  });
-
-  it("detects binary format", () => {
-    expect(detectFormat("01001000 01101001")).toBe("binary");
-  });
-
-  it("detects hex format", () => {
-    expect(detectFormat("48656c6c6f")).toBe("hex");
-  });
-
-  it("detects base64 format", () => {
-    expect(detectFormat("aGVsbG8=")).toBe("base64");
-  });
-
-  it("detects text format fallback", () => {
-    expect(detectFormat("Hello World!")).toBe("text");
-  });
-
-  it("handles long input", () => {
-    const original = "a".repeat(1000);
-    const encoded = encode(original).output;
-    expect(decode(encoded).output).toBe(original);
   });
 });

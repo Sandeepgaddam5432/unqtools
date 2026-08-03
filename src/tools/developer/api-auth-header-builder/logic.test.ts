@@ -1,105 +1,144 @@
 import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { generateAuthHeader, getAuthSchemes } from "./logic";
 
 describe("API Authentication Header Builder", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+  describe("Bearer Token", () => {
+    it("generates Bearer header", async () => {
+      const result = await generateAuthHeader({ scheme: "bearer", token: "test-token-123" });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerName).toBe("Authorization");
+      expect(result.result.headerValue).toBe("Bearer test-token-123");
+      expect(result.result.curlExample).toContain("Authorization");
+    });
+
+    it("fails without token", async () => {
+      const result = await generateAuthHeader({ scheme: "bearer" });
+      expect(result.ok).toBe(false);
+    });
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  describe("Basic Auth", () => {
+    it("generates Basic header", async () => {
+      const result = await generateAuthHeader({
+        scheme: "basic",
+        username: "user",
+        password: "pass",
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerName).toBe("Authorization");
+      expect(result.result.headerValue).toContain("Basic");
+      // Verify base64 encoding
+      const decoded = atob(result.result.headerValue.replace("Basic ", ""));
+      expect(decoded).toBe("user:pass");
+    });
+
+    it("fails without username", async () => {
+      const result = await generateAuthHeader({ scheme: "basic", password: "pass" });
+      expect(result.ok).toBe(false);
+    });
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  describe("API Key", () => {
+    it("generates custom header", async () => {
+      const result = await generateAuthHeader({
+        scheme: "apikey",
+        apiKey: "my-api-key",
+        apiKeyHeader: "X-API-Key",
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerName).toBe("X-API-Key");
+      expect(result.result.headerValue).toBe("my-api-key");
+    });
+
+    it("uses default header name", async () => {
+      const result = await generateAuthHeader({ scheme: "apikey", apiKey: "key" });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerName).toBe("X-API-Key");
+    });
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  describe("OAuth2", () => {
+    it("generates OAuth2 header with default Bearer type", async () => {
+      const result = await generateAuthHeader({
+        scheme: "oauth2",
+        accessToken: "oauth-token",
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerValue).toBe("Bearer oauth-token");
+    });
+
+    it("supports custom token type", async () => {
+      const result = await generateAuthHeader({
+        scheme: "oauth2",
+        accessToken: "token",
+        tokenType: "MAC",
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerValue).toBe("MAC token");
+    });
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  describe("HMAC", () => {
+    it("generates HMAC signature", async () => {
+      const result = await generateAuthHeader({
+        scheme: "hmac",
+        hmacSecret: "secret",
+        hmacPayload: "payload",
+        hmacAlgorithm: "SHA-256",
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerName).toBe("X-Signature");
+      expect(result.result.headerValue).toContain("HMAC-Signature");
+    });
+
+    it("fails without secret", async () => {
+      const result = await generateAuthHeader({
+        scheme: "hmac",
+        hmacPayload: "payload",
+      });
+      expect(result.ok).toBe(false);
+    });
   });
 
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
+  describe("AWS4", () => {
+    it("generates AWS credential header", async () => {
+      const result = await generateAuthHeader({
+        scheme: "aws4",
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+        secretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        region: "us-east-1",
+        service: "execute-api",
+      });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerValue).toContain("AWS4-HMAC-SHA256");
+      expect(result.result.headerValue).toContain("AKIAIOSFODNN7EXAMPLE");
+    });
   });
 
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
+  describe("NTLM", () => {
+    it("generates NTLM negotiate header", async () => {
+      const result = await generateAuthHeader({ scheme: "ntlm" });
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.result.headerValue).toContain("NTLM");
+    });
   });
 
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  describe("getAuthSchemes", () => {
+    it("returns all supported schemes", () => {
+      const schemes = getAuthSchemes();
+      expect(schemes.length).toBeGreaterThan(0);
+      expect(schemes.find(s => s.id === "bearer")).toBeDefined();
+      expect(schemes.find(s => s.id === "basic")).toBeDefined();
+      expect(schemes.find(s => s.id === "apikey")).toBeDefined();
+    });
   });
 });

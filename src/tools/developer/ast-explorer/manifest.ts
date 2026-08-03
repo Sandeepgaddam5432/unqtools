@@ -6,19 +6,19 @@ import type { ToolManifest } from "../../../lib/tool";
 export const manifest: ToolManifest = {
   id: "ast-explorer",
   name: "AST Explorer (JS/TS)",
-  description: "Explore Abstract Syntax Trees of JavaScript/TypeScript code. Parse, traverse, inspect nodes.",
+  description: "Visualize JavaScript/TypeScript code structure. Tokenizer, AST tree, and token table — all client-side, no dependencies.",
   category: "developer",
-  keywords: ["ast", "ast explorer", "abstract syntax tree", "javascript ast"],
+  keywords: ["ast", "abstract syntax tree", "javascript parser", "typescript", "tokenizer", "lexer", "code analysis", "code structure"],
   icon: "GitBranch",
   requiresNetwork: false,
   seo: {
     title: "AST Explorer (JS/TS) — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Explore Abstract Syntax Trees of JavaScript/TypeScript code. Parse, traverse, inspect nodes." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Analyzes JavaScript/TypeScript code and shows its structure — tokens, AST nodes, keywords, literals, and comments." },
+      { q: "Is this a full parser?", a: "This is a lightweight tokenizer and structural analyzer. It identifies keywords, identifiers, literals, and block structures without requiring a full ECMAScript parser." },
+      { q: "Is my code sent to a server?", a: "No. All analysis runs 100% in your browser." },
+      { q: "What languages are supported?", a: "JavaScript and TypeScript syntax highlighting and tokenization." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

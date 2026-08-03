@@ -1,24 +1,20 @@
-/**
- * Add Background Image to PDF — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "pdf-background-image",
   name: "Add Background Image to PDF",
-  description: "Add image background to PDF pages. Cover/contain, opacity, position.",
+  description: "Add background images to PDF pages. Supports fit/fill/stretch, opacity control, page selection. Uses pdf-lib — 100% client-side.",
   category: "pdf",
-  keywords: ["pdf background", "background image", "pdf bg", "watermark image"],
+  keywords: ["pdf background", "background image pdf", "watermark image", "pdf image background", "pdf watermark"],
   icon: "Image",
   requiresNetwork: false,
   seo: {
     title: "Add Background Image to PDF — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Add image background to PDF pages. Cover/contain, opacity, position." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Adds an image as a background to PDF pages. You can choose which pages, scale mode, position, and opacity." },
+      { q: "What image formats are supported?", a: "PNG and JPEG images can be used as backgrounds." },
+      { q: "Is my data sent to a server?", a: "No. All processing uses pdf-lib and runs 100% in your browser." },
+      { q: "Can I add backgrounds to specific pages?", a: "Yes — choose all pages, first page, last page, odd pages, or even pages." },
     ],
   },
-  status: "planned",
+  status: "done",
 };
