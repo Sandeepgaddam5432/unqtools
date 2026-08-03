@@ -20,5 +20,5 @@ export const manifest: ToolManifest = {
       { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
     ],
   },
-  status: "planned",
+  status: "live",
 };
