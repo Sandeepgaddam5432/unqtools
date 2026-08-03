@@ -197,8 +197,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   >
                     <Icon className="mr-2 h-4 w-4 text-primary" />
                     <span>{tool.name}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
+                    <span className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">
+                      {tool.status === "planned" && (
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Coming soon</span>
+                      )}
+                      <span>{CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}</span>
                     </span>
                   </CommandItem>
                 );
