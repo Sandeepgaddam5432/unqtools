@@ -1,24 +1,18 @@
-/**
- * Add Attachment (Embedded File) to PDF — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "pdf-attachment-embed-tool",
   name: "Add Attachment (Embedded File) to PDF",
-  description: "Embed files as attachments in PDF. Any file type, bulk.",
+  description: "Enhanced PDF attachment tool with file icons, MIME detection, size preview, and batch embed. All client-side with pdf-lib.",
   category: "pdf",
-  keywords: ["pdf attachment", "embed file", "pdf embed", "attach file"],
+  keywords: ["pdf attachment", "embed file pdf", "attach files", "pdf embedded"],
   icon: "Paperclip",
   requiresNetwork: false,
   seo: {
-    title: "Add Attachment (Embedded File) to PDF — 100% Private, Offline | UnQTools",
+    title: "Add Attachment to PDF — Enhanced Tool | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Embed files as attachments in PDF. Any file type, bulk." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Embeds files as attachments in PDF documents with enhanced file preview and MIME detection." },
+      { q: "Is my data safe?", a: "Yes — all processing is 100% client-side using pdf-lib." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

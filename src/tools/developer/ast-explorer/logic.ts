@@ -1,113 +1,235 @@
 /**
- * AST Explorer (JS/TS) — pure logic.
+ * AST Explorer (JS/TS) — Tokenizer and simple parser for JavaScript/TypeScript.
+ * Provides a visual representation of the code structure.
+ * 100% client-side.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface Token {
+  type: string;
+  value: string;
+  line: number;
+  column: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface AstNode {
+  type: string;
+  value?: string;
+  children: AstNode[];
+  start: number;
+  end: number;
+  depth: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+export interface ParseResult {
+  ok: true;
+  tokens: Token[];
+  ast: AstNode;
+  stats: {
+    tokenCount: number;
+    lineCount: number;
+    nodeCount: number;
+    maxDepth: number;
+  };
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
+export interface ParseError {
+  ok: false;
+  error: string;
+}
+
+const KEYWORDS = new Set([
+  "const", "let", "var", "function", "return", "if", "else", "for", "while",
+  "do", "switch", "case", "break", "continue", "class", "extends", "import",
+  "export", "from", "default", "async", "await", "try", "catch", "finally",
+  "throw", "new", "this", "typeof", "instanceof", "in", "of", "true", "false",
+  "null", "undefined", "interface", "type", "enum", "implements", "abstract",
+  "public", "private", "protected", "static", "readonly", "as", "is",
+]);
+
+const TOKEN_PATTERNS: { type: string; pattern: RegExp }[] = [
+  { type: "whitespace", pattern: /^\s+/ },
+  { type: "comment", pattern: /^\/\/[^\n]*/ },
+  { type: "multiline-comment", pattern: /^\/\*[\s\S]*?\*\// },
+  { type: "string", pattern: /^"(?:[^"\\]|\\.)*"|^'(?:[^'\\]|\\.)*'|^`(?:[^`\\]|\\.)*`/ },
+  { type: "number", pattern: /^0[xX][0-9a-fA-F]+|^0[bB][01]+|^0[oO][0-7]+|^\d+\.?\d*(?:[eE][+-]?\d+)?/ },
+  { type: "regex", pattern: /^\/(?:[^/\\]|\\.)+\/[gimsuy]*/ },
+  { type: "arrow", pattern: /^=>/ },
+  { type: "spread", pattern: /^\.\.\./ },
+  { type: "operator", pattern: /^(?:===|!==|==|!=|<=|>=|&&|\|\||>>|<<|\?\?|\+=|-=|\*=|\/=)/ },
+  { type: "identifier", pattern: /^[a-zA-Z_$][a-zA-Z0-9_$]*/ },
+  { type: "punctuation", pattern: /^[{}()\[\];,.:?<>=!&|+\-*/%^~@#]/ },
+];
+
+export function tokenize(code: string): Token[] {
+  const tokens: Token[] = [];
+  let pos = 0;
+  let line = 1;
+  let column = 1;
+
+  while (pos < code.length) {
+    let matched = false;
+
+    for (const { type, pattern } of TOKEN_PATTERNS) {
+      const remaining = code.slice(pos);
+      const match = remaining.match(pattern);
+      if (match && match.index === 0) {
+        const value = match[0];
+        if (type !== "whitespace") {
+          tokens.push({ type, value, line, column });
+        }
+        // Update position
+        for (const ch of value) {
+          if (ch === "\n") {
+            line++;
+            column = 1;
+          } else {
+            column++;
+          }
+        }
+        pos += value.length;
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      // Unknown character - skip
+      const ch = code[pos];
+      if (ch === "\n") { line++; column = 1; } else { column++; }
+      pos++;
+    }
   }
+
+  return tokens;
+}
+
+export function buildAst(tokens: Token[]): AstNode {
+  const root: AstNode = { type: "Program", children: [], start: 0, end: tokens.length, depth: 0 };
+  const stack: AstNode[] = [root];
+  let current = root;
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+
+    // Detect structure
+    if (token.type === "identifier" && KEYWORDS.has(token.value)) {
+      const node: AstNode = {
+        type: `Keyword:${token.value}`,
+        value: token.value,
+        children: [],
+        start: i,
+        end: i,
+        depth: current.depth + 1,
+      };
+      current.children.push(node);
+    } else if (token.value === "{") {
+      const block: AstNode = {
+        type: "Block",
+        children: [],
+        start: i,
+        end: i,
+        depth: current.depth + 1,
+      };
+      current.children.push(block);
+      stack.push(current);
+      current = block;
+    } else if (token.value === "}") {
+      current.end = i;
+      if (stack.length > 1) {
+        current = stack.pop()!;
+      }
+    } else if (token.value === "(") {
+      const paren: AstNode = {
+        type: "ParenExpression",
+        children: [],
+        start: i,
+        end: i,
+        depth: current.depth + 1,
+      };
+      current.children.push(paren);
+      stack.push(current);
+      current = paren;
+    } else if (token.value === ")") {
+      current.end = i;
+      if (stack.length > 1) {
+        current = stack.pop()!;
+      }
+    } else if (token.type === "string" || token.type === "number") {
+      current.children.push({
+        type: `Literal:${token.type}`,
+        value: token.value,
+        children: [],
+        start: i,
+        end: i,
+        depth: current.depth + 1,
+      });
+    } else if (token.type === "identifier" && !KEYWORDS.has(token.value)) {
+      current.children.push({
+        type: "Identifier",
+        value: token.value,
+        children: [],
+        start: i,
+        end: i,
+        depth: current.depth + 1,
+      });
+    } else if (token.type === "comment" || token.type === "multiline-comment") {
+      current.children.push({
+        type: "Comment",
+        value: token.value,
+        children: [],
+        start: i,
+        end: i,
+        depth: current.depth + 1,
+      });
+    }
+  }
+
+  return root;
+}
+
+export function parseCode(code: string): ParseResult | ParseError {
+  if (!code.trim()) return { ok: false, error: "Code is empty" };
+
   try {
-    const output = input;
+    const tokens = tokenize(code);
+    const ast = buildAst(tokens);
+
+    const lineCount = code.split("\n").length;
+    let nodeCount = 0;
+    let maxDepth = 0;
+
+    function countNodes(node: AstNode) {
+      nodeCount++;
+      if (node.depth > maxDepth) maxDepth = node.depth;
+      for (const child of node.children) countNodes(child);
+    }
+    countNodes(ast);
+
     return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
+      ok: true,
+      tokens,
+      ast,
+      stats: {
+        tokenCount: tokens.length,
+        lineCount,
+        nodeCount,
+        maxDepth,
       },
     };
   } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    return { ok: false, error: `Parse error: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+export function formatTokenTable(tokens: Token[]): string {
+  const lines = ["Line\tCol\tType\tValue", "----\t---\t----\t-----"];
+  for (const t of tokens) {
+    const val = t.value.length > 30 ? t.value.slice(0, 30) + "…" : t.value;
+    lines.push(`${t.line}\t${t.column}\t${t.type}\t${val}`);
+  }
+  return lines.join("\n");
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function formatAstJson(ast: AstNode, indent: number = 2): string {
+  return JSON.stringify(ast, null, indent);
 }

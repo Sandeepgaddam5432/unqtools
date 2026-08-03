@@ -1,24 +1,18 @@
-/**
- * Argon2 Hash Generator — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "argon2-hash-generator",
   name: "Argon2 Hash Generator",
-  description: "Argon2id/2d/2i parameter calculator + verifier. PHC parser. OWASP presets. PBKDF2 fallback.",
+  description: "Argon2 parameter calculator & hash string generator. Argon2d/i/id, strength analysis, presets, custom salt. 100% client-side.",
   category: "developer",
-  keywords: ["argon2 hash generator", "argon2 hash generator", "encode", "decode", "converter"],
-  icon: "Lock",
+  keywords: ["argon2", "hash", "password hashing", "argon2id", "argon2i", "argon2d", "strength"],
+  icon: "Key",
   requiresNetwork: false,
-  seo: {
-    title: "Argon2 Hash Generator — 100% Private, Offline | UnQTools",
+  seo: { title: "Argon2 Hash Generator — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Argon2id/2d/2i parameter calculator + verifier. PHC parser. OWASP presets. PBKDF2 fallback." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded or tracked." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Multiple modes/formats, (2) Live preview, (3) Import/export, (4) Bulk mode, (5) Copy/download, (6) History (localStorage), (7) Randomize, (8) Presets, (9) Validation, (10) PWA offline, (11) UTF-8 safe, (12) Dark mode." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What is Argon2?", a: "Argon2 is the winner of the Password Hashing Competition (2015). It's memory-hard, making it resistant to GPU/ASIC attacks." },
+      { q: "Which variant should I use?", a: "Argon2id is recommended for most use cases — it combines the benefits of Argon2i (side-channel resistance) and Argon2d (maximum GPU resistance)." },
+      { q: "Is my password sent to a server?", a: "No. Everything runs 100% in your browser." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

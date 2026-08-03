@@ -1,113 +1,151 @@
 /**
- * Add Background Image to PDF — pure logic.
+ * Add Background Image to PDF — pure logic using pdf-lib.
+ * Adds an image as background to all or selected pages.
  */
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export type PageSize = "all" | "first" | "last" | "odd" | "even" | number[];
+
+export interface BgOptions {
+  pages: PageSize;
+  opacity?: number; // 0-1
+  scale?: "fit" | "fill" | "stretch" | "original";
+  position?: "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface BgResult {
+  ok: true;
+  pdfBytes: Uint8Array;
+  pageCount: number;
+  pagesModified: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
+export type BgError = { ok: false; error: string };
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
+export async function addBackgroundImage(
+  pdfBuffer: ArrayBuffer,
+  imageBuffer: ArrayBuffer,
+  imageType: "png" | "jpg",
+  options: BgOptions,
+): Promise<BgResult | BgError> {
   try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
+    const { PDFDocument } = await import("pdf-lib");
+    const pdf = await PDFDocument.load(pdfBuffer);
+
+    let image;
+    if (imageType === "png") {
+      image = await pdf.embedPng(imageBuffer);
+    } else {
+      image = await pdf.embedJpg(imageBuffer);
+    }
+
+    const totalPages = pdf.getPageCount();
+    const targetPages = resolvePages(options.pages, totalPages);
+    let pagesModified = 0;
+
+    for (const pageIdx of targetPages) {
+      if (pageIdx >= totalPages) continue;
+      const page = pdf.getPage(pageIdx);
+      const { width: pageW, height: pageH } = page.getSize();
+
+      let imgW: number, imgH: number;
+      const imgAspect = image.width / image.height;
+      const pageAspect = pageW / pageH;
+
+      switch (options.scale || "fit") {
+        case "fit":
+          if (imgAspect > pageAspect) {
+            imgW = pageW;
+            imgH = pageW / imgAspect;
+          } else {
+            imgH = pageH;
+            imgW = pageH * imgAspect;
+          }
+          break;
+        case "fill":
+          if (imgAspect > pageAspect) {
+            imgH = pageH;
+            imgW = pageH * imgAspect;
+          } else {
+            imgW = pageW;
+            imgH = pageW / imgAspect;
+          }
+          break;
+        case "stretch":
+          imgW = pageW;
+          imgH = pageH;
+          break;
+        case "original":
+          imgW = image.width;
+          imgH = image.height;
+          break;
+        default:
+          imgW = pageW;
+          imgH = pageH;
+      }
+
+      let x: number, y: number;
+      switch (options.position || "center") {
+        case "center":
+          x = (pageW - imgW) / 2;
+          y = (pageH - imgH) / 2;
+          break;
+        case "top-left":
+          x = 0;
+          y = pageH - imgH;
+          break;
+        case "top-right":
+          x = pageW - imgW;
+          y = pageH - imgH;
+          break;
+        case "bottom-left":
+          x = 0;
+          y = 0;
+          break;
+        case "bottom-right":
+          x = pageW - imgW;
+          y = 0;
+          break;
+        default:
+          x = (pageW - imgW) / 2;
+          y = (pageH - imgH) / 2;
+      }
+
+      page.drawImage(image, {
+        x,
+        y,
+        width: imgW,
+        height: imgH,
+        opacity: options.opacity ?? 1,
+      });
+      pagesModified++;
+    }
+
+    const result = await pdf.save();
+    return { ok: true, pdfBytes: result, pageCount: totalPages, pagesModified };
   } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    return { ok: false, error: `Failed to add background: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+function resolvePages(spec: PageSize, total: number): number[] {
+  if (spec === "all") return Array.from({ length: total }, (_, i) => i);
+  if (spec === "first") return [0];
+  if (spec === "last") return [total - 1];
+  if (spec === "odd") return Array.from({ length: total }, (_, i) => i).filter((i) => i % 2 === 0);
+  if (spec === "even") return Array.from({ length: total }, (_, i) => i).filter((i) => i % 2 === 1);
+  if (Array.isArray(spec)) return spec.filter((i) => i >= 0 && i < total);
+  return [0];
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
+export function detectImageType(buffer: ArrayBuffer): "png" | "jpg" | null {
+  const bytes = new Uint8Array(buffer);
   if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpg";
   return null;
 }
 
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+export function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1048576).toFixed(1)} MB`;
 }

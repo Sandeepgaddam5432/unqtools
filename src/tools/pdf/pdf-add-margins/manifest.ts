@@ -1,24 +1,18 @@
-/**
- * Add Margins to PDF — Tool Manifest
- */
 import type { ToolManifest } from "../../../lib/tool";
-
 export const manifest: ToolManifest = {
   id: "pdf-add-margins",
   name: "Add Margins to PDF",
-  description: "Add margins/whitespace to PDF pages. Custom margin size, all sides or per-side.",
+  description: "Adds white margins/whitespace around PDF pages. Uses pdf-lib, 100% client-side.",
   category: "pdf",
-  keywords: ["pdf margins", "pdf padding", "pdf whitespace", "pdf border"],
-  icon: "Square",
+  keywords: ["add-margins-to-pdf", "pdf", "offline", "browser"],
+  icon: "Maximize2",
   requiresNetwork: false,
-  seo: {
-    title: "Add Margins to PDF — 100% Private, Offline | UnQTools",
+  seo: { title: "Add Margins to PDF — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Add margins/whitespace to PDF pages. Custom margin size, all sides or per-side." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Adds white margins/whitespace around PDF pages" },
+      { q: "Is my data sent to a server?", a: "No. All processing uses pdf-lib and runs 100% in your browser." },
+      { q: "Does it work offline?", a: "Yes — install as a PWA and use without network." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

@@ -6,19 +6,19 @@ import type { ToolManifest } from "../../../lib/tool";
 export const manifest: ToolManifest = {
   id: "api-auth-header-builder",
   name: "API Authentication Header Builder",
-  description: "Build API authentication headers: Bearer, Basic, API Key, HMAC, AWS Sig v4.",
+  description: "Generate auth headers for Bearer, Basic, API Key, OAuth2, Digest, HMAC, AWS4, and NTLM. Includes cURL and Fetch examples. 100% client-side.",
   category: "developer",
-  keywords: ["api auth", "authentication header", "bearer token", "basic auth"],
-  icon: "KeyRound",
+  keywords: ["api auth", "authentication header", "bearer token", "basic auth", "oauth2", "hmac", "aws4", "ntlm", "digest", "api key", "auth header builder"],
+  icon: "Shield",
   requiresNetwork: false,
   seo: {
     title: "API Authentication Header Builder — 100% Private, Offline | UnQTools",
     faq: [
-      { q: "What does this tool do?", a: "Build API authentication headers: Bearer, Basic, API Key, HMAC, AWS Sig v4." },
-      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
-      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
-      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+      { q: "What does this tool do?", a: "Generates HTTP authentication headers for various schemes including Bearer, Basic, API Key, OAuth2, Digest, HMAC, AWS4, and NTLM." },
+      { q: "Are my credentials sent to a server?", a: "No. All header generation happens 100% in your browser. Credentials never leave your device." },
+      { q: "What auth schemes are supported?", a: "Bearer Token, Basic Auth, API Key, OAuth 2.0, Digest Auth, HMAC Signature, AWS Signature v4, and NTLM." },
+      { q: "Does it generate code examples?", a: "Yes — generates cURL commands and Fetch API code for each header." },
     ],
   },
-  status: "planned",
+  status: "done",
 };

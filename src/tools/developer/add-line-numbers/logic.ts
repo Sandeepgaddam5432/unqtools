@@ -1,87 +1,73 @@
 /**
  * Add Line Numbers — pure logic.
+ * Adds sequential line numbers to text with configurable format.
  */
 
-export interface EncodeResult {
-  output: string;
-  error?: string;
+export interface LineNumberOptions {
+  start: number;
+  step: number;
+  separator: string;
+  padding: number;
+  skipEmpty: boolean;
+  position: "before" | "after";
+  format: "plain" | "brackets" | "parentheses" | "dot" | "colon" | "pipe";
 }
 
-export function encode(input: string): EncodeResult {
-  if (!input) return { output: "" };
-  try {
-    // Default encoding: base64-style
-    const encoded = btoa(unescape(encodeURIComponent(input)));
-    return { output: encoded };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : String(e) };
+const DEFAULTS: LineNumberOptions = {
+  start: 1, step: 1, separator: " ", padding: 0,
+  skipEmpty: false, position: "before", format: "plain",
+};
+
+function formatNum(n: number, opts: LineNumberOptions): string {
+  const raw = String(n);
+  const padded = opts.padding > 0 ? raw.padStart(opts.padding, "0") : raw;
+  switch (opts.format) {
+    case "brackets": return `[${padded}]`;
+    case "parentheses": return `(${padded})`;
+    case "dot": return `${padded}.`;
+    case "colon": return `${padded}:`;
+    case "pipe": return `| ${padded} |`;
+    default: return padded;
   }
 }
 
-export function decode(input: string): EncodeResult {
-  if (!input) return { output: "" };
-  try {
-    const decoded = decodeURIComponent(escape(atob(input)));
-    return { output: decoded };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Invalid input" };
+export function addLineNumbers(input: string, opts: Partial<LineNumberOptions> = {}): { ok: true; output: string; lineCount: number } | { ok: false; error: string } {
+  if (!input) return { ok: false, error: "Input is empty" };
+  const o = { ...DEFAULTS, ...opts };
+  const lines = input.split(/\r?\n/);
+  let num = o.start;
+  const result: string[] = [];
+
+  for (const line of lines) {
+    if (o.skipEmpty && line.trim() === "") {
+      result.push(line);
+    } else {
+      const formatted = formatNum(num, o);
+      if (o.position === "before") {
+        result.push(`${formatted}${o.separator}${line}`);
+      } else {
+        result.push(`${line}${o.separator}${formatted}`);
+      }
+      num += o.step;
+    }
   }
+
+  return { ok: true, output: result.join("\n"), lineCount: result.length };
 }
 
-export function validate(input: string, mode: "encode" | "decode"): { valid: boolean; error?: string } {
-  if (!input) return { valid: false, error: "Input is empty" };
-  if (mode === "decode") {
-    try { atob(input); return { valid: true }; }
-    catch { return { valid: false, error: "Invalid encoded input" }; }
-  }
-  return { valid: true };
+export function removeLineNumbers(input: string): { ok: true; output: string } | { ok: false; error: string } {
+  if (!input) return { ok: false, error: "Input is empty" };
+  const lines = input.split(/\r?\n/);
+  const result = lines.map(line => line.replace(/^\s*(?:\[\d+\]|\(\d+\)|\d+[.:\])]|\|\s*\d+\s*\||\d+)\s?/, ""));
+  return { ok: true, output: result.join("\n") };
 }
 
-export function bulkEncode(input: string): string[] {
-  return input.split(/\r?\n/).map((line) => encode(line).output);
-}
-
-export function bulkDecode(input: string): string[] {
-  return input.split(/\r?\n/).map((line) => decode(line).output);
-}
-
-export function getStats(input: string, output: string): { inputSize: number; outputSize: number; ratio: number } {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  return { inputSize, outputSize, ratio };
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-export function randomString(length: number = 32): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFormat(input: string): string {
-  if (/^[01\s]+$/.test(input)) return "binary";
-  if (/^[0-9a-fA-F\s]+$/.test(input) && input.length % 2 === 0) return "hex";
-  if (/^[A-Za-z0-9+/=\s]+$/.test(input)) return "base64";
-  return "text";
-}
-
-export function exportToFile(content: string, filename: string = "add-line-numbers-output.txt"): void {
-  const blob = new Blob([content], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+export function getStats(input: string) {
+  const lines = input.split(/\r?\n/);
+  return {
+    lineCount: lines.length,
+    charCount: input.length,
+    wordCount: input.split(/\s+/).filter(Boolean).length,
+    emptyLines: lines.filter(l => l.trim() === "").length,
+  };
 }
