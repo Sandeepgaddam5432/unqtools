@@ -178,3 +178,78 @@ export function wordCloudToJson(result: WordCloudResult): string {
 export function buildCorpus(docs: string[]): string[][] {
   return docs.map((d) => tokenize(d));
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function generateWordCloud(text: string, options: { minFrequency?: number; maxWords?: number; minFontSize?: number; maxFontSize?: number; removeStopWords?: boolean } = {}): Array<{ word: string; frequency: number; size: number; color: string }> {
+  const { minFrequency = 1, maxWords = 100, minFontSize = 12, maxFontSize = 72, removeStopWords = true } = options;
+  const cloud = buildWordCloud(text, { removeStopWords });
+  const filtered = cloud.filter((w) => w.frequency >= minFrequency).slice(0, maxWords);
+  if (filtered.length === 0) return [];
+  const maxFreq = filtered[0]!.frequency;
+  const minFreq = filtered[filtered.length - 1]!.frequency;
+  const range = Math.max(1, maxFreq - minFreq);
+  const colors = ["#1a1a1a", "#2d5b3d", "#8b4513", "#1a5276", "#6c3483", "#922b21", "#1f618d", "#117864"];
+  return filtered.map((entry, i) => {
+    const normalized = (entry.frequency - minFreq) / range;
+    const size = Math.round(minFontSize + normalized * (maxFontSize - minFontSize));
+    const color = colors[i % colors.length]!;
+    return { word: entry.word, frequency: entry.frequency, size, color };
+  });
+}
+
+export function wordCloudToSvg(text: string, options: { width?: number; height?: number; maxWords?: number } = {}): string {
+  const { width = 800, height = 400, maxWords = 50 } = options;
+  const cloud = generateWordCloud(text, { maxWords });
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+  svg += `<rect width="${width}" height="${height}" fill="#fafafa"/>`;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  let angle = 0;
+  let radius = 0;
+  cloud.forEach((entry) => {
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+    svg += `<text x="${x}" y="${y}" font-size="${entry.size}" fill="${entry.color}" text-anchor="middle" dominant-baseline="middle">${entry.word}</text>`;
+    angle += 0.5;
+    if (angle > Math.PI * 2) { angle = 0; radius += 40; }
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+export const COLOR_SCHEMES: ReadonlyArray<{ name: string; colors: string[] }> = [
+  { name: "Default", colors: ["#1a1a1a", "#2d5b3d", "#8b4513", "#1a5276", "#6c3483"] },
+  { name: "Pastel", colors: ["#ffb3ba", "#bae1ff", "#baffc9", "#ffffba", "#ffdfba"] },
+  { name: "Ocean", colors: ["#003f5c", "#58508d", "#bc5090", "#ff6361", "#ffa600"] },
+  { name: "Forest", colors: ["#2d5b3d", "#588157", "#a3b18a", "#dad7cd", "#344e41"] },
+  { name: "Sunset", colors: ["#ff6b6b", "#feca57", "#ff9ff3", "#48dbfb", "#1dd1a1"] },
+];
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateWordCloudInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length < 10) reports.push({ level: "warn", code: "FEW_WORDS", message: `Only ${words.length} words — word cloud may be sparse.` });
+  else reports.push({ level: "pass", code: "VALID", message: `${words.length} words available for cloud.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-word-cloud-data", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "WordCloud-Java", citation: "Viegas & Wattenberg (2008)", summary: "Wordle: word clouds for text visualization." },
+  { id: "D3-Cloud", citation: "D3.js word cloud layout", summary: "D3-based word cloud layout algorithm." },
+];

@@ -210,3 +210,79 @@ export function toCsv(results: (PalindromeResult | { error: string })[]): string
   }
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function checkPalindromeAdvanced(text: string, options: { caseSensitive?: boolean; ignoreSpaces?: boolean; ignorePunctuation?: boolean; ignoreNonAlpha?: boolean } = {}): { isPalindrome: boolean; original: string; normalized: string; reversed: string } {
+  const { caseSensitive = false, ignoreSpaces = true, ignorePunctuation = true, ignoreNonAlpha = false } = options;
+  let normalized = text;
+  if (!caseSensitive) normalized = normalized.toLowerCase();
+  if (ignoreSpaces) normalized = normalized.replace(/\s+/g, "");
+  if (ignorePunctuation) normalized = normalized.replace(/[.,;:!?'"()\-]/g, "");
+  if (ignoreNonAlpha) normalized = normalized.replace(/[^a-z0-9]/gi, "");
+  const reversed = [...normalized].reverse().join("");
+  return { isPalindrome: normalized === reversed, original: text, normalized, reversed };
+}
+
+export function findAllPalindromes(text: string, minLength: number = 3): Array<{ word: string; position: number; length: number }> {
+  const words = text.split(/\s+/);
+  const result: Array<{ word: string; position: number; length: number }> = [];
+  let pos = 0;
+  for (const word of words) {
+    const clean = word.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (clean.length >= minLength) {
+      const reversed = [...clean].reverse().join("");
+      if (clean === reversed) result.push({ word, position: pos, length: clean.length });
+    }
+    pos += word.length + 1;
+  }
+  return result;
+}
+
+export function analyzeSymmetry(text: string): { isSymmetric: boolean; axis: number; leftHalf: string; rightHalf: string } {
+  const normalized = text.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const len = normalized.length;
+  if (len === 0) return { isSymmetric: false, axis: 0, leftHalf: "", rightHalf: "" };
+  const axis = Math.floor(len / 2);
+  const leftHalf = normalized.slice(0, axis);
+  const rightHalf = [...normalized.slice(len - axis)].reverse().join("");
+  return { isSymmetric: leftHalf === rightHalf, axis, leftHalf, rightHalf };
+}
+
+export function palindromeScore(text: string): { score: number; matchingChars: number; totalChars: number } {
+  const normalized = text.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const len = normalized.length;
+  if (len === 0) return { score: 0, matchingChars: 0, totalChars: 0 };
+  let matching = 0;
+  for (let i = 0; i < Math.floor(len / 2); i++) { if (normalized[i] === normalized[len - 1 - i]) matching++; }
+  const total = Math.floor(len / 2);
+  return { score: Math.round((matching / total) * 100), matchingChars: matching, totalChars: total };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validatePalindromeInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const normalized = text.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (normalized.length < 2) reports.push({ level: "warn", code: "TOO_SHORT", message: "Text is too short for palindrome analysis." });
+  else reports.push({ level: "pass", code: "VALID", message: `${normalized.length} characters to analyze.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-palindrome-checker", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Combinatorics-Palindromes", citation: "Knuth, D. (2011). The Art of Computer Programming, Vol 4.", summary: "Palindrome generation and counting." },
+  { id: "Bioinformatics-Palindromes", citation: "Waterman, M. (1995). Introduction to Computational Biology.", summary: "Palindromic sequences in DNA analysis." },
+];

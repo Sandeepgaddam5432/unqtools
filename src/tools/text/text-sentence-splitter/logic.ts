@@ -267,3 +267,83 @@ export function highlightSentence(sentences: string[], index: number): string {
     .map((s, i) => (i === index ? `[START] ${s} [END]` : s))
     .join(" ");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function splitWithOptions(
+  text: string,
+  options: {
+    keepAbbreviations?: boolean;
+    customAbbreviations?: string[];
+    minLength?: number;
+    maxLength?: number;
+  } = {},
+): string[] {
+  const { keepAbbreviations = true, customAbbreviations = [], minLength = 0, maxLength = 0 } = options;
+  let sentences = splitSentences(text);
+  if (!keepAbbreviations) {
+    sentences = text.split(/(?<=[.!?])\s+/).filter(Boolean);
+  }
+  if (customAbbreviations.length > 0) {
+    for (const abbr of customAbbreviations) { addAbbreviation(abbr); }
+  }
+  if (minLength > 0) sentences = sentences.filter((s) => s.trim().length >= minLength);
+  if (maxLength > 0) sentences = sentences.filter((s) => s.trim().length <= maxLength);
+  return sentences;
+}
+
+export function extractSentencePositions(text: string): Array<{ sentence: string; start: number; end: number }> {
+  const sentences = splitSentences(text);
+  const result: Array<{ sentence: string; start: number; end: number }> = [];
+  let pos = 0;
+  for (const s of sentences) {
+    const start = text.indexOf(s, pos);
+    if (start === -1) continue;
+    result.push({ sentence: s, start, end: start + s.length });
+    pos = start + s.length;
+  }
+  return result;
+}
+
+export function analyzeSentenceStructure(text: string): Array<{ sentence: string; type: "simple" | "compound" | "complex" | "fragment"; clauses: number }> {
+  const sentences = splitSentences(text);
+  return sentences.map((s) => {
+    const trimmed = s.trim();
+    if (trimmed.length === 0) return { sentence: s, type: "fragment" as const, clauses: 0 };
+    const conjunctions = (trimmed.match(/\b(and|but|or|so|yet|because|although|while|if|when|since)\b/gi) ?? []).length;
+    const clauses = conjunctions + 1;
+    let type: "simple" | "compound" | "complex" | "fragment";
+    if (clauses === 1) type = "simple";
+    else if (clauses === 2 && /\b(and|but|or|so|yet)\b/i.test(trimmed)) type = "compound";
+    else if (clauses >= 2) type = "complex";
+    else type = "fragment";
+    return { sentence: s, type, clauses };
+  });
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateSplitInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const sentences = splitSentences(text);
+  reports.push({ level: "pass", code: "PARSED", message: `${sentences.length} sentences detected.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-sentence-splitter", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Unicode-UAX29", citation: "Unicode Standard Annex #29", summary: "Unicode Text Segmentation — sentence boundaries." },
+  { id: "Linguistics-Syntax", citation: "Crystal, D. (2010). The Cambridge Encyclopedia of Language.", summary: "Sentence structure and clause analysis." },
+];

@@ -114,3 +114,68 @@ export function frequencyToCsv(freq: FrequencyEntry[]): string {
   }
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function extractWordsAdvanced(text: string, options: { minLength?: number; maxLength?: number; uniqueOnly?: boolean; sorted?: "none" | "alpha" | "frequency" | "length"; removeStopWords?: boolean; caseSensitive?: boolean; pattern?: RegExp } = {}): string[] {
+  const { minLength = 0, maxLength = 0, uniqueOnly = false, sorted = "none", removeStopWords = false, caseSensitive = false, pattern } = options;
+  const stopWords = new Set(["the","a","an","and","or","but","in","on","at","to","for","of","with","by","is","was","are","were","be","been","have","has","had","do","does","did","will","would","could","should","may","might","can"]);
+  let words = text.split(/\s+/).filter(Boolean);
+  if (!caseSensitive) words = words.map((w) => w.toLowerCase());
+  words = words.filter((w) => {
+    const clean = w.replace(/[^a-zA-Z0-9']/g, "");
+    if (clean.length < minLength) return false;
+    if (maxLength > 0 && clean.length > maxLength) return false;
+    if (removeStopWords && stopWords.has(clean.toLowerCase())) return false;
+    if (pattern && !pattern.test(clean)) return false;
+    return true;
+  });
+  if (uniqueOnly) words = [...new Set(words)];
+  switch (sorted) {
+    case "alpha": words.sort((a, b) => a.localeCompare(b)); break;
+    case "frequency": { const freq = new Map<string, number>(); for (const w of words) freq.set(w, (freq.get(w) ?? 0) + 1); words = [...new Set(words)].sort((a, b) => (freq.get(b) ?? 0) - (freq.get(a) ?? 0)); break; }
+    case "length": words.sort((a, b) => b.length - a.length); break;
+  }
+  return words;
+}
+
+export function extractByPattern(text: string, pattern: RegExp): string[] {
+  const matches = text.match(pattern);
+  return matches ? matches : [];
+}
+
+export function extractUniqueWithStats(text: string): { words: string[]; totalWords: number; uniqueWords: number; uniqueRatio: number; avgLength: number; longestWord: string; shortestWord: string } {
+  const allWords = text.split(/\s+/).filter(Boolean);
+  const unique = [...new Set(allWords.map((w) => w.toLowerCase()))];
+  const totalLen = allWords.reduce((a, w) => a + w.length, 0);
+  const longest = allWords.reduce((a, b) => b.length > a.length ? b : a, "");
+  const shortest = allWords.reduce((a, b) => b.length < a.length ? b : a, allWords[0] ?? "");
+  return { words: unique, totalWords: allWords.length, uniqueWords: unique.length, uniqueRatio: allWords.length > 0 ? Math.round((unique.length / allWords.length) * 10000) / 100 : 0, avgLength: allWords.length > 0 ? Math.round((totalLen / allWords.length) * 100) / 100 : 0, longestWord: longest, shortestWord: shortest };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateExtractInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const words = text.split(/\s+/).filter(Boolean);
+  reports.push({ level: "pass", code: "VALID", message: `${words.length} words found.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-words-extractor", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "NLP-Tokenization", citation: "Jurafsky & Martin (2023). SLP3.", summary: "Speech and Language Processing — tokenization." },
+  { id: "Unicode-UAX29", citation: "Unicode Standard Annex #29", summary: "Word boundary detection in Unicode." },
+];

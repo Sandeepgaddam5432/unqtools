@@ -188,3 +188,72 @@ export function toCsv(result: LetterResult): string {
   lines.push(`Chi-squared vs English,${result.chiSquaredVsEnglish},,`);
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function comprehensiveLetterAnalysis(text: string): {
+  totalLetters: number; uppercase: number; lowercase: number; vowels: number; consonants: number;
+  digits: number; special: number; letterFrequency: Map<string, number>;
+  mostCommon: { letter: string; count: number }; leastCommon: { letter: string; count: number };
+} {
+  const frequency = new Map<string, number>();
+  let totalLetters = 0, uppercase = 0, lowercase = 0, vowels = 0, consonants = 0, digits = 0, special = 0;
+  const vowelSet = new Set(["a", "e", "i", "o", "u"]);
+  for (const char of text) {
+    if (/[A-Z]/.test(char)) { uppercase++; totalLetters++; const lower = char.toLowerCase(); frequency.set(lower, (frequency.get(lower) ?? 0) + 1); if (vowelSet.has(lower)) vowels++; else consonants++; }
+    else if (/[a-z]/.test(char)) { lowercase++; totalLetters++; frequency.set(char, (frequency.get(char) ?? 0) + 1); if (vowelSet.has(char)) vowels++; else consonants++; }
+    else if (/[0-9]/.test(char)) { digits++; }
+    else if (!/\s/.test(char)) { special++; }
+  }
+  let mostCommon = { letter: "", count: 0 };
+  let leastCommon = { letter: "", count: Infinity };
+  for (const [letter, count] of frequency) { if (count > mostCommon.count) mostCommon = { letter, count }; if (count < leastCommon.count) leastCommon = { letter, count }; }
+  if (leastCommon.count === Infinity) leastCommon = { letter: "", count: 0 };
+  return { totalLetters, uppercase, lowercase, vowels, consonants, digits, special, letterFrequency: frequency, mostCommon, leastCommon };
+}
+
+export function letterFrequencyPercent(text: string): Array<{ letter: string; count: number; percentage: number }> {
+  const analysis = comprehensiveLetterAnalysis(text);
+  const total = analysis.totalLetters || 1;
+  return Array.from(analysis.letterFrequency.entries())
+    .map(([letter, count]) => ({ letter, count, percentage: Math.round((count / total) * 10000) / 100 }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export function comparetoEnglishAverage(text: string): Array<{ letter: string; actual: number; expected: number; deviation: number }> {
+  const englishFreq: Record<string, number> = { e: 12.7, t: 9.1, a: 8.2, o: 7.5, i: 7.0, n: 6.7, s: 6.3, h: 6.1, r: 6.0, d: 4.3, l: 4.0, c: 2.8, u: 2.8, m: 2.4, w: 2.4, f: 2.2, g: 2.0, y: 2.0, p: 1.9, b: 1.5, v: 1.0, k: 0.8, j: 0.15, x: 0.15, q: 0.10, z: 0.07 };
+  const analysis = comprehensiveLetterAnalysis(text);
+  const total = analysis.totalLetters || 1;
+  return Object.entries(englishFreq).map(([letter, expected]) => {
+    const actual = (analysis.letterFrequency.get(letter) ?? 0) / total * 100;
+    return { letter, actual: Math.round(actual * 100) / 100, expected, deviation: Math.round((actual - expected) * 100) / 100 };
+  }).sort((a, b) => Math.abs(b.deviation) - Math.abs(a.deviation));
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateLetterInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const analysis = comprehensiveLetterAnalysis(text);
+  if (analysis.totalLetters === 0) reports.push({ level: "warn", code: "NO_LETTERS", message: "No alphabetic letters found in text." });
+  else reports.push({ level: "pass", code: "VALID", message: `${analysis.totalLetters} letters analyzed.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-letter-counter", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Norvig-English", citation: "Peter Norvig: English Letter Frequency", summary: "English letter frequency statistics from Google corpus." },
+  { id: "Unicode-Case", citation: "Unicode Standard \u00A75.6", summary: "Case mapping and folding." },
+];

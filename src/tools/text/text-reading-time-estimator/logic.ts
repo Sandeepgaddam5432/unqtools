@@ -327,3 +327,79 @@ Reading time estimation is a useful feature for blogs, articles, and documentati
 
 Speaking time is slower than reading time. A typical presenter speaks at about one hundred thirty words per minute. Slides should contain around sixty words each, so a ten minute talk needs about fifteen slides.`;
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export const READING_SPEEDS: ReadonlyArray<{ label: string; wpm: number; description: string }> = [
+  { label: "Skimming", wpm: 700, description: "Quick scanning for key points" },
+  { label: "Fast reader", wpm: 400, description: "Experienced reader, familiar topic" },
+  { label: "Average adult", wpm: 250, description: "Typical adult reading speed" },
+  { label: "Slow reader", wpm: 150, description: "Reading carefully or unfamiliar topic" },
+  { label: "Reading aloud", wpm: 130, description: "Speaking pace" },
+  { label: "Lecture pace", wpm: 100, description: "Presentation/lecture delivery" },
+];
+
+export function estimateAllReadingTimes(text: string): Array<{ label: string; wpm: number; minutes: number; formatted: string }> {
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return READING_SPEEDS.map((speed) => {
+    const minutes = words / speed.wpm;
+    return { label: speed.label, wpm: speed.wpm, minutes: Math.round(minutes * 100) / 100, formatted: formatDuration(minutes * 60 * 1000) };
+  });
+}
+
+export function estimateWithDifficulty(text: string, baseWpm: number = 250, options: { difficultyFactor?: number; familiarityFactor?: number; fatigueFactor?: number } = {}): { minutes: number; words: number; adjustedWpm: number; factors: { difficulty: number; familiarity: number; fatigue: number } } {
+  const { difficultyFactor = 1, familiarityFactor = 1, fatigueFactor = 1 } = options;
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const avgWordLength = words > 0 ? text.replace(/\s/g, "").length / words : 5;
+  const autoDifficulty = avgWordLength > 7 ? 1.3 : avgWordLength > 6 ? 1.15 : 1;
+  const effectiveDifficulty = difficultyFactor * autoDifficulty;
+  const adjustedWpm = Math.round(baseWpm / (effectiveDifficulty * familiarityFactor * fatigueFactor));
+  const minutes = words / Math.max(1, adjustedWpm);
+  return { minutes: Math.round(minutes * 100) / 100, words, adjustedWpm, factors: { difficulty: effectiveDifficulty, familiarity: familiarityFactor, fatigue: fatigueFactor } };
+}
+
+export function readingTimeBySection(sections: Array<{ title: string; text: string }>, wpm: number = 250): Array<{ title: string; words: number; minutes: number; formatted: string }> {
+  return sections.map((section) => {
+    const words = section.text.split(/\s+/).filter(Boolean).length;
+    const minutes = words / wpm;
+    return { title: section.title, words, minutes: Math.round(minutes * 100) / 100, formatted: formatDuration(minutes * 60 * 1000) };
+  });
+}
+
+export function formatDurationDetailed(seconds: number): string {
+  if (seconds < 60) return `${Math.round(seconds)} seconds`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.round(seconds % 60);
+  if (minutes < 60) return remainingSeconds > 0 ? `${minutes} min ${remainingSeconds} sec` : `${minutes} minutes`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes > 0 ? `${hours} hr ${remainingMinutes} min` : `${hours} hours`;
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateReadingTimeInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const words = text.split(/\s+/).filter(Boolean).length;
+  if (words < 10) reports.push({ level: "warn", code: "VERY_SHORT", message: `Only ${words} words — reading time estimate may be unreliable.` });
+  else reports.push({ level: "pass", code: "VALID", message: `${words} words — sufficient for reading time estimation.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-reading-time-estimator", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Brysbaert-2019", citation: "Brysbaert, M. (2019)", summary: "How many words do we read per minute? A review and meta-analysis." },
+  { id: "Rayner-1998", citation: "Rayner, K. (1998)", summary: "Eye movements in reading and information processing." },
+];

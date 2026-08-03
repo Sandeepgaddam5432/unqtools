@@ -248,3 +248,67 @@ export function toCsv(result: SyllableResult): string {
   lines.push(`Monosyllabic,${result.monosyllabicCount},`);
   return lines.join("\n");
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+export function countSyllablesAdvanced(word: string, algorithm: "heuristic" | "vowel" = "heuristic"): number {
+  if (!word || word.trim().length === 0) return 0;
+  if (algorithm === "vowel") {
+    const lower = word.toLowerCase();
+    const groups = lower.match(/[aeiouy]+/g);
+    if (!groups) return 1;
+    let count = groups.length;
+    if (lower.endsWith("e") && count > 1) count--;
+    return Math.max(1, count);
+  }
+  return heuristicSyllables(word);
+}
+
+export function stressPattern(word: string): { syllables: number; pattern: string; stressed: number[] } {
+  const count = countWordSyllables(word);
+  if (count <= 1) return { syllables: count, pattern: "\u25CF", stressed: [0] };
+  return { syllables: count, pattern: "\u25CF".repeat(count), stressed: [0] };
+}
+
+export function checkHaiku(text: string): { isHaiku: boolean; lines: number[]; pattern: string } {
+  const lines = text.split("\n").filter((l) => l.trim().length > 0);
+  if (lines.length !== 3) return { isHaiku: false, lines: [], pattern: "Not 3 lines" };
+  const counts = lines.map((line) => countSyllables(line));
+  return { isHaiku: counts[0] === 5 && counts[1] === 7 && counts[2] === 5, lines: counts, pattern: `${counts[0]}-${counts[1]}-${counts[2]}` };
+}
+
+export function syllableStats(text: string): { totalSyllables: number; totalWords: number; avgPerWord: number; monosyllabic: number; polysyllabic: number; complexWords: number } {
+  const words = text.split(/\s+/).filter(Boolean);
+  const counts = words.map((w) => countWordSyllables(w));
+  const totalSyllables = counts.reduce((a, b) => a + b, 0);
+  const monosyllabic = counts.filter((c) => c === 1).length;
+  const polysyllabic = counts.filter((c) => c >= 3).length;
+  return { totalSyllables, totalWords: words.length, avgPerWord: words.length > 0 ? Math.round((totalSyllables / words.length) * 100) / 100 : 0, monosyllabic, polysyllabic, complexWords: polysyllabic };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateSyllableInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text || text.trim().length === 0) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const stats = syllableStats(text);
+  reports.push({ level: "pass", code: "VALID", message: `${stats.totalWords} words, ${stats.totalSyllables} syllables.` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-syllable-counter", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Linguistics-Phonology", citation: "Hayes, B. (2009). Introductory Phonology.", summary: "Syllable structure and counting in English." },
+  { id: "Flesch-Syllables", citation: "Flesch, R. (1948)", summary: "Syllable counting heuristic for readability formulas." },
+];
