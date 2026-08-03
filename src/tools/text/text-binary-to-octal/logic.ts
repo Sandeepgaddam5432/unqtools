@@ -166,3 +166,98 @@ export function fmt(n: number, p = 4): string {
   const f = Math.pow(10, p);
   return String(Math.round((n + Number.EPSILON) * f) / f);
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Convert binary to all number bases.
+ */
+export function binaryToAllBasesFull(text: string): { binary: string; octal: string; decimal: string; hex: string; base64: string } {
+  const normalized = normalizeBinary(text);
+  const num = BigInt("0b" + normalized);
+  return {
+    binary: normalized,
+    octal: num.toString(8),
+    decimal: num.toString(10),
+    hex: num.toString(16).toUpperCase(),
+    base64: (() => {
+      const bytes: number[] = [];
+      for (let i = 0; i < normalized.length; i += 8) {
+        bytes.push(parseInt(normalized.slice(i, i + 8), 2));
+      }
+      try { return btoa(String.fromCharCode(...bytes)); } catch { return ""; }
+    })(),
+  };
+}
+
+/**
+ * Binary to octal reference table.
+ */
+export function binaryOctalReferenceTable(): Array<{ binary: string; octal: string; decimal: number }> {
+  const result: Array<{ binary: string; octal: string; decimal: number }> = [];
+  for (let i = 0; i < 8; i++) {
+    result.push({ binary: i.toString(2).padStart(3, "0"), octal: i.toString(8), decimal: i });
+  }
+  return result;
+}
+
+/**
+ * Statistics about binary input.
+ */
+export function binaryInputStats(text: string): { totalBits: number; totalGroups: number; avgGroupSize: number; bitWidth: number; zeros: number; ones: number } {
+  const normalized = normalizeBinary(text);
+  const bitWidth = autoDetectBits(text);
+  const groups = splitGroups(normalized, bitWidth);
+  const zeros = (normalized.match(/0/g) ?? []).length;
+  const ones = (normalized.match(/1/g) ?? []).length;
+  return {
+    totalBits: normalized.length,
+    totalGroups: groups.length,
+    avgGroupSize: groups.length > 0 ? Math.round((normalized.length / groups.length) * 100) / 100 : 0,
+    bitWidth,
+    zeros,
+    ones,
+  };
+}
+
+/**
+ * Validate binary for octal conversion.
+ */
+export function validateBinaryForOctal(text: string): { valid: boolean; reason?: string; bitWidth?: number } {
+  if (!text || text.trim().length === 0) return { valid: false, reason: "Empty input" };
+  const normalized = normalizeBinary(text);
+  if (!/^[01]+$/.test(normalized)) return { valid: false, reason: "Contains non-binary characters" };
+  const bitWidth = autoDetectBits(text);
+  if (bitWidth % 3 !== 0 && normalized.length % 3 !== 0) {
+    return { valid: true, bitWidth, reason: "Bit width not multiple of 3 — padding will be added." };
+  }
+  return { valid: true, bitWidth };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateBinaryOctalInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const valid = validateBinaryForOctal(text);
+  if (!valid.valid) reports.push({ level: "fail", code: "INVALID", message: valid.reason ?? "Invalid binary input." });
+  else reports.push({ level: "pass", code: "VALID", message: `Valid binary (${valid.bitWidth}-bit groups).` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-binary-to-octal", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Number-Bases", citation: "Knuth, D. (1997). TAOCP Vol 2.", summary: "Seminumerical Algorithms — number base conversion." },
+  { id: "Octal-Unix", citation: "Unix Standard", summary: "Octal notation in Unix file permissions." },
+];

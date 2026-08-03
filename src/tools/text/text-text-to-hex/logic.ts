@@ -81,3 +81,96 @@ export function validateOptions(opts: TextToHexOptions): { ok: true } | { error:
   if (!["utf-8", "utf-16le", "utf-16be", "ascii"].includes(opts.encoding)) return { error: "Unknown encoding" };
   return { ok: true };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Hex output formats.
+ */
+export const HEX_FORMATS: ReadonlyArray<{ id: string; label: string; prefix: string; separator: string; case: "upper" | "lower" }> = [
+  { id: "lower-space", label: "Lowercase, space-separated", prefix: "", separator: " ", case: "lower" },
+  { id: "upper-space", label: "Uppercase, space-separated", prefix: "", separator: " ", case: "upper" },
+  { id: "lower-none", label: "Lowercase, no separator", prefix: "", separator: "", case: "lower" },
+  { id: "upper-none", label: "Uppercase, no separator", prefix: "", separator: "", case: "upper" },
+  { id: "0x-space", label: "0x prefix, space-separated", prefix: "0x", separator: " ", case: "lower" },
+  { id: "lower-colon", label: "Lowercase, colon-separated", prefix: "", separator: ":", case: "lower" },
+  { id: "upper-dash", label: "Uppercase, dash-separated", prefix: "", separator: "-", case: "upper" },
+];
+
+/**
+ * Encode text to hex with format options.
+ */
+export function textToHexFormatted(text: string, formatId: string = "lower-space"): string {
+  const format = HEX_FORMATS.find((f) => f.id === formatId);
+  if (!format) throw new Error(`Unknown format: ${formatId}`);
+  const bytes = new TextEncoder().encode(text);
+  const hexStrings = [...bytes].map((b) => {
+    const hex = b.toString(16);
+    return format.case === "upper" ? hex.toUpperCase() : hex;
+  });
+  return hexStrings.map((h) => format.prefix + h).join(format.separator);
+}
+
+/**
+ * Encode to hex with code points (for Unicode).
+ */
+export function textToHexCodePoints(text: string): string {
+  return [...text].map((c) => "U+" + (c.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, "0")).join(" ");
+}
+
+/**
+ * Generate hex dump (like xxd output).
+ */
+export function hexDump(text: string, bytesPerLine: number = 16): string {
+  const bytes = new TextEncoder().encode(text);
+  const lines: string[] = [];
+  for (let i = 0; i < bytes.length; i += bytesPerLine) {
+    const offset = i.toString(16).padStart(8, "0");
+    const chunk = bytes.slice(i, i + bytesPerLine);
+    const hexPart = [...chunk].map((b) => b.toString(16).padStart(2, "0")).join(" ").padEnd(bytesPerLine * 3 - 1, " ");
+    const asciiPart = [...chunk].map((b) => b >= 32 && b < 127 ? String.fromCharCode(b) : ".").join("");
+    lines.push(`${offset}  ${hexPart}  |${asciiPart}|`);
+  }
+  return lines.join("\n");
+}
+
+/**
+ * Statistics about hex output.
+ */
+export function hexStats(text: string): { chars: number; bytes: number; hexDigits: number; hexOutputLength: number } {
+  const bytes = new TextEncoder().encode(text);
+  return {
+    chars: [...text].length,
+    bytes: bytes.length,
+    hexDigits: bytes.length * 2,
+    hexOutputLength: bytes.length * 3 - 1, // with spaces
+  };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateHexEncodeInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const hasNonAscii = [...text].some((c) => (c.codePointAt(0) ?? 0) > 127);
+  if (hasNonAscii) reports.push({ level: "warn", code: "NON_ASCII", message: "Text contains non-ASCII characters — multi-byte UTF-8 will be used." });
+  else reports.push({ level: "pass", code: "ASCII", message: "All characters are ASCII (single-byte)." });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-text-to-hex", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "RFC-4648", citation: "RFC 4648 (2006)", summary: "Base16 (hex) encoding standard." },
+  { id: "Unicode-UTF8", citation: "Unicode Standard", summary: "UTF-8 encoding form." },
+];

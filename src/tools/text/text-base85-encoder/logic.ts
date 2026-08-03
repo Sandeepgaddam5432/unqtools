@@ -113,3 +113,94 @@ export function validateInput(input: string, mode: "encode" | "decode"): { ok: t
   }
   return { ok: true };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Base85 variants.
+ */
+export const BASE85_VARIANTS: ReadonlyArray<{ id: string; label: string; description: string }> = [
+  { id: "ascii85", label: "Ascii85", description: "Adobe's Ascii85 (used in PDF/PostScript)" },
+  { id: "btoa", label: "btoa", description: "Older Unix btoa format" },
+  { id: "ipv6", label: "IPv6", description: "RFC 1924 IPv6 address encoding" },
+  { id: "rfc1924", label: "RFC 1924", description: "Same as IPv6 variant" },
+  { id: "z85", label: "ZeroMQ Z85", description: "ZeroMQ's Z85 encoding" },
+];
+
+/**
+ * Z85 alphabet (different from Ascii85).
+ */
+const Z85_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
+
+/**
+ * Encode using Z85 (ZeroMQ variant).
+ */
+export function encodeZ85(data: Uint8Array): string {
+  if (data.length % 4 !== 0) throw new Error("Z85 requires input length to be multiple of 4");
+  let result = "";
+  for (let i = 0; i < data.length; i += 4) {
+    const value = (data[i]! * 256 * 256 * 256) + (data[i + 1]! * 256 * 256) + (data[i + 2]! * 256) + (data[i + 3]!);
+    let chars = "";
+    let v = value;
+    for (let j = 0; j < 5; j++) { chars = Z85_ALPHABET[v % 85] + chars; v = Math.floor(v / 85); }
+    result += chars;
+  }
+  return result;
+}
+
+/**
+ * Decode Z85.
+ */
+export function decodeZ85(text: string): Uint8Array {
+  if (text.length % 5 !== 0) throw new Error("Z85 requires input length to be multiple of 5");
+  const bytes: number[] = [];
+  for (let i = 0; i < text.length; i += 5) {
+    let value = 0;
+    for (let j = 0; j < 5; j++) { value = value * 85 + Z85_ALPHABET.indexOf(text[i + j]!); }
+    bytes.push(Math.floor(value / 16777216) & 0xFF);
+    bytes.push(Math.floor(value / 65536) & 0xFF);
+    bytes.push(Math.floor(value / 256) & 0xFF);
+    bytes.push(value & 0xFF);
+  }
+  return new Uint8Array(bytes);
+}
+
+/**
+ * Calculate compression ratio.
+ */
+export function compressionRatio(inputBytes: number, outputChars: number): number {
+  return Math.round((outputChars / inputBytes) * 100) / 100;
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateBase85Input(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  if (text.startsWith("<~") && text.endsWith("~>")) {
+    reports.push({ level: "pass", code: "ASCII85_DELIMITED", message: "Ascii85 with delimiters detected." });
+  } else if (/^[0-9a-zA-Z.\-:+=^!/*?&<>()\[\]{}@%$#]+$/.test(text)) {
+    reports.push({ level: "pass", code: "VALID_CHARS", message: "Valid Base85 characters." });
+  } else {
+    reports.push({ level: "warn", code: "INVALID_CHARS", message: "Text contains characters outside Base85 alphabet." });
+  }
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-base85-encoder", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Ascii85-Adobe", citation: "Adobe PostScript Reference", summary: "Ascii85 encoding in PostScript/PDF." },
+  { id: "Z85-ZeroMQ", citation: "ZeroMQ RFC 32", summary: "Z85 encoding specification." },
+  { id: "RFC-1924", citation: "RFC 1924 (1996)", summary: "IPv6 address encoding using Base85." },
+];

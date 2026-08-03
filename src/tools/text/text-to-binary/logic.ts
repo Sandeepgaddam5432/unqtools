@@ -230,3 +230,97 @@ export function asciiReferenceTable(): { char: string; code: number; bits7: stri
     return { char: c, code, bits7: charToBinary(code, 7), bits8: charToBinary(code, 8) };
   });
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Binary encoding formats.
+ */
+export const BINARY_FORMATS: ReadonlyArray<{ id: string; label: string; separator: string; description: string }> = [
+  { id: "space", label: "Space-separated", separator: " ", description: "8-bit groups separated by spaces" },
+  { id: "none", label: "No separator", separator: "", description: "Continuous binary string" },
+  { id: "newline", label: "Newline-separated", separator: "\n", description: "One binary group per line" },
+  { id: "dash", label: "Dash-separated", separator: "-", description: "8-bit groups separated by dashes" },
+  { id: "underscore", label: "Underscore-separated", separator: "_", description: "8-bit groups separated by underscores" },
+];
+
+/**
+ * Encode text to binary with format options.
+ */
+export function textToBinaryFormatted(text: string, formatId: string = "space"): string {
+  const format = BINARY_FORMATS.find((f) => f.id === formatId);
+  if (!format) throw new Error(`Unknown format: ${formatId}`);
+  const groups = [...text].map((char) => char.codePointAt(0)!.toString(2).padStart(8, "0"));
+  return groups.join(format.separator);
+}
+
+/**
+ * Encode to 16-bit binary (for non-ASCII).
+ */
+export function textToBinary16(text: string): string {
+  return [...text].map((char) => {
+    const code = char.codePointAt(0) ?? 0;
+    return code.toString(2).padStart(16, "0");
+  }).join(" ");
+}
+
+/**
+ * Encode to 32-bit binary.
+ */
+export function textToBinary32(text: string): string {
+  return [...text].map((char) => {
+    const code = char.codePointAt(0) ?? 0;
+    return code.toString(2).padStart(32, "0");
+  }).join(" ");
+}
+
+/**
+ * Generate binary reference table.
+ */
+export function binaryReferenceTable(): Array<{ char: string; code: number; binary: string }> {
+  const result: Array<{ char: string; code: number; binary: string }> = [];
+  for (let i = 32; i < 127; i++) {
+    result.push({ char: String.fromCharCode(i), code: i, binary: i.toString(2).padStart(8, "0") });
+  }
+  return result;
+}
+
+/**
+ * Calculate statistics about binary output.
+ */
+export function binaryStats(text: string): { chars: number; bits: number; bytes: number; zeros: number; ones: number } {
+  const chars = [...text];
+  const bits = chars.reduce((a, c) => a + (c.codePointAt(0)?.toString(2).length ?? 8), 0);
+  const binary = chars.map((c) => (c.codePointAt(0) ?? 0).toString(2).padStart(8, "0")).join("");
+  const zeros = (binary.match(/0/g) ?? []).length;
+  const ones = (binary.match(/1/g) ?? []).length;
+  return { chars: chars.length, bits, bytes: Math.ceil(bits / 8), zeros, ones };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateBinaryEncodeInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const hasNonAscii = [...text].some((c) => (c.codePointAt(0) ?? 0) > 127);
+  if (hasNonAscii) reports.push({ level: "warn", code: "NON_ASCII", message: "Text contains non-ASCII characters — use 16-bit or 32-bit mode." });
+  else reports.push({ level: "pass", code: "ASCII", message: "All characters are ASCII." });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-to-binary", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "ASCII-Standard", citation: "ANSI X3.4 (1986)", summary: "American Standard Code for Information Interchange." },
+  { id: "Unicode-UTF", citation: "Unicode Standard", summary: "UTF-8, UTF-16, UTF-32 encoding forms." },
+];

@@ -220,3 +220,119 @@ export function fmt(n: number, p = 4): string {
   const f = Math.pow(10, p);
   return String(Math.round((n + Number.EPSILON) * f) / f);
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Decode binary with automatic bit-width detection.
+ */
+export function decodeBinaryAuto(text: string): string {
+  const normalized = normalizeBinary(text);
+  // Try 8-bit first
+  if (normalized.length % 8 === 0) {
+    try { return binaryToText(normalized); } catch { /* try next */ }
+  }
+  // Try 16-bit
+  if (normalized.length % 16 === 0) {
+    const groups: string[] = [];
+    for (let i = 0; i < normalized.length; i += 16) {
+      groups.push(normalized.slice(i, i + 16));
+    }
+    return groups.map((g) => String.fromCharCode(parseInt(g, 2))).join("");
+  }
+  // Try 7-bit (ASCII subset)
+  if (normalized.length % 7 === 0) {
+    const groups: string[] = [];
+    for (let i = 0; i < normalized.length; i += 7) {
+      groups.push(normalized.slice(i, i + 7));
+    }
+    return groups.map((g) => String.fromCharCode(parseInt(g, 2))).join("");
+  }
+  return binaryToText(normalized);
+}
+
+/**
+ * Detect the bit width of binary input.
+ */
+export function detectBitWidth(text: string): number {
+  const normalized = normalizeBinary(text);
+  const len = normalized.length;
+  if (len % 8 === 0) return 8;
+  if (len % 7 === 0) return 7;
+  if (len % 16 === 0) return 16;
+  if (len % 32 === 0) return 32;
+  return 8; // default
+}
+
+/**
+ * Validate binary string.
+ */
+export function validateBinary(text: string): { valid: boolean; reason?: string; bitWidth?: number } {
+  if (!text || text.trim().length === 0) return { valid: false, reason: "Empty input" };
+  const normalized = normalizeBinary(text);
+  if (!/^[01]+$/.test(normalized)) return { valid: false, reason: "Contains non-binary characters" };
+  const bitWidth = detectBitWidth(text);
+  return { valid: true, bitWidth };
+}
+
+/**
+ * Statistics about binary input.
+ */
+export function analyzeBinary(text: string): { totalBits: number; totalBytes: number; zeros: number; ones: number; zeroPercent: number; onePercent: number; bitWidth: number } {
+  const normalized = normalizeBinary(text);
+  const zeros = (normalized.match(/0/g) ?? []).length;
+  const ones = (normalized.match(/1/g) ?? []).length;
+  const total = normalized.length;
+  const bitWidth = detectBitWidth(text);
+  return {
+    totalBits: total,
+    totalBytes: Math.ceil(total / 8),
+    zeros,
+    ones,
+    zeroPercent: total > 0 ? Math.round((zeros / total) * 10000) / 100 : 0,
+    onePercent: total > 0 ? Math.round((ones / total) * 10000) / 100 : 0,
+    bitWidth,
+  };
+}
+
+/**
+ * Convert binary to multiple number bases.
+ */
+export function binaryToAllBases(text: string): { binary: string; octal: string; decimal: string; hex: string } {
+  const normalized = normalizeBinary(text);
+  const num = BigInt("0b" + normalized);
+  return {
+    binary: normalized,
+    octal: num.toString(8),
+    decimal: num.toString(10),
+    hex: num.toString(16).toUpperCase(),
+  };
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateBinaryDecodeInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const valid = validateBinary(text);
+  if (!valid.valid) reports.push({ level: "fail", code: "INVALID", message: valid.reason ?? "Invalid binary input." });
+  else reports.push({ level: "pass", code: "VALID", message: `Valid binary (${valid.bitWidth}-bit groups).` });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "binary-to-text", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "ASCII-Standard", citation: "ANSI X3.4 (1986)", summary: "American Standard Code for Information Interchange." },
+  { id: "Boolean-Algebra", citation: "Boole, G. (1854)", summary: "An Investigation of the Laws of Thought — binary logic." },
+];

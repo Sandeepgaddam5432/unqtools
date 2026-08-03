@@ -187,3 +187,114 @@ export function batchStats(results: OctalToBinaryResult[]): { totalGroups: numbe
   const mean = results.length ? totalGroups / results.length : 0;
   return { totalGroups, totalInvalid, meanGroupsPerRow: Math.round(mean * 100) / 100 };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Convert octal to all number bases.
+ */
+export function octalToAllBases(text: string): { octal: string; binary: string; decimal: string; hex: string; ascii: string } {
+  const normalized = normalizeOctal(text);
+  const num = BigInt("0o" + normalized);
+  return {
+    octal: normalized,
+    binary: num.toString(2),
+    decimal: num.toString(10),
+    hex: num.toString(16).toUpperCase(),
+    ascii: (() => {
+      const groups: string[] = [];
+      for (let i = 0; i < normalized.length; i += 3) {
+        groups.push(normalized.slice(i, i + 3));
+      }
+      return groups.map((g) => {
+        const code = parseInt(g, 8);
+        return code >= 32 && code < 127 ? String.fromCharCode(code) : ".";
+      }).join("");
+    })(),
+  };
+}
+
+/**
+ * Octal to binary reference table.
+ */
+export function octalBinaryReferenceTable(): Array<{ octal: string; binary: string; decimal: number }> {
+  const result: Array<{ octal: string; binary: string; decimal: number }> = [];
+  for (let i = 0; i < 8; i++) {
+    result.push({ octal: i.toString(8), binary: i.toString(2).padStart(3, "0"), decimal: i });
+  }
+  return result;
+}
+
+/**
+ * Statistics about octal input.
+ */
+export function octalInputStats(text: string): { totalDigits: number; totalGroups: number; avgGroupSize: number; uniqueDigits: number; maxDigit: number } {
+  const normalized = normalizeOctal(text);
+  const digitSet = new Set(normalized.split(""));
+  const maxDigit = Math.max(...normalized.split("").map((d) => parseInt(d, 8)));
+  return {
+    totalDigits: normalized.length,
+    totalGroups: Math.ceil(normalized.length / 3),
+    avgGroupSize: Math.round((normalized.length / Math.ceil(normalized.length / 3)) * 100) / 100,
+    uniqueDigits: digitSet.size,
+    maxDigit,
+  };
+}
+
+/**
+ * Validate octal for binary conversion.
+ */
+export function validateOctalForBinary(text: string): { valid: boolean; reason?: string } {
+  if (!text || text.trim().length === 0) return { valid: false, reason: "Empty input" };
+  const normalized = normalizeOctal(text);
+  if (!/^[0-7]+$/.test(normalized)) return { valid: false, reason: "Contains non-octal characters (8 or 9)" };
+  return { valid: true };
+}
+
+/**
+ * Convert octal file permissions to symbolic notation.
+ * Example: 755 → rwxr-xr-x
+ */
+export function octalToPermissions(octal: string): string {
+  const normalized = normalizeOctal(octal);
+  if (normalized.length < 3) return "";
+  const perms = normalized.slice(-3);
+  const groups = ["owner", "group", "other"];
+  const symbols = ["r", "w", "x"];
+  let result = "";
+  for (let g = 0; g < 3; g++) {
+    const digit = parseInt(perms[g]!, 8);
+    result += (digit & 4) ? "r" : "-";
+    result += (digit & 2) ? "w" : "-";
+    result += (digit & 1) ? "x" : "-";
+  }
+  return result;
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateOctalBinaryInput(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const valid = validateOctalForBinary(text);
+  if (!valid.valid) reports.push({ level: "fail", code: "INVALID", message: valid.reason ?? "Invalid octal input." });
+  else reports.push({ level: "pass", code: "VALID", message: "Valid octal input." });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-octal-to-binary", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "Number-Bases", citation: "Knuth, D. (1997). TAOCP Vol 2.", summary: "Seminumerical Algorithms — number base conversion." },
+  { id: "POSIX-Permissions", citation: "POSIX Standard", summary: "Octal file permission notation." },
+];

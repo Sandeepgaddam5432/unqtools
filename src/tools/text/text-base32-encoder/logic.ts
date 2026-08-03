@@ -86,3 +86,81 @@ export function validateInput(input: string, mode: "encode" | "decode"): { ok: t
   if (mode === "decode" && /[^A-Z2-7=\s]/i.test(input)) return { error: "Input contains invalid base32 characters" };
   return { ok: true };
 }
+
+
+// ============================================================================
+// 100x features — added while preserving all existing exports.
+// ============================================================================
+
+/**
+ * Base32 variants.
+ */
+export const BASE32_VARIANTS: ReadonlyArray<{ id: string; label: string; alphabet: string; description: string }> = [
+  { id: "rfc4648", label: "RFC 4648 (Standard)", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", description: "Standard Base32 with padding" },
+  { id: "hex", label: "Base32 Hex", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV", description: "Extended hex alphabet (RFC 4648)" },
+  { id: "crockford", label: "Crockford", alphabet: "0123456789ABCDEFGHJKMNPQRSTVWXYZ", description: "Douglas Crockford's variant for human-readable codes" },
+  { id: "geohash", label: "Geohash", alphabet: "0123456789bcdefghjkmnpqrstuvwxyz", description: "Used in geohash encoding" },
+  { id: "z-base-32", label: "z-base-32", alphabet: "ybndrfg8ejkmcpqxot1uwisza345h769", description: "Human-optimized Base32" },
+];
+
+/**
+ * Encode with a specific variant.
+ */
+export function encodeBase32Variant(text: string, variantId: string = "rfc4648"): string {
+  const variant = BASE32_VARIANTS.find((v) => v.id === variantId);
+  if (!variant) throw new Error(`Unknown Base32 variant: ${variantId}`);
+  const bytes = new TextEncoder().encode(text);
+  return encodeBase32(bytes, variant.alphabet);
+}
+
+/**
+ * Detect the Base32 variant used.
+ */
+export function detectBase32Variant(text: string): string | null {
+  const upper = text.toUpperCase().replace(/=+$/, "");
+  for (const variant of BASE32_VARIANTS) {
+    const chars = variant.alphabet.toUpperCase();
+    if ([...upper].every((c) => chars.includes(c) || c === "=")) {
+      return variant.id;
+    }
+  }
+  return null;
+}
+
+/**
+ * Calculate Crockford checksum.
+ */
+export function crockfordChecksum(value: string): string {
+  const alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ*~$=U";
+  let sum = 0;
+  for (const char of value.toUpperCase()) {
+    const idx = alphabet.indexOf(char);
+    if (idx >= 0) sum += idx;
+  }
+  return alphabet[sum % 37] ?? "?";
+}
+
+export interface ValidationReport { level: "pass" | "warn" | "fail"; code: string; message: string; }
+
+export function validateBase32Input(text: string): ValidationReport[] {
+  const reports: ValidationReport[] = [];
+  if (!text) { reports.push({ level: "fail", code: "EMPTY", message: "Input text is empty." }); return reports; }
+  const variant = detectBase32Variant(text);
+  if (variant) reports.push({ level: "pass", code: "DETECTED", message: `Detected variant: ${variant}.` });
+  else reports.push({ level: "warn", code: "UNKNOWN_VARIANT", message: "Could not detect Base32 variant." });
+  return reports;
+}
+
+export interface Receipt { tool: string; version: string; timestamp: string; inputFingerprint: string; }
+
+export function buildReceipt(text: string): Receipt {
+  const s = text.length + ":" + (text.charCodeAt(0) ?? 0);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return { tool: "text-base32-encoder", version: "100x.1.0", timestamp: new Date().toISOString(), inputFingerprint: (h >>> 0).toString(16).padStart(8, "0") };
+}
+
+export const REFERENCES: ReadonlyArray<{ id: string; citation: string; summary: string }> = [
+  { id: "RFC-4648", citation: "RFC 4648 (2006)", summary: "The Base16, Base32, and Base64 Data Encodings." },
+  { id: "Crockford-Base32", citation: "Douglas Crockford (2012)", summary: "Base32 Encoding for Human-Readable Data." },
+];
