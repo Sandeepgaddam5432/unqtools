@@ -1,10 +1,18 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt with 100% blueprint compliance + audit report._
+_Last updated: 2026-08-05 — branch arena/019fd1ad-unqtools. Tool count: 1700 (restored). Perf work (v17.64) intact._
 
 ## Current phase
 
-**v17.63 — 30 tools rebuilt with 100% blueprint compliance + audit report — ALL SCANNERS CLEAN**
+**v17.64 perf work intact — tool catalog back to 1700 tools (owner directive: no tool removals).**
+
+Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+
+- **v17.64 perf work (on branch):** logo 589KB→12KB, source-maps off, catalog split,
+  counts, lazy command palette, hero/LCP fix, framer-motion out of landing route.
+- **Tool removals reverted:** the dedupe/dead-tool removal commits were reverted —
+  **1700 tools live** (no tools removed), as the owner directed.
+- **State:** working tree clean; lint + tests pass; catalog + sitemap regenerated.
 
 ### Tool count: 1700 tools live
 
