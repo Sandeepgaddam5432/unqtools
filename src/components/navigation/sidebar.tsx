@@ -31,9 +31,9 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MobileHeader } from "./mobile-header";
 import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
-import { countByCategory, CATALOG } from "@/lib/catalog";
+import { CATEGORY_COUNTS, TOOL_COUNT } from "@/lib/counts";
 
-const TOOLS_COUNT = CATALOG.length;
+const TOOLS_COUNT = TOOL_COUNT;
 
 // Animation values as named module-level constants so JSX props stay
 // single-brace (initial={HIDDEN_W}) — keeps the JSX simple and consistent.
@@ -90,7 +90,7 @@ export function SidebarNav() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const counts = countByCategory();
+  const counts = CATEGORY_COUNTS;
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -103,7 +103,7 @@ export function SidebarNav() {
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-border/50">
         <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/25 overflow-hidden shadow-sm">
-          <img src="/logo.svg" alt="UnQ" className="w-full h-full object-cover" />
+          <img src="/logo.svg" alt="UnQ" width="36" height="36" className="w-full h-full object-cover" />
         </div>
         <AnimatePresence>
           {!collapsed && (

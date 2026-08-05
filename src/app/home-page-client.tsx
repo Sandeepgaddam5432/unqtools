@@ -26,8 +26,8 @@ import {
   Cpu,
   Database,
 } from "lucide-react";
-import { CATALOG, countByCategory } from "@/lib/catalog";
-import { CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
+import { CATEGORY_COUNTS, TOOL_COUNT } from "@/lib/counts";
+import { type ToolCategory } from "@/lib/tool";
 
 // ===== ANIMATION VARIANTS =====
 
@@ -58,9 +58,13 @@ const staggerItem = {
 };
 
 // ===== DATA =====
+// Home page intentionally does NOT import the 1700-item tool catalog.
+// It only needs a total count + per-category counts + 8 hand-picked
+// featured tools — all inlined below (tiny, parse-once). This keeps the
+// landing page bundle small and free of a long main-thread catalog parse.
 
-const toolCount = CATALOG.length;
-const counts = countByCategory();
+const toolCount = TOOL_COUNT;
+const counts = CATEGORY_COUNTS;
 
 // ===== CATEGORY CARDS (all categories with tools) =====
 const allCategoryCards: {
@@ -150,18 +154,71 @@ const trustBadges = [
   { icon: ShieldCheck, label: "No Tracking" },
 ];
 
-// ===== FEATURED CATALOG (most-used, hand-picked) =====
-const featuredToolIds = [
-  "json-formatter",
-  "uuid-generator",
-  "password-generator",
-  "color-picker",
-  "base64",
-  "hash-generator",
-  "qr-code-generator",
-  "word-character-counter",
+// ===== FEATURED TOOLS (most-used, hand-picked — inlined, no catalog import) =====
+const featuredTools: {
+  id: string;
+  name: string;
+  description: string;
+  category: ToolCategory;
+  status: "done" | "planned" | "beta";
+}[] = [
+  {
+    id: "json-formatter",
+    name: "JSON Formatter",
+    description: "Format, validate, minify, and sort JSON — fully in your browser.",
+    category: "developer",
+    status: "done",
+  },
+  {
+    id: "uuid-generator",
+    name: "UUID Generator",
+    description: "Generate RFC 4122 v4 UUIDs in bulk, with optional hyphens, uppercase, and prefix options.",
+    category: "developer",
+    status: "done",
+  },
+  {
+    id: "password-generator",
+    name: "Password Generator",
+    description: "Generate cryptographically-secure passwords, EFF passphrases, pronounceable passwords, PINs, and Diceware.",
+    category: "network-security",
+    status: "done",
+  },
+  {
+    id: "color-picker",
+    name: "Color Picker & Converter",
+    description: "Pick colors and convert between HEX, RGB, HSL, and HSV with WCAG contrast checking.",
+    category: "image",
+    status: "done",
+  },
+  {
+    id: "base64",
+    name: "Base64 Encoder / Decoder",
+    description: "Encode text or files to Base64, or decode Base64 back to text — UTF-8 safe with URL-safe variant.",
+    category: "developer",
+    status: "done",
+  },
+  {
+    id: "hash-generator",
+    name: "Hash Generator",
+    description: "Generate SHA-1, SHA-256, SHA-384, and SHA-512 hashes with hex and Base64 output via Web Crypto.",
+    category: "developer",
+    status: "done",
+  },
+  {
+    id: "qr-code-generator-image",
+    name: "QR Code Generator",
+    description: "Generate QR codes as images for URL, text, WiFi, vCard, SMS, email with custom colors and logo.",
+    category: "image",
+    status: "done",
+  },
+  {
+    id: "word-character-counter",
+    name: "Word & Character Counter",
+    description: "Live, Unicode-correct word, character, sentence, paragraph, and line counts with reading time.",
+    category: "text",
+    status: "done",
+  },
 ];
-const featuredTools = CATALOG.filter((t) => featuredToolIds.includes(t.id)).slice(0, 8);
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
