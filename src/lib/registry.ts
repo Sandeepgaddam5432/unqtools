@@ -234,6 +234,7 @@ import { manifest as excelToJsonConverter } from "@/tools/file/excel-to-json-con
 import { manifest as fb2Reader } from "@/tools/file/fb2-reader/manifest";
 import { manifest as isoExtractor } from "@/tools/file/iso-extractor/manifest";
 import { manifest as jarExtractor } from "@/tools/file/jar-extractor/manifest";
+import { manifest as lzhExtractor } from "@/tools/file/lzh-extractor/manifest";
 import { manifest as mobiReader } from "@/tools/file/mobi-reader/manifest";
 import { manifest as onlineZipCompressor } from "@/tools/file/online-zip-compressor/manifest";
 import { manifest as onlineZipExtractor } from "@/tools/file/online-zip-extractor/manifest";
@@ -264,17 +265,24 @@ import { manifest as pagesToPdfConverter } from "@/tools/file/pages-to-pdf-conve
 import { manifest as epubToMobiConverter } from "@/tools/file/epub-to-mobi-converter/manifest";
 import { manifest as epubToAzw3Converter } from "@/tools/file/epub-to-azw3-converter/manifest";
 import { manifest as mobiToEpubConverter } from "@/tools/file/mobi-to-epub-converter/manifest";
+import { manifest as litToPdfConverter } from "@/tools/file/lit-to-pdf-converter/manifest";
+import { manifest as lrfToPdfConverter } from "@/tools/file/lrf-to-pdf-converter/manifest";
 import { manifest as extractor7z } from "@/tools/file/7z-extractor/manifest";
+import { manifest as arjExtractor } from "@/tools/file/arj-extractor/manifest";
 import { manifest as bzip2Compressor } from "@/tools/file/bzip2-compressor/manifest";
 import { manifest as bzip2Decompressor } from "@/tools/file/bzip2-decompressor/manifest";
 import { manifest as cbrComicBookReader } from "@/tools/file/cbr-comic-book-reader/manifest";
+import { manifest as litToEpubConverter } from "@/tools/file/lit-to-epub-converter/manifest";
+import { manifest as lrfToEpubConverter } from "@/tools/file/lrf-to-epub-converter/manifest";
 import { manifest as pdfPasswordEncryptor } from "@/tools/file/pdf-password-encryptor/manifest";
 import { manifest as pdfSecurityRemover } from "@/tools/file/pdf-security-remover/manifest";
 import { manifest as postscriptToPdfConverter } from "@/tools/file/postscript-to-pdf-converter/manifest";
+import { manifest as prcToEpubConverter } from "@/tools/file/prc-to-epub-converter/manifest";
 import { manifest as rarExtractor } from "@/tools/file/rar-extractor/manifest";
 import { manifest as rpmExtractor } from "@/tools/file/rpm-extractor/manifest";
 import { manifest as tcrToEpubConverter } from "@/tools/file/tcr-to-epub-converter/manifest";
 import { manifest as wimExtractor } from "@/tools/file/wim-extractor/manifest";
+import { manifest as xarExtractor } from "@/tools/file/xar-extractor/manifest";
 import { manifest as zCompressor } from "@/tools/file/z-compressor/manifest";
 import { manifest as azw3ToPdfConverter } from "@/tools/file/azw3-to-pdf-converter/manifest";
 import { manifest as bulkFileTimestampChanger } from "@/tools/file/bulk-file-timestamp-changer/manifest";
@@ -287,7 +295,9 @@ import { manifest as lineEndingConverter } from "@/tools/file/line-ending-conver
 import { manifest as mobiToPdfConverter } from "@/tools/file/mobi-to-pdf-converter/manifest";
 import { manifest as pdfFormFlattener } from "@/tools/file/pdf-form-flattener/manifest";
 import { manifest as pdfPageOrganizer } from "@/tools/file/pdf-page-organizer/manifest";
+import { manifest as pdfToXpsConverter } from "@/tools/file/pdf-to-xps-converter/manifest";
 import { manifest as textEncodingConverter } from "@/tools/file/text-encoding-converter/manifest";
+import { manifest as xpsToPdfConverter } from "@/tools/file/xps-to-pdf-converter/manifest";
 import { manifest as canonicalTagGenerator } from "@/tools/seo/canonical-tag-generator/manifest";
 import { manifest as faqSchemaGenerator } from "@/tools/seo/faq-schema-generator/manifest";
 import { manifest as hreflangTagGenerator } from "@/tools/seo/hreflang-tag-generator/manifest";
@@ -1004,6 +1014,7 @@ import { manifest as cssTextShadowGenerator } from "@/tools/developer/css-text-s
 import { manifest as argon2HashGenerator } from "@/tools/developer/argon2-hash-generator/manifest";
 import { manifest as cssBorderRadiusGenerator } from "@/tools/developer/css-border-radius-generator/manifest";
 import { manifest as cssBlendModePreviewer } from "@/tools/developer/css-blend-mode-previewer/manifest";
+import { manifest as cssTriangleGenerator } from "@/tools/developer/css-triangle-generator/manifest";
 import { manifest as cssSpecificityCalculator } from "@/tools/developer/css-specificity-calculator/manifest";
 import { manifest as cssSelectorTester } from "@/tools/developer/css-selector-tester/manifest";
 import { manifest as atbashCipher } from "@/tools/developer/atbash-cipher/manifest";
@@ -1016,6 +1027,7 @@ import { manifest as cssColorFormatConverter } from "@/tools/developer/css-color
 import { manifest as cssGlassmorphismGenerator } from "@/tools/developer/css-glassmorphism-generator/manifest";
 import { manifest as base58EncodeDecode } from "@/tools/developer/base58-encode-decode/manifest";
 import { manifest as base64ImageEncodeDecode } from "@/tools/developer/base64-image-encode-decode/manifest";
+import { manifest as cssNeumorphismGenerator } from "@/tools/developer/css-neumorphism-generator/manifest";
 import { manifest as cssBackgroundPatternGenerator } from "@/tools/developer/css-background-pattern-generator/manifest";
 import { manifest as cssFilterGenerator } from "@/tools/developer/css-filter-generator/manifest";
 import { manifest as cssCubicBezierEditor } from "@/tools/developer/css-cubic-bezier-editor/manifest";
@@ -1896,6 +1908,7 @@ export const TOOLS: readonly ToolManifest[] = [
   fb2Reader,
   isoExtractor,
   jarExtractor,
+  lzhExtractor,
   mobiReader,
   onlineZipCompressor,
   onlineZipExtractor,
@@ -1926,17 +1939,24 @@ export const TOOLS: readonly ToolManifest[] = [
   epubToMobiConverter,
   epubToAzw3Converter,
   mobiToEpubConverter,
+  litToPdfConverter,
+  lrfToPdfConverter,
   extractor7z,
+  arjExtractor,
   bzip2Compressor,
   bzip2Decompressor,
   cbrComicBookReader,
+  litToEpubConverter,
+  lrfToEpubConverter,
   pdfPasswordEncryptor,
   pdfSecurityRemover,
   postscriptToPdfConverter,
+  prcToEpubConverter,
   rarExtractor,
   rpmExtractor,
   tcrToEpubConverter,
   wimExtractor,
+  xarExtractor,
   zCompressor,
   azw3ToPdfConverter,
   bulkFileTimestampChanger,
@@ -1949,7 +1969,9 @@ export const TOOLS: readonly ToolManifest[] = [
   mobiToPdfConverter,
   pdfFormFlattener,
   pdfPageOrganizer,
+  pdfToXpsConverter,
   textEncodingConverter,
+  xpsToPdfConverter,
   canonicalTagGenerator,
   faqSchemaGenerator,
   hreflangTagGenerator,
@@ -2663,6 +2685,7 @@ export const TOOLS: readonly ToolManifest[] = [
   argon2HashGenerator,
   cssBorderRadiusGenerator,
   cssBlendModePreviewer,
+  cssTriangleGenerator,
   cssSpecificityCalculator,
   cssSelectorTester,
   atbashCipher,
@@ -2675,6 +2698,7 @@ export const TOOLS: readonly ToolManifest[] = [
   cssGlassmorphismGenerator,
   base58EncodeDecode,
   base64ImageEncodeDecode,
+  cssNeumorphismGenerator,
   cssBackgroundPatternGenerator,
   cssFilterGenerator,
   cssCubicBezierEditor,
