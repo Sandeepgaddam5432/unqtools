@@ -4,16 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/pwa-install";
-import dynamic from "next/dynamic";
+import { CommandPaletteLazy } from "@/components/command-palette-lazy";
 import { MotionProvider } from "@/components/motion-provider";
-
-// Lazy-load the command palette (which carries the full 1700-item catalog
-// for ⌘K search). It only downloads/parses when the user opens it, keeping
-// it out of the initial page bundle on every route.
-const CommandPaletteMount = dynamic(
-  () => import("@/components/command-palette").then((m) => m.CommandPaletteMount),
-  { ssr: false }
-);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -171,7 +163,7 @@ export default function RootLayout({
             {children}
             <Toaster />
             <PWAInstallPrompt />
-            <CommandPaletteMount />
+            <CommandPaletteLazy />
           </ThemeProvider>
         </MotionProvider>
       </body>
