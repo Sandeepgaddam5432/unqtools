@@ -1567,12 +1567,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-to-postscript-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-to-mobi-converter</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -1580,12 +1574,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-to-azw3-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-to-djvu-converter</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1669,12 +1657,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/postscript-to-pdf-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/rar-extractor</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -1682,12 +1664,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/rpm-extractor</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/tcr-to-epub-converter</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1712,12 +1688,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/bulk-file-timestamp-changer</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/djvu-to-pdf-converter</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -5491,31 +5461,13 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/audio-converter-ref</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/video-compression-guide</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/audio-trimmer-ref</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/video-merger-ref</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/audio-equalizer-ref</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

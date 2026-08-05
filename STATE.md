@@ -10,9 +10,10 @@ Live tracking lives in [`docs/PROGRESS.md`](./docs/PROGRESS.md) — updated ever
 
 - **Dedupe:** 58 duplicate tool-name clusters found in `developer` alone.
   **SHA hash cluster done** — removed 4 exact duplicates (`sha1/sha256/sha3/sha512-hash-tool`).
-- **Retire dead tools:** removed **16 low-value tools** so far — 10 dead file-format
-  converters (LIT/LRF/PRC/XPS/XAR/LZH/ARJ) + 2 fading CSS fads (neumorphism, triangle).
-  Tool count 1700 → **1684** (registry, loader, catalog, sitemap all updated).
+- **Retire dead tools:** removed **24 low-value tools** so far — dead file formats
+  (LIT/LRF/PRC/XPS/XAR/LZH/ARJ/PostScript/TCR/DjVu) + fading CSS fads (neumorphism,
+  triangle) + redundant `-ref` dups (audio-converter/equalizer/trimmer-ref).
+  Tool count 1700 → **1676** (registry, loader, catalog, sitemap all updated).
 - **AI-agent-first:** natural-language routing + JSON export on outputs + surface
   regex-explainer / code-review helpers so both humans and LLM agents can use it.
 

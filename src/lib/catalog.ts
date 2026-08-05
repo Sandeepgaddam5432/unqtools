@@ -6,7 +6,7 @@
  * omitted here — it lives in src/lib/registry.ts and is only imported
  * by server-rendered tool detail pages.
  *
- * 1684 tools. Regenerate with: node scripts/regenerate-catalog.mjs
+ * 1676 tools. Regenerate with: node scripts/regenerate-catalog.mjs
  */
 import type { ToolCategory } from "./tool";
 
@@ -1149,27 +1149,11 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "audio-converter-ref",
-    name: "Audio Converter Reference",
-    description: "Reference for audio format conversion: MP3/WAV/AAC/OGG/FLAC/Opus with quality settings. 100% private. 100% private.",
-    category: "audio-video",
-    keywords: ["audio, converter, ref","audio-video"],
-    status: "done",
-  },
-  {
     id: "audio-equalizer",
     name: "Audio Equalizer",
     description: "Apply a 10-band graphic EQ to audio entirely in the browser. Drag-and-drop or pick a file, decode with Web Audio API, adjust the gain (-12 dB to +12 dB) on each ISO-standard band (31, 62, 125, 250, 500, 1k, 2k, 4k, 8k, 16k Hz), apply via a chain of peaking BiquadFilterNodes in an OfflineAudioContext for batch processing, and re-encode as a 16-bit PCM WAV (pure-JS encoder). 10+ preset library (flat, bass-boost, treble-boost, vocal-boost, loudness, rock, pop, jazz, classical, podcast), 3-band & 5-band simplified modes, 7 gain presets per band, default Q factor 1.41, gain validator, filter-chain config builder, file-size estimator, text + CSV report, history (localStorage), shareable URL, summary stats. 100% client-side.",
     category: "audio-video",
     keywords: ["equalizer","eq","10-band eq","graphic eq","biquad filter","audio tone control","frequency bands","bass boost","treble boost","audio filter"],
-    status: "done",
-  },
-  {
-    id: "audio-equalizer-ref",
-    name: "Audio Equalizer Reference",
-    description: "Reference for EQ bands, frequencies, Q-factor, and common presets. 100% private. 100% private.",
-    category: "audio-video",
-    keywords: ["audio, equalizer, ref","audio-video"],
     status: "done",
   },
   {
@@ -1290,14 +1274,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Trim audio files to a start/end range entirely in the browser. Drag-and-drop or pick a file, decode with Web Audio API, set start/end timestamps (MM:SS.ms, HH:MM:SS, or seconds), apply fade in/out (5 presets), and re-encode as a 16-bit PCM WAV (pure-JS encoder — no library). Multi-format time parser, sample-range calculator, 44-byte RIFF WAV header builder, file-size estimator, trim validation, crossfade calculator, audio preview before/after, history (localStorage), shareable URL, summary stats (original duration, trimmed duration, % removed, output size). 100% client-side.",
     category: "audio-video",
     keywords: ["audio trimmer","trim audio","cut audio","audio clipper","wav encoder","pcm","audio editor","waveform","riff"],
-    status: "done",
-  },
-  {
-    id: "audio-trimmer-ref",
-    name: "Audio Trimmer Reference",
-    description: "Reference for audio trimming: time selection, fade in/out, format export. 100% private. 100% private.",
-    category: "audio-video",
-    keywords: ["audio, trimmer, ref","audio-video"],
     status: "done",
   },
   {
@@ -3234,14 +3210,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Discount Rate calculator with detailed breakdown and 10+ extras. 100% private.",
     category: "calculators",
     keywords: ["discount,rate,calc","calculator","finance","math"],
-    status: "done",
-  },
-  {
-    id: "djvu-to-pdf-converter",
-    name: "Djvu To Pdf Converter",
-    description: "Convert files between formats using client-side libraries. Privacy-first, no upload, with 10+ extras. 100% private.",
-    category: "file",
-    keywords: ["djvu,to,pdf,converter","converter","file conversion","offline","private"],
     status: "done",
   },
   {
@@ -9557,14 +9525,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "pdf-to-djvu-converter",
-    name: "PDF to DjVu Converter",
-    description: "Convert PDF text to a simplified DjVu format in your browser. Pure JavaScript — extracts text from each PDF page, generates a simplified DjVu MRP-style binary with text chunks and page breaks. Downloads a .djvu file. Honest disclaimer: this is a text-only simplified format, not a full DjVu image-based file.",
-    category: "file",
-    keywords: ["pdf to djvu","convert pdf to djvu","pdf to djvu online","pdf to djvu free","pdf to djvu text","extract text from pdf to djvu","djvu generator","pdf to djvu converter","djvu text layer","simplified djvu"],
-    status: "done",
-  },
-  {
     id: "pdf-to-epub",
     name: "PDF to EPUB Converter",
     description: "Convert PDF to EPUB e-book format. Chapter detection, reflowable text.",
@@ -9731,14 +9691,6 @@ export const CATALOG: readonly CatalogItem[] = [
     category: "pdf",
     keywords: ["pdf to pdfx","pdfx","print ready","pdf print"],
     status: "planned",
-  },
-  {
-    id: "pdf-to-postscript-converter",
-    name: "PDF to PostScript Converter",
-    description: "Convert PDF text to PostScript (.ps) format in your browser. Pure JavaScript — extracts text from each PDF page, generates valid PostScript with proper header, page setup, text rendering commands, and showpage. Downloads a .ps file.",
-    category: "file",
-    keywords: ["pdf to postscript","convert pdf to ps","pdf to ps","pdf to postscript converter","pdf to ps converter","pdf to ps online","pdf to ps free","pdf to postscript online","extract text from pdf to ps","postscript generator"],
-    status: "done",
   },
   {
     id: "pdf-to-powerpoint",
@@ -10186,14 +10138,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Reference tool for common network ports. Generate port scan commands and port assignments.",
     category: "network-security",
     keywords: ["port scanner","port scan","network ports","port reference"],
-    status: "done",
-  },
-  {
-    id: "postscript-to-pdf-converter",
-    name: "PostScript to PDF Converter",
-    description: "Convert PostScript (.ps) files to PDF format. Parses PS commands (showpage, moveto, show, lineto, etc.), extracts text per page, and renders to PDF using pdf-lib. Page detection, text extraction, custom margins, font/page size — 100% client-side.",
-    category: "file",
-    keywords: ["postscript to pdf","ps to pdf","convert ps","postscript converter","ps converter","ghostscript alternative","showpage","moveto","postscript-to-pdf-converter"],
     status: "done",
   },
   {
@@ -11906,14 +11850,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Calculate income tax with brackets, deductions, credits, and multi-year comparison. 100% private. 100% private.",
     category: "business",
     keywords: ["tax, calculator, pro","business"],
-    status: "done",
-  },
-  {
-    id: "tcr-to-epub-converter",
-    name: "TCR to EPUB Converter",
-    description: "Convert TCR (Psion) ebooks to EPUB format in your browser. Parses the TCR header (magic PCF), reads the 256-entry code dictionary, decodes the compressed text stream, splits into chapters, generates a complete EPUB with NCX + NAV TOC, and packages as a .epub ZIP. 100% client-side.",
-    category: "file",
-    keywords: ["tcr to epub","convert tcr to epub","psion to epub","tcr ebook converter","tcr to epub online","tcr to epub free","psion tcr to epub","tcr to kindle","tcr to ereader","tcr file converter","tcr decompressor"],
     status: "done",
   },
   {

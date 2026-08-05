@@ -81,6 +81,7 @@ Make UnQTools useful to **every user and every AI agent** in the modern era by:
 | 2026-08-05 | **analysis** | Full duplicate/dead/AI-agent audit (see Step 0). |
 | 2026-08-05 | **v17.65 step 1: SHA dedupe** | Consolidated the SHA hash duplicate cluster: removed `sha256-hash-tool`, `sha1-hash-tool`, `sha3-hash-tool`, `sha512-hash-tool` (each an exact dup of the `-generator`). Kept canonical `sha*-hash-generator`. Tool count 1700 → **1696**. |
 | 2026-08-05 | **v17.65 step 2: remove dead tools** | Removed **16 low-value tools**: 10 dead file-format converters (`lit-to-epub/pdf`, `lrf-to-epub/pdf`, `prc-to-epub`, `xps-to-pdf`, `pdf-to-xps`, `xar-extractor`, `lzh-extractor`, `arj-extractor`) + 2 fading CSS fads (`css-neumorphism-generator`, `css-triangle-generator`). Tool count 1696 → **1684**. All registry/loader/catalog/sitemap refs cleaned; lint + tests pass. |
+| 2026-08-05 | **v17.65 step 3: bulk dead/dup removal** | Removed **8 more**: dead formats `pdf-to-postscript`, `postscript-to-pdf`, `tcr-to-epub`, `pdf-to-djvu`, `djvu-to-pdf` + redundant `-ref` duplicates `audio-converter-ref`, `audio-equalizer-ref`, `audio-trimmer-ref` (real counterparts exist). Tool count 1684 → **1676**. Kept PDF/A·X (print industry) and genuine reference guides (format/LUFS/FPS). |
 
 ## Dedupe progress
 
@@ -99,8 +100,14 @@ Make UnQTools useful to **every user and every AI agent** in the modern era by:
 |----------|---------|--------|
 | Dead file formats (LIT/LRF/PRC/XPS/XAR/LZH/ARJ) | 10 | ✅ done |
 | Fading CSS fads (neumorphism, triangle) | 2 | ✅ done |
+| Dead formats batch 2 (PostScript, TCR, DjVu) | 5 | ✅ done |
+| Redundant `-ref` dups (audio-converter/equalizer/trimmer-ref) | 3 | ✅ done |
 | Legacy archives (CHM/CAB/WIM/DEB/DMG/ISO/APK/RPM) | 0 | ⏳ kept (still niche-valid) |
 | Academic/CS reference tools (gray code, hamming, Q-format, julian) | 0 | ⏳ kept (serves learners) |
+| PDF/A + PDF/X | 0 | ⏳ kept (print/archival industry) |
+| Reference guides (audio-format/LUFS/FPS, video-format/FPS) | 0 | ⏳ kept (educational) |
+
+**Running total removed this session: 24 tools (1700 → 1676).**
 
 ## Known constraints
 

@@ -253,10 +253,8 @@ import { manifest as pdfToPowerpointConverter } from "@/tools/file/pdf-to-powerp
 import { manifest as pdfToOdtConverter } from "@/tools/file/pdf-to-odt-converter/manifest";
 import { manifest as pdfToOdsConverter } from "@/tools/file/pdf-to-ods-converter/manifest";
 import { manifest as pdfToOdpConverter } from "@/tools/file/pdf-to-odp-converter/manifest";
-import { manifest as pdfToPostScriptConverter } from "@/tools/file/pdf-to-postscript-converter/manifest";
 import { manifest as pdfToMobiConverter } from "@/tools/file/pdf-to-mobi-converter/manifest";
 import { manifest as pdfToAzw3Converter } from "@/tools/file/pdf-to-azw3-converter/manifest";
-import { manifest as pdfToDjvuConverter } from "@/tools/file/pdf-to-djvu-converter/manifest";
 import { manifest as dmgExtractor } from "@/tools/file/dmg-extractor/manifest";
 import { manifest as keynoteToPdfConverter } from "@/tools/file/keynote-to-pdf-converter/manifest";
 import { manifest as numbersToPdfConverter } from "@/tools/file/numbers-to-pdf-converter/manifest";
@@ -270,15 +268,12 @@ import { manifest as bzip2Decompressor } from "@/tools/file/bzip2-decompressor/m
 import { manifest as cbrComicBookReader } from "@/tools/file/cbr-comic-book-reader/manifest";
 import { manifest as pdfPasswordEncryptor } from "@/tools/file/pdf-password-encryptor/manifest";
 import { manifest as pdfSecurityRemover } from "@/tools/file/pdf-security-remover/manifest";
-import { manifest as postscriptToPdfConverter } from "@/tools/file/postscript-to-pdf-converter/manifest";
 import { manifest as rarExtractor } from "@/tools/file/rar-extractor/manifest";
 import { manifest as rpmExtractor } from "@/tools/file/rpm-extractor/manifest";
-import { manifest as tcrToEpubConverter } from "@/tools/file/tcr-to-epub-converter/manifest";
 import { manifest as wimExtractor } from "@/tools/file/wim-extractor/manifest";
 import { manifest as zCompressor } from "@/tools/file/z-compressor/manifest";
 import { manifest as azw3ToPdfConverter } from "@/tools/file/azw3-to-pdf-converter/manifest";
 import { manifest as bulkFileTimestampChanger } from "@/tools/file/bulk-file-timestamp-changer/manifest";
-import { manifest as djvuToPdfConverter } from "@/tools/file/djvu-to-pdf-converter/manifest";
 import { manifest as encodingDetector } from "@/tools/file/encoding-detector/manifest";
 import { manifest as epubToPdfConverter } from "@/tools/file/epub-to-pdf-converter/manifest";
 import { manifest as fileTreePrinter } from "@/tools/file/file-tree-printer/manifest";
@@ -908,11 +903,8 @@ import { manifest as hexadecimalCalculator } from "@/tools/calculators/hexadecim
 import { manifest as fibonacciGenerator } from "@/tools/calculators/fibonacci-generator/manifest";
 import { manifest as standardDeviationCalc } from "@/tools/calculators/standard-deviation-calc/manifest";
 import { manifest as scientificNotationConverter } from "@/tools/calculators/scientific-notation-converter/manifest";
-import { manifest as audioConverterRef } from "@/tools/audio-video/audio-converter-ref/manifest";
 import { manifest as videoCompressionGuide } from "@/tools/audio-video/video-compression-guide/manifest";
-import { manifest as audioTrimmerRef } from "@/tools/audio-video/audio-trimmer-ref/manifest";
 import { manifest as videoMergerRef } from "@/tools/audio-video/video-merger-ref/manifest";
-import { manifest as audioEqualizerRef } from "@/tools/audio-video/audio-equalizer-ref/manifest";
 import { manifest as batesNumberingTool } from "@/tools/pdf/bates-numbering-tool/manifest";
 import { manifest as pdfDeskewTool } from "@/tools/pdf/pdf-deskew-tool/manifest";
 import { manifest as pdfCombinePages } from "@/tools/pdf/pdf-combine-pages/manifest";
@@ -1915,10 +1907,8 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfToOdtConverter,
   pdfToOdsConverter,
   pdfToOdpConverter,
-  pdfToPostScriptConverter,
   pdfToMobiConverter,
   pdfToAzw3Converter,
-  pdfToDjvuConverter,
   dmgExtractor,
   keynoteToPdfConverter,
   numbersToPdfConverter,
@@ -1932,15 +1922,12 @@ export const TOOLS: readonly ToolManifest[] = [
   cbrComicBookReader,
   pdfPasswordEncryptor,
   pdfSecurityRemover,
-  postscriptToPdfConverter,
   rarExtractor,
   rpmExtractor,
-  tcrToEpubConverter,
   wimExtractor,
   zCompressor,
   azw3ToPdfConverter,
   bulkFileTimestampChanger,
-  djvuToPdfConverter,
   encodingDetector,
   epubToPdfConverter,
   fileTreePrinter,
@@ -2566,11 +2553,8 @@ export const TOOLS: readonly ToolManifest[] = [
   fibonacciGenerator,
   standardDeviationCalc,
   scientificNotationConverter,
-  audioConverterRef,
   videoCompressionGuide,
-  audioTrimmerRef,
   videoMergerRef,
-  audioEqualizerRef,
   batesNumberingTool,
   pdfDeskewTool,
   pdfCombinePages,
