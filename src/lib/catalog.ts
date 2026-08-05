@@ -6,7 +6,7 @@
  * omitted here — it lives in src/lib/registry.ts and is only imported
  * by server-rendered tool detail pages.
  *
- * 1696 tools. Regenerate with: node scripts/regenerate-catalog.mjs
+ * 1684 tools. Regenerate with: node scripts/regenerate-catalog.mjs
  */
 import type { ToolCategory } from "./tool";
 
@@ -1058,14 +1058,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Calculate Argon2 parameters (memory, iterations, parallelism) per OWASP RFC 9106. 100% private. 100% private.",
     category: "network-security",
     keywords: ["argon2, param, calculator","network-security"],
-    status: "done",
-  },
-  {
-    id: "arj-extractor",
-    name: "ARJ Extractor",
-    description: "Inspect ARJ archives. Detects the ARJ magic (0x60 0xEA), parses header structures, lists file entries with sizes and CRCs, and extracts STORE-method files when possible. Honest about ARJ compression limitations. 100% client-side.",
-    category: "file",
-    keywords: ["arj extractor","arj archive","arj file","extract arj","arj viewer","arj inspector","arj-extractor","compressed archive"],
     status: "done",
   },
   {
@@ -2813,14 +2805,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "css-neumorphism-generator",
-    name: "CSS Neumorphism Generator",
-    description: "Generate css neumorphism generator with live preview, presets, and 10+ extras. 100% private, offline-capable.",
-    category: "developer",
-    keywords: ["css neumorphism generator","css neumorphism generator"],
-    status: "done",
-  },
-  {
     id: "css-reset-generator",
     name: "CSS Reset/Normalize Snippet Generator",
     description: "Generate CSS reset or normalize snippets. Modern, minimal, Tailwind-style.",
@@ -2922,14 +2906,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Generate css transition generator with live preview, presets, and 10+ extras. 100% private, offline-capable.",
     category: "developer",
     keywords: ["css transition generator","css transition generator"],
-    status: "done",
-  },
-  {
-    id: "css-triangle-generator",
-    name: "CSS Triangle Generator",
-    description: "Generate css triangle generator with live preview, presets, and 10+ extras. 100% private, offline-capable.",
-    category: "developer",
-    keywords: ["css triangle generator","css triangle generator"],
     status: "done",
   },
   {
@@ -6549,22 +6525,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "lit-to-epub-converter",
-    name: "LIT to EPUB Converter",
-    description: "Convert Microsoft Reader (.lit) ebooks to EPUB format in your browser. Parses the LIT header (signature ITOLITLS), extracts text sections, splits into chapters, generates a complete EPUB with NCX + NAV TOC, and packages as a .epub ZIP. 100% client-side. DRM-free LIT files only.",
-    category: "file",
-    keywords: ["lit to epub","convert lit to epub","microsoft reader to epub","lit ebook converter","lit to epub online","lit to epub free","lit to kindle","lit to ereader","lit file converter","ms reader to epub","lit to epub converter"],
-    status: "done",
-  },
-  {
-    id: "lit-to-pdf-converter",
-    name: "LIT to PDF Converter",
-    description: "Convert MS Reader LIT ebooks to PDF in the browser — pure JavaScript. Parses LIT (Microsoft Reader) header + section table, extracts text, splits into chapters by headings, and renders to PDF using pdf-lib. Supports custom title, font size, page size, margins. 100% client-side.",
-    category: "file",
-    keywords: ["lit to pdf","lit converter","microsoft reader","lit ebook",".lit file","lit viewer","ebook to pdf","ms reader converter","lit-to-pdf-converter","lit ebook to pdf"],
-    status: "done",
-  },
-  {
     id: "loan-amortization-schedule",
     name: "Loan Amortization Schedule (Monthly, Bi-Weekly, Weekly)",
     description: "Generate full loan amortization schedules — monthly payment, principal/interest split, running balance, payoff date, and interest savings from extra payments. Standard amortization formula with monthly, bi-weekly, and weekly frequencies. Year-by-year summary for long loans. Export as text schedule or CSV. 17 extra features: 3 payment frequencies, monthly payment formula, per-payment interest calculator, per-payment principal calculator, balance tracker, extra-payment applier, total interest calculator, total paid calculator, payoff date estimator, text schedule renderer, CSV export, copy + download .txt + CSV, history (localStorage, last 20), shareable URL, summary stats, interest savings calculator (with vs without extra payment), year-by-year summary. 100% client-side.",
@@ -6645,35 +6605,11 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "lrf-to-epub-converter",
-    name: "LRF to EPUB Converter",
-    description: "Convert Sony BroadBook (.lrf) ebooks to EPUB format in your browser. Parses the LRF header (signature LRF), extracts text objects from the BroadBook structure, splits into chapters, generates a complete EPUB with NCX + NAV TOC, and packages as a .epub ZIP. 100% client-side.",
-    category: "file",
-    keywords: ["lrf to epub","convert lrf to epub","sony broadbook to epub","lrf ebook converter","lrf to epub online","lrf to epub free","sony reader to epub","lrf to kindle","lrf to ereader","broadbook to epub","lrf file converter"],
-    status: "done",
-  },
-  {
-    id: "lrf-to-pdf-converter",
-    name: "LRF to PDF Converter",
-    description: "Convert Sony BroadBook LRF ebooks to PDF in the browser — pure JavaScript. Parses LRF header + object table, extracts text from TEXT-type objects, splits into chapters by headings, and renders to PDF using pdf-lib. Supports custom title, font size, page size, margins. 100% client-side.",
-    category: "file",
-    keywords: ["lrf to pdf","lrf converter","sony broadbook","lrf ebook",".lrf file","lrf viewer","ebook to pdf","sony reader converter","lrf-to-pdf-converter","bbeb ebook"],
-    status: "done",
-  },
-  {
     id: "luhn-credit-card-validator",
     name: "Luhn / Credit Card Validator",
     description: "Validate identification numbers with the Luhn (mod-10) checksum — credit cards, IMEI, gift cards. Brand detection from BIN, step-by-step doubling visualization, corrected check-digit suggestion, transposition/typo hint, masked display, and bulk list mode with CSV export. 100% client-side — numbers never leave the browser.",
     category: "developer",
     keywords: ["luhn","luhn validator","credit card validator","mod 10","check digit","imei validator","gift card validator","bin detection","card brand","luhn algorithm","checksum"],
-    status: "done",
-  },
-  {
-    id: "lzh-extractor",
-    name: "LZH Extractor",
-    description: "Extract files from LZH/LHA archives in the browser — pure JavaScript LZH parser. Support level 0 (stored, no compression) and basic level 1 headers. List files, view sizes + CRC, extract stored files, re-zip as ZIP. 100% client-side.",
-    category: "file",
-    keywords: ["lzh extractor","lha extractor","lzh viewer","lzh reader","lha archive","lzh archive","lha parser","lzh parser","level 0 lzh","lzh-extractor"],
     status: "done",
   },
   {
@@ -9909,14 +9845,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
-    id: "pdf-to-xps-converter",
-    name: "Pdf To Xps Converter",
-    description: "Convert files between formats using client-side libraries. Privacy-first, no upload, with 10+ extras. 100% private.",
-    category: "file",
-    keywords: ["pdf,to,xps,converter","converter","file conversion","offline","private"],
-    status: "done",
-  },
-  {
     id: "pdf-toc-from-headings",
     name: "PDF Table of Contents from Headings",
     description: "Generate PDF table of contents from heading text. Auto-detect levels.",
@@ -10266,14 +10194,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PostScript (.ps) files to PDF format. Parses PS commands (showpage, moveto, show, lineto, etc.), extracts text per page, and renders to PDF using pdf-lib. Page detection, text extraction, custom margins, font/page size — 100% client-side.",
     category: "file",
     keywords: ["postscript to pdf","ps to pdf","convert ps","postscript converter","ps converter","ghostscript alternative","showpage","moveto","postscript-to-pdf-converter"],
-    status: "done",
-  },
-  {
-    id: "prc-to-epub-converter",
-    name: "PRC to EPUB Converter",
-    description: "Convert Mobipocket PRC ebooks to EPUB format in your browser. Parses the PalmDB header, extracts text records, decodes PalmDOC compression, splits into chapters, generates a complete EPUB with NCX + NAV TOC, and packages as a .epub ZIP. 100% client-side. DRM-free PRC files only.",
-    category: "file",
-    keywords: ["prc to epub","convert prc to epub","mobipocket to epub","prc ebook converter","prc to epub online","prc to epub free","palmdoc to epub","prc to kindle","prc to ereader","prc file converter","mobipocket prc to epub"],
     status: "done",
   },
   {
@@ -13501,14 +13421,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "xar-extractor",
-    name: "XAR Extractor",
-    description: "Extract files from XAR (eXtensible Archive) — Apple's archive format with XML TOC + heap. Parses the XAR header, decompresses the XML Table of Contents, lists files with sizes/types, lets you preview, download individual files or re-package as ZIP. 100% client-side.",
-    category: "file",
-    keywords: ["xar extractor","xar file","apple xar","extensible archive","xar unpack","xar viewer","xar to zip","xar toc","xar header","xar-extractor"],
-    status: "done",
-  },
-  {
     id: "xml-sitemap-generator",
     name: "XML Sitemap Generator",
     description: "Generate XML sitemaps for Google/Bing search engines. Bulk URL input, lastmod/changefreq/priority per URL, sitemap index support, robots.txt integration, and stats. 100% client-side.",
@@ -13539,14 +13451,6 @@ export const CATALOG: readonly CatalogItem[] = [
     category: "developer",
     keywords: ["xor","xor cipher","xor encrypt","xor decrypt"],
     status: "planned",
-  },
-  {
-    id: "xps-to-pdf-converter",
-    name: "Xps To Pdf Converter",
-    description: "Convert files between formats using client-side libraries. Privacy-first, no upload, with 10+ extras. 100% private.",
-    category: "file",
-    keywords: ["xps,to,pdf,converter","converter","file conversion","offline","private"],
-    status: "done",
   },
   {
     id: "xss-sanitizer",

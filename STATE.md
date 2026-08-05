@@ -9,11 +9,10 @@ _Last updated: 2026-08-05 — v17.64.x perf work on arena/019fd1ad-unqtools; new
 Live tracking lives in [`docs/PROGRESS.md`](./docs/PROGRESS.md) — updated every step.
 
 - **Dedupe:** 58 duplicate tool-name clusters found in `developer` alone.
-  **Started with the SHA hash cluster** — removed 4 exact duplicates
-  (`sha1/sha256/sha3/sha512-hash-tool`) keeping the canonical `-generator`.
-  Tool count 1700 → **1696** (registry, tool-page-client, catalog, sitemap updated).
-- **Retire:** dead/legacy formats (LIT/LRF/PRC/XPS/XAR/LZH/WIM/ARJ) + fading fads
-  (neumorphism, triangle) → mark or merge.
+  **SHA hash cluster done** — removed 4 exact duplicates (`sha1/sha256/sha3/sha512-hash-tool`).
+- **Retire dead tools:** removed **16 low-value tools** so far — 10 dead file-format
+  converters (LIT/LRF/PRC/XPS/XAR/LZH/ARJ) + 2 fading CSS fads (neumorphism, triangle).
+  Tool count 1700 → **1684** (registry, loader, catalog, sitemap all updated).
 - **AI-agent-first:** natural-language routing + JSON export on outputs + surface
   regex-explainer / code-review helpers so both humans and LLM agents can use it.
 

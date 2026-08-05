@@ -1453,12 +1453,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/lzh-extractor</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/mobi-reader</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -1639,25 +1633,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/lit-to-pdf-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/lrf-to-pdf-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/7z-extractor</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/arj-extractor</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1681,18 +1657,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/lit-to-epub-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/lrf-to-epub-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-password-encryptor</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -1706,12 +1670,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/postscript-to-pdf-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/prc-to-epub-converter</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1736,12 +1694,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/wim-extractor</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/xar-extractor</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1819,19 +1771,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-to-xps-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/text-encoding-converter</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/xps-to-pdf-converter</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -6127,12 +6067,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/css-triangle-generator</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/css-specificity-calculator</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -6200,12 +6134,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/base64-image-encode-decode</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/css-neumorphism-generator</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
