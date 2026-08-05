@@ -26,7 +26,7 @@ import {
   Cpu,
   Database,
 } from "lucide-react";
-import { TOOLS, countByCategory } from "@/lib/registry";
+import { CATALOG, countByCategory } from "@/lib/catalog";
 import { CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
 
 // ===== ANIMATION VARIANTS =====
@@ -59,7 +59,7 @@ const staggerItem = {
 
 // ===== DATA =====
 
-const toolCount = TOOLS.length;
+const toolCount = CATALOG.length;
 const counts = countByCategory();
 
 // ===== CATEGORY CARDS (all categories with tools) =====
@@ -150,7 +150,7 @@ const trustBadges = [
   { icon: ShieldCheck, label: "No Tracking" },
 ];
 
-// ===== FEATURED TOOLS (most-used, hand-picked) =====
+// ===== FEATURED CATALOG (most-used, hand-picked) =====
 const featuredToolIds = [
   "json-formatter",
   "uuid-generator",
@@ -161,7 +161,7 @@ const featuredToolIds = [
   "qr-code-generator",
   "word-character-counter",
 ];
-const featuredTools = TOOLS.filter((t) => featuredToolIds.includes(t.id)).slice(0, 8);
+const featuredTools = CATALOG.filter((t) => featuredToolIds.includes(t.id)).slice(0, 8);
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
@@ -348,7 +348,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== SECTION 2: FEATURED TOOLS ===== */}
+        {/* ===== SECTION 2: FEATURED CATALOG ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
             <motion.div

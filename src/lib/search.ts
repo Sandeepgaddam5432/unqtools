@@ -5,10 +5,10 @@
  * Strategy: subsequence match with scoring (consecutive matches score higher,
  * earlier matches score higher). Tiny (no deps) — stays well under budget.
  */
-import type { ToolManifest } from "./tool";
+import type { CatalogItem } from "./catalog";
 
 export interface SearchResult {
-  tool: ToolManifest;
+  tool: CatalogItem;
   score: number;
 }
 
@@ -47,7 +47,7 @@ export function scoreString(query: string, candidate: string): number {
  */
 export function searchTools(
   query: string,
-  tools: readonly ToolManifest[],
+  tools: readonly CatalogItem[],
   limit = 50,
 ): SearchResult[] {
   const q = query.trim();

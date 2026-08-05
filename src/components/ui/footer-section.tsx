@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Github, Heart, Lock, WifiOff, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { TOOLS } from '@/lib/registry';
+import { CATALOG } from '@/lib/catalog';
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from '@/lib/tool';
 
 interface FooterLink {
@@ -17,9 +17,9 @@ interface FooterSection {
   links: FooterLink[];
 }
 
-// Build footer links from actual registry data
+// Build footer links from the lightweight tool catalog
 const activeCategories = ALL_CATEGORIES.filter((c) => {
-  return TOOLS.some((t) => t.category === c);
+  return CATALOG.some((t) => t.category === c);
 });
 
 const footerLinks: FooterSection[] = [
@@ -54,7 +54,7 @@ const footerLinks: FooterSection[] = [
       { title: 'Privacy Policy', href: '/' },
       { title: 'Terms of Service', href: '/' },
       { title: 'GitHub', href: 'https://github.com/Sandeepgaddam5432/unqtools' },
-      { title: `All ${TOOLS.length} Tools`, href: '/tools' },
+      { title: `All ${CATALOG.length} Tools`, href: '/tools' },
     ],
   },
 ];
@@ -73,7 +73,7 @@ export function Footer() {
             </h2>
           </div>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            {TOOLS.length} free online tools that run 100% in your browser. No uploads, no tracking, no accounts.
+            {CATALOG.length} free online tools that run 100% in your browser. No uploads, no tracking, no accounts.
           </p>
           <div className="flex flex-wrap gap-2 pt-2">
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">

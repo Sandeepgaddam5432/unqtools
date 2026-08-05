@@ -29,7 +29,7 @@ import {
   Image as ImageIcon,
   Layers,
 } from "lucide-react";
-import { TOOLS, countByCategory } from "@/lib/registry";
+import { CATALOG, countByCategory } from "@/lib/catalog";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 import { searchTools } from "@/lib/search";
 
@@ -108,7 +108,7 @@ function ToolsPageContent() {
   const activeCats = ALL_CATEGORIES.filter((c) => (counts[c] ?? 0) > 0);
 
   const filteredTools = useMemo(() => {
-    let list = query.trim() ? searchTools(query, TOOLS, 50).map((r) => r.tool) : Array.from(TOOLS);
+    let list = query.trim() ? searchTools(query, CATALOG, 50).map((r) => r.tool) : Array.from(CATALOG);
     if (activeCategory !== "all") {
       list = list.filter((t) => t.category === activeCategory);
     }
@@ -129,7 +129,7 @@ function ToolsPageContent() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
             >
               <Layers className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-foreground font-medium">{TOOLS.length} Tools Available</span>
+              <span className="text-sm text-foreground font-medium">{CATALOG.length} Tools Available</span>
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
@@ -149,7 +149,7 @@ function ToolsPageContent() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
             >
-              {TOOLS.length} fast, free, offline-capable browser tools — converters,
+              {CATALOG.length} fast, free, offline-capable browser tools — converters,
               calculators, generators, formatters. No uploads, no tracking, no accounts.
             </motion.p>
 
@@ -182,7 +182,7 @@ function ToolsPageContent() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder={`Search ${TOOLS.length} tools…`}
+                  placeholder={`Search ${CATALOG.length} tools…`}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="h-12 w-full border-0 bg-transparent pl-10 pr-4 text-base rounded-2xl focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -211,7 +211,7 @@ function ToolsPageContent() {
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
-                All ({TOOLS.length})
+                All ({CATALOG.length})
               </motion.button>
               {activeCats.map((cat) => {
                 const Icon = CATEGORY_ICONS[cat] ?? Layers;
@@ -237,7 +237,7 @@ function ToolsPageContent() {
           </div>
         </section>
 
-        {/* ===== TOOLS GRID ===== */}
+        {/* ===== CATALOG GRID ===== */}
         <section className="section-padding pb-24">
           <div className="container mx-auto px-4 md:px-6">
             {filteredTools.length === 0 ? (

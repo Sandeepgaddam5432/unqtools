@@ -31,9 +31,9 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MobileHeader } from "./mobile-header";
 import { ALL_CATEGORIES, CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
-import { countByCategory, TOOLS } from "@/lib/registry";
+import { countByCategory, CATALOG } from "@/lib/catalog";
 
-const TOOLS_COUNT = TOOLS.length;
+const TOOLS_COUNT = CATALOG.length;
 
 // Animation values as named module-level constants so JSX props stay
 // single-brace (initial={HIDDEN_W}) — keeps the JSX simple and consistent.
