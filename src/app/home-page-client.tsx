@@ -274,46 +274,32 @@ export default function Home() {
           </div>
 
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6"
-            >
+            {/* NOTE: The hero above-the-fold content is intentionally plain
+                HTML (no framer-motion / no opacity:0). This makes it visible
+                in the SSR HTML immediately, so LCP ≈ FCP on slow connections.
+                Below-the-fold sections keep their whileInView animations. */}
+            <div className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">
                 {toolCount} free browser tools — no signup, no tracking
               </span>
-            </motion.div>
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight text-balance leading-[1.05]"
-            >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight text-balance leading-[1.05]">
               Private tools that{" "}
               <span className="unq-gradient-text">
                 respect you
               </span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed text-pretty"
-            >
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed text-pretty">
               {toolCount} fast, free, offline-capable browser tools — converters,
               calculators, generators, formatters, PDF utilities, SEO tools. Everything
               runs 100% in your browser. No uploads, no accounts, no tracking.
-            </motion.p>
+            </p>
 
             {/* Hero quick-search */}
-            <motion.form
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.28 }}
+            <form
               onSubmit={submitHeroSearch}
               className="max-w-xl mb-8"
             >
@@ -335,14 +321,9 @@ export default function Home() {
                   Search
                 </Button>
               </div>
-            </motion.form>
+            </form>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.38 }}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10"
-            >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10">
               <Button
                 asChild
                 size="lg"
@@ -360,15 +341,10 @@ export default function Home() {
               >
                 <Link href="/category/seo">Explore Categories</Link>
               </Button>
-            </motion.div>
+            </div>
 
             {/* Trust badges */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.45 }}
-              className="flex flex-wrap items-center gap-3 mb-10"
-            >
+            <div className="flex flex-wrap items-center gap-3 mb-10">
               {trustBadges.map((b) => {
                 const Icon = b.icon;
                 return (
@@ -382,15 +358,10 @@ export default function Home() {
                   </Badge>
                 );
               })}
-            </motion.div>
+            </div>
 
             {/* Stats strip */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-border/60"
-            >
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-border/60">
               {stats.map((s) => (
                 <div key={s.label} className="relative">
                   <div className="unq-gradient-text text-2xl sm:text-3xl font-bold tracking-tight">
@@ -401,7 +372,7 @@ export default function Home() {
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
 
