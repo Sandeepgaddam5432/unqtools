@@ -9,9 +9,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // Emit JS source maps in production for easier debugging.
-  // (Doesn't affect runtime perf — maps are only loaded when DevTools is open.)
-  productionBrowserSourceMaps: true,
+  // Source maps off: they roughly double the deploy payload on Cloudflare Pages
+  // and slow builds/edge/crawl for no user-visible benefit.
+  productionBrowserSourceMaps: false,
   // Modernize browser targets so the compiler can emit smaller, faster code
   // (skip transpilation for IE / legacy Edge / old Safari).
   // Browserslist is also configured in package.json.
