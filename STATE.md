@@ -1,10 +1,21 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt with 100% blueprint compliance + audit report._
+_Last updated: 2026-08-05 — v17.64.x perf work on arena/019fd1ad-unqtools; new phase: catalog cleanup + AI-agent-first._
 
 ## Current phase
 
-**v17.63 — 30 tools rebuilt with 100% blueprint compliance + audit report — ALL SCANNERS CLEAN**
+**v17.65 — Catalog cleanup (dedupe + retire dead tools) + AI-agent-first layer.**
+
+Live tracking lives in [`docs/PROGRESS.md`](./docs/PROGRESS.md) — updated every step.
+
+- **Dedupe:** 58 duplicate tool-name clusters found in `developer` alone.
+  **Started with the SHA hash cluster** — removed 4 exact duplicates
+  (`sha1/sha256/sha3/sha512-hash-tool`) keeping the canonical `-generator`.
+  Tool count 1700 → **1696** (registry, tool-page-client, catalog, sitemap updated).
+- **Retire:** dead/legacy formats (LIT/LRF/PRC/XPS/XAR/LZH/WIM/ARJ) + fading fads
+  (neumorphism, triangle) → mark or merge.
+- **AI-agent-first:** natural-language routing + JSON export on outputs + surface
+  regex-explainer / code-review helpers so both humans and LLM agents can use it.
 
 ### Tool count: 1700 tools live
 

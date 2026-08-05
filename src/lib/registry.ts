@@ -1630,13 +1630,10 @@ import { manifest as envFileParser } from "@/tools/developer/env-file-parser/man
 import { manifest as tomlToJsonConverter } from "@/tools/developer/toml-to-json-converter/manifest";
 import { manifest as jsonFlattenerToolV2 } from "@/tools/developer/json-flattener-tool-v2/manifest";
 import { manifest as typescriptToJs } from "@/tools/developer/typescript-to-js/manifest";
-import { manifest as sha1HashTool } from "@/tools/developer/sha1-hash-tool/manifest";
 import { manifest as openapiToClientSdk } from "@/tools/developer/openapi-to-client-sdk/manifest";
 import { manifest as regexReplaceTool } from "@/tools/developer/regex-replace-tool/manifest";
 import { manifest as jsxToJsCompilerV2 } from "@/tools/developer/jsx-to-js-compiler-v2/manifest";
 import { manifest as gitattributesGenerator } from "@/tools/developer/gitattributes-generator/manifest";
-import { manifest as sha512HashTool } from "@/tools/developer/sha512-hash-tool/manifest";
-import { manifest as nginxConfigGenerator } from "@/tools/developer/nginx-config-generator/manifest";
 import { manifest as dockerComposeGenerator } from "@/tools/developer/docker-compose-generator/manifest";
 import { manifest as openapiViewerEditor } from "@/tools/developer/openapi-viewer-editor/manifest";
 import { manifest as jsonToPythonClassV2 } from "@/tools/developer/json-to-python-class-v2/manifest";
@@ -1678,9 +1675,7 @@ import { manifest as prettierConfigGenerator } from "@/tools/developer/prettier-
 import { manifest as gitignoreGenerator } from "@/tools/developer/gitignore-generator/manifest";
 import { manifest as packageJsonGenerator } from "@/tools/developer/package-json-generator/manifest";
 import { manifest as consoleLogRemover } from "@/tools/developer/console-log-remover/manifest";
-import { manifest as sha3HashTool } from "@/tools/developer/sha3-hash-tool/manifest";
 import { manifest as regexTesterDebugger } from "@/tools/developer/regex-tester-debugger/manifest";
-import { manifest as cronParserReadable } from "@/tools/developer/cron-parser-readable/manifest";
 import { manifest as yamlToJsonConverter } from "@/tools/developer/yaml-to-json-converter/manifest";
 import { manifest as cssSpriteGeneratorTool } from "@/tools/developer/css-sprite-generator-tool/manifest";
 import { manifest as svgToJsxConverter } from "@/tools/developer/svg-to-jsx-converter/manifest";
@@ -1694,7 +1689,6 @@ import { manifest as shellScriptLinter } from "@/tools/developer/shell-script-li
 import { manifest as utf8ByteViewer } from "@/tools/developer/utf8-byte-viewer/manifest";
 import { manifest as dockerignoreGenerator } from "@/tools/developer/dockerignore-generator/manifest";
 import { manifest as quotedPrintableTool } from "@/tools/developer/quoted-printable-tool/manifest";
-import { manifest as sha256HashTool } from "@/tools/developer/sha256-hash-tool/manifest";
 
 import { manifest as deviceMockupGeneratorPhoneLaptop } from "@/tools/image/device-mockup-generator-phone-laptop/manifest";
 import { manifest as faviconGeneratorMultiSize } from "@/tools/image/favicon-generator-multi-size/manifest";
@@ -3307,12 +3301,10 @@ export const TOOLS: readonly ToolManifest[] = [
   tomlToJsonConverter,
   jsonFlattenerToolV2,
   typescriptToJs,
-  sha1HashTool,
   openapiToClientSdk,
   regexReplaceTool,
   jsxToJsCompilerV2,
   gitattributesGenerator,
-  sha512HashTool,
   nginxConfigGenerator,
   dockerComposeGenerator,
   openapiViewerEditor,
@@ -3355,7 +3347,6 @@ export const TOOLS: readonly ToolManifest[] = [
   gitignoreGenerator,
   packageJsonGenerator,
   consoleLogRemover,
-  sha3HashTool,
   regexTesterDebugger,
   cronParserReadable,
   yamlToJsonConverter,
@@ -3372,7 +3363,6 @@ export const TOOLS: readonly ToolManifest[] = [
   dockerignoreGenerator,
   quotedPrintableTool,
   sha256HashTool,
-
   deviceMockupGeneratorPhoneLaptop,
   faviconGeneratorMultiSize,
   colorContrastCheckerWcag,
