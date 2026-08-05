@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { Footer } from "@/components/ui/footer-section";
@@ -190,16 +191,29 @@ const stats = [
 // ===== PAGE COMPONENT =====
 
 export default function Home() {
+  const router = useRouter();
+  const [heroQuery, setHeroQuery] = useState("");
+
+  const submitHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = heroQuery.trim();
+    router.push(q ? `/tools?q=${encodeURIComponent(q)}` : "/tools");
+  };
+
   return (
     <div className="flex min-h-dvh bg-background">
       <SidebarNav />
       <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
         {/* ===== SECTION 1: HERO ===== */}
         <section className="relative section-padding pt-16 pb-20 md:pt-24 md:pb-32 overflow-hidden">
-          {/* Subtle gradient background */}
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl opacity-30" />
+          {/* Ambient gradient background with soft glow orbs */}
+          <div className="absolute inset-0 -z-10" aria-hidden="true">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-primary/15 blur-3xl opacity-40" />
+            <div className="absolute top-32 -left-24 w-72 h-72 rounded-full bg-amber-400/10 blur-3xl" />
+            <div className="absolute top-64 -right-24 w-80 h-80 rounded-full bg-rose-400/10 blur-3xl" />
+            {/* Subtle dot grid */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,var(--border)_0.75px,transparent_0)] bg-[size:26px_26px] opacity-[0.35] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" />
           </div>
 
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
@@ -207,7 +221,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+              className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">
@@ -222,7 +236,7 @@ export default function Home() {
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight text-balance leading-[1.05]"
             >
               Private tools that{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-amber-500 to-primary">
+              <span className="unq-gradient-text">
                 respect you
               </span>
             </motion.h1>
@@ -238,16 +252,44 @@ export default function Home() {
               runs 100% in your browser. No uploads, no accounts, no tracking.
             </motion.p>
 
+            {/* Hero quick-search */}
+            <motion.form
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.28 }}
+              onSubmit={submitHeroSearch}
+              className="max-w-xl mb-8"
+            >
+              <div className="unq-glass group flex items-center gap-2 rounded-2xl border border-border bg-card/60 pl-3.5 pr-1.5 py-1.5 shadow-lg shadow-black/[0.04] transition-all duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
+                <Search className="h-5 w-5 text-muted-foreground shrink-0" />
+                <input
+                  type="text"
+                  value={heroQuery}
+                  onChange={(e) => setHeroQuery(e.target.value)}
+                  placeholder={`Search ${toolCount} tools…`}
+                  aria-label="Search tools"
+                  className="h-11 w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground/70 outline-none"
+                />
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="gap-1.5 shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
+                >
+                  Search
+                </Button>
+              </div>
+            </motion.form>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.38 }}
               className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10"
             >
               <Button
                 asChild
                 size="lg"
-                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 text-base cursor-pointer touch-target"
+                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 text-base cursor-pointer touch-target shadow-lg shadow-primary/20"
               >
                 <Link href="/tools">
                   Browse {toolCount} Tools <ArrowRight className="h-4 w-4" />
@@ -293,8 +335,8 @@ export default function Home() {
               className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-border/60"
             >
               {stats.map((s) => (
-                <div key={s.label}>
-                  <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                <div key={s.label} className="relative">
+                  <div className="unq-gradient-text text-2xl sm:text-3xl font-bold tracking-tight">
                     {s.value}{s.suffix}
                   </div>
                   <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">
@@ -347,10 +389,10 @@ export default function Home() {
                 const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
                 return (
                   <motion.div key={tool.id} variants={staggerItem}>
-                    <Link href={`/tools/${tool.id}`} className="block group">
-                      <div className="rounded-xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md">
+                    <Link href={`/tools/${tool.id}`} className="block group h-full">
+                      <div className="card-hover rounded-2xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30">
                         <div className="flex items-center justify-between mb-3">
-                          <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                          <div className="unq-icon-tile h-9 w-9 rounded-lg flex items-center justify-center">
                             <Icon className="h-4.5 w-4.5 text-primary" />
                           </div>
                           {tool.status === "planned" && (
@@ -363,7 +405,7 @@ export default function Home() {
                         <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                           {tool.description}
                         </p>
-                        <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                           <span>Open</span>
                           <ArrowRight className="h-3 w-3 ml-1" />
                         </div>
@@ -411,13 +453,13 @@ export default function Home() {
                   <motion.div key={cat.href} variants={staggerItem}>
                     <Link
                       href={cat.href}
-                      className="block group rounded-xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md"
+                      className="block group card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                        <div className="unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center">
                           <Icon className="h-5 w-5 text-primary" />
                         </div>
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs tabular-nums">
                           {cat.count}
                         </Badge>
                       </div>
@@ -425,7 +467,7 @@ export default function Home() {
                       <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                         {cat.description}
                       </p>
-                      <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                         <span>Explore</span>
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </div>
@@ -494,9 +536,9 @@ export default function Home() {
               ].map((f) => {
                 const Icon = f.icon;
                 return (
-                  <motion.div key={f.title} variants={staggerItem}>
-                    <div className="rounded-xl border bg-card p-6 h-full">
-                      <div className={`h-10 w-10 rounded-lg bg-muted/50 border flex items-center justify-center mb-3`}>
+                  <motion.div key={f.title} variants={staggerItem} className="h-full">
+                    <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/25">
+                      <div className={`unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center mb-3`}>
                         <Icon className={`h-5 w-5 ${f.color}`} />
                       </div>
                       <h3 className="font-semibold text-base mb-1.5">{f.title}</h3>
@@ -519,9 +561,10 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5 }}
-              className="rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-8 md:p-12 text-center"
+              className="unq-glass relative overflow-hidden rounded-3xl border p-8 md:p-12 text-center"
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight text-balance">
+              <div aria-hidden="true" className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-64 w-[520px] rounded-full bg-primary/20 blur-3xl" />
+              <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight text-balance">
                 Ready to get started?
               </h2>
               <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto mb-6">

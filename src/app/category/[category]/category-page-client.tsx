@@ -88,7 +88,7 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
               initial={FADE_UP}
               animate={SHOWN}
               transition={T_BADGE}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+              className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6"
             >
               <Icon className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">
@@ -145,7 +145,7 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
           <div className="container mx-auto px-4 md:px-6">
             {tools.length === 0 ? (
               <motion.div initial={HIDDEN} animate={VISIBLE} className="text-center py-24">
-                <div className="h-16 w-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+                <div className="unq-icon-tile h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <Icon className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-2xl font-bold text-foreground mb-2">Coming soon</p>
@@ -171,14 +171,14 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                       className="unq-animate-fade-in-up"
                       style={{ animationDelay: `${Math.min(index * 30, 600)}ms` }}
                     >
-                      <Link href={`/tools/${tool.id}`} className="block group">
+                      <Link href={`/tools/${tool.id}`} className="block group h-full">
                         <div
-                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1"
+                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
                         >
-                          <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
+                          <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
                             <ToolIcon className="h-5 w-5 text-primary" />
                           </div>
-                          <h3 className="font-semibold mb-1">{tool.name}</h3>
+                          <h3 className="font-semibold mb-1 leading-tight">{tool.name}</h3>
                           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                             {tool.description}
                           </p>
@@ -193,7 +193,7 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                                 </Badge>
                               )}
                             </div>
-                            <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                               <span>Open</span>
                               <ArrowRight className="h-3.5 w-3.5 ml-1" />
                             </div>

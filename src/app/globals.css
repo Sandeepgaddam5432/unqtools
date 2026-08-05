@@ -383,3 +383,97 @@ img {
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+/* =====================================================================
+   UnQTools v17.64 — Modern UI foundation (ui-ux-pro-max skill driven)
+   Defines the shared visual language used across every page:
+   section spacing, touch targets, card hover lift/glow, glass surfaces,
+   gradient text, focus rings and accessible selection.
+
+   NOTE: These live in @layer components so Tailwind's utility layer
+   (e.g. inline `pt-16` / `pb-20` overrides on .section-padding) still wins.
+   ===================================================================== */
+
+@layer components {
+
+/* Consistent vertical rhythm for every top-level section. */
+.section-padding {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+@media (min-width: 768px) {
+  .section-padding {
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+  }
+}
+
+/* Minimum interactive target size for touch (WCAG 2.5.8). */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Card hover: gentle lift + soft depth shadow + ring-colored border glow.
+   Transitions come from each card's own `transition-all duration-*`; this
+   block only adds the elevated shadow/border so it composes cleanly. */
+.card-hover {
+  --card-glow: 0 18px 40px -20px rgba(0, 0, 0, 0.32);
+}
+.card-hover:hover {
+  box-shadow: var(--card-glow);
+  border-color: color-mix(in srgb, var(--ring) 45%, transparent);
+  transform: translateY(-3px);
+}
+.dark .card-hover {
+  --card-glow: 0 22px 50px -22px rgba(0, 0, 0, 0.7);
+}
+
+/* Frosted-glass surface for nav / overlays / hero chips. */
+.unq-glass {
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Signature gradient headline accent (copper → amber → copper). */
+.unq-gradient-text {
+  background-image: linear-gradient(110deg, var(--primary) 0%, #f2a35e 45%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Gradient "tile" behind category/tool icons in cards & headers. */
+.unq-icon-tile {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--ring) 22%, transparent), color-mix(in srgb, var(--ring) 6%, transparent));
+  border: 1px solid color-mix(in srgb, var(--ring) 28%, transparent);
+}
+
+/* Soft ring glow on focused interactive elements (keyboard nav). */
+:focus-visible {
+  outline: none;
+}
+:where(a, button, input, textarea, select, [role="button"], [tabindex]):focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 55%, transparent);
+}
+
+/* Accessible text-selection tint */
+::selection {
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
+  color: var(--foreground);
+}
+
+/* Dark-mode polish: softer card surfaces, crisper border emphasis */
+.dark {
+  color-scheme: dark;
+}
+
+/* Reduced motion: kill the card-hover lift too */
+@media (prefers-reduced-motion: reduce) {
+  .card-hover:hover {
+    transform: none;
+  }
+}
+
+} /* end @layer components */
