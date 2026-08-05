@@ -4,7 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/pwa-install";
-import { CommandPaletteLazy } from "@/components/command-palette-lazy";
+import { CommandPaletteMount } from "@/components/command-palette";
+import { MotionProvider } from "@/components/motion-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,12 +24,12 @@ const geistMono = Geist_Mono({
 
 const SITE_URL = "https://unqtools.pages.dev";
 const SITE_NAME = "UnQTools";
-const SITE_DESCRIPTION = "UnQTools is a 100% static, privacy-first, offline-capable PWA of 1700+ fast browser-based tools — converters, calculators, generators, formatters, PDF utilities, SEO tools, developer tools, image tools. No uploads, no tracking, no accounts.";
+const SITE_DESCRIPTION = "UnQTools is a 100% static, privacy-first, offline-capable PWA of 610+ fast browser-based tools — converters, calculators, generators, formatters, PDF utilities, SEO tools, developer tools, image tools. No uploads, no tracking, no accounts.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "UnQTools — 1700+ Private, Offline Browser Tools",
+    default: "UnQTools — 610+ Private, Offline Browser Tools",
     template: "%s | UnQTools",
   },
   description: SITE_DESCRIPTION,
@@ -70,7 +71,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "UnQTools — 1700+ Private, Offline Browser Tools",
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
     description: SITE_DESCRIPTION,
     images: [
       {
@@ -83,7 +84,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "UnQTools — 1700+ Private, Offline Browser Tools",
+    title: "UnQTools — 610+ Private, Offline Browser Tools",
     description: SITE_DESCRIPTION,
     images: ["/logo.svg"],
   },
@@ -152,17 +153,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-          <PWAInstallPrompt />
-          <CommandPaletteLazy />
-        </ThemeProvider>
+        <MotionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+            <PWAInstallPrompt />
+            <CommandPaletteMount />
+          </ThemeProvider>
+        </MotionProvider>
       </body>
     </html>
   );

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { Footer } from "@/components/ui/footer-section";
 import { Badge } from "@/components/ui/badge";
@@ -25,17 +25,41 @@ import {
   Cpu,
   Database,
 } from "lucide-react";
-import { CATEGORY_COUNTS, TOOL_COUNT } from "@/lib/counts";
-import { type ToolCategory } from "@/lib/tool";
+import { TOOLS, countByCategory } from "@/lib/registry";
+import { CATEGORY_LABELS, type ToolCategory } from "@/lib/tool";
+
+// ===== ANIMATION VARIANTS =====
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as const },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.05 },
+  },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
 
 // ===== DATA =====
-// Home page intentionally does NOT import the 1700-item tool catalog.
-// It only needs a total count + per-category counts + 8 hand-picked
-// featured tools — all inlined below (tiny, parse-once). This keeps the
-// landing page bundle small and free of a long main-thread catalog parse.
 
-const toolCount = TOOL_COUNT;
-const counts = CATEGORY_COUNTS;
+const toolCount = TOOLS.length;
+const counts = countByCategory();
 
 // ===== CATEGORY CARDS (all categories with tools) =====
 const allCategoryCards: {
@@ -125,71 +149,18 @@ const trustBadges = [
   { icon: ShieldCheck, label: "No Tracking" },
 ];
 
-// ===== FEATURED TOOLS (most-used, hand-picked — inlined, no catalog import) =====
-const featuredTools: {
-  id: string;
-  name: string;
-  description: string;
-  category: ToolCategory;
-  status: "done" | "planned" | "beta";
-}[] = [
-  {
-    id: "json-formatter",
-    name: "JSON Formatter",
-    description: "Format, validate, minify, and sort JSON — fully in your browser.",
-    category: "developer",
-    status: "done",
-  },
-  {
-    id: "uuid-generator",
-    name: "UUID Generator",
-    description: "Generate RFC 4122 v4 UUIDs in bulk, with optional hyphens, uppercase, and prefix options.",
-    category: "developer",
-    status: "done",
-  },
-  {
-    id: "password-generator",
-    name: "Password Generator",
-    description: "Generate cryptographically-secure passwords, EFF passphrases, pronounceable passwords, PINs, and Diceware.",
-    category: "network-security",
-    status: "done",
-  },
-  {
-    id: "color-picker",
-    name: "Color Picker & Converter",
-    description: "Pick colors and convert between HEX, RGB, HSL, and HSV with WCAG contrast checking.",
-    category: "image",
-    status: "done",
-  },
-  {
-    id: "base64",
-    name: "Base64 Encoder / Decoder",
-    description: "Encode text or files to Base64, or decode Base64 back to text — UTF-8 safe with URL-safe variant.",
-    category: "developer",
-    status: "done",
-  },
-  {
-    id: "hash-generator",
-    name: "Hash Generator",
-    description: "Generate SHA-1, SHA-256, SHA-384, and SHA-512 hashes with hex and Base64 output via Web Crypto.",
-    category: "developer",
-    status: "done",
-  },
-  {
-    id: "qr-code-generator-image",
-    name: "QR Code Generator",
-    description: "Generate QR codes as images for URL, text, WiFi, vCard, SMS, email with custom colors and logo.",
-    category: "image",
-    status: "done",
-  },
-  {
-    id: "word-character-counter",
-    name: "Word & Character Counter",
-    description: "Live, Unicode-correct word, character, sentence, paragraph, and line counts with reading time.",
-    category: "text",
-    status: "done",
-  },
+// ===== FEATURED TOOLS (most-used, hand-picked) =====
+const featuredToolIds = [
+  "json-formatter",
+  "uuid-generator",
+  "password-generator",
+  "color-picker",
+  "base64",
+  "hash-generator",
+  "qr-code-generator",
+  "word-character-counter",
 ];
+const featuredTools = TOOLS.filter((t) => featuredToolIds.includes(t.id)).slice(0, 8);
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
@@ -219,86 +190,64 @@ const stats = [
 // ===== PAGE COMPONENT =====
 
 export default function Home() {
-  const router = useRouter();
-  const [heroQuery, setHeroQuery] = useState("");
-
-  const submitHeroSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = heroQuery.trim();
-    router.push(q ? `/tools?q=${encodeURIComponent(q)}` : "/tools");
-  };
-
   return (
     <div className="flex min-h-dvh bg-background">
       <SidebarNav />
       <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
         {/* ===== SECTION 1: HERO ===== */}
         <section className="relative section-padding pt-16 pb-20 md:pt-24 md:pb-32 overflow-hidden">
-          {/* Ambient gradient background with soft glow orbs */}
-          <div className="absolute inset-0 -z-10" aria-hidden="true">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-primary/15 blur-3xl opacity-40" />
-            <div className="absolute top-32 -left-24 w-72 h-72 rounded-full bg-amber-400/10 blur-3xl" />
-            <div className="absolute top-64 -right-24 w-80 h-80 rounded-full bg-rose-400/10 blur-3xl" />
-            {/* Subtle dot grid */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,var(--border)_0.75px,transparent_0)] bg-[size:26px_26px] opacity-[0.35] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" />
+          {/* Subtle gradient background */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl opacity-30" />
           </div>
 
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
-            {/* NOTE: The hero above-the-fold content is intentionally plain
-                HTML (no framer-motion / no opacity:0). This makes it visible
-                in the SSR HTML immediately, so LCP ≈ FCP on slow connections.
-                Below-the-fold sections keep their whileInView animations. */}
-            <div className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+            >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">
                 {toolCount} free browser tools — no signup, no tracking
               </span>
-            </div>
+            </motion.div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight text-balance leading-[1.05]">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight text-balance leading-[1.05]"
+            >
               Private tools that{" "}
-              <span className="unq-gradient-text">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-amber-500 to-primary">
                 respect you
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed text-pretty">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
+              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed text-pretty"
+            >
               {toolCount} fast, free, offline-capable browser tools — converters,
               calculators, generators, formatters, PDF utilities, SEO tools. Everything
               runs 100% in your browser. No uploads, no accounts, no tracking.
-            </p>
+            </motion.p>
 
-            {/* Hero quick-search */}
-            <form
-              onSubmit={submitHeroSearch}
-              className="max-w-xl mb-8"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10"
             >
-              <div className="unq-glass group flex items-center gap-2 rounded-2xl border border-border bg-card/60 pl-3.5 pr-1.5 py-1.5 shadow-lg shadow-black/[0.04] transition-all duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
-                <Search className="h-5 w-5 text-muted-foreground shrink-0" />
-                <input
-                  type="text"
-                  value={heroQuery}
-                  onChange={(e) => setHeroQuery(e.target.value)}
-                  placeholder={`Search ${toolCount} tools…`}
-                  aria-label="Search tools"
-                  className="h-11 w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground/70 outline-none"
-                />
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="gap-1.5 shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
-                >
-                  Search
-                </Button>
-              </div>
-            </form>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10">
               <Button
                 asChild
                 size="lg"
-                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 text-base cursor-pointer touch-target shadow-lg shadow-primary/20"
+                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 text-base cursor-pointer touch-target"
               >
                 <Link href="/tools">
                   Browse {toolCount} Tools <ArrowRight className="h-4 w-4" />
@@ -312,10 +261,15 @@ export default function Home() {
               >
                 <Link href="/category/seo">Explore Categories</Link>
               </Button>
-            </div>
+            </motion.div>
 
             {/* Trust badges */}
-            <div className="flex flex-wrap items-center gap-3 mb-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.45 }}
+              className="flex flex-wrap items-center gap-3 mb-10"
+            >
               {trustBadges.map((b) => {
                 const Icon = b.icon;
                 return (
@@ -329,13 +283,18 @@ export default function Home() {
                   </Badge>
                 );
               })}
-            </div>
+            </motion.div>
 
             {/* Stats strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-border/60">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-border/60"
+            >
               {stats.map((s) => (
-                <div key={s.label} className="relative">
-                  <div className="unq-gradient-text text-2xl sm:text-3xl font-bold tracking-tight">
+                <div key={s.label}>
+                  <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
                     {s.value}{s.suffix}
                   </div>
                   <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">
@@ -343,14 +302,18 @@ export default function Home() {
                   </div>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
-        {/* ===== SECTION 2: FEATURED CATALOG ===== */}
+        {/* ===== SECTION 2: FEATURED TOOLS ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
               className="mb-10 flex items-end justify-between gap-4"
             >
               <div>
@@ -371,19 +334,23 @@ export default function Home() {
               >
                 View all <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-            </div>
+            </motion.div>
 
-            <div
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
             >
               {featuredTools.map((tool) => {
                 const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
                 return (
-                  <div key={tool.id}>
-                    <Link href={`/tools/${tool.id}`} className="block group h-full">
-                      <div className="card-hover rounded-2xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30">
+                  <motion.div key={tool.id} variants={staggerItem}>
+                    <Link href={`/tools/${tool.id}`} className="block group">
+                      <div className="rounded-xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md">
                         <div className="flex items-center justify-between mb-3">
-                          <div className="unq-icon-tile h-9 w-9 rounded-lg flex items-center justify-center">
+                          <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
                             <Icon className="h-4.5 w-4.5 text-primary" />
                           </div>
                           {tool.status === "planned" && (
@@ -396,23 +363,27 @@ export default function Home() {
                         <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                           {tool.description}
                         </p>
-                        <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
+                        <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                           <span>Open</span>
                           <ArrowRight className="h-3 w-3 ml-1" />
                         </div>
                       </div>
                     </Link>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ===== SECTION 3: ALL CATEGORIES ===== */}
         <section className="section-padding py-16 md:py-20 bg-muted/20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
               className="mb-10 text-center"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
@@ -425,24 +396,28 @@ export default function Home() {
               <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 {toolCount} tools organized across {allCategoryCards.length} categories.
               </p>
-            </div>
+            </motion.div>
 
-            <div
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
             >
               {allCategoryCards.map((cat) => {
                 const Icon = cat.icon;
                 return (
-                  <div key={cat.href}>
+                  <motion.div key={cat.href} variants={staggerItem}>
                     <Link
                       href={cat.href}
-                      className="block group card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
+                      className="block group rounded-xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md"
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div className="unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center">
+                        <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
                           <Icon className="h-5 w-5 text-primary" />
                         </div>
-                        <Badge variant="secondary" className="text-xs tabular-nums">
+                        <Badge variant="secondary" className="text-xs">
                           {cat.count}
                         </Badge>
                       </div>
@@ -450,22 +425,26 @@ export default function Home() {
                       <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                         {cat.description}
                       </p>
-                      <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
+                      <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                         <span>Explore</span>
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </div>
                     </Link>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ===== SECTION 4: WHY UNQTOOLS (clean feature grid) ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
               className="mb-10 text-center"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
@@ -478,9 +457,13 @@ export default function Home() {
               <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 Every tool runs locally. Your data never leaves your device.
               </p>
-            </div>
+            </motion.div>
 
-            <div
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
             >
               {[
@@ -511,9 +494,9 @@ export default function Home() {
               ].map((f) => {
                 const Icon = f.icon;
                 return (
-                  <div key={f.title} className="h-full">
-                    <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/25">
-                      <div className={`unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center mb-3`}>
+                  <motion.div key={f.title} variants={staggerItem}>
+                    <div className="rounded-xl border bg-card p-6 h-full">
+                      <div className={`h-10 w-10 rounded-lg bg-muted/50 border flex items-center justify-center mb-3`}>
                         <Icon className={`h-5 w-5 ${f.color}`} />
                       </div>
                       <h3 className="font-semibold text-base mb-1.5">{f.title}</h3>
@@ -521,21 +504,24 @@ export default function Home() {
                         {f.description}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ===== SECTION 5: CTA ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-            <div
-              className="unq-glass relative overflow-hidden rounded-3xl border p-8 md:p-12 text-center"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+              className="rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-8 md:p-12 text-center"
             >
-              <div aria-hidden="true" className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-64 w-[520px] rounded-full bg-primary/20 blur-3xl" />
-              <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight text-balance">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight text-balance">
                 Ready to get started?
               </h2>
               <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto mb-6">
@@ -561,7 +547,7 @@ export default function Home() {
                   <Link href="/category/seo">Start with SEO tools</Link>
                 </Button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
