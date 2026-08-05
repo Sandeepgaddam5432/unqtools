@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence, type Transition } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Home,
@@ -35,19 +34,8 @@ import { CATEGORY_COUNTS, TOOL_COUNT } from "@/lib/counts";
 
 const TOOLS_COUNT = TOOL_COUNT;
 
-// Animation values as named module-level constants so JSX props stay
-// single-brace (initial={HIDDEN_W}) — keeps the JSX simple and consistent.
-const HIDDEN_W = { opacity: 0, width: 0 };
-const VISIBLE_W = { opacity: 1, width: "auto" };
-const HIDDEN = { opacity: 0 };
-const VISIBLE = { opacity: 1 };
-const FAST: Transition = { duration: 0.2 };
-const SPRING: Transition = { type: "spring", stiffness: 300, damping: 30 };
-const SPRING_ACTIVE: Transition = { type: "spring", stiffness: 350, damping: 30 };
-const SLIDE_OUT = { x: -300 };
-const SLIDE_IN = { x: 0 };
-const W_EXPANDED = { width: 260 };
-const W_COLLAPSED = { width: 68 };
+const W_EXPANDED = 260;
+const W_COLLAPSED = 68;
 
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
@@ -105,42 +93,33 @@ export function SidebarNav() {
         <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/25 overflow-hidden shadow-sm">
           <img src="/logo.svg" alt="UnQ" width="36" height="36" className="w-full h-full object-cover" />
         </div>
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.div
-              initial={HIDDEN_W}
-              animate={VISIBLE_W}
-              exit={HIDDEN_W}
-              transition={FAST}
-              className="overflow-hidden whitespace-nowrap"
-            >
-              <h1 className="text-base font-bold tracking-tight">
-                UnQ<span className="text-primary">Tools</span>
-              </h1>
-              <p className="text-[10px] text-muted-foreground leading-tight">
-                Private · Offline · {TOOLS_COUNT} tools
-              </p>
-            </motion.div>
+        <div
+          className={cn(
+            "overflow-hidden whitespace-nowrap transition-all duration-200",
+            collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
           )}
-        </AnimatePresence>
+        >
+          <h1 className="text-base font-bold tracking-tight">
+            UnQ<span className="text-primary">Tools</span>
+          </h1>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            Private · Offline · {TOOLS_COUNT} tools
+          </p>
+        </div>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
         {navSections.map((section) => (
           <div key={section.label}>
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.p
-                  initial={HIDDEN}
-                  animate={VISIBLE}
-                  exit={HIDDEN}
-                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
-                >
-                  {section.label}
-                </motion.p>
+            <p
+              className={cn(
+                "px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground overflow-hidden transition-all duration-200",
+                collapsed ? "h-0 opacity-0" : "h-auto opacity-100"
               )}
-            </AnimatePresence>
+            >
+              {section.label}
+            </p>
             <div className="space-y-0.5">
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -162,11 +141,7 @@ export function SidebarNav() {
                     )}
                   >
                     {active && (
-                      <motion.div
-                        layoutId="sidebar-active"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-primary to-amber-500"
-                        transition={SPRING_ACTIVE}
-                      />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-primary to-amber-500" />
                     )}
                     <Icon
                       className={cn(
@@ -176,36 +151,26 @@ export function SidebarNav() {
                           : "text-muted-foreground group-hover:text-foreground"
                       )}
                     />
-                    <AnimatePresence>
-                      {!collapsed && (
-                        <motion.span
-                          initial={HIDDEN_W}
-                          animate={VISIBLE_W}
-                          exit={HIDDEN_W}
-                          transition={FAST}
-                          className="flex-1 overflow-hidden whitespace-nowrap"
-                        >
-                          {item.label}
-                        </motion.span>
+                    <span
+                      className={cn(
+                        "flex-1 overflow-hidden whitespace-nowrap transition-all duration-200",
+                        collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
                       )}
-                    </AnimatePresence>
-                    <AnimatePresence>
-                      {!collapsed && count != null && (
-                        <motion.span
-                          initial={HIDDEN}
-                          animate={VISIBLE}
-                          exit={HIDDEN}
-                          className={cn(
-                            "ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums",
-                            active
-                              ? "bg-primary/15 text-primary"
-                              : "bg-muted text-muted-foreground group-hover:bg-foreground/10"
-                          )}
-                        >
-                          {count}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                    >
+                      {item.label}
+                    </span>
+                    {!collapsed && count != null && (
+                      <span
+                        className={cn(
+                          "ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums",
+                          active
+                            ? "bg-primary/15 text-primary"
+                            : "bg-muted text-muted-foreground group-hover:bg-foreground/10"
+                        )}
+                      >
+                        {count}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -227,33 +192,25 @@ export function SidebarNav() {
           ) : (
             <Moon className="h-4 w-4" />
           )}
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.span
-                initial={HIDDEN}
-                animate={VISIBLE}
-                exit={HIDDEN}
-                className="text-sm"
-              >
-                {theme === "dark" ? "Light Mode" : "Dark Mode"}
-              </motion.span>
+          <span
+            className={cn(
+              "text-sm overflow-hidden whitespace-nowrap transition-all duration-200",
+              collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
             )}
-          </AnimatePresence>
+          >
+            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </span>
         </Button>
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.div
-              initial={HIDDEN}
-              animate={VISIBLE}
-              exit={HIDDEN}
-              className="flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground"
-            >
-              <span>Built with</span>
-              <Heart className="h-3 w-3 text-red-500 fill-red-500" />
-              <span>by Sandeep Gaddam</span>
-            </motion.div>
+        <div
+          className={cn(
+            "flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground overflow-hidden transition-all duration-200",
+            collapsed ? "h-0 opacity-0" : "h-auto opacity-100"
           )}
-        </AnimatePresence>
+        >
+          <span>Built with</span>
+          <Heart className="h-3 w-3 text-red-500 fill-red-500" />
+          <span>by Sandeep Gaddam</span>
+        </div>
       </div>
     </div>
   );
@@ -264,38 +221,24 @@ export function SidebarNav() {
       <MobileHeader menuOpen={mobileOpen} onMenuClick={() => setMobileOpen(!mobileOpen)} />
 
       {/* Mobile Overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={HIDDEN}
-            animate={VISIBLE}
-            exit={HIDDEN}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
-            onClick={() => setMobileOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {mobileOpen && (
+        <div
+          className="unq-animate-fade-in fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
 
       {/* Mobile Sidebar */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.aside
-            initial={SLIDE_OUT}
-            animate={SLIDE_IN}
-            exit={SLIDE_OUT}
-            transition={SPRING}
-            className="unq-glass fixed left-0 top-12 z-50 h-[calc(100%-3rem)] w-72 border-r border-border md:hidden"
-          >
-            {sidebarContent}
-          </motion.aside>
-        )}
-      </AnimatePresence>
+      {mobileOpen && (
+        <aside className="unq-glass fixed left-0 top-12 z-50 h-[calc(100%-3rem)] w-72 border-r border-border md:hidden">
+          {sidebarContent}
+        </aside>
+      )}
 
       {/* Desktop Sidebar */}
-      <motion.aside
-        animate={collapsed ? W_COLLAPSED : W_EXPANDED}
-        transition={SPRING}
-        className="unq-glass hidden md:flex flex-col fixed left-0 top-0 h-full border-r border-border/50 z-30"
+      <aside
+        style={{ width: collapsed ? W_COLLAPSED : W_EXPANDED }}
+        className="unq-glass hidden md:flex flex-col fixed left-0 top-0 h-full border-r border-border/50 z-30 transition-[width] duration-200"
       >
         {sidebarContent}
 
@@ -311,14 +254,12 @@ export function SidebarNav() {
             <ChevronLeft className="h-3 w-3" />
           )}
         </button>
-      </motion.aside>
+      </aside>
 
       {/* Spacer */}
-      <motion.div
-        initial={W_EXPANDED}
-        animate={collapsed ? W_COLLAPSED : W_EXPANDED}
-        transition={SPRING}
-        className="hidden md:block flex-shrink-0"
+      <div
+        style={{ width: collapsed ? W_COLLAPSED : W_EXPANDED }}
+        className="hidden md:block flex-shrink-0 transition-[width] duration-200"
       />
     </>
   );

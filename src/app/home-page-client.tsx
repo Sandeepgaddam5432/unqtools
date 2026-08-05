@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { Footer } from "@/components/ui/footer-section";
 import { Badge } from "@/components/ui/badge";
@@ -28,34 +27,6 @@ import {
 } from "lucide-react";
 import { CATEGORY_COUNTS, TOOL_COUNT } from "@/lib/counts";
 import { type ToolCategory } from "@/lib/tool";
-
-// ===== ANIMATION VARIANTS =====
-
-const sectionVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as const },
-  },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.05 },
-  },
-};
-
-const staggerItem = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" as const },
-  },
-};
 
 // ===== DATA =====
 // Home page intentionally does NOT import the 1700-item tool catalog.
@@ -379,11 +350,7 @@ export default function Home() {
         {/* ===== SECTION 2: FEATURED CATALOG ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5 }}
+            <div
               className="mb-10 flex items-end justify-between gap-4"
             >
               <div>
@@ -404,19 +371,15 @@ export default function Home() {
               >
                 View all <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
+            <div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
             >
               {featuredTools.map((tool) => {
                 const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
                 return (
-                  <motion.div key={tool.id} variants={staggerItem}>
+                  <div key={tool.id}>
                     <Link href={`/tools/${tool.id}`} className="block group h-full">
                       <div className="card-hover rounded-2xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30">
                         <div className="flex items-center justify-between mb-3">
@@ -439,21 +402,17 @@ export default function Home() {
                         </div>
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ===== SECTION 3: ALL CATEGORIES ===== */}
         <section className="section-padding py-16 md:py-20 bg-muted/20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5 }}
+            <div
               className="mb-10 text-center"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
@@ -466,19 +425,15 @@ export default function Home() {
               <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 {toolCount} tools organized across {allCategoryCards.length} categories.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
+            <div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
             >
               {allCategoryCards.map((cat) => {
                 const Icon = cat.icon;
                 return (
-                  <motion.div key={cat.href} variants={staggerItem}>
+                  <div key={cat.href}>
                     <Link
                       href={cat.href}
                       className="block group card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
@@ -500,21 +455,17 @@ export default function Home() {
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ===== SECTION 4: WHY UNQTOOLS (clean feature grid) ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5 }}
+            <div
               className="mb-10 text-center"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
@@ -527,13 +478,9 @@ export default function Home() {
               <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 Every tool runs locally. Your data never leaves your device.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
+            <div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
             >
               {[
@@ -564,7 +511,7 @@ export default function Home() {
               ].map((f) => {
                 const Icon = f.icon;
                 return (
-                  <motion.div key={f.title} variants={staggerItem} className="h-full">
+                  <div key={f.title} className="h-full">
                     <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/25">
                       <div className={`unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center mb-3`}>
                         <Icon className={`h-5 w-5 ${f.color}`} />
@@ -574,21 +521,17 @@ export default function Home() {
                         {f.description}
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ===== SECTION 5: CTA ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5 }}
+            <div
               className="unq-glass relative overflow-hidden rounded-3xl border p-8 md:p-12 text-center"
             >
               <div aria-hidden="true" className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-64 w-[520px] rounded-full bg-primary/20 blur-3xl" />
@@ -618,7 +561,7 @@ export default function Home() {
                   <Link href="/category/seo">Start with SEO tools</Link>
                 </Button>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 

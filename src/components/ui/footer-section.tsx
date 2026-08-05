@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import type { ComponentProps, ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import type { ReactNode } from 'react';
 import { Github, Heart, Lock, WifiOff, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { TOOL_COUNT, ACTIVE_CATEGORIES } from '@/lib/counts';
@@ -149,26 +148,19 @@ export function Footer() {
 
 type ViewAnimationProps = {
   delay?: number;
-  className?: ComponentProps<typeof motion.div>['className'];
+  className?: string;
   children: ReactNode;
 };
 
+// Pure-CSS fade-in (globals.css `.unq-animate-fade-in`) — no framer-motion
+// dependency. Respects prefers-reduced-motion via the CSS media query.
 function AnimatedContainer({ className, delay = 0.1, children }: ViewAnimationProps) {
-  const shouldReduceMotion = useReducedMotion();
-
-  if (shouldReduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
-    <motion.div
-      initial={{ filter: 'blur(4px)', translateY: -8, opacity: 0 }}
-      whileInView={{ filter: 'blur(0px)', translateY: 0, opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.8 }}
-      className={className}
+    <div
+      className={`unq-animate-fade-in ${className ?? ''}`}
+      style={{ animationDelay: `${delay}s` }}
     >
       {children}
-    </motion.div>
+    </div>
   );
-};
+}

@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/pwa-install";
 import { CommandPaletteLazy } from "@/components/command-palette-lazy";
-import { MotionProvider } from "@/components/motion-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -153,19 +152,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <MotionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-            <PWAInstallPrompt />
-            <CommandPaletteLazy />
-          </ThemeProvider>
-        </MotionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+          <PWAInstallPrompt />
+          <CommandPaletteLazy />
+        </ThemeProvider>
       </body>
     </html>
   );
