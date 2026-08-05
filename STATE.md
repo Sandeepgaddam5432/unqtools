@@ -53,4 +53,3 @@ _Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt wit
 ### Known issues
 
 - **555 tools** built in v17.56–v17.61 used generic template logic instead of implementing actual blueprint features. 30 have been rebuilt in v17.63. The remaining 565 generic template/mock tools across developer, pdf, and network-security categories are now explicitly marked with `status: "planned"` (Coming Soon) in their manifest.ts and display "Coming Soon" badges and alert notices in the UI until they are rebuilt. See `BLUEPRINT-COMPLIANCE-AUDIT.md` for the full list.
-- Build OOMs in 4GB sandbox (local `next build` fails) but Cloudflare 7GB runners handle it successfully.
