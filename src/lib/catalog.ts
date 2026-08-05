@@ -6,7 +6,7 @@
  * omitted here — it lives in src/lib/registry.ts and is only imported
  * by server-rendered tool detail pages.
  *
- * 1696 tools. Regenerate with: node scripts/regenerate-catalog.mjs
+ * 1700 tools. Regenerate with: node scripts/regenerate-catalog.mjs
  */
 import type { ToolCategory } from "./tool";
 
@@ -11213,7 +11213,23 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
+    id: "sha1-hash-tool",
+    name: "SHA-1 Hash Generator",
+    description: "Generate SHA-1 hashes using WebCrypto. Text/file, hex/base64.",
+    category: "developer",
+    keywords: ["sha1","sha-1","sha1 hash","hash"],
+    status: "planned",
+  },
+  {
     id: "sha256-hash-generator",
+    name: "SHA-256 Hash Generator",
+    description: "Generate SHA-256 hashes using WebCrypto. Text/file, hex/base64.",
+    category: "developer",
+    keywords: ["sha256","sha-256","sha256 hash","hash"],
+    status: "planned",
+  },
+  {
+    id: "sha256-hash-tool",
     name: "SHA-256 Hash Generator",
     description: "Generate SHA-256 hashes using WebCrypto. Text/file, hex/base64.",
     category: "developer",
@@ -11229,7 +11245,23 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
+    id: "sha3-hash-tool",
+    name: "SHA-3 Hash Generator",
+    description: "Generate SHA-3 (Keccak) hashes. SHA3-256, SHA3-512, pure JS.",
+    category: "developer",
+    keywords: ["sha3","sha-3","keccak","sha3 hash"],
+    status: "planned",
+  },
+  {
     id: "sha512-hash-generator",
+    name: "SHA-512 Hash Generator",
+    description: "Generate SHA-512 hashes using WebCrypto. Text/file, hex/base64.",
+    category: "developer",
+    keywords: ["sha512","sha-512","sha512 hash","hash"],
+    status: "planned",
+  },
+  {
+    id: "sha512-hash-tool",
     name: "SHA-512 Hash Generator",
     description: "Generate SHA-512 hashes using WebCrypto. Text/file, hex/base64.",
     category: "developer",

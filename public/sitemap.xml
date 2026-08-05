@@ -9793,6 +9793,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://unqtools.pages.dev/tools/sha1-hash-tool</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://unqtools.pages.dev/tools/openapi-to-client-sdk</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -9812,6 +9818,18 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/gitattributes-generator</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/sha512-hash-tool</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/nginx-config-generator</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -10063,7 +10081,19 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://unqtools.pages.dev/tools/sha3-hash-tool</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://unqtools.pages.dev/tools/regex-tester-debugger</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/cron-parser-readable</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -10142,6 +10172,12 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/quoted-printable-tool</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/sha256-hash-tool</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
