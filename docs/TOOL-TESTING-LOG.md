@@ -1,17 +1,17 @@
-# UnQTools — 100x Tools Test Log (తెలుగు)
+# UnQTools — 100x Tools Test Log
 
-> **ఉద్దేశ్యం:** waves 1–6 లో rebuild చేసిన **60 tools** అన్నీ, vaati exact options/features
-> tho list chesanu — nuvvu oka oka tool ni methodically test cheyadaniki.
+> **Enduku:** waves 1–6 lo rebuild chesina **60 tools** anni, vaati options/features tho list
+> chesanu — nuvvu oka oka tool ni methodically test cheyadaniki.
 >
-> **ఎలా ఉపయోగించాలి:**
-> 1. Live site లో `/tools/<id>` open cheyyi (లేదా `npm run dev` → `http://localhost:3000/tools/<id>`).
-> 2. Tool లో unna anni features try cheyyi (ఈ list లో unna checkboxes tho).
-> 3. **Test status** column లో raayi: `✅ PASS` (పని చేస్తుంది), `❌ FAIL` (పని చెయ్యడం లేదు),
->    లేదా `⚠️ ISSUE` (+ ఏమి జరిగింది).
+> **Elaa use cheyyali:**
+> 1. Live site lo `/tools/<id>` open cheyyi (leda `npm run dev` → `http://localhost:3000/tools/<id>`).
+> 2. Tool lo unna anni features try cheyyi (list lo unna checkboxes tho).
+> 3. **Test status** column lo raayi: `✅ PASS` (pani chestundi), `❌ FAIL` (pani cheyyatledu),
+>    leda `⚠️ ISSUE` (+ em jarigindo).
 >
-> ప్రతి row: `| Tool | Status | Issues |` — `⬜` స్థానంలో నీ verdict raayi.
+> Prathi row: `| Tool | Status | Issues |` — `⬜` sthanamlo nee verdict raayi.
 
-**లెజెండ్:** ✅ PASS · ❌ FAIL · ⚠️ ISSUE (వివరించు) · ⬜ ఇంకా TEST చేయలేదు
+**Legend:** ✅ PASS · ❌ FAIL · ⚠️ ISSUE (vivarinchu) · ⬜ inka TEST cheyyaledu
 
 ---
 
@@ -34,20 +34,19 @@
 
 ### 1. Compress PDF — `/tools/compress-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] **Drop zone** — ఒకటి లేదా అంతకంటే ఎక్కువ PDFs drag & drop (batch లో 20 వరకు)
-- [ ] **Compression presets** — Very high / High / Normal / Compact / Maximum (5 presets)
-- [ ] **Custom quality** — Custom toggle → JPEG quality slider (10–100%) + downscale slider (25–100%)
-- [ ] **Exact target size** — checkbox → KB టైప్ చేయి (e.g. 200) → auto quality ladder ≤ target వరకు
-- [ ] **Grayscale** — checkbox (scans కి బెస్ట్)
+- [ ] **Drop zone** — okati leda ekkuva PDFs drag & drop cheyyi (batch lo 20 varaku)
+- [ ] **Compression presets** — Very high / High / Normal / Compact / Maximum (5 presets) anni try cheyyi
+- [ ] **Custom quality** — Custom toggle chesi JPEG quality slider (10–100%) + downscale slider (25–100%) adjust cheyyi
+- [ ] **Exact target size** — checkbox on chesi KB type cheyyi (e.g. 200) → auto quality ladder target varaku reduce chestundi
+- [ ] **Grayscale** — checkbox (scans ki best)
 - [ ] **Strip metadata** — checkbox
-- [ ] **Results table** — before/after size, ప్రతి file కి % saved
-- [ ] **Download all (ZIP)** — multi-file → ZIP download; ఒక్క file అయితే direct download
-- [ ] **Privacy note** — "100% local" footer text
+- [ ] **Results table** — prathi file ki before/after size + % saved chudu
+- [ ] **Download all (ZIP)** — multiple files unte ZIP download; okkate file aithe direct download
+- [ ] **Privacy note** — footer lo "100% local" undi
 
-**Notes:** నిజమైన in-browser JPEG re-encoding (canvas). PDF లో embedded images లేకపోతే,
-structural-only compress అవుతుంది (quality పాడవదు) — UI అది చెప్తుంది.
+**Note:** real in-browser JPEG re-encoding (canvas). PDF lo embedded images ledante structural-only compress avtundi — UI adi cheptundi.
 
 | Verdict | Issues |
 |---------|--------|
@@ -57,16 +56,16 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 2. Crop PDF Pages — `/tools/crop-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] **Drop zone** — ఒక్క PDF
-- [ ] **Quick presets** — Trim 5mm / Trim 10mm / Trim 15mm / Cut 25mm
-- [ ] **Reset to full page** — preset button (crop తీసేసి పూర్తి పేజీ చూపిస్తుంది)
-- [ ] **Custom margins** — Top / Bottom / Left / Right number inputs
-- [ ] **Units** — mm / in / pt toggle
-- [ ] **Pages (optional)** — page-range input (e.g. `1, 3-5`)
-- [ ] **Live dimension preview** — "before → after" page size pt లో (టైప్ చేస్తుండగానే update)
-- [ ] **Apply crop** → download
+- [ ] **Drop zone** — oka PDF eyyi
+- [ ] **Quick presets** — Trim 5mm / Trim 10mm / Trim 15mm / Cut 25mm anni try cheyyi
+- [ ] **Reset to full page** — button click cheste crop pothundi, full page vastundi
+- [ ] **Custom margins** — Top / Bottom / Left / Right values type cheyyi
+- [ ] **Units** — mm / in / pt toggle cheyyi
+- [ ] **Pages (optional)** — page-range type cheyyi (e.g. `1, 3-5`)
+- [ ] **Live dimension preview** — "before → after" page size pt lo update avtundi type chestunte
+- [ ] **Apply crop** → download cheyyi
 
 | Verdict | Issues |
 |---------|--------|
@@ -76,17 +75,17 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 3. HTML to PDF — `/tools/html-to-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] **HTML textarea** — HTML paste చేయి (inline styles బెస్ట్ పని చేస్తాయి)
-- [ ] **Load invoice sample / Simple sample** buttons
+- [ ] **HTML textarea** — HTML paste cheyyi (inline styles best pani chestayi)
+- [ ] **Load invoice sample / Simple sample** buttons click cheyyi
 - [ ] **Page size** — A4 / Letter / A5
 - [ ] **Orientation** — Portrait / Landscape
 - [ ] **Margin** — slider (0–40 mm)
-- [ ] **Sharpness** — slider (1×–3× render scale)
+- [ ] **Sharpness** — slider (1×–3×)
 - [ ] **Quality** — slider (50–100%)
 - [ ] **Page numbers in margin** — checkbox
-- [ ] **Convert to PDF** → content ఎక్కువ ఉంటే multi-page slicing → download
+- [ ] **Convert to PDF** → content ekkuva unte multi-page slicing → download
 
 | Verdict | Issues |
 |---------|--------|
@@ -94,16 +93,16 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ---
 
-### 4. Images to PDF — `/tools/images-to-pdf` *(verified deep, 1,864 LOC)*
+### 4. Images to PDF — `/tools/images-to-pdf` *(already deep, 1,864 LOC)*
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Multiple image upload (PNG/JPG/WebP/GIF/HEIC…)
+- [ ] Multiple images upload cheyyi (PNG/JPG/WebP/GIF/HEIC…)
 - [ ] Page size (A4/Letter/Fit/A3/A5…)
 - [ ] Orientation, fit modes (contain/cover/stretch/actual)
 - [ ] Anchor positions, rotation, fill order (across/down)
 - [ ] Units (mm/in), margins
-- [ ] Output PDF download
+- [ ] Output PDF download cheyyi
 
 | Verdict | Issues |
 |---------|--------|
@@ -113,13 +112,13 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 5. Merge PDF — `/tools/merge-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Multiple PDFs add చేయి, drag తో reorder చేయి
+- [ ] Multiple PDFs add cheyyi, drag tho order marchu
 - [ ] Per-file page-range (optional) — e.g. `1-3, 5`
 - [ ] **Interleave pages** checkbox (A1, B1, A2, B2…)
 - [ ] Output filename + metadata (title/author/subject)
-- [ ] Live total page-count preview
+- [ ] Live total page-count preview chudu
 - [ ] Merge → download
 
 | Verdict | Issues |
@@ -130,17 +129,17 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 6. PDF Page Numbers — `/tools/pdf-page-numbers`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Position** — 6 buttons (bottom-left/center/right, top-left/center/right)
-- [ ] **Format** — Plain (X) / Page X / Page X of N / X / N / - X - / Zero-padded / Roman
+- [ ] **Format** — Plain (X) / Page X / Page X of N / X / N / - X - / Zero-padded / Roman anni try cheyyi
 - [ ] **First number** — start value
-- [ ] **Start on page** — numbering ఎక్కడ మొదలవ్వాలో physical page
+- [ ] **Start on page** — numbering ekkada start avvalo physical page
 - [ ] **Font size, Bold, Color** (color picker)
 - [ ] **Prefix / Suffix** — text boxes (e.g. `§ ` / `.`)
 - [ ] **Skip pages** — e.g. `1, 3`
 - [ ] **Only on pages** — e.g. `2-6`
-- [ ] **Live preview** — "First … Last — N of M pages numbered"
+- [ ] **Live preview** — "First … Last — N of M pages numbered" chudu
 - [ ] Add → download
 
 | Verdict | Issues |
@@ -149,13 +148,13 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ---
 
-### 7. PDF to Excel — `/tools/pdf-to-excel-converter` *(verified deep, 2,672 LOC, 93 tests)*
+### 7. PDF to Excel — `/tools/pdf-to-excel-converter` *(already deep, 2,672 LOC, 93 tests)*
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Tables unna PDF upload చేయి
-- [ ] Table detection / multi-sheet output
-- [ ] Download .xlsx
+- [ ] Tables unna PDF upload cheyyi
+- [ ] Table detection / multi-sheet output chudu
+- [ ] Download .xlsx cheyyi
 
 | Verdict | Issues |
 |---------|--------|
@@ -163,12 +162,12 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ---
 
-### 8. PDF to Word — `/tools/pdf-to-word-converter` *(verified deep, 1,963 LOC, 84 tests)*
+### 8. PDF to Word — `/tools/pdf-to-word-converter` *(already deep, 1,963 LOC, 84 tests)*
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → DOCX download
-- [ ] Headings/lists/formatting అలాగే ఉండాలి
+- [ ] Headings/lists/formatting alaage unda chudu
 
 | Verdict | Issues |
 |---------|--------|
@@ -178,16 +177,16 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 9. PDF Watermark — `/tools/pdf-watermark`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] **Watermark text** input
-- [ ] **Image watermark** — PNG/JPG ఎంచుకో + width (pt)
+- [ ] **Watermark text** type cheyyi
+- [ ] **Image watermark** — PNG/JPG choose cheyyi + width (pt)
 - [ ] **Placement** — Diagonal / Tiled / Centered / Custom position
 - [ ] **Custom anchor** — 9-grid anchor buttons + X/Y offset (pt)
 - [ ] **Font size, Opacity slider, Rotation, Color** picker
 - [ ] **Bold text** checkbox
 - [ ] **Pages (optional)** — e.g. `1, 3-5`
-- [ ] **Corner stamp** — అదనపు text (bottom-left)
+- [ ] **Corner stamp** — additional text (bottom-left)
 - [ ] Add → download
 
 | Verdict | Issues |
@@ -196,9 +195,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ---
 
-### 10. Split PDF — `/tools/split-pdf` *(verified deep, 932 LOC)*
+### 10. Split PDF — `/tools/split-pdf` *(already deep, 932 LOC)*
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Split modes — ranges / every N pages / single page
 - [ ] Custom ranges, filename templates ({base}{n}{start}{end})
@@ -231,13 +230,13 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 11. Flatten PDF — `/tools/flatten-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Remove form fields** checkbox (default on)
 - [ ] **Remove annotations** checkbox (default on)
 - [ ] **Remove JavaScript** checkbox (default on)
 - [ ] **Strip metadata** checkbox (default off)
-- [ ] Results report — fields/annotations/JS removed counts + pages with annotations
+- [ ] Results report — fields/annotations/JS removed counts + pages with annotations chudu
 - [ ] Download flattened PDF
 
 | Verdict | Issues |
@@ -248,12 +247,12 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 12. Interleave PDF — `/tools/interleave-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] PDF A + PDF B upload చేయి
-- [ ] **Cycle A / Cycle B** — ఒక్కో round కి pages (e.g. 1:1, 2:2, 3:2)
+- [ ] PDF A + PDF B upload cheyyi
+- [ ] **Cycle A / Cycle B** — oka round ki enni pages (e.g. 1:1, 2:2, 3:2)
 - [ ] **Start with A / Start with B** toggle
-- [ ] Result — total page count (A+B)
+- [ ] Result — total page count (A+B) chudu
 - [ ] Download
 
 | Verdict | Issues |
@@ -264,9 +263,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 13. N-Up PDF — `/tools/n-up-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] **Pages per sheet** — 1–16 (grid auto-compute అవుతుంది)
+- [ ] **Pages per sheet** — 1–16 (grid auto-compute avtundi)
 - [ ] **Sheet size** — A4/Letter/A3/A5/Custom (w/h pt)
 - [ ] **Order** — row-wise / column-wise
 - [ ] **Margin + gutter** (pt)
@@ -282,10 +281,10 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 14. Markdown to PDF — `/tools/markdown-to-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Markdown textarea (headings, **bold**, *italic*, lists, code blocks, quotes)
-- [ ] **GFM tables** — `| a | b |` rows borders + header shading తో render అవ్వాలి
+- [ ] **GFM tables** — `| a | b |` rows borders + header shading tho render avvali
 - [ ] Page size / orientation / margin
 - [ ] **Body size** slider, **page numbers** checkbox
 - [ ] Convert → selectable-text PDF
@@ -298,11 +297,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 15. Remove Blank Pages — `/tools/remove-blank-pages`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Sensitivity** — Off/Light/Strong (0/1/2)
-- [ ] **Scan-range pages** (optional) — e.g. `1-10` మాత్రమే scan
-- [ ] **Preview** — download కి ముందు removed page numbers చూపిస్తుంది
+- [ ] **Scan-range pages** (optional) — e.g. `1-10` matrame scan
+- [ ] **Preview** — download ki mundu removed page numbers chupistundi
 - [ ] Remove → download cleaned PDF
 
 | Verdict | Issues |
@@ -313,7 +312,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 16. Resize PDF Pages — `/tools/resize-pdf-pages`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Presets** — A3/A4/A5/Letter/Legal/Tabloid/Executive
 - [ ] **Custom size** — width/height + unit (pt/mm/in)
@@ -330,10 +329,10 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 17. RTF to PDF — `/tools/rtf-to-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] RTF content paste చేయి (లేదా .rtf upload)
-- [ ] Unicode (`\u233`), hex (`\'e9`), `\tab`, `\par` సరిగ్గా వస్తాయా
+- [ ] RTF content paste cheyyi (leda .rtf upload)
+- [ ] Unicode (`\u233`), hex (`\'e9`), `\tab`, `\par` correct ga vasthaya chudu
 - [ ] Page size / orientation / margin / font size
 - [ ] Convert → PDF
 
@@ -345,11 +344,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 18. Scale PDF Content — `/tools/scale-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Scale** — 10–1000% (0.1–10)
 - [ ] **Anchor** — center / 4 corners
-- [ ] **Keep page size** — content sheet లోపలే scale అవుతుంది (page పెరగదు)
+- [ ] **Keep page size** — content sheet lopale scale avtundi (page pedda avvadu)
 - [ ] **Pages (optional)**
 - [ ] Download
 
@@ -361,11 +360,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 19. SVG to PDF — `/tools/svg-to-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] SVG paste చేయి
+- [ ] SVG paste cheyyi
 - [ ] **Fit mode** — Contain / Cover / Fill / Actual
-- [ ] **White background** toggle (లేదా transparent)
+- [ ] **White background** toggle (leda transparent)
 - [ ] **DPI** — 1×–4× render
 - [ ] Page size (A4/Letter/Fit) + orientation
 - [ ] Convert → PDF
@@ -378,7 +377,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 20. Text to PDF — `/tools/text-to-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Text textarea
 - [ ] **Font** — Helvetica / Times / Courier
@@ -413,11 +412,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 21. Add Background to PDF — `/tools/pdf-add-background`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Mode** — Solid color / Image / PDF page
 - [ ] Color picker + **opacity** slider
-- [ ] Image mode — PNG/JPG ఎంచుకో + fit / tile / stretch
+- [ ] Image mode — PNG/JPG choose + fit / tile / stretch
 - [ ] PDF-page mode — underlay PDF + page number
 - [ ] **Pages (optional)** — e.g. `1, 3-5`
 - [ ] Add → download
@@ -430,7 +429,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 22. Add Page Border — `/tools/pdf-add-border`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Width** (0.25–24 pt), **Inset** (0–100 pt)
 - [ ] **Color** picker
@@ -446,9 +445,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 23. Add Header & Footer — `/tools/pdf-add-header-footer`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Header text + Footer text (`{page}` / `{pages}` placeholders తో)
+- [ ] Header text + Footer text (`{page}` / `{pages}` placeholders tho)
 - [ ] Header position + Footer position — Left / Center / Right
 - [ ] Font size, **Bold**, Color
 - [ ] **Rule lines** checkbox
@@ -463,11 +462,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 24. Add Attachment to PDF — `/tools/pdf-add-attachment`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] PDF ఎంచుకో + ఒకటి లేదా ఎక్కువ files attach (multi-select)
+- [ ] PDF choose + okati leda ekkuva files attach (multi-select)
 - [ ] **Description** (optional)
-- [ ] Attach → download; result open చేస్తే attachments panel లో files + page 1 మీద paperclip కనిపించాలి
+- [ ] Attach → download; result open cheste attachments panel lo files + page 1 meeda paperclip kanipinchali
 
 | Verdict | Issues |
 |---------|--------|
@@ -477,13 +476,13 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 25. Combine Pages Side-by-Side (2-up) — `/tools/pdf-2up-join`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Sheet size — A4/Letter/Custom, orientation (landscape default)
 - [ ] **Margin + gutter** (pt)
 - [ ] **Repeat last page when odd** checkbox
 - [ ] **Divider line** checkbox
-- [ ] Create → download (1+2, 3+4… ఒక్కో sheet లో)
+- [ ] Create → download (1+2, 3+4… oka sheet lo)
 
 | Verdict | Issues |
 |---------|--------|
@@ -493,9 +492,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 26. B&W Scan Optimizer — `/tools/bw-scan-optimizer`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Scanned/image PDF upload చేయి
+- [ ] Scanned/image PDF upload cheyyi
 - [ ] **Threshold** slider (0–255)
 - [ ] **Despeckle** — Off / Light (3×3) / Strong (5×5)
 - [ ] **Dither (halftones)** checkbox
@@ -511,9 +510,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 27. EPUB to PDF — `/tools/epub-to-pdf-converter`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] .epub file upload చేయి
+- [ ] .epub file upload cheyyi
 - [ ] Page size / orientation / margin / body size
 - [ ] **Include chapter titles** checkbox
 - [ ] Convert → selectable-text PDF + chapter/char count report
@@ -526,11 +525,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 28. Office to PDF — `/tools/office-to-pdf`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] .docx upload (bold/italic ఉండాలి)
-- [ ] .xlsx upload (tables rows గా)
-- [ ] .pptx upload (slides వేరుగా)
+- [ ] .docx upload (bold/italic undali)
+- [ ] .xlsx upload (tables rows ga)
+- [ ] .pptx upload (slides separate ga)
 - [ ] .txt / .rtf / .csv upload
 - [ ] Page size / orientation / margin / body size
 - [ ] Convert → PDF + char-count report
@@ -541,9 +540,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ---
 
-### 29. Bates Numbering Tool — `/tools/bates-numbering-tool` *(verified real, 24 tests)*
+### 29. Bates Numbering Tool — `/tools/bates-numbering-tool` *(already real, 24 tests)*
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Custom format, prefix/suffix
 - [ ] 9-grid position, font size, start number
@@ -556,9 +555,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ---
 
-### 30. PDF Accessibility Checker — `/tools/pdf-accessibility-checker` *(verified deep, 2,794 LOC, 78 tests)*
+### 30. PDF Accessibility Checker — `/tools/pdf-accessibility-checker` *(already deep, 2,794 LOC, 78 tests)*
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → accessibility report (tags, contrast, text layer, language…)
 - [ ] Recommendations + summary stats
@@ -588,12 +587,12 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 31. Add Margins to PDF — `/tools/pdf-add-margins`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Top/Bottom/Left/Right margin inputs
 - [ ] **Unit** — mm / in / pt
 - [ ] **Pages (optional)**
-- [ ] Add → download (page పెరుగుతుంది, whitespace margin content చుట్టూ వస్తుంది)
+- [ ] Add → download (page pedda avtundi, whitespace margin content chuttu vastundi)
 
 | Verdict | Issues |
 |---------|--------|
@@ -603,14 +602,14 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 32. Edit/Annotate PDF — `/tools/pdf-annotate`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Type** — Highlight / Note / Square / Line
 - [ ] X, Y, Width, Height (pt)
 - [ ] **Color** picker, **opacity** slider
 - [ ] **Text** (note contents)
-- [ ] **Pages** (e.g. `1` లేదా `1,3`)
-- [ ] Add → download (annotations viewer లో కనిపించాలి)
+- [ ] **Pages** (e.g. `1` leda `1,3`)
+- [ ] Add → download (annotations viewer lo kanipinchali)
 
 | Verdict | Issues |
 |---------|--------|
@@ -620,13 +619,13 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 33. PDF Bookmarks Editor — `/tools/pdf-bookmarks`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] PDF upload → **existing bookmarks** చూపించాలి
+- [ ] PDF upload → **existing bookmarks** chupinchali
 - [ ] Add bookmark — title + page
-- [ ] Add చేసిన bookmark ని remove చేయి
-- [ ] **Remove all bookmarks** button (existing ఉంటేనే)
-- [ ] Save → download; viewer లో open చేస్తే outline panel లో bookmarks కనిపించాలి
+- [ ] Add chesina bookmark ni remove cheyyi
+- [ ] **Remove all bookmarks** button (existing unte)
+- [ ] Save → download; viewer lo open cheste outline panel lo bookmarks kanipinchali
 
 | Verdict | Issues |
 |---------|--------|
@@ -636,9 +635,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 34. PDF Batch Processor — `/tools/pdf-batch-pipeline`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Multiple PDFs add చేయి
+- [ ] Multiple PDFs add cheyyi
 - [ ] **Operation** — Rotate / Compress / Strip metadata / Watermark
 - [ ] Rotate: 90/180/270° choice
 - [ ] Watermark: text input
@@ -653,7 +652,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 35. PDF Metadata Cleaner — `/tools/pdf-clean-metadata`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Clean metadata
 - [ ] Report — fields removed, Info dict, XMP, size saved
@@ -667,7 +666,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 36. Compress to Target Size — `/tools/pdf-compress-target`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Target size (KB)** input — e.g. 200, 500, 1000
 - [ ] Grayscale + strip metadata checkboxes
@@ -682,13 +681,13 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 37. PDF Permissions Editor — `/tools/pdf-permissions`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Owner password (required) + user password (optional)
 - [ ] Printing — None / Low / High
 - [ ] Copying / Modifying / Form filling / Annotations checkboxes
 - [ ] Lock → download
-- [ ] *Note:* build లో encryption లేకపోతే clear error వస్తుంది (అదే expected)
+- [ ] *Note:* build lo encryption ledante clear error vastundi (ade expected)
 
 | Verdict | Issues |
 |---------|--------|
@@ -698,11 +697,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 38. Unlock PDF — `/tools/pdf-unlock`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Password-protected PDF upload చేయి
-- [ ] Password enter చేసి Unlock → download (password లేకుండా open అవ్వాలి)
-- [ ] తప్పు password → clear error
+- [ ] Password-protected PDF upload cheyyi
+- [ ] Password enter chesi Unlock → download (password lekunda open avvali)
+- [ ] Tappu password → clear error
 
 | Verdict | Issues |
 |---------|--------|
@@ -712,11 +711,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 39. Split PDF by Size — `/tools/pdf-split-by-size`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] **Max size per part (KB)**
 - [ ] Run → parts table (name, pages, size) + **Download all (ZIP)**
-- [ ] ప్రతి part ని వేరుగా download చేయడం
+- [ ] Prathi part ni separate ga download cheyyadam
 
 | Verdict | Issues |
 |---------|--------|
@@ -726,12 +725,12 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 40. Create PDF Form — `/tools/pdf-form-builder`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Form title, margin, font size
-- [ ] Fields add చేయి — Text / Checkbox / Radio / Dropdown
-- [ ] Labels edit చేయి; radio/dropdown options (comma separated)
-- [ ] Create → download fillable PDF; viewer లో open చేస్తే fields పని చేయాలి
+- [ ] Fields add cheyyi — Text / Checkbox / Radio / Dropdown
+- [ ] Labels edit cheyyi; radio/dropdown options (comma separated)
+- [ ] Create → download fillable PDF; viewer lo open cheste fields pani cheyali
 
 | Verdict | Issues |
 |---------|--------|
@@ -758,7 +757,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 41. Extract Text (PDF to TXT) — `/tools/pdf-extract-text`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Extract → text preview + page/char report
 - [ ] **Copy text** button
@@ -773,10 +772,10 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 42. PDF Word Count — `/tools/pdf-word-count`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Count → stat cards (words/chars/no-spaces/sentences/paragraphs/reading time)
-- [ ] Per-page table (పేజీలు >1 ఉంటే)
+- [ ] Per-page table (pages >1 unte)
 
 | Verdict | Issues |
 |---------|--------|
@@ -786,7 +785,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 43. PDF to JSON — `/tools/pdf-to-json`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Convert → pretty JSON preview (metadata + per-page text + counts)
 - [ ] **Copy JSON** / **Download .json**
@@ -799,9 +798,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 44. PDF to Markdown — `/tools/pdf-to-markdown`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] PDF upload → Convert → Markdown `##` headings తో (పెద్ద font → headings)
+- [ ] PDF upload → Convert → Markdown `##` headings tho (pedda font → headings)
 - [ ] **Copy Markdown** / **Download .md**
 
 | Verdict | Issues |
@@ -812,10 +811,10 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 45. Extract Images — `/tools/pdf-extract-images`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Image-based PDF upload → Extract → table (name/format/dimensions/size)
-- [ ] ప్రతి image ని వేరుగా download
+- [ ] Prathi image ni separate ga download
 - [ ] **Download all (ZIP)**
 - [ ] Text-only PDF → "no images found" error
 
@@ -827,10 +826,10 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 46. Invert PDF Colors (Dark Mode) — `/tools/pdf-invert-colors`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Image-based PDF upload → Invert → report (images inverted, pixels)
-- [ ] Download inverted PDF (images dark-mode అవ్వాలి)
+- [ ] Download inverted PDF (images dark-mode avvali)
 
 | Verdict | Issues |
 |---------|--------|
@@ -840,7 +839,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 47. Grayscale PDF — `/tools/pdf-grayscale`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Image-based PDF upload → Convert → report
 - [ ] Download grayscale PDF
@@ -853,11 +852,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 48. Split PDF by Bookmarks — `/tools/pdf-split-by-bookmarks`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] **≥2 bookmarks ఉన్న PDF** upload → Split → chapter parts (title, pages, size)
+- [ ] **≥2 bookmarks unna PDF** upload → Split → chapter parts (title, pages, size)
 - [ ] **Download all (ZIP)**
-- [ ] Bookmarks లేకపోతే clear error
+- [ ] Bookmarks ledante clear error
 
 | Verdict | Issues |
 |---------|--------|
@@ -867,7 +866,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 49. Export PDF Form Data — `/tools/pdf-export-form-data`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Filled form PDF upload → Export → field/type/value table
 - [ ] **Download CSV / JSON / FDF**
@@ -880,7 +879,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 50. Poster Split — `/tools/pdf-poster-split`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Page / Rows / Columns / Overlap inputs
 - [ ] **Tile output size** — Fit / A4 / Letter
@@ -911,9 +910,9 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 51. PDF to HTML — `/tools/pdf-to-html`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] PDF upload → Convert → HTML preview (paragraphs + images data URLs గా)
+- [ ] PDF upload → Convert → HTML preview (paragraphs + images data URLs ga)
 - [ ] **Copy HTML** / **Download .html**
 
 | Verdict | Issues |
@@ -924,12 +923,12 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 52. Find & Replace Text — `/tools/pdf-find-replace`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Real text ఉన్న PDF upload → Find / Replace with
+- [ ] Real text unna PDF upload → Find / Replace with
 - [ ] **Case sensitive** checkbox
 - [ ] Run → report (N replacements in M streams)
-- [ ] Download updated PDF; open చేస్తే text replaced అయ్యి ఉండాలి
+- [ ] Download updated PDF; open cheste text replaced ayyi undali
 
 | Verdict | Issues |
 |---------|--------|
@@ -939,11 +938,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 53. Auto-Redact PII — `/tools/pdf-auto-redact-pii`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Emails/phones/Aadhaar/cards/IP/PAN/SSN ఉన్న PDF upload
+- [ ] Emails/phones/Aadhaar/cards/IP/PAN/SSN unna PDF upload
 - [ ] Scan → per-type counts + match table (page, type, value)
-- [ ] **Download masked TXT** (values `***` తో replace అవ్వాలి)
+- [ ] **Download masked TXT** (values `***` tho replace avvali)
 - [ ] Clean text → no matches
 
 | Verdict | Issues |
@@ -954,11 +953,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 54. Merge PDF with Bookmarks — `/tools/pdf-merge-bookmarks`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] 2+ PDFs add → Merge → file-level bookmarks + internal bookmarks re-anchored
 - [ ] Report (files/pages/bookmarks)
-- [ ] Download; open చేస్తే outline panel లో అన్ని bookmarks కనిపించాలి
+- [ ] Download; open cheste outline panel lo anni bookmarks kanipinchali
 
 | Verdict | Issues |
 |---------|--------|
@@ -968,7 +967,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 55. PDF Document Info Viewer — `/tools/pdf-document-info-viewer`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → View → metadata cards (title/author/subject/creator/producer/pages/encrypted)
 - [ ] Per-page table (size + rotation)
@@ -982,11 +981,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 56. Import Form Data — `/tools/pdf-import-form-data`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] Form PDF + FDF / JSON / CSV data file upload
 - [ ] Fill → report (set/skipped fields)
-- [ ] Download filled PDF; open చేస్తే values కనిపించాలి
+- [ ] Download filled PDF; open cheste values kanipinchali
 
 | Verdict | Issues |
 |---------|--------|
@@ -996,11 +995,11 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 57. Repair PDF — `/tools/pdf-repair`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
-- [ ] Damaged PDF upload (లేదా trailing garbage ఉన్నది) → Repair
+- [ ] Damaged PDF upload (leda trailing garbage unnaadi) → Repair
 - [ ] Notes list (trimmed junk / permissive parse / re-saved)
-- [ ] Download repaired PDF; viewer లో open అవ్వాలి
+- [ ] Download repaired PDF; viewer lo open avvali
 
 | Verdict | Issues |
 |---------|--------|
@@ -1010,7 +1009,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 58. PDF Text-to-Speech — `/tools/pdf-text-to-speech`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Extract for reading
 - [ ] **Read aloud** button (browser voice) + Stop
@@ -1025,12 +1024,12 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 59. PDF Summarize (On-Device AI) — `/tools/pdf-summarize-ai`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → **Summary length** (sentences)
 - [ ] Summarize → key-sentence summary + ratio report
 - [ ] **Copy summary** / **Download .txt**
-- [ ] Sentences లేకపోతే clear error
+- [ ] Sentences ledante clear error
 
 | Verdict | Issues |
 |---------|--------|
@@ -1040,10 +1039,10 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ### 60. PDF to EPUB — `/tools/pdf-to-epub`
 
-**Test చేయవలసిన options/features:**
+**Ee features test cheyyi:**
 
 - [ ] PDF upload → Convert → EPUB report (chapters/chars)
-- [ ] **Download .epub**; e-book reader లో open చేయి (e.g. Calibre)
+- [ ] **Download .epub**; e-book reader lo open cheyyi (e.g. Calibre)
 
 | Verdict | Issues |
 |---------|--------|
@@ -1053,7 +1052,7 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 
 ## Summary tally
 
-| Wave | Tools | ✅ Pass | ❌ Fail | ⚠️ Issue | ⬜ Test కాలేదు |
+| Wave | Tools | ✅ Pass | ❌ Fail | ⚠️ Issue | ⬜ Test cheyyaledu |
 |------|------:|-------:|-------:|---------:|--------------:|
 | 1 (v18.2) | 10 | 0 | 0 | 0 | 10 |
 | 2 (v18.3) | 10 | 0 | 0 | 0 | 10 |
@@ -1063,5 +1062,5 @@ structural-only compress అవుతుంది (quality పాడవదు) �
 | 6 (v18.7) | 10 | 0 | 0 | 0 | 10 |
 | **Total** | **60** | **0** | **0** | **0** | **60** |
 
-> Test పూర్తి చేసిన తర్వాత: ఈ file update చేయి (✅/❌/⚠️ mark చేసి issues రాయి), commit + push
-> చేయి — లేదా failed tools నాకు పంపిస్తే నేను fix చేస్తాను.
+> Test poorthi chesaka: ee file update cheyyi (✅/❌/⚠️ mark chesi issues raayi), commit + push
+> cheyyi — leda failed tools naaku pampisthe nenu fix chestanu.
