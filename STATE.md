@@ -12,6 +12,12 @@ Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 - **v17.67:** Added **XML Formatter** (developer), **Email Validator** (developer),
   **Currency Converter** (calculators, offline reference rates). Tool count → **1704**.
   All 100% offline. Lint + tests pass; catalog/sitemap regenerated (1719 URLs).
+- **v17.68:** **Codebase cleanup (ponytail)** — deleted dead code: `archive/` (1.1MB,
+  84 files) + 6 unused UI components. **All 1704 tools intact.** no-archive-imports +
+  51 tests pass; lint clean.
+- **v17.69:** **CSS perf (ponytail)** — removed 5 unused Tailwind animation tokens
+  (marquee/meteor/orbit/ripple). globals.css 12.3KB→10.9KB. Perf work confirmed intact
+  (framer-motion out of landing, catalog split, lazy palette, hero plain HTML).
 
 - **v17.64 perf work (on branch):** logo 589KB→12KB, source-maps off, catalog split,
   counts, lazy command palette, hero/LCP fix, framer-motion out of landing route.
