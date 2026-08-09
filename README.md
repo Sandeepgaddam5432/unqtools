@@ -9,6 +9,13 @@ tool-collection sites.
 
 ## Status
 
+**v18.6 — PDF 100x wave 5: 50 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
+
+Waves 1–5 rebuilt/added 50 PDF tools to the 100x bar — including a real shared text-
+extraction engine powering TXT/JSON/Markdown/word-count converters, image extraction,
+dark-mode inversion, grayscale, bookmark-based splitting, form-data export, and poster
+tiling. Full comparison: [`docs/PDF-100x-TOOLS.md`](./docs/PDF-100x-TOOLS.md).
+
 **v18.5 — PDF 100x wave 4: 40 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
 
 Waves 1–4 rebuilt 40 PDF tools to the 100x bar — including 18 fake template stubs turned

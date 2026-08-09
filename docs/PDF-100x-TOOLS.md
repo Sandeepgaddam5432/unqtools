@@ -113,3 +113,23 @@ tools went from fake `validate/process` stubs to real pdf-lib engines with real 
 **Wave 4 verified:** 7,276 PDF tests pass (309 files; +56 new across 10 tools); ESLint clean on all
 touched files; the 10 tools' manifests flipped `planned → done` (all previously "Coming Soon");
 no tools removed (1,679 intact). All 10 were generic template stubs before this wave.
+
+---
+
+## Wave 5 (v18.6) — next 10 NEW PDF capabilities (text extraction family + image ops + structural)
+
+| # | Tool | Real engine |
+|---|------|-------------|
+| 41 | **Extract Text (PDF to TXT)** | New shared content-stream text extractor (`_shared/text-extract.ts`): decodes FlateDecode streams, parses Tj/TJ/hex-string operators, reconstructs lines — 10 shared + 5 tool tests |
+| 42 | **PDF Word Count** | Words/chars/sentences/paragraphs/reading time + per-page table — 10 tests |
+| 43 | **PDF to JSON** | Metadata + per-page text + word counts as structured JSON — 3 tests |
+| 44 | **PDF to Markdown** | Text with font-size heading detection (## / ###) + paragraphs + bullets — 5 tests |
+| 45 | **Extract Images** | Pulls every embedded PNG/JPEG out with format/dimensions + ZIP — 4 tests |
+| 46 | **Invert Colors (Dark Mode)** | Canvas pixel-invert of embedded images, swapped back — 4 tests |
+| 47 | **Grayscale** | Canvas luminance→gray of embedded images — 4 tests |
+| 48 | **Split by Bookmarks** | Reads outline tree, splits at bookmark boundaries into chapters — 4 tests |
+| 49 | **Export Form Data** | All form field values → CSV / JSON / FDF (Acrobat-compatible) — 5 tests |
+| 50 | **Poster Split** | Slices a page into ROWS×COLS tiles with overlap + per-tile page size — 5 tests |
+
+**Wave 5 verified:** 7,143 PDF tests pass (310 files; +95 new across 10 tools + shared engine);
+ESLint clean; manifests flipped `planned → done`; no tools removed (1,679 intact).

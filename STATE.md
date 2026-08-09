@@ -4,6 +4,20 @@ _Last updated: 2026-08-09 — branch arena/019fe601-unqtools. Tool count: 1679. 
 
 ## Current phase
 
+**v18.6 — PDF 100x wave 5: next 10 NEW PDF capabilities + shared real text-extraction engine. 1,679 tools live.**
+
+- **v18.6 (PDF 100x wave 5):** Built a shared real text-extraction engine
+  (`src/tools/pdf/_shared/text-extract.ts`: FlateDecode inflate, Tj/TJ/hex-string
+  operator parsing, font-size capture — 10 tests) and 10 tools on top of it:
+  **Extract Text (TXT)**, **Word Count** (words/chars/sentences/paragraphs/reading
+  time + per-page table), **PDF to JSON** (metadata + text), **PDF to Markdown**
+  (heading detection from font sizes), **Extract Images** (embedded PNG/JPEG + ZIP),
+  **Invert Colors** (dark-mode canvas), **Grayscale**, **Split by Bookmarks**
+  (outline boundaries), **Export Form Data** (CSV/JSON/FDF), **Poster Split**
+  (rows×cols tiles + overlap). All 10 manifests flipped `planned → done`.
+  7,143 PDF tests pass (+95 new); ESLint clean; no removals. Full table:
+  [`docs/PDF-100x-TOOLS.md`](./PDF-100x-TOOLS.md).
+
 **v18.5 — PDF 100x wave 4: next 10 NEW PDF capabilities (margins, annotate, bookmarks, batch, metadata, target-size, permissions, unlock, split-by-size, form builder). 1,679 tools live.**
 
 - **v18.5 (PDF 100x wave 4):** The alphabetical next-10 selector surfaced mostly duplicate

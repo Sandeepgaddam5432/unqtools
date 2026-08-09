@@ -7594,7 +7594,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Add margins/whitespace to PDF pages. Custom margin size, all sides or per-side.",
     category: "pdf",
     keywords: ["pdf margins","pdf padding","pdf whitespace","pdf border"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-add-page-numbers",
@@ -7666,7 +7666,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Annotate PDFs. Highlights, comments, drawings, stamps, text boxes.",
     category: "pdf",
     keywords: ["pdf annotate","pdf comment","pdf markup","annotate pdf"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-annotate-tool",
@@ -7770,7 +7770,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Batch process PDFs. Apply same operations to multiple files at once.",
     category: "pdf",
     keywords: ["pdf batch","batch pdf","bulk pdf","pdf pipeline"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-batch-processor",
@@ -7834,7 +7834,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "View, edit, add, remove PDF bookmarks/outline. Hierarchical structure, drag-drop.",
     category: "pdf",
     keywords: ["pdf bookmarks","pdf outline","pdf toc","pdf contents"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-bookmarks-editor",
@@ -7906,7 +7906,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Remove all metadata from PDF for privacy. Author, dates, custom properties.",
     category: "pdf",
     keywords: ["pdf metadata","clean metadata","anonymize pdf","pdf privacy"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-color-separation",
@@ -7962,7 +7962,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Compress PDF to a specific target file size. Iterative quality reduction.",
     category: "pdf",
     keywords: ["compress pdf","pdf size","target size","reduce pdf"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-compress-target-size",
@@ -8354,7 +8354,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Create fillable PDF forms. Text fields, checkboxes, radio, dropdowns.",
     category: "pdf",
     keywords: ["pdf form","form builder","fillable pdf","pdf fields"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-form-builder-tool",
@@ -8970,7 +8970,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Edit PDF permissions. Print, copy, modify, annotate restrictions.",
     category: "pdf",
     keywords: ["pdf permissions","pdf restrictions","pdf security","pdf rights"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-portfolio-builder",
@@ -9274,7 +9274,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Split PDF into parts by target file size. Useful for email attachments.",
     category: "pdf",
     keywords: ["split pdf size","pdf split size","split by size","pdf size"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-split-spreads",
@@ -9826,7 +9826,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Remove password protection from PDF (if you know the password). Strip encryption.",
     category: "pdf",
     keywords: ["unlock pdf","pdf password remove","decrypt pdf","pdf unlock"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-version-converter",

@@ -1,114 +1,50 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument, StandardFonts } from "pdf-lib";
+import { linesToMarkdown, pdfToMarkdown } from "./logic";
+import type { TextLine } from "../_shared/text-extract";
 
-describe("PDF to Markdown Converter", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+describe("linesToMarkdown", () => {
+  it("turns large-font lines into headings", () => {
+    const lines: TextLine[] = [
+      { text: "Big Title", fontSize: 24 },
+      { text: "Normal paragraph text here", fontSize: 12 },
+      { text: "More body text", fontSize: 12 },
+    ];
+    const md = linesToMarkdown(lines, 12);
+    expect(md).toContain("## Big Title");
+    expect(md).toContain("Normal paragraph text here");
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("keeps bullet lines", () => {
+    const md = linesToMarkdown([{ text: "- item one", fontSize: 12 }, { text: "- item two", fontSize: 12 }], 12);
+    expect(md).toContain("- item one");
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("joins body lines into paragraphs", () => {
+    const md = linesToMarkdown([{ text: "A", fontSize: 12 }, { text: "B", fontSize: 12 }], 12);
+    expect(md).toContain("A B");
+  });
+});
+
+describe("pdfToMarkdown", () => {
+  it("converts a real PDF to markdown", async () => {
+    const doc = await PDFDocument.create();
+    const font = await doc.embedFont(StandardFonts.Helvetica);
+    const page = doc.addPage([300, 400]);
+    page.drawText("Main heading", { x: 40, y: 320, size: 22, font });
+    page.drawText("Body paragraph with several words.", { x: 40, y: 290, size: 12, font });
+    const r = await pdfToMarkdown(await doc.save());
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.markdown).toContain("Main heading");
+      expect(r.output.markdown).toContain("Body paragraph");
+      const md = new TextDecoder().decode(r.output.bytes);
+      expect(md.length).toBeGreaterThan(0);
+    }
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
-  });
-
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
-  });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-    expect(formatBytes(1073741824)).toBe("1.00 GB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-    expect(formatDuration(90000)).toBe("1.5m");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    const id1 = randomId();
-    const id2 = randomId();
-    expect(id1).not.toBe(id2);
-  });
-
-  it("detects PDF file type", () => {
-    const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46]);
-    expect(detectFileType(pdfBytes)).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    const pngBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
-    expect(detectFileType(pngBytes)).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    const unknown = new Uint8Array([0x00, 0x00, 0x00, 0x00]);
-    expect(detectFileType(unknown)).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-    expect(getMimeType("json")).toBe("application/json");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.ratio).toBeLessThan(1);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("rejects corrupt PDFs", async () => {
+    const r = await pdfToMarkdown(new Uint8Array([1, 2]));
+    expect(r.ok).toBe(false);
   });
 });

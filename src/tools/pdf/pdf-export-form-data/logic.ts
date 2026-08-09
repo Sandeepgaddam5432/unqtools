@@ -1,113 +1,107 @@
 /**
- * Export PDF Form Data (FDF/XFDF/CSV) — pure logic.
+ * Export PDF Form Data (CSV / FDF / JSON) — real engine.
+ *
+ * Reads all interactive form fields (text, checkbox, radio, dropdown,
+ * signature) and exports their current values as CSV, JSON, or FDF (Form
+ * Data Format) — the interchange format Acrobat understands. Pure pdf-lib
+ * form API, unit-tested.
  */
+import { PDFDocument, PDFName, PDFDict, PDFString, PDFHexString } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface FormFieldValue {
+  name: string;
+  type: string;
+  value: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface ExportResult {
+  fields: FormFieldValue[];
+  csv: string;
+  json: string;
+  fdf: string;
+  bytes: Uint8Array;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
+/** Read all form field names + values. Pure-ish (needs a loaded doc). */
+export function readFormFields(doc: PDFDocument): FormFieldValue[] {
+  const out: FormFieldValue[] = [];
   try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    const form = doc.getForm();
+    for (const field of form.getFields()) {
+      const name = field.getName() ?? "";
+      const ctor = field.constructor.name;
+      const type = ctor.replace(/^PDF/, "").replace(/Field$/, "");
+      let value = "";
+      try {
+        if (ctor === "PDFTextField" || ctor === "PDFRadioGroup") {
+          value = (field as { getText?: () => string }).getText?.() ?? "";
+        } else if (ctor === "PDFDropdown") {
+          const sel = (field as { getSelected?: () => string[] }).getSelected?.() ?? [];
+          value = sel[0] ?? "";
+        } else if (ctor === "PDFCheckBox") {
+          value = (field as { isChecked?: () => boolean }).isChecked?.() ? "true" : "false";
+        } else if (ctor === "PDFOptionList") {
+          const sel = (field as { getSelected?: () => string[] }).getSelected?.() ?? [];
+          value = sel.join(", ");
+        }
+      } catch {
+        value = "";
+      }
+      out.push({ name, type, value });
+    }
+  } catch {
+    /* no fields */
   }
+  return out;
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+/** Build a CSV document from field values. Pure. */
+export function fieldsToCsv(fields: FormFieldValue[]): string {
+  const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
+  const rows = [["name", "type", "value"].map(esc).join(",")];
+  for (const f of fields) rows.push([esc(f.name), esc(f.type), esc(f.value)].join(","));
+  return rows.join("\n");
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
+/** Build FDF (Form Data Format) XML. Pure. */
+export function fieldsToFdf(fields: FormFieldValue[]): string {
+  const parts = fields.map(
+    (f) => `      <field name="${f.name.replace(/"/g, "&quot;")}"><value>${f.value.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</value></field>`
+  );
+  return `%FDF-1.2
+1 0 obj
+<< /FDF << /Fields [
+${parts.join("\n")}
+] >> >>
+endobj
+trailer
+<< /Root 1 0 R >>
+%%EOF
+`;
 }
 
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
+export async function exportFormData(bytes: Uint8Array): Promise<ToolResult<ExportResult>> {
+  let doc: PDFDocument;
+  try {
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
+  }
+  const fields = readFormFields(doc);
+  if (fields.length === 0) {
+    return { ok: false, error: "No interactive form fields were found in this PDF." };
+  }
+  const csv = fieldsToCsv(fields);
+  const json = JSON.stringify(fields, null, 2);
+  const fdf = fieldsToFdf(fields);
+  return {
+    ok: true,
+    output: { fields, csv, json, fdf, bytes: new TextEncoder().encode(fdf) },
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
 }
 
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
-}
+void PDFName;
+void PDFDict;
+void PDFString;
+void PDFHexString;

@@ -1,105 +1,72 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument } from "pdf-lib";
+import { exportFormData, fieldsToCsv, fieldsToFdf } from "./logic";
 
-describe("Export PDF Form Data (FDF/XFDF/CSV)", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+async function makeFormPdf(): Promise<Uint8Array> {
+  const doc = await PDFDocument.create();
+  const page = doc.addPage([300, 400]);
+  const form = doc.getForm();
+  const name = form.createTextField("fullname");
+  name.addToPage(page, { x: 50, y: 300, width: 150, height: 20 });
+  name.setText("Sandeep Gaddam");
+  const cb = form.createCheckBox("agree");
+  cb.addToPage(page, { x: 50, y: 260, width: 16, height: 16 });
+  cb.check();
+  const dd = form.createDropdown("country");
+  dd.addToPage(page, { x: 50, y: 220, width: 150, height: 20 });
+  dd.setOptions(["IN", "US"]);
+  dd.select("IN");
+  return doc.save();
+}
+
+describe("fieldsToCsv", () => {
+  it("builds a CSV with header + rows", () => {
+    const csv = fieldsToCsv([
+      { name: "fullname", type: "TextField", value: 'Sa"nd' },
+      { name: "agree", type: "CheckBox", value: "true" },
+    ]);
+    expect(csv).toContain('"name","type","value"');
+    expect(csv).toContain('"fullname","TextField","Sa""nd"');
+  });
+});
+
+describe("fieldsToFdf", () => {
+  it("builds FDF with field values", () => {
+    const fdf = fieldsToFdf([{ name: "country", type: "Dropdown", value: "IN" }]);
+    expect(fdf).toContain("%FDF-1.2");
+    expect(fdf).toContain('<field name="country">');
+    expect(fdf).toContain("<value>IN</value>");
+  });
+});
+
+describe("exportFormData", () => {
+  it("exports all field values", async () => {
+    const r = await exportFormData(await makeFormPdf());
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.fields.length).toBe(3);
+      const name = r.output.fields.find((f) => f.name === "fullname");
+      expect(name?.value).toBe("Sandeep Gaddam");
+      const agree = r.output.fields.find((f) => f.name === "agree");
+      expect(agree?.value).toBe("true");
+      const country = r.output.fields.find((f) => f.name === "country");
+      expect(country?.value).toBe("IN");
+      expect(r.output.csv).toContain("fullname");
+      expect(r.output.json).toContain("Sandeep Gaddam");
+      expect(r.output.fdf).toContain("%FDF-1.2");
+    }
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("reports when there are no fields", async () => {
+    const doc = await PDFDocument.create();
+    const page = doc.addPage([200, 300]);
+    page.drawText("no fields", { x: 5, y: 5, size: 8 });
+    const r = await exportFormData(await doc.save());
+    expect(r.ok).toBe(false);
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
-  });
-
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
-  });
-
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
-  });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("rejects corrupt PDFs", async () => {
+    const r = await exportFormData(new Uint8Array([1, 2]));
+    expect(r.ok).toBe(false);
   });
 });

@@ -1,153 +1,101 @@
 /**
- * PDF to Markdown Converter — pure logic.
+ * PDF to Markdown — real engine.
+ *
+ * Extracts text with line-level font sizes (from the content stream Tf
+ * operators) and reconstructs Markdown: lines with a notably larger font
+ * become headings (## / ###), paragraphs separated by blank lines, bullet
+ * markers preserved when the source already had them. Output is selectable
+ * Markdown text.
  */
+import type { ToolResult } from "../../../lib/tool";
+import { extractAllText, parseContentText, inflateBytes, type TextLine } from "../_shared/text-extract";
+import { PDFDocument } from "pdf-lib";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface MdResult {
+  markdown: string;
+  bytes: Uint8Array;
+  pageCount: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
-}
-
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+/** Pure: convert extracted lines (with font sizes) into Markdown. */
+export function linesToMarkdown(lines: TextLine[], bodySize = 12): string {
+  // Heuristic: find the most common font size → body.
+  const sizes = lines.map((l) => l.fontSize).filter((s) => s > 0);
+  const counts = new Map<number, number>();
+  for (const s of sizes) counts.set(s, (counts.get(s) ?? 0) + 1);
+  let body = bodySize;
+  let best = 0;
+  for (const [s, c] of counts) {
+    if (c > best) {
+      best = c;
+      body = s;
+    }
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    // Generic processing — returns input as-is (override in specific tools)
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function copyToClipboard(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    return navigator.clipboard.writeText(text);
-  }
-  return Promise.reject(new Error("Clipboard API not available"));
-}
-
-export function downloadFile(content: string | Blob, filename: string, mime = "text/plain"): void {
-  const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  // PDF
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  // PNG
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  // JPEG
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  // GIF
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  // ZIP
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  // GZIP
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    gif: "image/gif",
-    webp: "image/webp",
-    svg: "image/svg+xml",
-    html: "text/html",
-    css: "text/css",
-    js: "application/javascript",
-    json: "application/json",
-    xml: "application/xml",
-    csv: "text/csv",
-    txt: "text/plain",
-    md: "text/markdown",
-    zip: "application/zip",
+  const out: string[] = [];
+  let para: string[] = [];
+  const flushPara = () => {
+    if (para.length > 0) {
+      out.push(para.join(" "));
+      para = [];
+    }
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
+  for (const l of lines) {
+    const fs = l.fontSize > 0 ? l.fontSize : body;
+    if (fs >= body * 1.35) {
+      flushPara();
+      const level = fs >= body * 1.8 ? "##" : "###";
+      out.push(`${level} ${l.text}`);
+    } else if (l.text.startsWith("- ") || l.text.startsWith("* ")) {
+      flushPara();
+      out.push(l.text);
+    } else {
+      para.push(l.text);
+    }
+  }
+  flushPara();
+  return out.join("\n\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
-export function getStats(input: string, output: string): {
-  inputSize: number;
-  outputSize: number;
-  ratio: number;
-  savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
+export async function pdfToMarkdown(bytes: Uint8Array): Promise<ToolResult<MdResult>> {
+  const r = await extractAllText(bytes);
+  if (!r.ok) return r;
 
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+  // Get font-size-aware lines per page for heading detection.
+  let doc: PDFDocument;
+  try {
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF." };
+  }
+  const md: string[] = [];
+  const pages = doc.getPages();
+  for (let p = 0; p < pages.length; p++) {
+    const contents = pages[p]!.node.Contents();
+    let lines: TextLine[] = [];
+    if (contents) {
+      const arr = (contents as unknown as { array?: unknown[] }).array;
+      const items: unknown[] = Array.isArray(arr) ? arr : [contents];
+      for (const item of items) {
+        const ref = item as { objectNumber?: number };
+        const looked = ref.objectNumber ? doc.context.lookup(ref as never) : (item as never);
+        const raw = (looked as { contents?: Uint8Array }).contents;
+        if (raw) {
+          const inflated = await inflateBytes(raw);
+          const data = inflated ?? raw;
+          lines = lines.concat(parseContentText(data));
+        }
+      }
+    }
+    if (lines.length === 0) {
+      // Fall back to plain text lines (no font info).
+      lines = r.pages[p]!.split("\n").map((t) => ({ text: t, fontSize: 0 }));
+    }
+    md.push(linesToMarkdown(lines));
+  }
+
+  const markdown = md.join("\n\n---\n\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+  return {
+    ok: true,
+    output: { markdown, bytes: new TextEncoder().encode(markdown), pageCount: r.pageCount },
+  };
 }

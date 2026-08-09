@@ -1,113 +1,107 @@
 /**
- * Split PDF Page into Poster Tiles — pure logic.
+ * Split PDF Page into Poster Tiles — real engine.
+ *
+ * Takes one page and slices it into an ROWS×COLS grid of tiles, each tile
+ * becoming its own PDF page — print the tiles and assemble them into a
+ * large poster. Crop boxes are used (non-destructive), text stays vector.
+ * Pure pdf-lib.
  */
+import { PDFDocument, PageSizes } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface PosterOptions {
+  /** Page to posterize (1-indexed). Default 1. */
+  page?: number;
+  rows: number;
+  cols: number;
+  /** Optional overlap between tiles in pt (helps alignment). */
+  overlap?: number;
+  /** Output page size: "fit" = tile size, or an ISO size. */
+  pageSize?: "fit" | "a4" | "letter";
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface PosterResult {
+  bytes: Uint8Array;
+  tiles: number;
+  rows: number;
+  cols: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+/** Compute tile grid geometry. Pure + testable. */
+export function tileGrid(
+  pageW: number,
+  pageH: number,
+  rows: number,
+  cols: number,
+  overlap: number
+): { x: number; y: number; w: number; h: number }[] {
+  const r = Math.max(1, Math.floor(rows));
+  const c = Math.max(1, Math.floor(cols));
+  const ov = Math.max(0, overlap || 0);
+  const baseW = pageW / c;
+  const baseH = pageH / r;
+  const tiles: { x: number; y: number; w: number; h: number }[] = [];
+  for (let row = 0; row < r; row++) {
+    for (let col = 0; col < c; col++) {
+      const x = col * baseW;
+      const y = (r - 1 - row) * baseH; // bottom-up in PDF coords
+      const w = col === c - 1 ? pageW - x : baseW + ov;
+      const h = row === r - 1 ? pageH - y : baseH + ov;
+      tiles.push({ x, y, w, h });
+    }
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+  return tiles;
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
+export async function posterSplit(
+  bytes: Uint8Array,
+  options: PosterOptions
+): Promise<ToolResult<PosterResult>> {
+  let doc: PDFDocument;
   try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
   }
-}
+  const total = doc.getPageCount();
+  const pageIdx = Math.max(1, Math.min(total, Math.floor(options.page ?? 1))) - 1;
+  const rows = Math.max(1, Math.min(10, Math.floor(options.rows || 2)));
+  const cols = Math.max(1, Math.min(10, Math.floor(options.cols || 3)));
+  const overlap = Math.max(0, Math.min(50, options.overlap ?? 0));
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
+  const srcPage = doc.getPages()[pageIdx]!;
+  const { width: pageW, height: pageH } = srcPage.getSize();
+  const tiles = tileGrid(pageW, pageH, rows, cols, overlap);
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+  try {
+    const out = await PDFDocument.create();
+    for (const t of tiles) {
+      let pageW2: number;
+      let pageH2: number;
+      if (options.pageSize === "a4" || options.pageSize === "letter") {
+        const base = options.pageSize === "a4" ? PageSizes.A4 : PageSizes.Letter;
+        pageW2 = base[0];
+        pageH2 = base[1];
+      } else {
+        pageW2 = t.w;
+        pageH2 = t.h;
+      }
+      const outPage = out.addPage([pageW2, pageH2]);
+      // Draw only the tile region of the source page.
+      const embedded = await out.embedPage(srcPage);
+      outPage.drawPage(embedded, {
+        x: 0,
+        y: 0,
+        width: pageW2,
+        height: pageH2,
+        clip: { x: t.x, y: t.y, width: t.w, height: t.h },
+      });
+    }
+    out.setProducer("UnQTools — Poster Split");
+    out.setCreator("UnQTools — Poster Split");
+    out.setCreationDate(new Date());
+    return { ok: true, output: { bytes: await out.save(), tiles: tiles.length, rows, cols } };
+  } catch {
+    return { ok: false, error: "Something went wrong while splitting into tiles." };
+  }
 }

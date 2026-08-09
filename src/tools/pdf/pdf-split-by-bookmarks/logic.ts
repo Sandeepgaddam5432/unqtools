@@ -1,113 +1,86 @@
 /**
- * Split PDF by Bookmarks — pure logic.
+ * Split PDF by Bookmarks — real engine.
+ *
+ * Reads the PDF outline tree and splits the document at bookmark
+ * boundaries: each bookmark becomes the first page of its own output part
+ * (the last part runs to the end of the document). Pure pdf-lib + outline
+ * reading.
  */
+import { PDFDocument } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
+import { readOutlines } from "../pdf-bookmarks/logic";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface BookmarkSplitPart {
+  name: string;
+  bytes: Uint8Array;
+  pageCount: number;
+  startPage: number;
+  endPage: number;
+  title: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface BookmarkSplitResult {
+  parts: BookmarkSplitPart[];
+  totalPages: number;
+  bookmarksUsed: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
+export async function splitByBookmarks(
+  bytes: Uint8Array,
+  baseName = "part"
+): Promise<ToolResult<BookmarkSplitResult>> {
+  let src: PDFDocument;
   try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    src = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
   }
-}
+  const total = src.getPageCount();
+  if (total === 0) return { ok: false, error: "The PDF has no pages." };
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
+  const outlines = readOutlines(src);
+  // Keep bookmarks that map to a real page and are ordered.
+  const valid = outlines
+    .filter((b) => b.page >= 1 && b.page <= total)
+    .sort((a, b) => a.page - b.page);
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
+  if (valid.length < 2) {
+    return {
+      ok: false,
+      error: "Need at least 2 bookmarks to split by (or the bookmarks have no page destinations).",
+    };
+  }
 
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
+  const boundaries = valid.map((b) => b.page);
+  // Build page ranges: [boundary[i], boundary[i+1]-1], last runs to end.
+  const ranges: { start: number; end: number; title: string }[] = [];
+  for (let i = 0; i < boundaries.length; i++) {
+    const start = boundaries[i]!;
+    const end = i + 1 < boundaries.length ? boundaries[i + 1]! - 1 : total;
+    if (end < start) continue;
+    ranges.push({ start, end, title: valid[i]!.title });
+  }
 
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+  try {
+    const parts: BookmarkSplitPart[] = [];
+    for (let i = 0; i < ranges.length; i++) {
+      const r = ranges[i]!;
+      const out = await PDFDocument.create();
+      const indices = Array.from({ length: r.end - r.start + 1 }, (_, k) => r.start - 1 + k);
+      const pages = await out.copyPages(src, indices);
+      for (const p of pages) out.addPage(p);
+      const title = r.title.replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-") || `part-${i + 1}`;
+      parts.push({
+        name: `${baseName}-${i + 1}-${title.slice(0, 40)}.pdf`,
+        bytes: await out.save(),
+        pageCount: indices.length,
+        startPage: r.start,
+        endPage: r.end,
+        title: r.title,
+      });
+    }
+    return { ok: true, output: { parts, totalPages: total, bookmarksUsed: ranges.length } };
+  } catch {
+    return { ok: false, error: "Something went wrong while splitting by bookmarks." };
+  }
 }
