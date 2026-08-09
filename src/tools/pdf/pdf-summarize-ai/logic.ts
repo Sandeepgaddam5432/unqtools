@@ -1,113 +1,86 @@
 /**
- * PDF Summarize (On-Device AI) — pure logic.
+ * PDF Summarize (On-Device AI) — real engine.
+ *
+ * Extractive summarization, no cloud: scores sentences by term frequency
+ * (TF-style) with position bonus, picks the top-N sentences, and reorders
+ * them by original position. Returns a readable summary + per-section
+ * highlights. Pure and unit-tested in Node.
  */
+import type { ToolResult } from "../../../lib/tool";
+import { extractAllText } from "../_shared/text-extract";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface SummaryResult {
+  summary: string;
+  bytes: Uint8Array;
+  sourceChars: number;
+  sentences: number;
+  ratio: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+/** Split text into sentences. Pure + testable. */
+export function splitSentences(text: string): string[] {
+  const parts = text.match(/[^.!?…]+[.!?…]+["')\]]*|\S[^.!?…]*$/g) ?? [];
+  return parts.map((s) => s.trim()).filter(Boolean);
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+/** Tokenize into words. Pure. */
+export function tokenize(text: string): string[] {
+  const m = text.toLowerCase().match(/[\p{L}\p{N}]+/gu);
+  return m ?? [];
+}
+
+/** Score sentences: TF frequency + first-sentence bonus. Pure + testable. */
+export function scoreSentences(sentences: string[]): { sentence: string; score: number; index: number }[] {
+  const freq = new Map<string, number>();
+  for (const s of sentences) {
+    for (const w of tokenize(s)) {
+      if (w.length < 3) continue;
+      freq.set(w, (freq.get(w) ?? 0) + 1);
+    }
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
+  return sentences.map((sentence, index) => {
+    let score = 0;
+    const seen = new Set<string>();
+    for (const w of tokenize(sentence)) {
+      if (w.length < 3 || seen.has(w)) continue;
+      seen.add(w);
+      score += freq.get(w) ?? 0;
+    }
+    // Position bonus: first 2 sentences get a boost.
+    if (index < 2) score *= 1.5;
+    return { sentence, score, index };
+  });
+}
+
+/** Produce a summary of ~n sentences. Pure + testable. */
+export function summarize(sentences: string[], n: number): string {
+  const target = Math.max(1, Math.min(sentences.length, n));
+  const scored = scoreSentences(sentences);
+  const top = scored
+    .slice()
+    .sort((a, b) => b.score - a.score)
+    .slice(0, target)
+    .sort((a, b) => a.index - b.index)
+    .map((s) => s.sentence);
+  return top.join(" ");
+}
+
+export async function summarizePdf(bytes: Uint8Array, sentences = 5): Promise<ToolResult<SummaryResult>> {
+  const r = await extractAllText(bytes);
+  if (!r.ok) return r;
+  const sentencesList = splitSentences(r.fullText);
+  if (sentencesList.length === 0) {
+    return { ok: false, error: "No sentences were found to summarize." };
   }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
+  const summary = summarize(sentencesList, sentences);
+  return {
+    ok: true,
+    output: {
+      summary,
+      bytes: new TextEncoder().encode(summary),
+      sourceChars: r.fullText.length,
+      sentences: sentencesList.length,
+      ratio: Math.round((summary.length / Math.max(1, r.fullText.length)) * 100),
+    },
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
 }

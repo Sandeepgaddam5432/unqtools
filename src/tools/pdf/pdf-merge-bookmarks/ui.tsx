@@ -1,116 +1,144 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+/** Merge PDFs with Bookmarks — real UI. */
+
+import React, { useRef, useState } from "react";
+import { PDFDocument } from "pdf-lib";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
-import { validate, process, formatBytes, getStats } from "./logic";
+import { Download, FileUp, Trash2, BookmarkCheck } from "lucide-react";
+import { toast } from "sonner";
+import { ActionBar, ClearButton, ErrorBanner, RunButton } from "../../_shared";
+import { downloadBytes, formatBytes } from "../_shared/download";
+import { mergePdfsWithBookmarks } from "./logic";
 
-export default function MergePDFswithBookmarks() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<string[]>([]);
+type LoadedFile = { name: string; bytes: Uint8Array; pageCount: number };
 
-  const issues = useMemo(() => validate(input), [input]);
-  const stats = useMemo(() => getStats(input, output), [input, output]);
+export default function MergeWithBookmarks() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [files, setFiles] = useState<LoadedFile[]>([]);
+  const [result, setResult] = useState<Uint8Array | null>(null);
+  const [report, setReport] = useState("");
+  const [error, setError] = useState("");
+  const [working, setWorking] = useState(false);
 
-  const handleProcess = useCallback(() => {
-    setError(null);
-    const result = process(input);
-    if (result.error) {
-      setError(result.error);
-      setOutput("");
-    } else {
-      setOutput(result.output);
-      setHistory((prev) => [input.slice(0, 100), ...prev].slice(0, 10));
+  async function loadFiles(list: FileList | File[]) {
+    const arr = Array.from(list);
+    const loaded: LoadedFile[] = [];
+    for (const f of arr) {
+      try {
+        const bytes = new Uint8Array(await f.arrayBuffer());
+        const doc = await PDFDocument.load(bytes);
+        loaded.push({ name: f.name, bytes, pageCount: doc.getPageCount() });
+      } catch {
+        toast.error(`Could not read ${f.name}`);
+      }
     }
-  }, [input]);
+    if (loaded.length > 0) {
+      setFiles((prev) => [...prev, ...loaded]);
+      setResult(null);
+      setReport("");
+      setError("");
+      toast.success(`Loaded ${loaded.length} PDF(s)`);
+    }
+  }
 
-  const clear = useCallback(() => {
-    setInput(""); setOutput(""); setError(null);
-  }, []);
+  function reset() {
+    setFiles([]);
+    setResult(null);
+    setReport("");
+    setError("");
+  }
 
-  const loadExample = useCallback(() => {
-    setInput("Sample input text for testing");
-  }, []);
+  async function run() {
+    if (files.length === 0) return;
+    setWorking(true);
+    setError("");
+    setResult(null);
+    setReport("");
+    const r = await mergePdfsWithBookmarks(files.map((f) => ({ name: f.name, bytes: f.bytes })));
+    setWorking(false);
+    if (r.ok) {
+      setResult(r.output.bytes);
+      setReport(`${r.output.files} file(s) · ${r.output.totalPages} pages · ${r.output.bookmarks} bookmark(s)`);
+      toast.success("Merged with bookmarks!");
+    } else {
+      setError(r.error);
+    }
+  }
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <Label className="text-sm font-medium">Input <span className="text-muted-foreground">({formatBytes(stats.inputSize)})</span></Label>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={loadExample}>Example</Button>
-              <Button variant="ghost" size="sm" onClick={clear}>Clear</Button>
+      {files.length === 0 ? (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            void loadFiles(e.dataTransfer.files);
+          }}
+          className="w-full rounded-xl border-2 border-dashed border-border p-10 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors"
+        >
+          <BookmarkCheck className="mx-auto mb-2 h-9 w-9 text-muted-foreground" />
+          <p className="text-sm font-medium">Drop PDFs here (or click to browse)</p>
+          <p className="mt-1 text-xs text-muted-foreground">Merge and keep a clickable outline for every file.</p>
+        </button>
+      ) : (
+        <div className="space-y-2">
+          {files.map((f) => (
+            <div key={f.name} className="flex items-center justify-between rounded-lg border bg-card p-2.5">
+              <p className="truncate text-sm font-medium flex-1">{f.name}</p>
+              <span className="text-xs text-muted-foreground mr-3">{f.pageCount}p</span>
+              <Button variant="ghost" size="icon-sm" aria-label={`Remove ${f.name}`} onClick={() => setFiles((p) => p.filter((x) => x.name !== f.name))}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
-          </div>
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Enter input..."
-            rows={5}
-            className="font-mono text-sm"
-          />
-          {issues.filter((i) => i.severity === "error").length > 0 && (
-            <p className="text-xs text-destructive">{issues.filter((i) => i.severity === "error")[0].message}</p>
+          ))}
+          <Button variant="outline" size="sm" className="gap-1.5 cursor-pointer" onClick={() => inputRef.current?.click()}>
+            <FileUp className="h-3.5 w-3.5" /> Add more
+          </Button>
+        </div>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/pdf,.pdf"
+        multiple
+        className="hidden"
+        aria-label="Choose PDFs"
+        onChange={(e) => {
+          if (e.target.files) void loadFiles(e.target.files);
+          e.target.value = "";
+        }}
+      />
+
+      {files.length > 0 && (
+        <div className="space-y-4 rounded-xl border bg-card p-4">
+          <ActionBar>
+            <RunButton onClick={() => void run()} disabled={files.length === 0} loading={working} label={`Merge ${files.length} file(s)`} />
+            <ClearButton onClick={reset} disabled={files.length === 0 && !result && !error} label="Clear" />
+          </ActionBar>
+
+          {error && <ErrorBanner message={error} />}
+
+          {result && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <div>
+                <p className="text-sm font-medium">Merged PDF ready • {formatBytes(result.length)}</p>
+                {report && <p className="text-xs text-muted-foreground mt-0.5">{report}</p>}
+              </div>
+              <Button onClick={() => downloadBytes(result, "merged-with-bookmarks.pdf")} className="gap-1.5">
+                <Download className="h-4 w-4" /> Download
+              </Button>
+            </div>
           )}
-          <Button onClick={handleProcess} disabled={!input.trim()}>Process</Button>
-        </CardContent>
-      </Card>
-
-      {error && <ErrorBanner message={error} />}
-
-      {output && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center justify-between">
-              <span>Output</span>
-              <Badge variant="outline">{formatBytes(stats.outputSize)}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-3">
-            <div className="rounded-md border bg-muted/30 p-3 font-mono text-xs whitespace-pre-wrap break-all max-h-96 overflow-y-auto">
-              {output}
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <CopyButton getText={() => output} label="Copy output" />
-              <DownloadButton getText={() => output} filename="{slug}-output.txt" />
-            </div>
-          </CardContent>
-        </Card>
+        </div>
       )}
 
-      {history.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center justify-between">
-              <span>Recent</span>
-              <Button variant="ghost" size="sm" onClick={() => setHistory([])}>Clear</Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-1">
-            {history.map((h, i) => (
-              <button key={i} onClick={() => setInput(h)} className="block w-full text-left text-xs px-2 py-1 rounded hover:bg-muted/50 font-mono truncate">
-                {h}
-              </button>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> All processing happens 100% in your browser. Nothing is uploaded, tracked, or stored remotely. Works offline as a PWA.
-          </p>
-        </CardContent>
-      </Card>
+      <p className="text-xs text-muted-foreground">
+        Privacy: 100% local — your PDFs never leave your device. Each file becomes a top-level bookmark; internal
+        bookmarks are re-anchored to their new page numbers.
+      </p>
     </div>
   );
 }

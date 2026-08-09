@@ -9,6 +9,13 @@ tool-collection sites.
 
 ## Status
 
+**v18.7 — PDF 100x wave 6: 60 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
+
+Waves 1–6 rebuilt/added 60 PDF tools to the 100x bar — PDF↔HTML/EPUB/JSON/Markdown,
+find & replace, PII auto-redaction, bookmark-aware merging, form data import/export,
+repair, read-aloud and on-device summarization. Full comparison:
+[`docs/PDF-100x-TOOLS.md`](./docs/PDF-100x-TOOLS.md).
+
 **v18.6 — PDF 100x wave 5: 50 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
 
 Waves 1–5 rebuilt/added 50 PDF tools to the 100x bar — including a real shared text-

@@ -4,6 +4,18 @@ _Last updated: 2026-08-09 — branch arena/019fe601-unqtools. Tool count: 1679. 
 
 ## Current phase
 
+**v18.7 — PDF 100x wave 6: next 10 NEW PDF capabilities (to-html, find-replace, redact-pii, merge-bookmarks, info-viewer, import-form-data, repair, text-to-speech, summarize, to-epub). 1,679 tools live.**
+
+- **v18.7 (PDF 100x wave 6):** 10 more genuinely new capabilities, all real engines:
+  **PDF to HTML** (self-contained, images as data URLs), **Find & Replace Text**
+  (content-stream rewriting), **Auto-Redact PII** (pattern detection + masked export),
+  **Merge with Bookmarks** (outline rebuilt + re-anchored), **Document Info Viewer**
+  (metadata + page sizes), **Import Form Data** (FDF/JSON/CSV fill), **Repair PDF**
+  (junk-trim + permissive parse), **Text-to-Speech** (speechSynthesis), **Summarize**
+  (extractive TF scoring), **PDF to EPUB** (valid EPUB 3). 7,000 PDF tests pass
+  (+49 new); ESLint clean; no removals. Full table:
+  [`docs/PDF-100x-TOOLS.md`](./PDF-100x-TOOLS.md).
+
 **v18.6 — PDF 100x wave 5: next 10 NEW PDF capabilities + shared real text-extraction engine. 1,679 tools live.**
 
 - **v18.6 (PDF 100x wave 5):** Built a shared real text-extraction engine

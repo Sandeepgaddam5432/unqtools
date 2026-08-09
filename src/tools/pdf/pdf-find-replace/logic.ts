@@ -1,113 +1,174 @@
 /**
- * PDF Find & Replace Text — pure logic.
+ * PDF Find & Replace Text — real engine.
+ *
+ * Rewrites text in a PDF's content streams: parses every string literal
+ * (parenthesised and hex), replaces matching substrings, and re-encodes the
+ * streams. Reports how many replacements happened. Text remains selectable.
+ * Pure operator-level replacement is unit-tested.
  */
+import { PDFDocument, PDFName, PDFRawStream, PDFRef } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
+import { inflateBytes } from "../_shared/text-extract";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface ReplaceOptions {
+  find: string;
+  replace: string;
+  /** Case-insensitive match. */
+  caseSensitive?: boolean;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface ReplaceResult {
+  bytes: Uint8Array;
+  replacements: number;
+  streamsTouched: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+/** Replace text inside a decoded PDF string literal. Pure + testable. */
+export function replaceInStringLiteral(
+  literal: string,
+  find: string,
+  replace: string,
+  caseSensitive: boolean
+): { text: string; count: number } {
+  const hay = caseSensitive ? literal : literal.toLowerCase();
+  const needle = caseSensitive ? find : find.toLowerCase();
+  if (!needle) return { text: literal, count: 0 };
+  let count = 0;
+  let out = "";
+  let i = 0;
+  while (i < literal.length) {
+    const idx = hay.indexOf(needle, i);
+    if (idx === -1) {
+      out += literal.slice(i);
+      break;
+    }
+    out += literal.slice(i, idx) + replace;
+    count++;
+    i = idx + needle.length;
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+  return { text: out, count };
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
+/**
+ * Rewrite all parenthesised strings in a content stream body.
+ * Returns the new body + replacement count. Pure + testable.
+ */
+export function replaceInContentStream(
+  body: string,
+  find: string,
+  replace: string,
+  caseSensitive: boolean
+): { body: string; count: number } {
+  let count = 0;
+  let out = "";
+  let i = 0;
+  while (i < body.length) {
+    const c = body[i]!;
+    if (c === "(") {
+      // Find matching close paren (honour escapes + nesting simply).
+      let j = i + 1;
+      let depth = 1;
+      let lit = "";
+      while (j < body.length && depth > 0) {
+        const ch = body[j]!;
+        if (ch === "\\") {
+          lit += ch + (body[j + 1] ?? "");
+          j += 2;
+          continue;
+        }
+        if (ch === "(") depth++;
+        if (ch === ")") depth--;
+        if (depth > 0) lit += ch;
+        j++;
+      }
+      const replaced = replaceInStringLiteral(lit, find, replace, caseSensitive);
+      out += "(" + replaced.text + ")";
+      count += replaced.count;
+      i = j;
+      continue;
+    }
+    if (c === "<" && body[i + 1] !== "<") {
+      // Hex string: decode, replace, re-encode as hex.
+      const end = body.indexOf(">", i);
+      const hex = body.slice(i + 1, end === -1 ? body.length : end);
+      let decoded = "";
+      for (let k = 0; k + 1 < hex.length; k += 2) {
+        const pair = hex.slice(k, k + 2);
+        if (/^[0-9a-fA-F]{2}$/.test(pair)) decoded += String.fromCharCode(parseInt(pair, 16));
+      }
+      const replaced = replaceInStringLiteral(decoded, find, replace, caseSensitive);
+      if (replaced.count > 0) {
+        let hexOut = "";
+        for (let k = 0; k < replaced.text.length; k++) {
+          hexOut += replaced.text.charCodeAt(k).toString(16).padStart(2, "0");
+        }
+        out += "<" + hexOut + ">";
+        count += replaced.count;
+      } else {
+        out += body.slice(i, end === -1 ? body.length : end + 1);
+      }
+      i = end === -1 ? body.length : end + 1;
+      continue;
+    }
+    out += c;
+    i++;
   }
+  return { body: out, count };
+}
+
+export async function findReplacePdf(
+  bytes: Uint8Array,
+  options: ReplaceOptions
+): Promise<ToolResult<ReplaceResult>> {
+  const find = options.find;
+  if (!find) return { ok: false, error: "Enter the text to find." };
+  const replace = options.replace ?? "";
+  const caseSensitive = options.caseSensitive ?? false;
+
+  let doc: PDFDocument;
   try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
+  }
+
+  try {
+    let total = 0;
+    let streamsTouched = 0;
+    for (const [, obj] of doc.context.enumerateIndirectObjects()) {
+      if (!(obj instanceof PDFRawStream)) continue;
+      const filter = obj.dict.get(PDFName.of("Filter"));
+      let isFlate = false;
+      if (filter instanceof PDFName) isFlate = filter.toString() === "/FlateDecode";
+      else if (Array.isArray(filter)) isFlate = (filter[0] as PDFName)?.toString() === "/FlateDecode";
+      if (!isFlate) continue;
+
+      const raw = obj.contents;
+      const inflated = await inflateBytes(raw);
+      if (!inflated) continue;
+      const body = new TextDecoder("latin1").decode(inflated);
+      const res = replaceInContentStream(body, find, replace, caseSensitive);
+      if (res.count === 0) continue;
+
+      // Re-inflate the new body (deflate with zlib header).
+      const newRaw = deflateSync(res.body);
+      (obj as unknown as { contents: Uint8Array }).contents = newRaw;
+      total += res.count;
+      streamsTouched++;
+    }
+    if (total === 0) {
+      return { ok: false, error: `"${find}" was not found in any text stream.` };
+    }
+    return { ok: true, output: { bytes: await doc.save(), replacements: total, streamsTouched } };
+  } catch {
+    return { ok: false, error: "Something went wrong while replacing text." };
   }
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+function deflateSync(text: string): Uint8Array {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const zlib = require("node:zlib");
+  return new Uint8Array(zlib.deflateSync(Buffer.from(text, "latin1")));
 }
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
-}
+void PDFRef;

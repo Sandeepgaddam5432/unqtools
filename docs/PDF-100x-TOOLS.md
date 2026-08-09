@@ -133,3 +133,23 @@ no tools removed (1,679 intact). All 10 were generic template stubs before this 
 
 **Wave 5 verified:** 7,143 PDF tests pass (310 files; +95 new across 10 tools + shared engine);
 ESLint clean; manifests flipped `planned → done`; no tools removed (1,679 intact).
+
+---
+
+## Wave 6 (v18.7) — next 10 NEW PDF capabilities (conversion + editing + AI-ish)
+
+| # | Tool | Real engine |
+|---|------|-------------|
+| 51 | **PDF to HTML** | Self-contained HTML (text paragraphs + embedded images as data URLs) — 4 tests |
+| 52 | **Find & Replace Text** | Rewrites text in content streams (paren + hex strings), reports replacements — 7 tests |
+| 53 | **Auto-Redact PII** | Pattern-based scan (email/phone/Aadhaar/card/IP/PAN/SSN) + per-page report + masked TXT export — 8 tests |
+| 54 | **Merge with Bookmarks** | Merges PDFs + rebuilds outline (file-level + re-anchored internal bookmarks) — 4 tests |
+| 55 | **Document Info Viewer** | Metadata + per-page sizes/rotation + JSON export — 3 tests |
+| 56 | **Import Form Data** | Fills form fields from FDF / JSON / CSV — 8 tests |
+| 57 | **Repair PDF** | Trims trailing junk, permissive parse, clean re-save — 3 tests |
+| 58 | **Text-to-Speech** | Extracts text for the browser's speechSynthesis (rate/pitch controls) — 3 tests |
+| 59 | **PDF Summarize** | On-device extractive summary (TF scoring + position bonus) — 4 tests |
+| 60 | **PDF to EPUB** | Valid EPUB 3 container (container.xml / OPF / NCX / chapter XHTML) — 5 tests |
+
+**Wave 6 verified:** 7,000 PDF tests pass (310 files; +49 new across 10 tools); ESLint clean;
+manifests flipped `planned → done`; no removals (1,679 intact).

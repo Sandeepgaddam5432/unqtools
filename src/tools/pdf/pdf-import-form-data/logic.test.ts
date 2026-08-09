@@ -1,105 +1,81 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument } from "pdf-lib";
+import { parseFdf, parseJsonInput, parseCsvInput, importFormData } from "./logic";
 
-describe("Import/Fill PDF Form Data (FDF/XFDF/CSV)", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+describe("parseFdf", () => {
+  it("extracts field/value pairs", () => {
+    const fdf = `%FDF-1.2\n<field name="fullname"><value>John</value></field>\n<field name="age"><value>30</value></field>`;
+    const pairs = parseFdf(fdf);
+    expect(pairs).toHaveLength(2);
+    expect(pairs[0]).toEqual({ name: "fullname", value: "John" });
+  });
+});
+
+describe("parseJsonInput", () => {
+  it("parses arrays and {fields:[]}", () => {
+    expect(parseJsonInput('[{"name":"a","value":"1"}]')).toEqual([{ name: "a", value: "1" }]);
+    expect(parseJsonInput('{"fields":[{"name":"b","value":"x"}]}')).toEqual([{ name: "b", value: "x" }]);
+  });
+});
+
+describe("parseCsvInput", () => {
+  it("parses name,value rows skipping header", () => {
+    const csv = "name,value\nfullname,John Doe\nage,30";
+    const pairs = parseCsvInput(csv);
+    expect(pairs).toEqual([
+      { name: "fullname", value: "John Doe" },
+      { name: "age", value: "30" },
+    ]);
+  });
+});
+
+describe("importFormData", () => {
+  async function makeFormPdf(): Promise<Uint8Array> {
+    const doc = await PDFDocument.create();
+    const page = doc.addPage([300, 400]);
+    const form = doc.getForm();
+    const name = form.createTextField("fullname");
+    name.addToPage(page, { x: 50, y: 300, width: 150, height: 20 });
+    const cb = form.createCheckBox("agree");
+    cb.addToPage(page, { x: 50, y: 260, width: 16, height: 16 });
+    return doc.save();
+  }
+
+  it("fills fields from FDF", async () => {
+    const r = await importFormData(await makeFormPdf(), [], "fdf", '<field name="fullname"><value>Sandeep</value></field>');
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.setCount).toBe(1);
+      const doc = await PDFDocument.load(r.output.bytes);
+      const f = doc.getForm().getFields().find((x) => x.getName() === "fullname");
+      expect((f as { getText: () => string }).getText()).toBe("Sandeep");
+    }
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("fills checkboxes and reports skips", async () => {
+    const r = await importFormData(
+      await makeFormPdf(),
+      [],
+      "json",
+      JSON.stringify([
+        { name: "agree", value: "true" },
+        { name: "missing", value: "x" },
+      ])
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.setCount).toBe(1);
+      expect(r.output.skipped).toContain("missing");
+    }
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("errors on empty input", async () => {
+    const r = await importFormData(await makeFormPdf(), [], "json", "[]");
+    expect(r.ok).toBe(false);
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
-  });
-
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
-  });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("rejects corrupt PDFs", async () => {
+    const r = await importFormData(new Uint8Array([1, 2]), [], "json", '[{"name":"a","value":"b"}]');
+    expect(r.ok).toBe(false);
   });
 });

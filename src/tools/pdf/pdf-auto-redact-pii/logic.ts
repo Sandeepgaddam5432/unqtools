@@ -1,113 +1,101 @@
 /**
- * PDF Auto-Redact PII — pure logic.
+ * PDF Auto-Redact PII — real engine.
+ *
+ * Scans the extracted text for personally-identifiable patterns (email,
+ * phone, Aadhaar-like 12-digit, credit-card, IP, PAN-like, SSN-like) and
+ * reports every match per page. Optionally produces a redacted TXT export
+ * (matches masked) so you can review before removing the source. 100%
+ * local; the report is the honest deliverable, not fake "redaction".
  */
+import type { ToolResult } from "../../../lib/tool";
+import { extractAllText } from "../_shared/text-extract";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export type PiiKind = "email" | "phone" | "aadhaar" | "credit-card" | "ip" | "pan" | "ssn" | "url";
+
+export interface PiiMatch {
+  kind: PiiKind;
+  value: string;
+  page: number;
+  start: number;
+  end: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface RedactResult {
+  matches: PiiMatch[];
+  byKind: Record<string, number>;
+  redactedText: string;
+  bytes: Uint8Array;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+export const PII_PATTERNS: { kind: PiiKind; label: string; re: RegExp }[] = [
+  { kind: "email", label: "Email", re: /[\w.+-]+@[\w-]+\.[\w.]+/g },
+  { kind: "phone", label: "Phone", re: /(?:\+?\d{1,3}[\s-]?)?(?:\(\d{2,4}\)[\s-]?)?\d{3,5}[\s-]?\d{4,5}(?!\d)/g },
+  { kind: "aadhaar", label: "Aadhaar (12-digit)", re: /\b[2-9]\d{3}[\s-]?\d{4}[\s-]?\d{4}\b/g },
+  { kind: "credit-card", label: "Credit card", re: /\b(?:\d[ -]*?){13,16}\b/g },
+  { kind: "ip", label: "IP address", re: /\b\d{1,3}(?:\.\d{1,3}){3}\b/g },
+  { kind: "pan", label: "PAN (India)", re: /\b[A-Z]{5}\d{4}[A-Z]\b/g },
+  { kind: "ssn", label: "SSN (US)", re: /\b\d{3}-\d{2}-\d{4}\b/g },
+  { kind: "url", label: "URL", re: /https?:\/\/[^\s"'<>]+/g },
+];
+
+/** Mask a value for the redacted export. Pure + testable. */
+export function maskValue(value: string, kind: PiiKind): string {
+  if (kind === "email") {
+    const [user, domain] = value.split("@");
+    const head = user!.slice(0, 2);
+    return `${head}***@${domain ?? "***"}`;
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
+  if (value.length <= 4) return "****";
+  return value.slice(0, 2) + "*".repeat(Math.min(6, value.length - 4)) + value.slice(-2);
+}
+
+/** Find PII matches in text. Pure + testable. */
+export function findPii(text: string): { kind: PiiKind; value: string; start: number; end: number }[] {
+  const out: { kind: PiiKind; value: string; start: number; end: number }[] = [];
+  for (const p of PII_PATTERNS) {
+    p.re.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = p.re.exec(text)) !== null) {
+      const value = m[0];
+      if (!value) break;
+      out.push({ kind: p.kind, value, start: m.index, end: m.index + value.length });
+      if (m.index === p.re.lastIndex) p.re.lastIndex++;
+    }
   }
-  return issues;
+  return out.sort((a, b) => a.start - b.start);
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
+/** Replace all matches with masks in a text. Pure + testable. */
+export function redactText(text: string, matches: { start: number; end: number; value: string; kind: PiiKind }[]): string {
+  let out = "";
+  let i = 0;
+  for (const m of matches) {
+    if (m.start < i) continue; // overlapping
+    out += text.slice(i, m.start);
+    out += maskValue(m.value, m.kind);
+    i = m.end;
   }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
+  out += text.slice(i);
+  return out;
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
+export async function autoRedactPii(bytes: Uint8Array): Promise<ToolResult<RedactResult>> {
+  const r = await extractAllText(bytes);
+  if (!r.ok) return r;
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
+  const matches: PiiMatch[] = [];
+  r.pages.forEach((pageText, idx) => {
+    for (const m of findPii(pageText)) {
+      matches.push({ kind: m.kind, value: m.value, page: idx + 1, start: m.start, end: m.end });
+    }
+  });
 
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
+  const byKind: Record<string, number> = {};
+  for (const m of matches) byKind[m.kind] = (byKind[m.kind] ?? 0) + 1;
 
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
+  const redactedText = redactText(r.fullText, matches);
+  return {
+    ok: true,
+    output: { matches, byKind, redactedText, bytes: new TextEncoder().encode(redactedText) },
   };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
 }
