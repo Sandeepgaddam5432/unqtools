@@ -1,105 +1,79 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument, PDFName } from "pdf-lib";
+import { runBatch } from "./logic";
 
-describe("PDF Batch Processor", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+async function makePdf(pages: number, meta = true): Promise<Uint8Array> {
+  const doc = await PDFDocument.create();
+  for (let i = 0; i < pages; i++) {
+    const page = doc.addPage([200, 300]);
+    page.drawText(`p${i}`, { x: 5, y: 5, size: 6 });
+  }
+  if (meta) doc.setTitle("Batch");
+  return doc.save();
+}
+
+describe("runBatch", () => {
+  it("rotates multiple files", async () => {
+    const files = [
+      { name: "a.pdf", bytes: await makePdf(2) },
+      { name: "b.pdf", bytes: await makePdf(3) },
+    ];
+    const r = await runBatch(files, { op: "rotate", rotation: 90 });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.length).toBe(2);
+      expect(r.output.every((f) => f.ok)).toBe(true);
+      const doc = await PDFDocument.load(r.output[0]!.bytes!);
+      expect(doc.getPages()[0].getRotation().angle).toBe(90);
+    }
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("strips metadata from multiple files", async () => {
+    const r = await runBatch([{ name: "a.pdf", bytes: await makePdf(1, true) }], { op: "strip-metadata" });
+    expect(r.ok).toBe(true);
+    if (r.ok && r.output[0]!.ok) {
+      const doc = await PDFDocument.load(r.output[0]!.bytes!);
+      expect(doc.getTitle() ?? "").toBe("");
+    }
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("compresses multiple files", async () => {
+    const r = await runBatch(
+      [
+        { name: "a.pdf", bytes: await makePdf(2) },
+        { name: "b.pdf", bytes: await makePdf(1) },
+      ],
+      { op: "compress", compress: { stripMetadata: true } }
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.every((f) => f.ok)).toBe(true);
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("watermarks multiple files", async () => {
+    const r = await runBatch([{ name: "a.pdf", bytes: await makePdf(1) }], { op: "watermark", watermarkText: "DRAFT" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output[0]!.ok).toBe(true);
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  it("reports per-file errors without failing the batch", async () => {
+    const r = await runBatch(
+      [
+        { name: "good.pdf", bytes: await makePdf(1) },
+        { name: "bad.pdf", bytes: new Uint8Array([1, 2]) },
+      ],
+      { op: "rotate" }
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output[0]!.ok).toBe(true);
+      expect(r.output[1]!.ok).toBe(false);
+    }
   });
 
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("errors without files or op", async () => {
+    expect((await runBatch([], { op: "rotate" })).ok).toBe(false);
+    expect((await runBatch([{ name: "a", bytes: new Uint8Array() }], { op: "" as never })).ok).toBe(false);
   });
 });
+
+void PDFName;

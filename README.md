@@ -9,6 +9,14 @@ tool-collection sites.
 
 ## Status
 
+**v18.5 — PDF 100x wave 4: 40 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
+
+Waves 1–4 rebuilt 40 PDF tools to the 100x bar — including 18 fake template stubs turned
+into real engines, plus 10 brand-new capabilities (annotations, outline bookmarks, batch
+processing, exact target-size compression, permissions, unlock, size-split, form builder,
+metadata cleaning, margins). Full comparison:
+[`docs/PDF-100x-TOOLS.md`](./docs/PDF-100x-TOOLS.md).
+
 **v18.4 — PDF 100x wave 3: 30 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
 
 Waves 1–3 rebuilt 30 PDF tools to the 100x bar and turned 8 fake "planned" template

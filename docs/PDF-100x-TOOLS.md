@@ -92,3 +92,24 @@ backward-compatible signatures (all existing UIs keep working); no tools removed
 **Wave 3 verified:** 7,403 PDF tests pass (309 files; +87 new across 8 rebuilt tools);
 ESLint clean on all touched files; no tools removed (1,679 intact). The 8 template-shell
 tools went from fake `validate/process` stubs to real pdf-lib engines with real UIs.
+
+---
+
+## Wave 4 (v18.5) — next 10 NEW PDF capabilities (no duplicate stubs)
+
+| # | Tool | Real engine |
+|---|------|-------------|
+| 31 | **Add Margins to PDF** | Grows pages + shifts the crop so uniform whitespace margins surround content — mm/in/pt units, per-page — 6 tests |
+| 32 | **Edit/Annotate PDF** | Adds **highlight / text note / square / line (arrowheads)** PDF annotations with color + opacity, per-page — 7 tests |
+| 33 | **PDF Bookmarks Editor** | Reads + writes the **outline tree** at catalog level (Title/Dest wiring), add/remove, page-anchored — 4 tests |
+| 34 | **PDF Batch Processor** | Applies **rotate / compress / strip-metadata / watermark** to many files at once, per-file results + ZIP — 6 tests |
+| 35 | **PDF Metadata Cleaner** | Wipes Title/Author/Subject/Keywords/Creator/Producer + Info dict + XMP, reports savings — 7 tests |
+| 36 | **Compress to Target Size** | Standalone **exact-size** compressor (auto quality ladder until ≤ target KB) — 5 tests |
+| 37 | **PDF Permissions Editor** | Owner/user passwords + print/copy/modify/form/annotation flags (graceful note when the pdf-lib build lacks encryption) — 8 tests |
+| 38 | **Unlock PDF** | Removes a password (decrypt with password + resave unencrypted) — 4 tests |
+| 39 | **Split PDF by Size** | Splits into parts ≤ target KB with sequential names + page ranges — 5 tests |
+| 40 | **Create PDF Form** | Builds fillable PDFs: **text fields, checkboxes, radio groups, dropdowns**, multi-page layout — 4 tests |
+
+**Wave 4 verified:** 7,276 PDF tests pass (309 files; +56 new across 10 tools); ESLint clean on all
+touched files; the 10 tools' manifests flipped `planned → done` (all previously "Coming Soon");
+no tools removed (1,679 intact). All 10 were generic template stubs before this wave.

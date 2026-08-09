@@ -1,105 +1,85 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument, PDFName, PDFArray } from "pdf-lib";
+import { annotatePdf, buildAnnotationDict, hexToRgb, appendAnnotation } from "./logic";
 
-describe("Edit/Annotate PDF", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+async function makePdf(pages: number): Promise<Uint8Array> {
+  const doc = await PDFDocument.create();
+  for (let i = 0; i < pages; i++) {
+    const page = doc.addPage([200, 300]);
+    page.drawText(`p${i}`, { x: 5, y: 5, size: 6 });
+  }
+  return doc.save();
+}
+
+describe("buildAnnotationDict", () => {
+  it("builds a highlight with quad points", () => {
+    const d = buildAnnotationDict("highlight", { x: 10, y: 20, width: 100, height: 12, color: "#ffff00", opacity: 0.5 });
+    expect(d.Subtype.toString()).toBe("/Highlight");
+    expect(d.QuadPoints.length).toBe(8);
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("builds a note with contents", () => {
+    const d = buildAnnotationDict("note", { x: 5, y: 5, width: 20, height: 20, text: "Hi" });
+    expect(d.Subtype.toString()).toBe("/Text");
+    expect(String(d.Contents.decodeText())).toBe("Hi");
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("builds a line with arrow", () => {
+    const d = buildAnnotationDict("line", { x: 0, y: 0, width: 50, height: 0, x2: 50, y2: 50, arrow: "end" });
+    expect(d.Subtype.toString()).toBe("/Line");
+    expect(d.L).toEqual([0, 0, 50, 50]);
+  });
+});
+
+describe("hexToRgb", () => {
+  it("returns pdf-lib RGB", () => {
+    const c = hexToRgb("#ff0000");
+    expect(c.red).toBe(1);
+  });
+});
+
+describe("appendAnnotation", () => {
+  it("creates an Annots array when missing", async () => {
+    const doc = await PDFDocument.create();
+    const page = doc.addPage([100, 100]);
+    appendAnnotation(page, doc, { Subtype: PDFName.of("Text"), Rect: [0, 0, 10, 10] });
+    const bytes = await doc.save();
+    const reloaded = await PDFDocument.load(bytes);
+    const annots = reloaded.getPages()[0].node.get(PDFName.of("Annots"));
+    expect(annots instanceof PDFArray).toBe(true);
+    expect(annots.size()).toBe(1);
+  });
+});
+
+describe("annotatePdf", () => {
+  it("adds a highlight to the first page", async () => {
+    const pdf = await makePdf(2);
+    const r = await annotatePdf(pdf, { type: "highlight", x: 10, y: 20, width: 100, height: 12 });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.annotationsAdded).toBe(1);
+      const doc = await PDFDocument.load(r.output.bytes);
+      const annots = doc.getPages()[0].node.get(PDFName.of("Annots"));
+      expect(annots instanceof PDFArray && annots.size()).toBe(1);
+    }
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("adds annotations to a page range", async () => {
+    const pdf = await makePdf(3);
+    const r = await annotatePdf(pdf, { type: "note", x: 5, y: 5, width: 20, height: 20, text: "x", pages: "1,3" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.annotationsAdded).toBe(2);
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  it("adds a line with arrow to all pages", async () => {
+    const pdf = await makePdf(2);
+    const r = await annotatePdf(pdf, { type: "line", x: 0, y: 0, width: 50, height: 0, x2: 50, y2: 50, arrow: true, pages: "1-2" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.annotationsAdded).toBe(2);
   });
 
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("rejects corrupt PDFs", async () => {
+    const r = await annotatePdf(new Uint8Array([1]), { type: "square", x: 0, y: 0, width: 10, height: 10 });
+    expect(r.ok).toBe(false);
   });
 });

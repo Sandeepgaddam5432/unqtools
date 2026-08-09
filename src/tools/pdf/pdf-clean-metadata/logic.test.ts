@@ -1,105 +1,81 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument } from "pdf-lib";
+import { cleanMetadata, inspectMetadata, META_FIELDS } from "./logic";
 
-describe("PDF Metadata Cleaner", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+async function makePdf(meta = true): Promise<Uint8Array> {
+  const doc = await PDFDocument.create();
+  const page = doc.addPage([200, 300]);
+  page.drawText("hi", { x: 5, y: 5, size: 8 });
+  if (meta) {
+    doc.setTitle("Secret Title");
+    doc.setAuthor("Secret Author");
+    doc.setSubject("Top Secret");
+    doc.setKeywords(["kw"]);
+    doc.setCreator("UnQTools");
+    doc.setProducer("UnQTools");
+  }
+  return doc.save();
+}
+
+describe("inspectMetadata", () => {
+  it("detects present fields", async () => {
+    const doc = await PDFDocument.load(await makePdf(true));
+    const info = inspectMetadata(doc);
+    expect(info.fields).toContain("Title");
+    expect(info.fields).toContain("Author");
+    expect(info.infoPresent).toBe(true);
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("finds no user metadata on a clean PDF (only pdf-lib defaults)", async () => {
+    const doc = await PDFDocument.load(await makePdf(false));
+    const info = inspectMetadata(doc);
+    // pdf-lib always stamps Creator/Producer; user fields must be absent.
+    expect(info.fields).not.toContain("Title");
+    expect(info.fields).not.toContain("Author");
+    expect(info.fields.length).toBeLessThanOrEqual(2);
+  });
+});
+
+describe("cleanMetadata", () => {
+  it("wipes all metadata fields", async () => {
+    const r = await cleanMetadata(await makePdf(true));
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const doc = await PDFDocument.load(r.output.bytes);
+      expect(doc.getTitle() ?? "").toBe("");
+      expect(doc.getAuthor() ?? "").toBe("");
+      expect(doc.getSubject() ?? "").toBe("");
+      expect((doc.getKeywords() ?? []).length).toBe(0);
+      expect(r.output.fieldsRemoved.length).toBeGreaterThanOrEqual(3);
+    }
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("keeps page count", async () => {
+    const r = await cleanMetadata(await makePdf(true));
+    expect(r.ok).toBe(true);
+    if (r.ok) expect((await PDFDocument.load(r.output.bytes)).getPageCount()).toBe(1);
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("reports size savings", async () => {
+    const r = await cleanMetadata(await makePdf(true));
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.cleanedSize).toBeLessThanOrEqual(r.output.originalSize);
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  it("handles a PDF with no user metadata", async () => {
+    const r = await cleanMetadata(await makePdf(false));
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.fieldsRemoved).not.toContain("Title");
   });
 
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
+  it("rejects corrupt PDFs", async () => {
+    const r = await cleanMetadata(new Uint8Array([1, 2, 3]));
+    expect(r.ok).toBe(false);
   });
+});
 
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+describe("META_FIELDS", () => {
+  it("covers the standard six", () => {
+    expect(META_FIELDS).toEqual(["Title", "Author", "Subject", "Keywords", "Creator", "Producer"]);
   });
 });

@@ -1,113 +1,117 @@
 /**
- * Split PDF by File Size — pure logic.
+ * Split PDF by File Size — real engine.
+ *
+ * Splits a PDF into multiple parts so that each part stays at or under a
+ * target size (KB/MB). Pages are accumulated greedily; when adding the next
+ * page would exceed the target, a new part starts. Pure pdf-lib.
  */
+import { PDFDocument } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface SplitBySizeOptions {
+  /** Target size in KB per part (min 10). */
+  targetKB: number;
+  /** Filename base (without extension). */
+  baseName: string;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface SplitPart {
+  name: string;
+  bytes: Uint8Array;
+  pageCount: number;
+  size: number;
+  startPage: number;
+  endPage: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+export interface SplitBySizeResult {
+  parts: SplitPart[];
+  totalPages: number;
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
+export async function splitBySize(
+  bytes: Uint8Array,
+  options: SplitBySizeOptions
+): Promise<ToolResult<SplitBySizeResult>> {
+  const targetKB = Math.max(10, Math.floor(options.targetKB || 100));
+  const targetBytes = targetKB * 1024;
+  const base = (options.baseName || "part").replace(/\.pdf$/i, "");
+
+  let src: PDFDocument;
   try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+    src = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
   }
-}
+  const total = src.getPageCount();
+  if (total === 0) return { ok: false, error: "The PDF has no pages." };
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
+  try {
+    const parts: SplitPart[] = [];
+    let partStart = 0;
+    let partDoc = await PDFDocument.create();
+    const pageCounts: number[] = [];
 
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
+    const commit = async (endIndex: number, name: string) => {
+      const outBytes = await partDoc.save();
+      parts.push({
+        name,
+        bytes: outBytes,
+        pageCount: pageCounts.length,
+        size: outBytes.length,
+        startPage: partStart + 1,
+        endPage: endIndex,
+      });
+    };
 
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
+    for (let i = 0; i < total; i++) {
+      const [page] = await partDoc.copyPages(src, [i]);
+      partDoc.addPage(page);
+      pageCounts.push(i + 1);
+      const size = (await partDoc.save()).length;
+      // If we exceed the target and there's at least one page in this part,
+      // cut before adding the NEXT page (i.e. at i+1).
+      if (size > targetBytes && pageCounts.length > 1) {
+        // Rebuild part without the last page.
+        const trimmed = await PDFDocument.create();
+        const keep = pageCounts.slice(0, -1);
+        const copied = await trimmed.copyPages(src, keep.map((p) => p - 1));
+        for (const p of copied) trimmed.addPage(p);
+        const outBytes = await trimmed.save();
+        parts.push({
+          name: `${base}-${parts.length + 1}.pdf`,
+          bytes: outBytes,
+          pageCount: keep.length,
+          size: outBytes.length,
+          startPage: partStart + 1,
+          endPage: keep[keep.length - 1]!,
+        });
+        partStart = keep[keep.length - 1]!;
+        partDoc = await PDFDocument.create();
+        pageCounts.length = 0;
+        // Re-add the current page to the new part.
+        const [p2] = await partDoc.copyPages(src, [i]);
+        partDoc.addPage(p2);
+        pageCounts.push(i + 1);
+      }
+    }
+    if (pageCounts.length > 0) {
+      const outBytes = await partDoc.save();
+      parts.push({
+        name: `${base}-${parts.length + 1}.pdf`,
+        bytes: outBytes,
+        pageCount: pageCounts.length,
+        size: outBytes.length,
+        startPage: partStart + 1,
+        endPage: pageCounts[pageCounts.length - 1]!,
+      });
+    }
 
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+    if (parts.length === 0) {
+      return { ok: false, error: "The PDF could not be split." };
+    }
+    return { ok: true, output: { parts, totalPages: total } };
+  } catch {
+    return { ok: false, error: "Something went wrong while splitting." };
+  }
 }

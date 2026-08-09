@@ -4,6 +4,17 @@ _Last updated: 2026-08-09 — branch arena/019fe601-unqtools. Tool count: 1679. 
 
 ## Current phase
 
+**v18.5 — PDF 100x wave 4: next 10 NEW PDF capabilities (margins, annotate, bookmarks, batch, metadata, target-size, permissions, unlock, split-by-size, form builder). 1,679 tools live.**
+
+- **v18.5 (PDF 100x wave 4):** The alphabetical next-10 selector surfaced mostly duplicate
+  twins of already-done tools, so this wave implemented 10 genuinely NEW PDF capabilities
+  (all were template stubs): Add Margins, Annotate (highlight/note/square/line), Bookmarks
+  Editor (outline tree read/write), Batch Processor (4 ops × many files + ZIP), Metadata
+  Cleaner, Compress to Exact Target Size, Permissions Editor, Unlock PDF, Split by Size,
+  and Fillable Form Builder. All 10 manifests flipped `planned → done`. 7,276 PDF tests
+  pass (+56 new); ESLint clean; no removals. Full table:
+  [`docs/PDF-100x-TOOLS.md`](./PDF-100x-TOOLS.md).
+
 **v18.4 — PDF 100x wave 3: next 10 alphabetical PDF tools; 8 fake template shells became real engines. 1,679 tools live.**
 
 - **v18.4 (PDF 100x wave 3):** The auditor flagged 8 "planned" PDF tools as fake stubs —

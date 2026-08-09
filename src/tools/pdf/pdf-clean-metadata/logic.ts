@@ -1,113 +1,89 @@
 /**
- * PDF Metadata Cleaner — pure logic.
+ * PDF Metadata Cleaner — real engine.
+ *
+ * Strips document metadata (Title/Author/Subject/Keywords/Creator/Producer,
+ * plus the Info dictionary and XMP metadata stream) from a PDF. Reports what
+ * was removed and how much space was saved. Pure pdf-lib.
  */
+import { PDFDocument, PDFName, PDFDict } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export interface CleanMetaResult {
+  bytes: Uint8Array;
+  originalSize: number;
+  cleanedSize: number;
+  fieldsRemoved: string[];
+  infoPresent: boolean;
+  xmpRemoved: boolean;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+/** Which standard metadata fields to clear. */
+export const META_FIELDS = ["Title", "Author", "Subject", "Keywords", "Creator", "Producer"] as const;
+
+/** Inspect which metadata exists. Pure-ish (needs a loaded doc). */
+export function inspectMetadata(doc: PDFDocument): { fields: string[]; infoPresent: boolean; xmp: boolean } {
+  const fields: string[] = [];
+  for (const f of META_FIELDS) {
+    const v = doc.getTitle ?? null;
+    void v;
+    try {
+      const getters: Record<string, () => string | undefined> = {
+        Title: () => doc.getTitle(),
+        Author: () => doc.getAuthor(),
+        Subject: () => doc.getSubject(),
+        Keywords: () => doc.getKeywords().join(", "),
+        Creator: () => doc.getCreator(),
+        Producer: () => doc.getProducer(),
+      };
+      const value = getters[f]?.();
+      if (value) fields.push(f);
+    } catch {
+      /* ignore */
+    }
+  }
+  const infoEntry = (doc.context.trailerInfo as Record<string, unknown>)["Info"];
+  const info = infoEntry instanceof PDFName ? null : (doc.context.lookup(infoEntry as never) as Record<string, unknown> | null);
+  const infoPresent = Boolean(info && typeof info === "object" && Object.keys(info).length > 0);
+  const xmp = Boolean(doc.catalog.get(PDFName.of("Metadata")));
+  return { fields, infoPresent, xmp };
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
+export async function cleanMetadata(bytes: Uint8Array): Promise<ToolResult<CleanMetaResult>> {
+  let doc: PDFDocument;
   try {
-    const output = input;
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
+  }
+  const originalSize = bytes.length;
+  try {
+    const before = inspectMetadata(doc);
+    doc.setTitle("");
+    doc.setAuthor("");
+    doc.setSubject("");
+    doc.setKeywords([]);
+    doc.setCreator("");
+    doc.setProducer("");
+    // Remove the Info dictionary entirely (it lives in the trailer).
+    const trailer = doc.context.trailerInfo as Record<string, unknown>;
+    if (trailer["Info"]) delete trailer["Info"];
+    // Remove the XMP metadata stream.
+    if (doc.catalog.get(PDFName.of("Metadata"))) {
+      doc.catalog.delete(PDFName.of("Metadata"));
+    }
+    const cleaned = await doc.save({ useObjectStreams: true });
     return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
+      ok: true,
+      output: {
+        bytes: cleaned,
+        originalSize,
+        cleanedSize: cleaned.length,
+        fieldsRemoved: before.fields,
+        infoPresent: before.infoPresent,
+        xmpRemoved: before.xmp,
       },
     };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+  } catch {
+    return { ok: false, error: "Something went wrong while cleaning metadata." };
   }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
 }

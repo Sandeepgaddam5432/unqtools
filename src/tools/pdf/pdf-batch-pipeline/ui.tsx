@@ -1,116 +1,236 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+/** PDF Batch Processor (Pipeline) — real UI (rotate/compress/strip/watermark × many files). */
+
+import React, { useRef, useState } from "react";
+import { PDFDocument } from "pdf-lib";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { ErrorBanner, CopyButton, DownloadButton } from "../../_shared";
-import { validate, process, formatBytes, getStats } from "./logic";
+import { Download, FileUp, FolderArchive, Layers, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { ActionBar, ClearButton, ErrorBanner, RunButton } from "../../_shared";
+import { downloadBytes, formatBytes } from "../_shared/download";
+import { runBatch, type BatchOp, type BatchFileResult } from "./logic";
 
-export default function PDFBatchProcessor() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<string[]>([]);
+type LoadedFile = { name: string; bytes: Uint8Array; pageCount: number };
 
-  const issues = useMemo(() => validate(input), [input]);
-  const stats = useMemo(() => getStats(input, output), [input, output]);
+export default function BatchPipeline() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [files, setFiles] = useState<LoadedFile[]>([]);
+  const [op, setOp] = useState<BatchOp>("rotate");
+  const [rotation, setRotation] = useState<"90" | "180" | "270">("90");
+  const [watermarkText, setWatermarkText] = useState("DRAFT");
+  const [stripMeta, setStripMeta] = useState(false);
+  const [results, setResults] = useState<BatchFileResult[]>([]);
+  const [error, setError] = useState("");
+  const [working, setWorking] = useState(false);
 
-  const handleProcess = useCallback(() => {
-    setError(null);
-    const result = process(input);
-    if (result.error) {
-      setError(result.error);
-      setOutput("");
-    } else {
-      setOutput(result.output);
-      setHistory((prev) => [input.slice(0, 100), ...prev].slice(0, 10));
+  async function loadFiles(list: FileList | File[]) {
+    const arr = Array.from(list);
+    const loaded: LoadedFile[] = [];
+    for (const f of arr) {
+      try {
+        const bytes = new Uint8Array(await f.arrayBuffer());
+        const doc = await PDFDocument.load(bytes);
+        loaded.push({ name: f.name, bytes, pageCount: doc.getPageCount() });
+      } catch {
+        toast.error(`Could not read ${f.name}`);
+      }
     }
-  }, [input]);
+    if (loaded.length > 0) {
+      setFiles((prev) => [...prev, ...loaded]);
+      setResults([]);
+      setError("");
+      toast.success(`Loaded ${loaded.length} PDF(s)`);
+    }
+  }
 
-  const clear = useCallback(() => {
-    setInput(""); setOutput(""); setError(null);
-  }, []);
+  function reset() {
+    setFiles([]);
+    setResults([]);
+    setError("");
+  }
 
-  const loadExample = useCallback(() => {
-    setInput("Sample input text for testing");
-  }, []);
+  async function run() {
+    if (files.length === 0) return;
+    setWorking(true);
+    setError("");
+    setResults([]);
+    const r = await runBatch(
+      files.map((f) => ({ name: f.name, bytes: f.bytes })),
+      {
+        op,
+        rotation: Number(rotation) as 90 | 180 | 270,
+        watermarkText,
+        compress: { stripMetadata: stripMeta },
+      }
+    );
+    setWorking(false);
+    if (r.ok) {
+      setResults(r.output);
+      const okCount = r.output.filter((x) => x.ok).length;
+      toast.success(`${okCount}/${r.output.length} processed`);
+    } else {
+      setError(r.error);
+    }
+  }
+
+  async function downloadAll() {
+    const ok = results.filter((r) => r.ok && r.bytes);
+    if (ok.length === 0) return;
+    if (ok.length === 1) {
+      downloadBytes(ok[0]!.bytes!, `batch-${ok[0]!.name}`);
+      return;
+    }
+    try {
+      const { default: JSZip } = await import("jszip");
+      const zip = new JSZip();
+      for (const r of ok) zip.file(`batch-${r.name}`, r.bytes!.slice().buffer as ArrayBuffer);
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "unqtools-batch.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      toast.error("Could not create ZIP — downloading individually.");
+      for (const r of ok) downloadBytes(r.bytes!, `batch-${r.name}`);
+    }
+  }
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <Label className="text-sm font-medium">Input <span className="text-muted-foreground">({formatBytes(stats.inputSize)})</span></Label>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={loadExample}>Example</Button>
-              <Button variant="ghost" size="sm" onClick={clear}>Clear</Button>
+      {files.length === 0 ? (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            void loadFiles(e.dataTransfer.files);
+          }}
+          className="w-full rounded-xl border-2 border-dashed border-border p-10 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors"
+        >
+          <Layers className="mx-auto mb-2 h-9 w-9 text-muted-foreground" />
+          <p className="text-sm font-medium">Drop one or more PDFs here or click to browse</p>
+          <p className="mt-1 text-xs text-muted-foreground">Apply one operation to many files at once.</p>
+        </button>
+      ) : (
+        <div className="space-y-2">
+          {files.map((f) => (
+            <div key={f.name} className="flex items-center justify-between rounded-lg border bg-card p-2.5">
+              <p className="truncate text-sm font-medium flex-1">{f.name}</p>
+              <span className="text-xs text-muted-foreground mr-3">{f.pageCount}p</span>
+              <Button variant="ghost" size="icon-sm" aria-label={`Remove ${f.name}`} onClick={() => setFiles((p) => p.filter((x) => x.name !== f.name))}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
-          </div>
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Enter input..."
-            rows={5}
-            className="font-mono text-sm"
-          />
-          {issues.filter((i) => i.severity === "error").length > 0 && (
-            <p className="text-xs text-destructive">{issues.filter((i) => i.severity === "error")[0].message}</p>
-          )}
-          <Button onClick={handleProcess} disabled={!input.trim()}>Process</Button>
-        </CardContent>
-      </Card>
-
-      {error && <ErrorBanner message={error} />}
-
-      {output && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center justify-between">
-              <span>Output</span>
-              <Badge variant="outline">{formatBytes(stats.outputSize)}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-3">
-            <div className="rounded-md border bg-muted/30 p-3 font-mono text-xs whitespace-pre-wrap break-all max-h-96 overflow-y-auto">
-              {output}
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <CopyButton getText={() => output} label="Copy output" />
-              <DownloadButton getText={() => output} filename="{slug}-output.txt" />
-            </div>
-          </CardContent>
-        </Card>
+          ))}
+          <Button variant="outline" size="sm" className="gap-1.5 cursor-pointer" onClick={() => inputRef.current?.click()}>
+            <FileUp className="h-3.5 w-3.5" /> Add more
+          </Button>
+        </div>
       )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/pdf,.pdf"
+        multiple
+        className="hidden"
+        aria-label="Choose PDFs"
+        onChange={(e) => {
+          if (e.target.files) void loadFiles(e.target.files);
+          e.target.value = "";
+        }}
+      />
 
-      {history.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center justify-between">
-              <span>Recent</span>
-              <Button variant="ghost" size="sm" onClick={() => setHistory([])}>Clear</Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-1">
-            {history.map((h, i) => (
-              <button key={i} onClick={() => setInput(h)} className="block w-full text-left text-xs px-2 py-1 rounded hover:bg-muted/50 font-mono truncate">
-                {h}
+      {files.length > 0 && (
+        <div className="space-y-4 rounded-xl border bg-card p-4">
+          <div className="flex flex-wrap gap-2">
+            {(["rotate", "compress", "strip-metadata", "watermark"] as BatchOp[]).map((o) => (
+              <button
+                key={o}
+                type="button"
+                onClick={() => setOp(o)}
+                aria-pressed={op === o}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium cursor-pointer ${op === o ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/80"}`}
+              >
+                {o}
               </button>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+
+          {op === "rotate" && (
+            <div className="flex flex-wrap gap-2">
+              {(["90", "180", "270"] as const).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRotation(r)}
+                  aria-pressed={rotation === r}
+                  className={`px-3 py-1.5 rounded-full text-xs cursor-pointer ${rotation === r ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/80"}`}
+                >
+                  {r}°
+                </button>
+              ))}
+            </div>
+          )}
+
+          {op === "watermark" && (
+            <div className="space-y-1">
+              <Label htmlFor="bp-wm">Watermark text</Label>
+              <Input id="bp-wm" value={watermarkText} onChange={(e) => setWatermarkText(e.target.value)} />
+            </div>
+          )}
+
+          {op === "compress" && (
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={stripMeta} onChange={(e) => setStripMeta(e.target.checked)} className="h-4 w-4 accent-primary" />
+              Also strip metadata
+            </label>
+          )}
+
+          <ActionBar>
+            <RunButton onClick={() => void run()} disabled={files.length === 0} loading={working} label={`Run on ${files.length} file(s)`} />
+            <ClearButton onClick={reset} disabled={files.length === 0} label="Clear" />
+          </ActionBar>
+
+          {error && <ErrorBanner message={error} />}
+
+          {results.length > 0 && (
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-medium">{results.filter((r) => r.ok).length}/{results.length} processed</p>
+                <Button variant="outline" size="sm" className="gap-1.5 cursor-pointer" onClick={() => void downloadAll()}>
+                  <FolderArchive className="h-3.5 w-3.5" /> Download all (ZIP)
+                </Button>
+              </div>
+              <div className="space-y-1.5">
+                {results.map((r) => (
+                  <div key={r.name} className="flex items-center justify-between rounded-lg border bg-card p-2 text-sm">
+                    <span className="truncate">{r.name}</span>
+                    {r.ok ? (
+                      <Button variant="ghost" size="icon-sm" aria-label={`Download ${r.name}`} onClick={() => r.bytes && downloadBytes(r.bytes, `batch-${r.name}`)}>
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-destructive">{r.error}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
-      <Card>
-        <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Privacy:</strong> All processing happens 100% in your browser. Nothing is uploaded, tracked, or stored remotely. Works offline as a PWA.
-          </p>
-        </CardContent>
-      </Card>
+      <p className="text-xs text-muted-foreground">
+        Privacy: 100% local — files never leave your device.
+      </p>
     </div>
   );
 }

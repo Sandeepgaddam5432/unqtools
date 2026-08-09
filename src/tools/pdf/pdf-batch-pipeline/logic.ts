@@ -1,113 +1,121 @@
 /**
- * PDF Batch Processor — pure logic.
+ * PDF Batch Processor (Pipeline) — real engine.
+ *
+ * Applies one operation to MANY PDFs at once:
+ *   - rotate (90/180/270° on all or selected pages)
+ *   - compress (structural + optional metadata strip)
+ *   - strip-metadata (wipe Info + XMP)
+ *   - watermark (text, diagonal)
+ * Each file is processed with the same options; per-file results are
+ * returned so the UI can offer individual or ZIP downloads.
  */
+import { PDFDocument, PDFName, degrees, StandardFonts, rgb } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
+import { compressPdf } from "../compress-pdf/logic";
 
-export interface ProcessResult {
-  output: string;
+export type BatchOp = "rotate" | "compress" | "strip-metadata" | "watermark";
+
+export interface BatchOptions {
+  op: BatchOp;
+  /** Rotation degrees (rotate). */
+  rotation?: 90 | 180 | 270;
+  /** Compress settings (compress). */
+  compress?: { grayscale?: boolean; stripMetadata?: boolean; quality?: number };
+  /** Watermark text (watermark). */
+  watermarkText?: string;
+}
+
+export interface BatchFileInput {
+  name: string;
+  bytes: Uint8Array;
+}
+
+export interface BatchFileResult {
+  name: string;
+  ok: boolean;
   error?: string;
-  metadata?: Record<string, unknown>;
+  bytes?: Uint8Array;
+  pages?: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
-}
+export async function runBatch(
+  files: BatchFileInput[],
+  options: BatchOptions
+): Promise<ToolResult<BatchFileResult[]>> {
+  if (files.length === 0) return { ok: false, error: "Add at least one PDF file." };
+  if (!options.op) return { ok: false, error: "Choose a batch operation." };
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
+  const results: BatchFileResult[] = [];
+  for (const file of files) {
+    try {
+      let bytes = file.bytes;
+      let pages = 0;
+      if (options.op === "rotate") {
+        const doc = await PDFDocument.load(bytes);
+        pages = doc.getPageCount();
+        const angle = options.rotation ?? 90;
+        for (const page of doc.getPages()) {
+          const current = page.getRotation().angle;
+          page.setRotation(degrees((current + angle) % 360));
+        }
+        bytes = await doc.save();
+      } else if (options.op === "strip-metadata") {
+        const doc = await PDFDocument.load(bytes);
+        pages = doc.getPageCount();
+        doc.setTitle("");
+        doc.setAuthor("");
+        doc.setSubject("");
+        doc.setKeywords([]);
+        doc.setCreator("");
+        doc.setProducer("");
+        const trailer = doc.context.trailerInfo as Record<string, unknown>;
+        if (trailer["Info"]) delete trailer["Info"];
+        if (doc.catalog.get(PDFName.of("Metadata"))) {
+          doc.catalog.delete(PDFName.of("Metadata"));
+        }
+        bytes = await doc.save({ useObjectStreams: true });
+      } else if (options.op === "compress") {
+        const res = await compressPdf(bytes, {
+          quality: options.compress?.quality ?? 0.82,
+          grayscale: options.compress?.grayscale,
+          stripMetadata: options.compress?.stripMetadata,
+        });
+        if (!res.ok) {
+          results.push({ name: file.name, ok: false, error: res.error });
+          continue;
+        }
+        bytes = res.output.bytes;
+        pages = res.output.imagesRecompressed > 0 ? 0 : 0;
+      } else if (options.op === "watermark") {
+        const text = (options.watermarkText ?? "").trim();
+        if (!text) {
+          results.push({ name: file.name, ok: false, error: "Enter watermark text." });
+          continue;
+        }
+        const doc = await PDFDocument.load(bytes);
+        pages = doc.getPageCount();
+        const font = await doc.embedFont(StandardFonts.HelveticaBold);
+        const fs = 48;
+        const opacity = 0.25;
+        for (const page of doc.getPages()) {
+          const { width, height } = page.getSize();
+          const textW = font.widthOfTextAtSize(text, fs);
+          page.drawText(text, {
+            x: (width - textW) / 2,
+            y: (height - fs) / 2,
+            size: fs,
+            font,
+            color: rgb(0.5, 0.5, 0.5),
+            opacity,
+            rotate: degrees(45),
+          });
+        }
+        bytes = await doc.save();
+      }
+      results.push({ name: file.name, ok: true, bytes, pages });
+    } catch {
+      results.push({ name: file.name, ok: false, error: "Could not process this file." });
+    }
   }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
-}
-
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
-  }
-  try {
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
-    };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
-  }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-    gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", html: "text/html",
-    css: "text/css", js: "application/javascript", json: "application/json",
-    xml: "application/xml", csv: "text/csv", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number; outputSize: number; ratio: number; savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
+  return { ok: true, output: results };
 }
