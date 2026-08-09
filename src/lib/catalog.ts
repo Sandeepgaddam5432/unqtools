@@ -1898,7 +1898,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Optimize 1-bit black & white scanned PDFs. Threshold, dithering.",
     category: "pdf",
     keywords: ["bw pdf","1-bit pdf","scan optimize","black white"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "bzip2-compressor",
@@ -3594,7 +3594,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert EPUB e-books to PDF. Preserve chapters, styling, TOC.",
     category: "pdf",
     keywords: ["epub to pdf","epub converter","ebook to pdf","epub pdf"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "epub-to-pdf-tool",
@@ -7274,7 +7274,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert Office documents to PDF. .docx, .xlsx, .pptx to PDF.",
     category: "pdf",
     keywords: ["office to pdf","docx to pdf","xlsx to pdf","pptx to pdf"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "office-to-pdf-converter",
@@ -7538,7 +7538,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Combine 2 PDF pages side-by-side on one page. N-up imposition.",
     category: "pdf",
     keywords: ["2-up","side by side","pdf combine","n-up"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-2up-join-tool",
@@ -7562,7 +7562,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Embed files as attachments in PDF. Documents, images, any file type.",
     category: "pdf",
     keywords: ["pdf attachment","embed file pdf","pdf embed","pdf attach"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-add-background",
@@ -7570,7 +7570,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Add color or image background to PDF pages. Opacity, position, tiled option.",
     category: "pdf",
     keywords: ["pdf background","background pdf","pdf bg","pdf color"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-add-border",
@@ -7578,7 +7578,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Add decorative border/frame to PDF pages. Color, width, style options.",
     category: "pdf",
     keywords: ["pdf border","pdf frame","page border","pdf outline"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-add-header-footer",
@@ -7586,7 +7586,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Add headers and footers to PDF pages. Text, page numbers, date, custom position.",
     category: "pdf",
     keywords: ["pdf header","pdf footer","header footer","pdf top bottom"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-add-margins",
