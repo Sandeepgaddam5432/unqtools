@@ -1716,6 +1716,9 @@ import { manifest as macAddressVendorOui } from "@/tools/network-security/mac-ad
 
 import { manifest as aiChatWithPdf } from "@/tools/pdf/ai-chat-with-pdf/manifest";
 import { manifest as timezoneConverter } from "@/tools/developer/timezone-converter/manifest";
+import { manifest as xmlFormatter } from "@/tools/developer/xml-formatter/manifest";
+import { manifest as emailValidator } from "@/tools/developer/email-validator/manifest";
+import { manifest as currencyConverter } from "@/tools/calculators/currency-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
@@ -3394,6 +3397,9 @@ export const TOOLS: readonly ToolManifest[] = [
 
   aiChatWithPdf,
   timezoneConverter,
+  xmlFormatter,
+  emailValidator,
+  currencyConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

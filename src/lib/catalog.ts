@@ -6,7 +6,7 @@
  * omitted here — it lives in src/lib/registry.ts and is only imported
  * by server-rendered tool detail pages.
  *
- * 1701 tools. Regenerate with: node scripts/regenerate-catalog.mjs
+ * 1704 tools. Regenerate with: node scripts/regenerate-catalog.mjs
  */
 import type { ToolCategory } from "./tool";
 
@@ -3069,6 +3069,14 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
+    id: "currency-converter",
+    name: "Currency Converter",
+    description: "Convert between 30+ major world currencies (USD, EUR, GBP, INR, JPY, CNY, AUD, CAD, and more). Includes a built-in reference-rate table, live-like quick conversion, amount scaling, and bulk table view. Runs 100% offline with a clear note that rates are reference (not live) values. 100% private.",
+    category: "calculators",
+    keywords: ["currency converter","exchange rate","convert money","usd to eur","usd to inr","currency calculator","foreign exchange","money converter"],
+    status: "done",
+  },
+  {
     id: "customer-tracker",
     name: "Customer Tracker",
     description: "Track customers and follow-ups — contact info, last-contact date, status, value. Compute days since last contact, total and average customer value, status breakdown, overdue follow-ups, and a follow-up priority list (oldest first). 100% client-side with email + phone validation, CSV/text export, history, and shareable URLs.",
@@ -3482,6 +3490,14 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Generate, customize, and store business email templates for 10 common scenarios — welcome, follow-up, meeting-request, proposal, thank-you, reminder, apology, newsletter, out-of-office, sales-outreach. Each template has 5 tone variants (formal, professional, casual, friendly, urgent). Variable substitution, subject auto-generator, read-time estimator, placeholder validator, multi-template batch generator. Render as text, HTML, or markdown. 18 extra features. 100% client-side.",
     category: "business",
     keywords: ["email template","email generator","business email","cold email","follow-up email","welcome email","meeting request","sales outreach","newsletter template","out of office","professional email"],
+    status: "done",
+  },
+  {
+    id: "email-validator",
+    name: "Email Validator",
+    description: "Validate single email addresses or a whole list. Checks format, syntax, length limits, and top-level domain against the real IANA TLD list, with clear per-error explanations. Batch mode + CSV export. 100% private.",
+    category: "developer",
+    keywords: ["email validator","validate email","email checker","email regex","batch email validation","email syntax","email format check","disposable email"],
     status: "done",
   },
   {
@@ -13546,6 +13562,14 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Extract files from XAR (eXtensible Archive) — Apple's archive format with XML TOC + heap. Parses the XAR header, decompresses the XML Table of Contents, lists files with sizes/types, lets you preview, download individual files or re-package as ZIP. 100% client-side.",
     category: "file",
     keywords: ["xar extractor","xar file","apple xar","extensible archive","xar unpack","xar viewer","xar to zip","xar toc","xar header","xar-extractor"],
+    status: "done",
+  },
+  {
+    id: "xml-formatter",
+    name: "XML Formatter",
+    description: "Format, beautify, minify, and validate XML in your browser. Pretty-print with adjustable indentation, collapse to compact form, and validate well-formedness with line/column error reports. 100% private.",
+    category: "developer",
+    keywords: ["xml formatter","xml beautifier","format xml","minify xml","pretty print xml","xml validator","well-formed xml","indent xml"],
     status: "done",
   },
   {

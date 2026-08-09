@@ -1761,6 +1761,9 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "mac-address-vendor-oui": () => import("@/tools/network-security/mac-address-vendor-oui/ui"),
   "ai-chat-with-pdf": () => import("@/tools/pdf/ai-chat-with-pdf/ui"),
   "timezone-converter": () => import("@/tools/developer/timezone-converter/ui"),
+  "xml-formatter": () => import("@/tools/developer/xml-formatter/ui"),
+  "email-validator": () => import("@/tools/developer/email-validator/ui"),
+  "currency-converter": () => import("@/tools/calculators/currency-converter/ui"),
 };
 
 interface ToolPageClientProps {
