@@ -11,3 +11,43 @@ describe("svgToPdf", () => {
   it("handles letter page", async () => { /* requires DOM */ });
   it("handles landscape", async () => { /* requires DOM */ });
 });
+
+describe("svg advanced (pure helpers)", () => {
+  it("parseSvgSize reads width/height attrs", async () => {
+    const { parseSvgSize } = await import("./logic");
+    expect(parseSvgSize('<svg width="100" height="50"></svg>')).toEqual({ width: 100, height: 50 });
+  });
+
+  it("parseSvgSize falls back to viewBox", async () => {
+    const { parseSvgSize } = await import("./logic");
+    expect(parseSvgSize('<svg viewBox="0 0 640 480"></svg>')).toEqual({ width: 640, height: 480 });
+  });
+
+  it("parseSvgSize falls back to defaults", async () => {
+    const { parseSvgSize } = await import("./logic");
+    expect(parseSvgSize("<svg></svg>")).toEqual({ width: 800, height: 600 });
+  });
+
+  it("computeDraw contain keeps aspect inside margins", async () => {
+    const { computeDraw } = await import("./logic");
+    const d = computeDraw("contain", 100, 200, 400, 400, 20);
+    expect(d.w / d.h).toBeCloseTo(0.5, 2);
+    expect(d.x).toBeGreaterThanOrEqual(20);
+    expect(d.y).toBeGreaterThanOrEqual(20);
+    expect(d.w).toBeLessThanOrEqual(360);
+    expect(d.h).toBeLessThanOrEqual(360);
+  });
+
+  it("computeDraw fill covers the full area", async () => {
+    const { computeDraw } = await import("./logic");
+    const d = computeDraw("fill", 100, 200, 400, 400, 20);
+    expect(d.w).toBeCloseTo(360, 1);
+    expect(d.h).toBeCloseTo(720, 1);
+  });
+
+  it("rejects invalid SVG", async () => {
+    const { svgToPdf } = await import("./logic");
+    const r = await svgToPdf("not svg at all");
+    expect(r.ok).toBe(false);
+  });
+});

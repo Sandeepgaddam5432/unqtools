@@ -29,34 +29,18 @@ import {
   Sun,
   Moon,
   Star,
+  Trash2,
+  Clock,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { CATALOG } from "@/lib/catalog";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
-
-const RECENTS_KEY = "unq-cmdk-recents";
-const MAX_RECENTS = 5;
-
-function loadRecents(): string[] {
-  try {
-    const raw = localStorage.getItem(RECENTS_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string").slice(0, MAX_RECENTS) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveRecent(id: string) {
-  try {
-    const cur = loadRecents().filter((x) => x !== id);
-    cur.unshift(id);
-    localStorage.setItem(RECENTS_KEY, JSON.stringify(cur.slice(0, MAX_RECENTS)));
-  } catch {
-    /* ignore */
-  }
-}
+import {
+  clearFavorites,
+  loadFavorites,
+  loadRecent,
+  recordRecent,
+} from "@/lib/tool-history";
 
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
@@ -83,17 +67,25 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [recents, setRecents] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    if (open) setRecents(loadRecents());
+    if (open) {
+      setRecents(loadRecent());
+      setFavorites(loadFavorites());
+    }
   }, [open]);
 
   const recentTools = recents
     .map((id) => CATALOG.find((t) => t.id === id))
     .filter(Boolean) as Array<(typeof CATALOG)[number]>;
 
+  const favoriteTools = favorites
+    .map((id) => CATALOG.find((t) => t.id === id))
+    .filter(Boolean) as Array<(typeof CATALOG)[number]>;
+
   function go(url: string, toolId?: string) {
-    if (toolId) saveRecent(toolId);
+    if (toolId) setRecents(recordRecent(toolId));
     onOpenChange(false);
     router.push(url);
   }
@@ -140,6 +132,41 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
             <CommandSeparator />
 
+            {/* Favorites */}
+            {favoriteTools.length > 0 && (
+              <>
+                <CommandGroup heading={`Favorites (${favoriteTools.length})`}>
+                  {favoriteTools.map((tool) => {
+                    const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
+                    return (
+                      <CommandItem
+                        key={`fav-${tool.id}`}
+                        onSelect={() => go(`/tools/${tool.id}`, tool.id)}
+                        className="cursor-pointer"
+                      >
+                        <Star className="mr-2 h-4 w-4 fill-amber-500 text-amber-500" />
+                        <span>{tool.name}</span>
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
+                        </span>
+                      </CommandItem>
+                    );
+                  })}
+                  <CommandItem
+                    onSelect={() => {
+                      clearFavorites();
+                      setFavorites([]);
+                    }}
+                    className="cursor-pointer text-muted-foreground"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    <span>Clear all favorites</span>
+                  </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
+              </>
+            )}
+
             {/* Recents */}
             {recentTools.length > 0 && (
               <>
@@ -152,7 +179,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         onSelect={() => go(`/tools/${tool.id}`, tool.id)}
                         className="cursor-pointer"
                       >
-                        <Icon className="mr-2 h-4 w-4 text-primary" />
+                        <Clock className="mr-2 h-4 w-4 text-primary" />
                         <span>{tool.name}</span>
                         <span className="ml-auto text-xs text-muted-foreground">
                           {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}

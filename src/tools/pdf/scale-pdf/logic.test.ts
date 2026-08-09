@@ -15,9 +15,53 @@ describe("scalePdf", () => {
     const pdf = await makePdf(2, 200, 200); const r = await scalePdf(pdf, { scale: 2, pages: "1" });
     expect(r.ok).toBe(true); if (r.ok) { const doc = await PDFDocument.load(r.output); expect(doc.getPages()[0].getSize().width).toBe(400); expect(doc.getPages()[1].getSize().width).toBe(200); }
   });
-  it("errors on scale below 25%", async () => { const pdf = await makePdf(1); const r = await scalePdf(pdf, { scale: 0.1 }); expect(r.ok).toBe(false); });
-  it("errors on scale above 400%", async () => { const pdf = await makePdf(1); const r = await scalePdf(pdf, { scale: 5 }); expect(r.ok).toBe(false); });
+  it("errors on scale below 10%", async () => { const pdf = await makePdf(1); const r = await scalePdf(pdf, { scale: 0.05 }); expect(r.ok).toBe(false); });
+  it("errors on scale above 1000%", async () => { const pdf = await makePdf(1); const r = await scalePdf(pdf, { scale: 12 }); expect(r.ok).toBe(false); });
   it("errors on invalid page range", async () => { const pdf = await makePdf(2); const r = await scalePdf(pdf, { scale: 1, pages: "9" }); expect(r.ok).toBe(false); });
   it("errors on invalid bytes", async () => { const r = await scalePdf(new Uint8Array([1]), { scale: 1 }); expect(r.ok).toBe(false); });
   it("100% scale is a no-op but valid", async () => { const pdf = await makePdf(1, 200, 200); const r = await scalePdf(pdf, { scale: 1 }); expect(r.ok).toBe(true); });
+});
+
+describe("scale advanced (anchor, keep size)", () => {
+  it("scaleAnchorOffsets computes translations", async () => {
+    const { scaleAnchorOffsets } = await import("./logic");
+    const c = scaleAnchorOffsets("center", 100, 200, 2);
+    expect(c).toEqual({ x: -50, y: -100 });
+    const bl = scaleAnchorOffsets("bottom-left", 100, 200, 2);
+    expect(bl).toEqual({ x: 0, y: 0 });
+  });
+
+  it("keeps page size when requested", async () => {
+    const pdf = await makePdf(1);
+    const r = await scalePdf(pdf, { scale: 1.5, keepPageSize: true });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const doc = await PDFDocument.load(r.output);
+      const { width } = doc.getPages()[0].getSize();
+      expect(width).toBe(595);
+    }
+  });
+
+  it("grows the page when keepPageSize=false", async () => {
+    const pdf = await makePdf(1);
+    const r = await scalePdf(pdf, { scale: 1.5, keepPageSize: false });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const doc = await PDFDocument.load(r.output);
+      const { width } = doc.getPages()[0].getSize();
+      expect(Math.round(width)).toBe(Math.round(595 * 1.5));
+    }
+  });
+
+  it("applies to selected pages only", async () => {
+    const pdf = await makePdf(2);
+    const r = await scalePdf(pdf, { scale: 2, pages: "1" });
+    expect(r.ok).toBe(true);
+  });
+
+  it("rejects out-of-range scale", async () => {
+    const pdf = await makePdf(1);
+    const r = await scalePdf(pdf, { scale: 20 });
+    expect(r.ok).toBe(false);
+  });
 });

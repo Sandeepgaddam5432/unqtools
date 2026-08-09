@@ -369,9 +369,9 @@ md.push(row(["Tools inside those clusters", summary.toolsInExactClusters, pct(su
 md.push(row(["Distinct capabilities", summary.uniqueCapabilities, ""]))
 md.push(row(["Near-duplicate pairs (>=0.6)", summary.nearDuplicatePairs, ""]))
 md.push("")
-md.push("> Duplicates are NOT removal candidates. Owner directive: keep all tools.")
-md.push("> Each cluster gets ONE canonical engine; the siblings become thin")
-md.push("> wrappers with their own copy, SEO angle and presets.")
+md.push("> Owner directive (v18): merge each cluster into ONE powerful mega tool.")
+md.push("> Old URLs 301-redirect to the merged tool (public/_redirects) — engines are")
+md.push("> never lost, only consolidated. See docs/MERGE-PLAN.md for the roadmap.")
 md.push("")
 
 md.push("## Category scoreboard (worst first)")

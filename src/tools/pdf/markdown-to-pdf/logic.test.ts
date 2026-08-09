@@ -18,3 +18,41 @@ describe("markdownToPdf", () => {
   it("sets creator metadata", async () => { const r = await markdownToPdf("# Test", baseOpts); expect(r.ok).toBe(true); if (r.ok) { const doc = await PDFDocument.load(r.output); expect(doc.getCreator()).toContain("UnQTools"); } });
   it("handles letter page + landscape", async () => { const r = await markdownToPdf("# Test", { pageSize: "letter", orientation: "landscape", margin: 50 }); expect(r.ok).toBe(true); });
 });
+
+describe("markdown advanced (parser + tables)", () => {
+  it("parseMarkdown handles headings, lists and code", async () => {
+    const { parseMarkdown } = await import("./logic");
+    const lines = parseMarkdown("# Title\n\n- item\n\n```\ncode\n```\n");
+    expect(lines.some((l) => l.bold && l.fontSize > 12)).toBe(true);
+    expect(lines.some((l) => l.bullet)).toBe(true);
+    expect(lines.some((l) => l.mono)).toBe(true);
+  });
+
+  it("splitTableRow parses GFM cells", async () => {
+    const { splitTableRow } = await import("./logic");
+    expect(splitTableRow("| a | b | c |")).toEqual(["a", "b", "c"]);
+    expect(splitTableRow("plain text")).toBeNull();
+  });
+
+  it("parseMarkdown extracts GFM tables with headers", async () => {
+    const { parseMarkdown } = await import("./logic");
+    const md = "| Name | Value |\n|---|---|\n| A | 1 |\n| B | 2 |\n";
+    const lines = parseMarkdown(md);
+    const tables = lines.filter((l) => l.table);
+    expect(tables.length).toBe(3);
+    expect(tables[0]!.isHeader).toBe(true);
+    expect(tables[0]!.table).toEqual(["Name", "Value"]);
+  });
+
+  it("supports page numbers option", async () => {
+    const { markdownToPdf } = await import("./logic");
+    const r = await markdownToPdf("# Hi\n\nSome **bold** text\n\n- one\n- two\n", { pageNumbers: true, bodySize: 12 });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect((await PDFDocument.load(r.output)).getPageCount()).toBeGreaterThanOrEqual(1);
+  });
+
+  it("rejects empty markdown", async () => {
+    const { markdownToPdf } = await import("./logic");
+    expect((await markdownToPdf("   ")).ok).toBe(false);
+  });
+});

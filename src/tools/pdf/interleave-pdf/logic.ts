@@ -16,6 +16,12 @@ export interface InterleaveInput {
   bytesB: Uint8Array;
   /** Name of PDF B — used in error messages. */
   nameB: string;
+  /** Pages of A per round (default 1) — e.g. 2 for A1,A2,B1,B2. */
+  cycleA?: number;
+  /** Pages of B per round (default 1). */
+  cycleB?: number;
+  /** Start with A (default true) — false starts with B. */
+  startWithA?: boolean;
 }
 
 export interface InterleaveResult {
@@ -46,20 +52,40 @@ export async function interleavePdf(input: InterleaveInput): Promise<ToolResult<
     return { ok: false, error: "Both PDFs are empty — nothing to interleave." };
   }
 
+  const cycleA = Math.max(1, Math.floor(input.cycleA ?? 1));
+  const cycleB = Math.max(1, Math.floor(input.cycleB ?? 1));
+  const startWithA = input.startWithA ?? true;
+
   try {
     const out = await PDFDocument.create();
     const maxPages = Math.max(countA, countB);
 
-    for (let i = 0; i < maxPages; i++) {
-      // Take page i from A if it exists
-      if (i < countA) {
-        const [page] = await out.copyPages(docA, [i]);
-        out.addPage(page);
-      }
-      // Take page i from B if it exists
-      if (i < countB) {
-        const [page] = await out.copyPages(docB, [i]);
-        out.addPage(page);
+    let ia = 0;
+    let ib = 0;
+    // Round-robin with configurable cycle sizes: A×cycleA, B×cycleB, …
+    while (ia < countA || ib < countB) {
+      if (startWithA) {
+        for (let k = 0; k < cycleA && ia < countA; k++) {
+          const [page] = await out.copyPages(docA, [ia]);
+          out.addPage(page);
+          ia++;
+        }
+        for (let k = 0; k < cycleB && ib < countB; k++) {
+          const [page] = await out.copyPages(docB, [ib]);
+          out.addPage(page);
+          ib++;
+        }
+      } else {
+        for (let k = 0; k < cycleB && ib < countB; k++) {
+          const [page] = await out.copyPages(docB, [ib]);
+          out.addPage(page);
+          ib++;
+        }
+        for (let k = 0; k < cycleA && ia < countA; k++) {
+          const [page] = await out.copyPages(docA, [ia]);
+          out.addPage(page);
+          ia++;
+        }
       }
     }
 

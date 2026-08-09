@@ -1,13 +1,75 @@
 # UnQTools — Build State
 
-_Last updated: 2026-08-09 — branch arena/019fe5f1-unqtools. Tool count: 1704. Perf work (v17.71) intact._
+_Last updated: 2026-08-09 — branch arena/019fe601-unqtools. Tool count: 1679. Perf work (v17.71) intact. Owner directive (v18): consolidate tools into fewer, powerful mega tools + kill the "which tool do I need?" confusion._
 
 ## Current phase
 
-**v17.71 — 1704 tools live, perf + high-demand tools + cleanup intact (owner directive: no removals).**
+**v18.3 — PDF 100x wave 2: next 10 alphabetical PDF tools rebuilt (flatten, interleave, n-up, markdown, blank-removal, resize, rtf, scale, svg, text). 1,679 tools live.**
+
+- **v18.3 (PDF 100x wave 2):** Continued the 100x program with the next 10 PDF tools:
+  **Flatten PDF** (choose fields/annotations/JS/metadata + removal report), **Interleave PDF**
+  (cycles + start-with), **N-Up PDF** (1–16/sheet + grids + row/column + borders + sheet
+  numbers), **Markdown to PDF** (GFM tables + page numbers + selectable text), **Remove Blank
+  Pages** (sensitivity levels + scan-range + preview), **Resize PDF Pages** (7 presets + pt/mm/in
+  + fit content), **RTF to PDF** (real unicode/hex/tab/par parser), **Scale PDF Content**
+  (10–1000% + anchors), **SVG to PDF** (fit modes + transparent + DPI), **Text to PDF**
+  (3 fonts + alignment + header/footer + page numbers). Backward-compatible; 7,486 PDF tests
+  pass (+50 new); ESLint clean; no removals. Full table: [`docs/PDF-100x-TOOLS.md`](./PDF-100x-TOOLS.md).
+
+**v18.2 — PDF 100x wave: 10 selected PDF tools rebuilt to beat the competition. 1,679 tools live.**
+
+- **v18.2 (PDF 100x):** Web-researched competitor features (iLovePDF = 3 presets + server upload,
+  SmallPDF = 2/day, Sejda = some page-level options) then rebuilt the 10 selected PDF tools to be
+  100x: **Compress PDF** (5 presets + custom quality + downscale + grayscale + **exact target size**
+  + batch 20 files + ZIP + real in-browser JPEG re-encoding), **Crop PDF** (presets + units + per-page
+  + live preview + reset), **HTML to PDF** (page setup + page numbers + multi-page), **Page Numbers**
+  (7 formats + positions + start/skip + bold/color + prefix/suffix), **Watermark** (text/image + 4
+  placements + 9 anchors + rotation + extras), **Merge interleave**. Full breakdown:
+  [`docs/PDF-100x-TOOLS.md`](./PDF-100x-TOOLS.md). 7,436 PDF tests pass; no removals.
+
+**v18.1 — Anti-confusion UX: task-based groups, "Ready now" default, intent search, task cards. 1679 tools live.**
+
+- **v18.1 (anti-confusion):** Users land on a wall of 1,679 tools and don't know which
+  one fits their task. Fixed with best-practice UX:
+  1. **Task-based grouping** (`src/lib/tool-groups.ts`, 11 unit tests) — the 7 biggest
+     categories (pdf, developer, image, file, text, seo, network-security) split into
+     job buckets ("Page editing", "Merge & split", "Compress & optimize", "Protect &
+     sign", "Convert from/to PDF"…). Category pages now render grouped sections with
+     jump-to chips + "N ready · M coming soon" counts instead of one flat grid.
+  2. **"Ready now (1133)" is the default tools filter** — the 546 "Coming Soon" stubs
+     are hidden by default (All (1679) toggle still available). No more users clicking
+     a promising tool only to hit "UI coming soon".
+  3. **Intent search** (`src/lib/search.ts`) — everyday phrasing now finds tools:
+     "make my PDF smaller" → Compress PDF, "join two pdfs" → Merge PDF, "lock my file"
+     → encrypt/password tools. 13 search tests.
+  4. **Home page "What do you want to do?" task cards** — 6 common tasks with plain
+     descriptions link straight to the right tools/search.
+  5. **Task-based search placeholder** — "What do you want to do? e.g. 'make my PDF smaller'".
+  Verified: /tools + /category/pdf + / SSR render all new sections; 46 unit tests pass;
+  ESLint clean; scoped tsc clean.
+
+**v18.0 — Consolidation wave 1: PDF Page Manager (26 tools → 1). 1679 tools live.**
 
 Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+Consolidation roadmap: [`docs/MERGE-PLAN.md`](./docs/MERGE-PLAN.md).
+Growth & monetization: [`docs/ROADMAP-v18.md`](./docs/ROADMAP-v18.md).
 
+- **v18.0:** **Merged 26 PDF page tools → `pdf-page-manager`** (delete, extract,
+  duplicate, insert, reorder, rotate, reverse in one tabbed mega tool; self-contained
+  `logic.ts` with 12 unit tests; old URLs 301-redirect via `public/_redirects`).
+  **Tool-page UX reorg:** tool UI is now the hero — About / FAQ / Related live behind
+  compact tabs instead of full-page sections. Tool count 1704 → **1679** (26 merged − 1 new).
+  Catalog/sitemap/TOOLS-INDEX/counts regenerated (1694 URLs). Docs added:
+  `docs/MERGE-PLAN.md` (125 remaining duplicate clusters → future mega tools),
+  `docs/ROADMAP-v18.md` (domain, top-50 traffic-first, UnQ AI, B2B API, ₹1L/day path).
+  Removed tool dirs deleted; registry cleaned; tests 38 pass; ESLint clean on touched files.
+- **v17.72:** Added **Favorites + Recently viewed tools** (site-wide, localStorage-only, privacy-first):
+  `src/lib/tool-history.ts` (pure, 14 unit tests) + `src/hooks/use-tool-history.ts` (cross-tab sync).
+  ★ button on every tool card and tool page; Favorites/Recent quick-filter chips on `/tools`
+  (`?view=favorites|recent` linkable); Favorites + Recent groups in the ⌘K palette (unified recent
+  storage, was `unq-cmdk-recents`). Also added **`docs/TOOLS-INDEX.md`** — auto-generated catalog of
+  all **1,704 tools** (via `scripts/generate-tools-index.mjs`), linked from README. Fixed pre-existing
+  framer-motion `Variants` type widening in the tools page (now explicitly typed). All 1,704 tools intact.
 - **v17.66:** Added **Timezone Converter** (developer) — offline, DST-aware. 1700 → **1701**.
 - **v17.67:** Added **XML Formatter** (developer), **Email Validator** (developer),
   **Currency Converter** (calculators, offline reference rates). Tool count → **1704**.

@@ -97,3 +97,32 @@ describe("interleavePdf", () => {
     }
   });
 });
+
+describe("interleave advanced (cycles + start)", () => {
+  it("interleaves 2:2 (two pages at a time)", async () => {
+    const { interleavePdf } = await import("./logic");
+    const a = await makePdf(4);
+    const b = await makePdf(4);
+    const res = await interleavePdf({ bytesA: a, nameA: "a.pdf", bytesB: b, nameB: "b.pdf", cycleA: 2, cycleB: 2 });
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.output.totalPageCount).toBe(8);
+  });
+
+  it("supports startWithB", async () => {
+    const { interleavePdf } = await import("./logic");
+    const a = await makePdf(2);
+    const b = await makePdf(2);
+    const res = await interleavePdf({ bytesA: a, nameA: "a.pdf", bytesB: b, nameB: "b.pdf", startWithA: false });
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.output.totalPageCount).toBe(4);
+  });
+
+  it("handles unequal lengths with cycles", async () => {
+    const { interleavePdf } = await import("./logic");
+    const a = await makePdf(1);
+    const b = await makePdf(5);
+    const res = await interleavePdf({ bytesA: a, nameA: "a.pdf", bytesB: b, nameB: "b.pdf", cycleA: 2, cycleB: 3 });
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.output.totalPageCount).toBe(6);
+  });
+});

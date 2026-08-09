@@ -55,3 +55,50 @@ describe("removeBlankPages", () => {
     if (r.ok) expect(r.output.removedPageNumbers).toEqual([1, 3, 5]);
   });
 });
+
+describe("remove-blank advanced", () => {
+  it("previewBlankPages reports without mutating", async () => {
+    const { previewBlankPages } = await import("./logic");
+    const pdf = await makePdfWithContent(3, []);
+    const r = await previewBlankPages(pdf);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.originalCount).toBe(3);
+      expect(r.output.removedPageNumbers).toEqual([]);
+    }
+  });
+
+  it("respects scan-range pages", async () => {
+    const { previewBlankPages } = await import("./logic");
+    const pdf = await makePdfWithContent(4, []);
+    const r = await previewBlankPages(pdf, { pages: "2-3" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.scannedPageNumbers).toEqual([2, 3]);
+  });
+
+  it("keeps pages outside the scan range", async () => {
+    const { removeBlankPages } = await import("./logic");
+    const pdf = await makePdfWithContent(4, []);
+    const r = await removeBlankPages(pdf, { pages: "1" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.keptCount).toBe(4);
+  });
+
+  it("rejects when every scanned page is blank", async () => {
+    const { PDFDocument } = await import("pdf-lib");
+    const doc = await PDFDocument.create();
+    doc.addPage([200, 200]); // fresh page has no content stream → blank
+    const bytes = await doc.save();
+    const r = await removeBlankPages(bytes, { sensitivity: 0 });
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toMatch(/blank/i);
+  });
+
+  it("supports sensitivity levels", async () => {
+    const pdf = await makePdfWithContent(2, []);
+    for (const s of [0, 1, 2] as const) {
+      const r = await removeBlankPages(pdf, { sensitivity: s });
+      expect(r.ok).toBe(true);
+    }
+  });
+});

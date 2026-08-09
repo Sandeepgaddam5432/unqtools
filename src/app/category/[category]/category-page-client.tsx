@@ -18,7 +18,8 @@ import {
   Layers,
   Sparkles,
 } from "lucide-react";
-import { CATEGORY_LABELS, type ToolCategory, type ToolManifest } from "@/lib/tool";
+import { type ToolCategory, type ToolManifest } from "@/lib/tool";
+import { groupTools } from "@/lib/tool-groups";
 
 // ===== ANIMATION CONSTANTS (named, so JSX props stay single-brace) =====
 
@@ -76,6 +77,7 @@ interface CategoryPageClientProps {
 
 export function CategoryPageClient({ category, label, tools }: CategoryPageClientProps) {
   const Icon = CATEGORY_ICONS[category] ?? Layers;
+  const grouped = groupTools(category, tools);
 
   return (
     <div className="flex min-h-dvh bg-background">
@@ -140,9 +142,39 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
           </div>
         </section>
 
-        {/* ===== TOOLS GRID ===== */}
+        {/* ===== GROUP JUMP LINKS ===== */}
+        {grouped.length > 1 && (
+          <section className="section-padding pb-0 -mt-6">
+            <div className="container mx-auto px-4 md:px-6">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">
+                What do you want to do? Jump to a section
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {grouped.map((g) => {
+                  const gid = g.group ? g.group.id : "other";
+                  const total = g.items.length;
+                  const doneCount = g.items.filter((t) => t.status !== "planned").length;
+                  return (
+                    <a
+                      key={gid}
+                      href={`#group-${gid}`}
+                      className="px-3 py-1.5 rounded-full border bg-card text-xs font-medium text-foreground/80 hover:border-primary/40 hover:text-foreground transition-colors"
+                    >
+                      {g.group?.label ?? "More tools"}{" "}
+                      <span className="text-muted-foreground">
+                        ({doneCount} ready{total > doneCount ? ` +${total - doneCount} soon` : ""})
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ===== GROUPED TOOLS ===== */}
         <section className="section-padding pb-24">
-          <div className="container mx-auto px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6 space-y-14">
             {tools.length === 0 ? (
               <motion.div initial={HIDDEN} animate={VISIBLE} className="text-center py-24">
                 <div className="unq-icon-tile h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -160,50 +192,68 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                 </Button>
               </motion.div>
             ) : (
-              <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
-              >
-                {tools.map((tool, index) => {
-                  const ToolIcon = CATEGORY_ICONS[tool.category] ?? Layers;
-                  return (
-                    <div
-                      key={tool.id}
-                      className="unq-animate-fade-in-up"
-                      style={{ animationDelay: `${Math.min(index * 30, 600)}ms` }}
-                    >
-                      <Link href={`/tools/${tool.id}`} className="block group h-full">
-                        <div
-                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
-                        >
-                          <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
-                            <ToolIcon className="h-5 w-5 text-primary" />
-                          </div>
-                          <h3 className="font-semibold mb-1 leading-tight">{tool.name}</h3>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                            {tool.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
-                              <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
-                                {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
-                              </Badge>
-                              {tool.status === "planned" && (
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
-                                  Coming Soon
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
-                              <span>Open</span>
-                              <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
+              grouped.map((g, gi) => {
+                const gid = g.group ? g.group.id : "other";
+                const doneCount = g.items.filter((t) => t.status !== "planned").length;
+                const soonCount = g.items.length - doneCount;
+                return (
+                  <div key={gid} id={`group-${gid}`} className="scroll-mt-24">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+                      <h2 className="text-xl md:text-2xl font-bold text-foreground">
+                        {g.group?.label ?? "More tools"}
+                      </h2>
+                      <p className="text-xs text-muted-foreground">
+                        {doneCount} ready{soonCount > 0 ? ` · ${soonCount} coming soon` : ""}
+                      </p>
                     </div>
-                  );
-                })}
-              </div>
+                    {g.group && (
+                      <p className="text-sm text-muted-foreground mb-5">{g.group.blurb}</p>
+                    )}
+                    {!g.group && (
+                      <p className="text-sm text-muted-foreground mb-5">
+                        Everything else in this category.
+                      </p>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                      {g.items.map((tool, index) => {
+                        const ToolIcon = CATEGORY_ICONS[tool.category] ?? Layers;
+                        return (
+                          <div
+                            key={tool.id}
+                            className="unq-animate-fade-in-up"
+                            style={{ animationDelay: `${Math.min((gi * 7 + index) * 25, 500)}ms` }}
+                          >
+                            <Link href={`/tools/${tool.id}`} className="block group h-full">
+                              <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30">
+                                <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
+                                  <ToolIcon className="h-5 w-5 text-primary" />
+                                </div>
+                                <h3 className="font-semibold mb-1 leading-tight">{tool.name}</h3>
+                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                  {tool.description}
+                                </p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-1.5">
+                                    {tool.status === "planned" && (
+                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
+                                        Coming Soon
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
+                                    <span>Open</span>
+                                    <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })
             )}
           </div>
         </section>

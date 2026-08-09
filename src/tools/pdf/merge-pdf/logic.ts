@@ -32,6 +32,12 @@ export interface MergeOptions {
     author?: string;
     subject?: string;
   };
+  /**
+   * Interleave (alternate) pages across all input files — page 1 of file A,
+   * page 1 of file B, page 2 of A, page 2 of B… Files with fewer pages just
+   * run out. Only meaningful with 2+ files.
+   */
+  interleave?: boolean;
 }
 
 export interface MergePreviewFile {
@@ -130,6 +136,8 @@ export async function mergePdfs(
     out.setCreationDate(new Date());
     out.setModificationDate(new Date());
 
+    // Load every input once so we can build the page plan (incl. interleave).
+    const loaded: { name: string; doc: PDFDocument; indices: number[] }[] = [];
     for (const input of inputs) {
       let src: PDFDocument;
       try {
@@ -151,8 +159,25 @@ export async function mergePdfs(
       } else {
         indices = src.getPageIndices();
       }
-      const pages = await out.copyPages(src, indices);
-      for (const page of pages) out.addPage(page);
+      loaded.push({ name: input.name, doc: src, indices });
+    }
+
+    if (options.interleave && loaded.length > 1) {
+      // Alternate pages: A1, B1, C1, A2, B2, C2, …
+      const maxLen = Math.max(...loaded.map((l) => l.indices.length));
+      for (let i = 0; i < maxLen; i++) {
+        for (const l of loaded) {
+          if (i < l.indices.length) {
+            const [page] = await out.copyPages(l.doc, [l.indices[i]!]);
+            out.addPage(page);
+          }
+        }
+      }
+    } else {
+      for (const l of loaded) {
+        const pages = await out.copyPages(l.doc, l.indices);
+        for (const page of pages) out.addPage(page);
+      }
     }
     if (out.getPageCount() === 0) {
       return { ok: false, error: "No pages selected — check your page ranges." };

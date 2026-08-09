@@ -16,3 +16,36 @@ describe("textToPdf", () => {
   it("sets creator metadata", async () => { const r = await textToPdf("Test", baseOpts); expect(r.ok).toBe(true); if (r.ok) { const doc = await PDFDocument.load(r.output); expect(doc.getCreator()).toContain("UnQTools"); } });
   it("handles unicode text", async () => { const r = await textToPdf("Café — naïve résumé", baseOpts); expect(r.ok).toBe(true); });
 });
+
+describe("text-to-pdf advanced", () => {
+  it("wrapText wraps long words and keeps short lines", async () => {
+    const { wrapText } = await import("./logic");
+    const { PDFDocument, StandardFonts } = await import("pdf-lib");
+    const doc = await PDFDocument.create();
+    const font = await doc.embedFont(StandardFonts.Helvetica);
+    const lines = wrapText("one two three four", 40, font, 12);
+    expect(lines.length).toBeGreaterThan(1);
+    expect(lines.join(" ").replace(/\s+/g, " ").trim()).toBe("one two three four");
+  });
+
+  it("supports Courier, alignment and header", async () => {
+    const { textToPdf } = await import("./logic");
+    const r = await textToPdf("Hello world\nSecond line", { font: "courier", align: "center", header: "My Doc", pageNumbers: true });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect((await PDFDocument.load(r.output)).getPageCount()).toBeGreaterThanOrEqual(1);
+  });
+
+  it("multi-page text produces multiple pages", async () => {
+    const { textToPdf } = await import("./logic");
+    const long = Array.from({ length: 120 }, (_, i) => `Line number ${i} of the test document`).join("\n");
+    const r = await textToPdf(long, { fontSize: 12 });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect((await PDFDocument.load(r.output)).getPageCount()).toBeGreaterThan(1);
+  });
+
+  it("rejects empty text", async () => {
+    const { textToPdf } = await import("./logic");
+    const r = await textToPdf("   ");
+    expect(r.ok).toBe(false);
+  });
+});

@@ -847,25 +847,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/delete-pdf-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/duplicate-pdf-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/duplicate-file-finder</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/extract-pdf-pages</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -890,12 +872,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/images-to-pdf</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/insert-pdf-pages</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -973,12 +949,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/reorder-pdf-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/resize-pdf-pages</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -986,18 +956,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/rtf-to-pdf</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/reverse-pdf</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/rotate-pdf</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -7375,12 +7333,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-rotate</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-add-page-numbers</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -7447,12 +7399,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-extract-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-to-rtf</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -7489,12 +7435,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-delete-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-protect</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -7508,12 +7448,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-to-epub</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-reorder-pages</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -8221,12 +8155,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-insert-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-scale-fit</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -8269,12 +8197,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-reorder-custom</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-stamp-document</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -8312,12 +8234,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-attachment-embed</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-delete-range</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -8479,12 +8395,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-duplicate-pages</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-background-image</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -8557,12 +8467,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-rotate-range</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-highlight-markup</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -8624,12 +8528,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-redact-pattern</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-reverse-order</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -8707,12 +8605,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-extract-range</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-booklet-print</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -8732,12 +8624,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-to-pdfx</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-rotate-permanent</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -8923,12 +8809,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-duplicate-pages-tool</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-auto-rotate-tool</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -9025,12 +8905,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-reverse-order-tool</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-fill-form-tool</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -9038,12 +8912,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-highlight-markup-tool</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-insert-pages-tool</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -9445,12 +9313,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-delete-range-tool</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-hyperlink-editor-pdf</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -9488,12 +9350,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-split-advanced-tool</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-extract-range-tool</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -9619,12 +9475,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-rotate-range-tool</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-translate-layout</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -9650,12 +9500,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-export-form-data-fdf</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-page-reorder-custom-tool</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -10286,6 +10130,12 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/ai-chat-with-pdf</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unqtools.pages.dev/tools/pdf-page-manager</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

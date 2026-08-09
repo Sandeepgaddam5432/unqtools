@@ -212,6 +212,51 @@ const featuredTools: {
   },
 ];
 
+// ===== COMMON TASKS (task-based entry — "which tool do I need?" shortcut) =====
+const TASKS: {
+  title: string;
+  description: string;
+  href: string;
+  icon: typeof Code2;
+}[] = [
+  {
+    title: "Make my PDF smaller",
+    description: "Compress, shrink or reduce a PDF file's size without losing quality.",
+    href: "/tools?q=compress pdf",
+    icon: FileText,
+  },
+  {
+    title: "Merge or split PDFs",
+    description: "Combine several PDFs into one, or split one document into many.",
+    href: "/tools?q=merge pdf",
+    icon: Layers,
+  },
+  {
+    title: "Edit an image",
+    description: "Resize, crop, rotate, convert or compress an image in seconds.",
+    href: "/tools?q=image resize",
+    icon: ImageIcon,
+  },
+  {
+    title: "Format my code",
+    description: "Beautify, minify or validate JSON, HTML, CSS and other code.",
+    href: "/tools?q=json formatter",
+    icon: Code2,
+  },
+  {
+    title: "Create a strong password",
+    description: "Generate secure, random passwords and passphrases instantly.",
+    href: "/tools/password-generator",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Check my writing",
+    description: "Count words, characters and sentences, or check readability.",
+    href: "/tools?q=word count",
+    icon: Type,
+  },
+];
+
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
@@ -368,7 +413,53 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== SECTION 2: FEATURED CATALOG ===== */}
+        {/* ===== SECTION 2: WHAT DO YOU WANT TO DO? (task-based entry) ===== */}
+        <section className="section-padding py-16 md:py-20 bg-muted/20">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="mb-10 text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                <span className="text-sm text-primary font-medium">Not sure which tool?</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight text-balance">
+                What do you want to do?
+              </h2>
+              <p className="text-sm sm:text-base text-muted-foreground mt-2 max-w-xl mx-auto">
+                Describe the task in plain words — the search understands everyday
+                language like “make my PDF smaller” and finds the right tool.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {TASKS.map((task) => {
+                const TaskIcon = task.icon;
+                return (
+                  <Link
+                    key={task.href}
+                    href={task.href}
+                    className="block group"
+                  >
+                    <div className="card-hover rounded-2xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30 flex items-start gap-4">
+                      <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center shrink-0">
+                        <TaskIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-foreground mb-0.5 leading-tight">
+                          {task.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {task.description}
+                        </p>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-1 ml-auto opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ===== SECTION 3: FEATURED CATALOG ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
             <div
@@ -430,7 +521,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== SECTION 3: ALL CATEGORIES ===== */}
+        {/* ===== SECTION 4: ALL CATEGORIES ===== */}
         <section className="section-padding py-16 md:py-20 bg-muted/20">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
             <div
@@ -483,7 +574,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== SECTION 4: WHY UNQTOOLS (clean feature grid) ===== */}
+        {/* ===== SECTION 5: WHY UNQTOOLS (clean feature grid) ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
             <div
@@ -549,7 +640,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== SECTION 5: CTA ===== */}
+        {/* ===== SECTION 6: CTA ===== */}
         <section className="section-padding py-16 md:py-20">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl">
             <div
@@ -586,7 +677,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== SECTION 6: FOOTER ===== */}
+        {/* ===== SECTION 7: FOOTER ===== */}
         <Footer />
       </main>
     </div>

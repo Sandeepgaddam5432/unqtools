@@ -6,7 +6,7 @@
  * omitted here — it lives in src/lib/registry.ts and is only imported
  * by server-rendered tool detail pages.
  *
- * 1704 tools. Regenerate with: node scripts/regenerate-catalog.mjs
+ * 1679 tools. Regenerate with: node scripts/regenerate-catalog.mjs
  */
 import type { ToolCategory } from "./tool";
 
@@ -3173,14 +3173,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "delete-pdf-pages",
-    name: "Delete PDF Pages",
-    description: "Remove unwanted pages from a PDF by entering page numbers or ranges (e.g. 2, 5-7). Preview the page count before and after, then download the cleaned PDF. 100% private.",
-    category: "pdf",
-    keywords: ["delete pdf pages","remove pdf pages","pdf page remover","cut pages from pdf","pdf delete"],
-    status: "done",
-  },
-  {
     id: "dependency-graph-visualizer",
     name: "Import Dependency Graph Visualizer",
     description: "Visualize import dependency graphs. Detect circular deps, unused modules.",
@@ -3429,14 +3421,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "duplicate-pdf-pages",
-    name: "Duplicate PDF Pages",
-    description: "Clone selected pages in a PDF N times. E.g. duplicate page 3 five times to repeat it. Supports page ranges. 100% private, runs in your browser.",
-    category: "pdf",
-    keywords: ["duplicate pdf pages","clone pdf pages","copy pdf pages","repeat pdf pages","pdf page duplicator","multiply pdf pages","pdf cloner"],
-    status: "done",
-  },
-  {
     id: "e-commerce-product-seo-optimizer",
     name: "E-commerce Product SEO Optimizer",
     description: "Optimize e-commerce product page SEO — generate SEO title (60 chars), meta description (155 chars), URL slug, Product JSON-LD schema, heading structure, keyword extraction, alt-text suggestions, content score with breakdown, bulk CSV mode, currency presets, history, shareable URL. 100% client-side — paste product details, get instant SEO output.",
@@ -3674,14 +3658,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Track business expenses — categorize, total, and generate expense reports. CSV parser with validation, date range filter, category grouper, grand total, top expense, daily average, category percentages, tax-deductible markers, 9 category presets, 7 currency presets, sort options, text + CSV export, history (localStorage), shareable URL. 100% client-side.",
     category: "business",
     keywords: ["expense tracker","expense report","business expenses","expense categories","expense calculator","tax deductible","reimbursement","expense log","expense summary","spending tracker","budget tracker"],
-    status: "done",
-  },
-  {
-    id: "extract-pdf-pages",
-    name: "Extract PDF Pages",
-    description: "Extract specific pages or ranges from a PDF into a new file. Enter ranges like 1-3, 5, 8- and download only the pages you need. 100% private, runs in your browser.",
-    category: "pdf",
-    keywords: ["extract pdf pages","pdf page extractor","save pages from pdf","subset pdf","pdf clip","get pages from pdf"],
     status: "done",
   },
   {
@@ -5610,14 +5586,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Audit URL indexability: classify each URL as indexable / canonicalized / noindex / robots_blocked / error_status / duplicate_canonical. Detect canonical chains, missing canonicals, duplicate canonical targets. Generate recommendations. CSV import/export, history, shareable URL. 100% client-side — paste CSV of URL metadata and get an instant coverage report.",
     category: "seo",
     keywords: ["index coverage","indexability","canonical","noindex","robots blocked","duplicate canonical","canonical chain","index status","seo audit"],
-    status: "done",
-  },
-  {
-    id: "insert-pdf-pages",
-    name: "Insert PDF Pages",
-    description: "Insert pages from a second PDF into your main PDF at any position. Choose where to insert and which pages from the source. 100% private, runs in your browser.",
-    category: "pdf",
-    keywords: ["insert pdf pages","add pages to pdf","merge pdf at position","insert pages","pdf page inserter","combine pdf pages","pdf insert"],
     status: "done",
   },
   {
@@ -8053,14 +8021,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "pdf-delete-pages",
-    name: "Delete Pages from PDF",
-    description: "Remove specific pages from PDF. Page range selection, preview before deletion.",
-    category: "pdf",
-    keywords: ["pdf delete","delete pdf pages","remove pages","pdf remove"],
-    status: "planned",
-  },
-  {
     id: "pdf-deskew",
     name: "Deskew/Straighten Scanned PDF",
     description: "Automatically detect and correct page skew in scanned PDFs.",
@@ -8181,22 +8141,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
-    id: "pdf-duplicate-pages",
-    name: "Duplicate/Clone PDF Pages",
-    description: "Duplicate specific pages in a PDF. Custom count, page ranges.",
-    category: "pdf",
-    keywords: ["pdf duplicate","clone pages","duplicate pdf","copy pages"],
-    status: "planned",
-  },
-  {
-    id: "pdf-duplicate-pages-tool",
-    name: "Duplicate/Clone PDF Pages",
-    description: "Duplicate specific pages in a PDF. Custom count, page ranges.",
-    category: "pdf",
-    keywords: ["pdf duplicate","clone pages","duplicate pdf","copy pages"],
-    status: "planned",
-  },
-  {
     id: "pdf-export-form-data",
     name: "Export PDF Form Data (FDF/XFDF/CSV)",
     description: "Export PDF form field data to FDF, XFDF, or CSV formats.",
@@ -8266,14 +8210,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Extract all images from multiple PDFs. Bulk, format detection, ZIP export.",
     category: "pdf",
     keywords: ["extract images pdf","pdf images","bulk extract","pdf images"],
-    status: "planned",
-  },
-  {
-    id: "pdf-extract-pages",
-    name: "Extract Pages from PDF",
-    description: "Extract specific pages from PDF into a new file. Range selection, preview.",
-    category: "pdf",
-    keywords: ["pdf extract","extract pages","pdf pages","pdf subset"],
     status: "planned",
   },
   {
@@ -8621,22 +8557,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "pdf-insert-pages",
-    name: "Insert/Add Pages to PDF",
-    description: "Insert blank pages or pages from another PDF. Position, count, source.",
-    category: "pdf",
-    keywords: ["pdf insert","add pages pdf","insert pdf","pdf pages"],
-    status: "planned",
-  },
-  {
-    id: "pdf-insert-pages-tool",
-    name: "Insert/Add Pages to PDF",
-    description: "Insert blank pages or pages from another PDF. Position, count, source.",
-    category: "pdf",
-    keywords: ["pdf insert","add pages pdf","insert pdf","pdf pages"],
-    status: "planned",
-  },
-  {
     id: "pdf-interleave-merge",
     name: "PDF Interleave Merge (Alternate Pages)",
     description: "Interleave pages from multiple PDFs alternately. 2-way, 3-way merging.",
@@ -8933,38 +8853,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
-    id: "pdf-page-delete-range",
-    name: "Delete Page Range from PDF",
-    description: "Delete a specific page range from PDF. Simple range selection.",
-    category: "pdf",
-    keywords: ["delete pages pdf","pdf delete","remove pages","pdf trim"],
-    status: "planned",
-  },
-  {
-    id: "pdf-page-delete-range-tool",
-    name: "Delete Page Range from PDF",
-    description: "Delete a specific page range from PDF. Simple selection.",
-    category: "pdf",
-    keywords: ["delete pages pdf","pdf delete","remove pages","pdf trim"],
-    status: "planned",
-  },
-  {
-    id: "pdf-page-extract-range",
-    name: "Extract Page Range from PDF",
-    description: "Extract a specific page range from PDF. Simple range selection.",
-    category: "pdf",
-    keywords: ["extract pages pdf","pdf range","pdf subset","extract range"],
-    status: "planned",
-  },
-  {
-    id: "pdf-page-extract-range-tool",
-    name: "Extract Page Range from PDF",
-    description: "Extract a specific page range from PDF. Simple selection.",
-    category: "pdf",
-    keywords: ["extract pages pdf","pdf range","pdf subset","extract range"],
-    status: "planned",
-  },
-  {
     id: "pdf-page-label-editor",
     name: "PDF Page Label Editor",
     description: "Edit PDF page labels. Logical numbering (i, ii, 1, 2, A, B) for navigation.",
@@ -8997,6 +8885,14 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
+    id: "pdf-page-manager",
+    name: "PDF Page Manager",
+    description: "All page operations in one place: delete, extract, duplicate, insert, reorder, rotate and reverse PDF pages. Load one file, switch between 7 tabs, download instantly. 100% private — runs in your browser.",
+    category: "pdf",
+    keywords: ["pdf page manager","delete pdf pages","extract pdf pages","duplicate pdf pages","insert pdf pages","reorder pdf pages","rotate pdf pages","reverse pdf","pdf page organizer","pdf editor"],
+    status: "done",
+  },
+  {
     id: "pdf-page-numbers",
     name: "PDF Page Numbers",
     description: "Add page numbers to any PDF. Choose position (6 spots), format (Page X of N), starting number, pages to skip, and font size. 100% private, runs in your browser.",
@@ -9013,22 +8909,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "pdf-page-reorder-custom",
-    name: "Custom Reorder PDF Pages",
-    description: "Custom reorder PDF pages with drag-and-drop. Visual thumbnails.",
-    category: "pdf",
-    keywords: ["reorder pdf","pdf reorder","arrange pages","pdf order"],
-    status: "planned",
-  },
-  {
-    id: "pdf-page-reorder-custom-tool",
-    name: "Custom Reorder PDF Pages",
-    description: "Custom reorder PDF pages with drag-and-drop. Thumbnails.",
-    category: "pdf",
-    keywords: ["reorder pdf","pdf reorder","arrange pages","pdf order"],
-    status: "planned",
-  },
-  {
     id: "pdf-page-resize-individual",
     name: "Resize Individual PDF Pages",
     description: "Resize individual PDF pages to different dimensions. Per-page control.",
@@ -9042,22 +8922,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Resize individual PDF pages to different dimensions. Per-page.",
     category: "pdf",
     keywords: ["resize pages","pdf resize","page size","pdf dimensions"],
-    status: "planned",
-  },
-  {
-    id: "pdf-page-rotate-range",
-    name: "Rotate Page Range in PDF",
-    description: "Rotate a specific page range in PDF. 90/180/270 degrees.",
-    category: "pdf",
-    keywords: ["rotate pages pdf","pdf rotate","rotate range","turn pages"],
-    status: "planned",
-  },
-  {
-    id: "pdf-page-rotate-range-tool",
-    name: "Rotate Page Range in PDF",
-    description: "Rotate a specific page range in PDF. 90/180/270 degrees.",
-    category: "pdf",
-    keywords: ["rotate pages pdf","pdf rotate","rotate range","turn pages"],
     status: "planned",
   },
   {
@@ -9269,14 +9133,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
-    id: "pdf-reorder-pages",
-    name: "Reorder PDF Pages",
-    description: "Reorder PDF pages by drag-and-drop. Visual page thumbnails, insert blank pages.",
-    category: "pdf",
-    keywords: ["pdf reorder","reorder pages","pdf order","pdf arrange"],
-    status: "planned",
-  },
-  {
     id: "pdf-repair",
     name: "Repair PDF",
     description: "Attempt to repair corrupted or damaged PDF files. Rebuild xref, fix streams.",
@@ -9298,38 +9154,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Repair corrupted PDF files. Rebuild xref table, fix streams, recover content.",
     category: "pdf",
     keywords: ["repair pdf","fix pdf","pdf repair","corrupt pdf"],
-    status: "planned",
-  },
-  {
-    id: "pdf-reverse-order",
-    name: "Reverse PDF Page Order",
-    description: "Reverse the order of pages in a PDF. Last page becomes first.",
-    category: "pdf",
-    keywords: ["reverse pdf","pdf reverse","backwards pdf","flip pdf"],
-    status: "planned",
-  },
-  {
-    id: "pdf-reverse-order-tool",
-    name: "Reverse PDF Page Order",
-    description: "Reverse the order of pages in a PDF. Last page becomes first.",
-    category: "pdf",
-    keywords: ["reverse pdf","pdf reverse","backwards pdf","flip pdf"],
-    status: "planned",
-  },
-  {
-    id: "pdf-rotate",
-    name: "Rotate PDF Pages",
-    description: "Rotate PDF pages 90°, 180°, 270°. Single page, page range, or all pages.",
-    category: "pdf",
-    keywords: ["pdf rotate","rotate pdf","pdf rotation","turn pdf"],
-    status: "planned",
-  },
-  {
-    id: "pdf-rotate-permanent",
-    name: "Rotate PDF Pages (Permanent)",
-    description: "Permanently rotate PDF pages. 90, 180, 270 degrees, page ranges.",
-    category: "pdf",
-    keywords: ["rotate pdf","pdf rotate","turn pdf","rotate pages"],
     status: "planned",
   },
   {
@@ -10757,14 +10581,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
-    id: "reorder-pdf-pages",
-    name: "Reorder PDF Pages",
-    description: "Change the page order in a PDF by typing a custom sequence (e.g. 3,1,2) or using quick presets: reverse all pages, or duplicate pages for printing. 100% private.",
-    category: "pdf",
-    keywords: ["reorder pdf pages","rearrange pdf","pdf page order","reverse pdf","pdf reorganize","shuffle pdf pages"],
-    status: "done",
-  },
-  {
     id: "resize-pdf-pages",
     name: "Resize PDF Pages",
     description: "Change PDF page size to A4, Letter, Legal, A3, or custom dimensions. Apply to all or selected pages. 100% private, runs in your browser.",
@@ -10821,14 +10637,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "planned",
   },
   {
-    id: "reverse-pdf",
-    name: "Reverse PDF Pages",
-    description: "Reverse the page order of a PDF — last page becomes first, first becomes last. Instant, 100% private, runs in your browser.",
-    category: "pdf",
-    keywords: ["reverse pdf","flip pdf pages","backwards pdf","pdf page order","reverse page order","invert pdf","pdf reverser"],
-    status: "done",
-  },
-  {
     id: "review-sentiment-analyzer",
     name: "Review Sentiment Analyzer",
     description: "Analyze customer reviews for sentiment and extract topics — pure JS sentiment analysis with no AI or network calls. Built-in lexicon of 100+ positive/negative words, negation handling ('not good'), per-review score, sentiment label, star rating distribution, average star rating, mismatch detector (5 stars but negative text), top-5 topics, top-20 word frequency, filter, CSV export, history (localStorage), shareable URL. 100% client-side.",
@@ -10875,14 +10683,6 @@ export const CATALOG: readonly CatalogItem[] = [
     category: "developer",
     keywords: ["rot13","rot47","cipher","caesar"],
     status: "planned",
-  },
-  {
-    id: "rotate-pdf",
-    name: "Rotate PDF",
-    description: "Rotate all pages, odd pages, even pages, or any specific page in a PDF by 90°, 180°, or 270°. 100% private — runs entirely in your browser.",
-    category: "pdf",
-    keywords: ["rotate pdf","pdf rotation","turn pdf","flip pdf pages","pdf orientation"],
-    status: "done",
   },
   {
     id: "round-corners-tool",

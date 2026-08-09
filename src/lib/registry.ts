@@ -133,15 +133,11 @@ import { manifest as cropPdf } from "@/tools/pdf/crop-pdf/manifest";
 import { manifest as csvFileJoiner } from "@/tools/file/csv-file-joiner/manifest";
 import { manifest as csvFileSplitter } from "@/tools/file/csv-file-splitter/manifest";
 import { manifest as csvToTsvConverter } from "@/tools/file/csv-to-tsv-converter/manifest";
-import { manifest as deletePdfPages } from "@/tools/pdf/delete-pdf-pages/manifest";
-import { manifest as duplicatePdfPages } from "@/tools/pdf/duplicate-pdf-pages/manifest";
 import { manifest as duplicateFileFinder } from "@/tools/file/duplicate-file-finder/manifest";
-import { manifest as extractPdfPages } from "@/tools/pdf/extract-pdf-pages/manifest";
 import { manifest as fileRenameUtility } from "@/tools/file/file-rename-utility/manifest";
 import { manifest as flattenPdf } from "@/tools/pdf/flatten-pdf/manifest";
 import { manifest as htmlToPdf } from "@/tools/pdf/html-to-pdf/manifest";
 import { manifest as imagesToPdf } from "@/tools/pdf/images-to-pdf/manifest";
-import { manifest as insertPdfPages } from "@/tools/pdf/insert-pdf-pages/manifest";
 import { manifest as interleavePdf } from "@/tools/pdf/interleave-pdf/manifest";
 import { manifest as jsonToXmlConverter } from "@/tools/file/json-to-xml-converter/manifest";
 import { manifest as markdownToPdf } from "@/tools/pdf/markdown-to-pdf/manifest";
@@ -154,11 +150,8 @@ import { manifest as pdfSignDraw } from "@/tools/pdf/pdf-sign-draw/manifest";
 import { manifest as pdfStamp } from "@/tools/pdf/pdf-stamp/manifest";
 import { manifest as pdfWatermark } from "@/tools/pdf/pdf-watermark/manifest";
 import { manifest as removeBlankPages } from "@/tools/pdf/remove-blank-pages/manifest";
-import { manifest as reorderPdfPages } from "@/tools/pdf/reorder-pdf-pages/manifest";
 import { manifest as resizePdfPages } from "@/tools/pdf/resize-pdf-pages/manifest";
 import { manifest as rtfToPdf } from "@/tools/pdf/rtf-to-pdf/manifest";
-import { manifest as reversePdf } from "@/tools/pdf/reverse-pdf/manifest";
-import { manifest as rotatePdf } from "@/tools/pdf/rotate-pdf/manifest";
 import { manifest as scalePdf } from "@/tools/pdf/scale-pdf/manifest";
 import { manifest as splitPdf } from "@/tools/pdf/split-pdf/manifest";
 import { manifest as svgToPdf } from "@/tools/pdf/svg-to-pdf/manifest";
@@ -1224,7 +1217,6 @@ import { manifest as pdfToGif } from "@/tools/pdf/pdf-to-gif/manifest";
 import { manifest as pdfDownsampleImages } from "@/tools/pdf/pdf-downsample-images/manifest";
 import { manifest as pdfTocGenerator } from "@/tools/pdf/pdf-toc-generator/manifest";
 import { manifest as pdfAddAttachment } from "@/tools/pdf/pdf-add-attachment/manifest";
-import { manifest as pdfRotate } from "@/tools/pdf/pdf-rotate/manifest";
 import { manifest as pdfAddPageNumbers } from "@/tools/pdf/pdf-add-page-numbers/manifest";
 import { manifest as pdfMetadata } from "@/tools/pdf/pdf-metadata/manifest";
 import { manifest as pdfAddHeaderFooter } from "@/tools/pdf/pdf-add-header-footer/manifest";
@@ -1236,18 +1228,15 @@ import { manifest as pdfExtractText } from "@/tools/pdf/pdf-extract-text/manifes
 import { manifest as pdfSplit } from "@/tools/pdf/pdf-split/manifest";
 import { manifest as pdfMerge } from "@/tools/pdf/pdf-merge/manifest";
 import { manifest as pdfDeskew } from "@/tools/pdf/pdf-deskew/manifest";
-import { manifest as pdfExtractPages } from "@/tools/pdf/pdf-extract-pages/manifest";
 import { manifest as pdfToRtf } from "@/tools/pdf/pdf-to-rtf/manifest";
 import { manifest as pdfToExcel } from "@/tools/pdf/pdf-to-excel/manifest";
 import { manifest as pdfLinearize } from "@/tools/pdf/pdf-linearize/manifest";
 import { manifest as pdfAddWatermark } from "@/tools/pdf/pdf-add-watermark/manifest";
 import { manifest as pdfOcr } from "@/tools/pdf/pdf-ocr/manifest";
 import { manifest as pdfRemoveWatermark } from "@/tools/pdf/pdf-remove-watermark/manifest";
-import { manifest as pdfDeletePages } from "@/tools/pdf/pdf-delete-pages/manifest";
 import { manifest as pdfProtect } from "@/tools/pdf/pdf-protect/manifest";
 import { manifest as pdfToTiff } from "@/tools/pdf/pdf-to-tiff/manifest";
 import { manifest as pdfToEpub } from "@/tools/pdf/pdf-to-epub/manifest";
-import { manifest as pdfReorderPages } from "@/tools/pdf/pdf-reorder-pages/manifest";
 import { manifest as pdfRepair } from "@/tools/pdf/pdf-repair/manifest";
 
 import { manifest as cssVariablesGenerator } from "@/tools/developer/css-variables-generator/manifest";
@@ -1366,7 +1355,6 @@ import { manifest as pdfNUp } from "@/tools/pdf/pdf-n-up/manifest";
 import { manifest as pdfSplitAdvanced } from "@/tools/pdf/pdf-split-advanced/manifest";
 import { manifest as pdfAutoRotate } from "@/tools/pdf/pdf-auto-rotate/manifest";
 import { manifest as officeToPdf } from "@/tools/pdf/office-to-pdf/manifest";
-import { manifest as pdfInsertPages } from "@/tools/pdf/pdf-insert-pages/manifest";
 import { manifest as pdfScaleFit } from "@/tools/pdf/pdf-scale-fit/manifest";
 import { manifest as pdfSpellCheck } from "@/tools/pdf/pdf-spell-check/manifest";
 import { manifest as pdfRenameContent } from "@/tools/pdf/pdf-rename-content/manifest";
@@ -1374,7 +1362,6 @@ import { manifest as pdfGrayscale } from "@/tools/pdf/pdf-grayscale/manifest";
 import { manifest as pdfMetadataViewer } from "@/tools/pdf/pdf-metadata-viewer/manifest";
 import { manifest as pdfSummarizeAi } from "@/tools/pdf/pdf-summarize-ai/manifest";
 import { manifest as pdfPageLabelEditor } from "@/tools/pdf/pdf-page-label-editor/manifest";
-import { manifest as pdfPageReorderCustom } from "@/tools/pdf/pdf-page-reorder-custom/manifest";
 import { manifest as pdfStampDocument } from "@/tools/pdf/pdf-stamp-document/manifest";
 import { manifest as pdfFindReplace } from "@/tools/pdf/pdf-find-replace/manifest";
 import { manifest as pdfPageSize } from "@/tools/pdf/pdf-page-size/manifest";
@@ -1382,7 +1369,6 @@ import { manifest as pdfOcrSearchable } from "@/tools/pdf/pdf-ocr-searchable/man
 import { manifest as pdfBatchProcessor } from "@/tools/pdf/pdf-batch-processor/manifest";
 import { manifest as pdfPageBlankInsert } from "@/tools/pdf/pdf-page-blank-insert/manifest";
 import { manifest as pdfAttachmentEmbed } from "@/tools/pdf/pdf-attachment-embed/manifest";
-import { manifest as pdfPageDeleteRange } from "@/tools/pdf/pdf-page-delete-range/manifest";
 import { manifest as pdfBorderFrame } from "@/tools/pdf/pdf-border-frame/manifest";
 import { manifest as pdfTocFromHeadings } from "@/tools/pdf/pdf-toc-from-headings/manifest";
 import { manifest as pdfExtractAnnotations } from "@/tools/pdf/pdf-extract-annotations/manifest";
@@ -1409,7 +1395,6 @@ import { manifest as pdfSplitByBookmarks } from "@/tools/pdf/pdf-split-by-bookma
 import { manifest as pdfFontEmbedder } from "@/tools/pdf/pdf-font-embedder/manifest";
 import { manifest as pdfExtractTextBulk } from "@/tools/pdf/pdf-extract-text-bulk/manifest";
 import { manifest as pdfBatchPipeline } from "@/tools/pdf/pdf-batch-pipeline/manifest";
-import { manifest as pdfDuplicatePages } from "@/tools/pdf/pdf-duplicate-pages/manifest";
 import { manifest as pdfBackgroundImage } from "@/tools/pdf/pdf-background-image/manifest";
 import { manifest as pdfExportFormData } from "@/tools/pdf/pdf-export-form-data/manifest";
 import { manifest as pdfPosterSplit } from "@/tools/pdf/pdf-poster-split/manifest";
@@ -1422,7 +1407,6 @@ import { manifest as pdfDocumentAssembler } from "@/tools/pdf/pdf-document-assem
 import { manifest as pdfImportFormData } from "@/tools/pdf/pdf-import-form-data/manifest";
 import { manifest as pdfXExport } from "@/tools/pdf/pdf-x-export/manifest";
 import { manifest as pdfLayersEditor } from "@/tools/pdf/pdf-layers-editor/manifest";
-import { manifest as pdfPageRotateRange } from "@/tools/pdf/pdf-page-rotate-range/manifest";
 import { manifest as pdfHighlightMarkup } from "@/tools/pdf/pdf-highlight-markup/manifest";
 import { manifest as pdfBookmarksFromText } from "@/tools/pdf/pdf-bookmarks-from-text/manifest";
 import { manifest as webpageToPdf } from "@/tools/pdf/webpage-to-pdf/manifest";
@@ -1434,7 +1418,6 @@ import { manifest as pdfTablesCsv } from "@/tools/pdf/pdf-tables-csv/manifest";
 import { manifest as pdfSplitBySize } from "@/tools/pdf/pdf-split-by-size/manifest";
 import { manifest as pdfAiChat } from "@/tools/pdf/pdf-ai-chat/manifest";
 import { manifest as pdfRedactPattern } from "@/tools/pdf/pdf-redact-pattern/manifest";
-import { manifest as pdfReverseOrder } from "@/tools/pdf/pdf-reverse-order/manifest";
 import { manifest as pdfAddPageNumbersAdvanced } from "@/tools/pdf/pdf-add-page-numbers-advanced/manifest";
 import { manifest as pdfFlipbook } from "@/tools/pdf/pdf-flipbook/manifest";
 import { manifest as pdfCompressTarget } from "@/tools/pdf/pdf-compress-target/manifest";
@@ -1447,12 +1430,10 @@ import { manifest as pdfWatermarkAdvanced } from "@/tools/pdf/pdf-watermark-adva
 import { manifest as pdfTranslateDevice } from "@/tools/pdf/pdf-translate-device/manifest";
 import { manifest as epubToPdfTool } from "@/tools/pdf/epub-to-pdf-tool/manifest";
 import { manifest as pdfCleanMetadata } from "@/tools/pdf/pdf-clean-metadata/manifest";
-import { manifest as pdfPageExtractRange } from "@/tools/pdf/pdf-page-extract-range/manifest";
 import { manifest as pdfBookletPrint } from "@/tools/pdf/pdf-booklet-print/manifest";
 import { manifest as imageToPdfTool } from "@/tools/pdf/image-to-pdf-tool/manifest";
 import { manifest as pdfRepairTool } from "@/tools/pdf/pdf-repair-tool/manifest";
 import { manifest as pdfToPdfx } from "@/tools/pdf/pdf-to-pdfx/manifest";
-import { manifest as pdfRotatePermanent } from "@/tools/pdf/pdf-rotate-permanent/manifest";
 import { manifest as pdfSummarizer } from "@/tools/pdf/pdf-summarizer/manifest";
 import { manifest as pdfFillForm } from "@/tools/pdf/pdf-fill-form/manifest";
 import { manifest as pdfInterleaveMerge } from "@/tools/pdf/pdf-interleave-merge/manifest";
@@ -1484,7 +1465,6 @@ import { manifest as pdfNUpBooklet } from "@/tools/pdf/pdf-n-up-booklet/manifest
 import { manifest as pdfDocumentAssemblerTool } from "@/tools/pdf/pdf-document-assembler-tool/manifest";
 import { manifest as pdfLayersOcgManager } from "@/tools/pdf/pdf-layers-ocg-manager/manifest";
 import { manifest as pdf2upJoinTool } from "@/tools/pdf/pdf-2up-join-tool/manifest";
-import { manifest as pdfDuplicatePagesTool } from "@/tools/pdf/pdf-duplicate-pages-tool/manifest";
 import { manifest as pdfAutoRotateTool } from "@/tools/pdf/pdf-auto-rotate-tool/manifest";
 import { manifest as pdfFlipbookGenerator } from "@/tools/pdf/pdf-flipbook-generator/manifest";
 import { manifest as pdfFindReplaceTool } from "@/tools/pdf/pdf-find-replace-tool/manifest";
@@ -1501,10 +1481,8 @@ import { manifest as pdfRenameFromContent } from "@/tools/pdf/pdf-rename-from-co
 import { manifest as pdfSpellCheckTool } from "@/tools/pdf/pdf-spell-check-tool/manifest";
 import { manifest as pdfPortfolioBuilderTool } from "@/tools/pdf/pdf-portfolio-builder-tool/manifest";
 import { manifest as pdfTextToSpeechTool } from "@/tools/pdf/pdf-text-to-speech-tool/manifest";
-import { manifest as pdfReverseOrderTool } from "@/tools/pdf/pdf-reverse-order-tool/manifest";
 import { manifest as pdfFillFormTool } from "@/tools/pdf/pdf-fill-form-tool/manifest";
 import { manifest as pdfHighlightMarkupTool } from "@/tools/pdf/pdf-highlight-markup-tool/manifest";
-import { manifest as pdfInsertPagesTool } from "@/tools/pdf/pdf-insert-pages-tool/manifest";
 import { manifest as pdfExtractAnnotationsTool } from "@/tools/pdf/pdf-extract-annotations-tool/manifest";
 import { manifest as pdfMetadataViewerTool } from "@/tools/pdf/pdf-metadata-viewer-tool/manifest";
 import { manifest as pdfPageLabelEditorTool } from "@/tools/pdf/pdf-page-label-editor-tool/manifest";
@@ -1572,7 +1550,6 @@ import { manifest as pdfDigitalSignatureCert } from "@/tools/pdf/pdf-digital-sig
 import { manifest as pdfPageResizeIndividualTool } from "@/tools/pdf/pdf-page-resize-individual-tool/manifest";
 import { manifest as pdfGrayscaleTool } from "@/tools/pdf/pdf-grayscale-tool/manifest";
 import { manifest as pdfHeaderFooterAdv } from "@/tools/pdf/pdf-header-footer-adv/manifest";
-import { manifest as pdfPageDeleteRangeTool } from "@/tools/pdf/pdf-page-delete-range-tool/manifest";
 import { manifest as pdfHyperlinkEditorPdf } from "@/tools/pdf/pdf-hyperlink-editor-pdf/manifest";
 import { manifest as pdfLinearizeWeb } from "@/tools/pdf/pdf-linearize-web/manifest";
 import { manifest as pdfLayersOcgEditorTool } from "@/tools/pdf/pdf-layers-ocg-editor-tool/manifest";
@@ -1580,7 +1557,6 @@ import { manifest as pdfMarginPaddingTool } from "@/tools/pdf/pdf-margin-padding
 import { manifest as pdfDespeckleClean } from "@/tools/pdf/pdf-despeckle-clean/manifest";
 import { manifest as pdfRepairCorrupt } from "@/tools/pdf/pdf-repair-corrupt/manifest";
 import { manifest as pdfSplitAdvancedTool } from "@/tools/pdf/pdf-split-advanced-tool/manifest";
-import { manifest as pdfPageExtractRangeTool } from "@/tools/pdf/pdf-page-extract-range-tool/manifest";
 import { manifest as pdfPortfolioPackageBuilder } from "@/tools/pdf/pdf-portfolio-package-builder/manifest";
 import { manifest as pdfWatermarkAdvancedTool } from "@/tools/pdf/pdf-watermark-advanced-tool/manifest";
 import { manifest as pdfSummarizerAi } from "@/tools/pdf/pdf-summarizer-ai/manifest";
@@ -1601,13 +1577,11 @@ import { manifest as pdfPageSizeChange } from "@/tools/pdf/pdf-page-size-change/
 import { manifest as pdfChatQa } from "@/tools/pdf/pdf-chat-qa/manifest";
 import { manifest as pdfPageLabelsEditor } from "@/tools/pdf/pdf-page-labels-editor/manifest";
 import { manifest as pdfDrawSignaturePlace } from "@/tools/pdf/pdf-draw-signature-place/manifest";
-import { manifest as pdfPageRotateRangeTool } from "@/tools/pdf/pdf-page-rotate-range-tool/manifest";
 import { manifest as pdfTranslateLayout } from "@/tools/pdf/pdf-translate-layout/manifest";
 import { manifest as pdfTablesToCsv } from "@/tools/pdf/pdf-tables-to-csv/manifest";
 import { manifest as officeToPdfConverter } from "@/tools/pdf/office-to-pdf-converter/manifest";
 import { manifest as pdfStampAdvancedTool } from "@/tools/pdf/pdf-stamp-advanced-tool/manifest";
 import { manifest as pdfExportFormDataFdf } from "@/tools/pdf/pdf-export-form-data-fdf/manifest";
-import { manifest as pdfPageReorderCustomTool } from "@/tools/pdf/pdf-page-reorder-custom-tool/manifest";
 import { manifest as pdfDocumentInfoViewer } from "@/tools/pdf/pdf-document-info-viewer/manifest";
 import { manifest as pdfCompareDiffTool } from "@/tools/pdf/pdf-compare-diff-tool/manifest";
 import { manifest as pdfFormCreatorBuilder } from "@/tools/pdf/pdf-form-creator-builder/manifest";
@@ -1715,6 +1689,7 @@ import { manifest as hstsPreloadCheckerHeader } from "@/tools/network-security/h
 import { manifest as macAddressVendorOui } from "@/tools/network-security/mac-address-vendor-oui/manifest";
 
 import { manifest as aiChatWithPdf } from "@/tools/pdf/ai-chat-with-pdf/manifest";
+import { manifest as pdfPageManager } from "@/tools/pdf/pdf-page-manager/manifest";
 import { manifest as timezoneConverter } from "@/tools/developer/timezone-converter/manifest";
 import { manifest as xmlFormatter } from "@/tools/developer/xml-formatter/manifest";
 import { manifest as emailValidator } from "@/tools/developer/email-validator/manifest";
@@ -1837,13 +1812,9 @@ export const TOOLS: readonly ToolManifest[] = [
   compressPdf,
   contactSheetPdf,
   cropPdf,
-  deletePdfPages,
-  duplicatePdfPages,
-  extractPdfPages,
   flattenPdf,
   htmlToPdf,
   imagesToPdf,
-  insertPdfPages,
   interleavePdf,
   markdownToPdf,
   mergePdf,
@@ -1855,11 +1826,8 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfStamp,
   pdfWatermark,
   removeBlankPages,
-  reorderPdfPages,
   resizePdfPages,
   rtfToPdf,
-  reversePdf,
-  rotatePdf,
   scalePdf,
   splitPdf,
   svgToPdf,
@@ -2905,7 +2873,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfDownsampleImages,
   pdfTocGenerator,
   pdfAddAttachment,
-  pdfRotate,
   pdfAddPageNumbers,
   pdfMetadata,
   pdfAddHeaderFooter,
@@ -2917,18 +2884,15 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfSplit,
   pdfMerge,
   pdfDeskew,
-  pdfExtractPages,
   pdfToRtf,
   pdfToExcel,
   pdfLinearize,
   pdfAddWatermark,
   pdfOcr,
   pdfRemoveWatermark,
-  pdfDeletePages,
   pdfProtect,
   pdfToTiff,
   pdfToEpub,
-  pdfReorderPages,
   pdfRepair,
 
   cssVariablesGenerator,
@@ -3047,7 +3011,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfSplitAdvanced,
   pdfAutoRotate,
   officeToPdf,
-  pdfInsertPages,
   pdfScaleFit,
   pdfSpellCheck,
   pdfRenameContent,
@@ -3055,7 +3018,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfMetadataViewer,
   pdfSummarizeAi,
   pdfPageLabelEditor,
-  pdfPageReorderCustom,
   pdfStampDocument,
   pdfFindReplace,
   pdfPageSize,
@@ -3063,7 +3025,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfBatchProcessor,
   pdfPageBlankInsert,
   pdfAttachmentEmbed,
-  pdfPageDeleteRange,
   pdfBorderFrame,
   pdfTocFromHeadings,
   pdfExtractAnnotations,
@@ -3090,7 +3051,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfFontEmbedder,
   pdfExtractTextBulk,
   pdfBatchPipeline,
-  pdfDuplicatePages,
   pdfBackgroundImage,
   pdfExportFormData,
   pdfPosterSplit,
@@ -3103,7 +3063,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfImportFormData,
   pdfXExport,
   pdfLayersEditor,
-  pdfPageRotateRange,
   pdfHighlightMarkup,
   pdfBookmarksFromText,
   webpageToPdf,
@@ -3115,7 +3074,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfSplitBySize,
   pdfAiChat,
   pdfRedactPattern,
-  pdfReverseOrder,
   pdfAddPageNumbersAdvanced,
   pdfFlipbook,
   pdfCompressTarget,
@@ -3128,12 +3086,10 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfTranslateDevice,
   epubToPdfTool,
   pdfCleanMetadata,
-  pdfPageExtractRange,
   pdfBookletPrint,
   imageToPdfTool,
   pdfRepairTool,
   pdfToPdfx,
-  pdfRotatePermanent,
   pdfSummarizer,
   pdfFillForm,
   pdfInterleaveMerge,
@@ -3165,7 +3121,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfDocumentAssemblerTool,
   pdfLayersOcgManager,
   pdf2upJoinTool,
-  pdfDuplicatePagesTool,
   pdfAutoRotateTool,
   pdfFlipbookGenerator,
   pdfFindReplaceTool,
@@ -3182,10 +3137,8 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfSpellCheckTool,
   pdfPortfolioBuilderTool,
   pdfTextToSpeechTool,
-  pdfReverseOrderTool,
   pdfFillFormTool,
   pdfHighlightMarkupTool,
-  pdfInsertPagesTool,
   pdfExtractAnnotationsTool,
   pdfMetadataViewerTool,
   pdfPageLabelEditorTool,
@@ -3253,7 +3206,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfPageResizeIndividualTool,
   pdfGrayscaleTool,
   pdfHeaderFooterAdv,
-  pdfPageDeleteRangeTool,
   pdfHyperlinkEditorPdf,
   pdfLinearizeWeb,
   pdfLayersOcgEditorTool,
@@ -3261,7 +3213,6 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfDespeckleClean,
   pdfRepairCorrupt,
   pdfSplitAdvancedTool,
-  pdfPageExtractRangeTool,
   pdfPortfolioPackageBuilder,
   pdfWatermarkAdvancedTool,
   pdfSummarizerAi,
@@ -3282,13 +3233,11 @@ export const TOOLS: readonly ToolManifest[] = [
   pdfChatQa,
   pdfPageLabelsEditor,
   pdfDrawSignaturePlace,
-  pdfPageRotateRangeTool,
   pdfTranslateLayout,
   pdfTablesToCsv,
   officeToPdfConverter,
   pdfStampAdvancedTool,
   pdfExportFormDataFdf,
-  pdfPageReorderCustomTool,
   pdfDocumentInfoViewer,
   pdfCompareDiffTool,
   pdfFormCreatorBuilder,
@@ -3400,6 +3349,7 @@ export const TOOLS: readonly ToolManifest[] = [
   xmlFormatter,
   emailValidator,
   currencyConverter,
+  pdfPageManager,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));

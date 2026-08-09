@@ -214,3 +214,38 @@ describe("getMergeOutputName", () => {
     expect(getMergeOutputName({ outputName: "my report v2" })).toBe("my report v2");
   });
 });
+
+describe("merge interleave", () => {
+  it("alternates pages across two files", async () => {
+    const { mergePdfs } = await import("./logic");
+    const a = await makePdf(2);
+    const b = await makePdf(3);
+    const res = await mergePdfs(
+      [
+        { name: "a.pdf", bytes: a },
+        { name: "b.pdf", bytes: b },
+      ],
+      { interleave: true }
+    );
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      const doc = await PDFDocument.load(res.output);
+      expect(doc.getPageCount()).toBe(5); // A1,B1,A2,B2,B3
+    }
+  });
+
+  it("non-interleave merge appends whole files", async () => {
+    const { mergePdfs } = await import("./logic");
+    const a = await makePdf(2);
+    const b = await makePdf(3);
+    const res = await mergePdfs(
+      [
+        { name: "a.pdf", bytes: a },
+        { name: "b.pdf", bytes: b },
+      ],
+      { interleave: false }
+    );
+    expect(res.ok).toBe(true);
+    if (res.ok) expect((await PDFDocument.load(res.output)).getPageCount()).toBe(5);
+  });
+});

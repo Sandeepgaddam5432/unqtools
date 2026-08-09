@@ -2,26 +2,33 @@
 
 > Single source of truth for the current working session's progress.
 > Updated with **every** meaningful step so nothing is ever lost.
-> Last updated: **2026-08-09 (arena/019fe5f1-unqtools)**
+> Last updated: **2026-08-09 (arena/019fe601-unqtools)**
 
 ---
 
-## Session goal
+## Session goal (updated by owner, v18)
 
-Keep UnQTools at **1704 tools** (owner directive: do NOT remove tools) while keeping the
-v17.71 performance improvements. Take every tool to **god level** — see
-[`GOD-LEVEL-PLAN.md`](./GOD-LEVEL-PLAN.md).
+**Consolidate the overlapping tools into fewer, far more powerful mega tools** (owner
+directive: merges are wanted now — old URLs keep working via 301 redirects, engines are
+never lost). Every tool rebuilt should be advanced from day one, and the tool pages must
+be clean UX (tool first, docs behind tabs). Tracked against
+[`GOD-LEVEL-PLAN.md`](./GOD-LEVEL-PLAN.md) and [`MERGE-PLAN.md`](./MERGE-PLAN.md).
 
 ---
 
 ## Current phase
 
-**v17.71 — Perf + High-Demand Tools + Cleanup.** 1704 tools live; landing route 100% framer-motion-free; dead code removed; docs synchronized.
+**v18.1 — Anti-confusion UX (task groups, Ready-now default, intent search, task cards). 1679 tools live.**
 
 ### Progress log
 
 | Date | Commit / phase | What changed |
 |------|----------------|--------------|
+| 2026-08-09 | **v18.3** | **PDF 100x wave 2 — next 10 alphabetical PDF tools rebuilt** (see `docs/PDF-100x-TOOLS.md`): **Flatten PDF** (choose fields/annotations/JS/metadata + removal report, 12 tests), **Interleave PDF** (cycles 1:1/2:2 + start-with, 11 tests), **N-Up PDF** (1–16 per sheet, computed grids, row/column order, A3/A4/A5/custom sheets, margins/gutter, borders, sheet numbers, 14 tests), **Markdown to PDF** (GFM tables + borders, body-size scaling, page numbers, selectable text, 19 tests), **Remove Blank Pages** (3 sensitivity levels + scan-range + preview, 13 tests), **Resize PDF Pages** (7 presets + custom pt/mm/in + fit contain/stretch + per-page, 13 tests), **RTF to PDF** (real parser: \uN unicode, \'xx hex, \tab, \par, destination-group skipping, 18 tests), **Scale PDF Content** (10–1000% + anchors + keep/grow page, 13 tests), **SVG to PDF** (fit modes + transparent bg + 1–4× DPI, 13 tests), **Text to PDF** (3 fonts + spacing + alignment + header/footer + page numbers, 16 tests). Backward-compatible signatures; all 7,486 PDF tests pass (308 files, +50 new); ESLint clean; no removals (1,679 tools). |
+| 2026-08-09 | **v18.2** | **PDF 100x wave — 10 selected PDF tools rebuilt to beat iLovePDF/SmallPDF/Sejda/PDF24** (feature research via web search; see `docs/PDF-100x-TOOLS.md`). Deep rebuilds: **Compress PDF** (5 presets + custom quality + downscale + grayscale + exact target-size auto-fit + batch 20 files + ZIP + per-file savings table + real in-browser JPEG re-encoding, 15 tests), **Crop PDF Pages** (4 presets + mm/in/pt units + per-page ranges + live dimension preview + reset, 13 tests), **HTML to PDF** (A4/Letter/A5 + orientation + margin + sharpness + quality + page numbers + multi-page slicing, 10 tests), **PDF Page Numbers** (7 formats incl. Roman/padded + start page + skip/apply + bold/color + prefix/suffix + live preview, 12 tests), **PDF Watermark** (text OR image + 4 placements + 9 anchors + rotation + extras, 14 tests), **Merge PDF interleave mode** (A1,B1,A2,B2 two-sided scan, 2 tests). Verified already-deep: Images-to-PDF (1,864 LOC), PDF-to-Excel (2,672 LOC, 93 tests), PDF-to-Word (1,963 LOC, 84 tests), Split PDF (932 LOC). All 7,436 PDF tests pass; ESLint clean; no removals (1,679 tools). |
+| 2026-08-09 | **v18.1** | **Anti-confusion UX overhaul** (owner: "users don't know which tool to use"). (1) `src/lib/tool-groups.ts` — task-based buckets for pdf/developer/image/file/text/seo/network-security with deterministic regex matchers (11 tests); category pages render grouped sections with "jump to" chips, per-group blurbs and "N ready · M soon" counts. (2) `/tools` defaults to **Ready now (1133)** — hides 546 planned stubs; All (1679) toggle preserved. (3) `search.ts` intent synonyms — "make my PDF smaller"→Compress PDF, "join two pdfs"→Merge PDF, "lock"→encrypt/password (13 tests). (4) Home "What do you want to do?" task cards (6 curated tasks → right tools/search). (5) Task-based search placeholders. Verified SSR: /tools, /category/pdf (10 groups), home. 46 unit tests pass; ESLint 0 errors; scoped tsc clean. |
+| 2026-08-09 | **v18.0** | **Merged 26 PDF page tools → `pdf-page-manager`** — delete/extract/duplicate/insert/reorder/rotate/reverse in one tabbed mega tool with a self-contained `logic.ts` (12 unit tests), chain-ops ("Apply next op") and per-op downloads. All 26 old ids removed from registry + dirs deleted; 26× 301 redirects in `public/_redirects`; catalog/sitemap/counts/TOOLS-INDEX regenerated (1,679 tools, 1,694 URLs). **Tool-page UX reorg:** tool UI is now the page hero; About & how-to-use / FAQ / Related moved behind compact tabs (no more full-page explanation walls). Docs: `docs/MERGE-PLAN.md` (125 remaining clusters → future mega tools + build order) and `docs/ROADMAP-v18.md` (custom domain, top-50 traffic-first rebuilds, UnQ AI router, B2B API, India-first wedge, monetization ladder to ₹1L/day). Tests: 38 pass (12 new); ESLint clean on touched files; dev-server SSR verified for the mega tool page. |
+| 2026-08-09 | **v17.72** | **Favorites + Recently viewed (site-wide, localStorage-only, privacy-first)** — `src/lib/tool-history.ts` (pure helpers, 14 unit tests) + `src/hooks/use-tool-history.ts` (React bindings, cross-tab sync via `storage` event). ★ toggle button on every tool card (tools directory) and on every tool page header; Favorites (N) / Recent (N) quick-filter chips on `/tools` (linkable `?view=favorites|recent`, empty states + Clear buttons); ⌘K command palette gains Favorites + Recent groups (unified recent storage `unqtools:recent`, replaces `unq-cmdk-recents`). Also: **`docs/TOOLS-INDEX.md`** — auto-generated markdown catalog of **all 1,704 tools** across 13 categories with status/offline columns + per-tool `/tools/<id>` links (`scripts/generate-tools-index.mjs`), linked from README; typed the pre-existing framer-motion `Variants` consts in the tools page (was silently widened, `next.config` has `ignoreBuildErrors`). Verified: `/tools` SSR renders chips + 1,704 card stars; scoped `tsc` clean; ESLint clean on all touched files; 26 unit tests pass (14 new). No tools removed — still 1,704. |
 | 2026-08-05 | **v17.64 → 6e15539** | UI polish + perf: logo 589KB→12KB, source-maps off, catalog split, counts, lazy palette, hero/LCP fix, framer-motion out of landing route. |
 | 2026-08-05 | **17ad352** | Revert juggling settled; STATE.md OOM rule removed. |
 | 2026-08-05 | **v17.65 (explored)** | Dedupe + dead-tool removal explored (SHA cluster, dead formats). |

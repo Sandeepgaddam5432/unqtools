@@ -34,3 +34,4 @@ test-results/
 .eslintcache
 .next/cache/
 tsconfig.tsbuildinfo
+*.tsbuildinfo

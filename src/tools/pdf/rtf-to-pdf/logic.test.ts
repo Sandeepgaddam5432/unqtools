@@ -19,3 +19,49 @@ describe("rtfToPdf", () => {
   it("sets creator metadata", async () => { const r = await rtfToPdf(sampleRtf, baseOpts); expect(r.ok).toBe(true); if (r.ok) { const doc = await PDFDocument.load(r.output); expect(doc.getCreator()).toContain("UnQTools"); } });
   it("extracts text with paragraph breaks", async () => { const r = await rtfToPdf(sampleRtf, baseOpts); expect(r.ok).toBe(true); });
 });
+
+describe("rtf extraction advanced", () => {
+  it("handles unicode escapes \\uN", async () => {
+    const { extractRtfText } = await import("./logic");
+    const rtf = "{\\rtf1 Caf\\u233? \\u2339?}";
+    const t = extractRtfText(rtf);
+    expect(t).toContain("Caf\u00e9");
+  });
+
+  it("handles hex escapes \\'xx", async () => {
+    const { extractRtfText } = await import("./logic");
+    const rtf = "{\\rtf1 caf\\'e9}";
+    expect(extractRtfText(rtf)).toContain("caf\u00e9");
+  });
+
+  it("turns \\par and \\tab into structure", async () => {
+    const { extractRtfText } = await import("./logic");
+    const rtf = "{\\rtf1 hello\\tab world\\par second line}";
+    const t = extractRtfText(rtf);
+    expect(t).toContain("\t");
+    expect(t).toContain("\n");
+    expect(t).toContain("second line");
+  });
+
+  it("strips formatting control words", async () => {
+    const { extractRtfText } = await import("./logic");
+    const rtf = "{\\rtf1\\b Bold text\\b0 normal}";
+    const t = extractRtfText(rtf);
+    expect(t).toContain("Bold text");
+    expect(t).toContain("normal");
+    expect(t).not.toContain("\\b");
+  });
+
+  it("escaped braces survive", async () => {
+    const { extractRtfText } = await import("./logic");
+    const rtf = "{\\rtf1 literal \\{ brace \\} end}";
+    const t = extractRtfText(rtf);
+    expect(t).toContain("{");
+    expect(t).toContain("}");
+  });
+
+  it("rejects non-RTF input", async () => {
+    const r = await rtfToPdf("plain text without rtf marker");
+    expect(r.ok).toBe(false);
+  });
+});

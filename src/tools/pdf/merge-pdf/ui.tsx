@@ -33,6 +33,7 @@ export default function MergePdf() {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaAuthor, setMetaAuthor] = useState("");
   const [metaSubject, setMetaSubject] = useState("");
+  const [interleave, setInterleave] = useState(false);
   const [previewTotal, setPreviewTotal] = useState<number | null>(null);
 
   async function addFiles(list: FileList | File[]) {
@@ -130,7 +131,7 @@ export default function MergePdf() {
       setPreviewTotal(null);
       return;
     }
-    previewMerge(files, { outputName, metadata: { title: metaTitle, author: metaAuthor, subject: metaSubject } })
+    previewMerge(files, { outputName, interleave, metadata: { title: metaTitle, author: metaAuthor, subject: metaSubject } })
       .then((res) => {
         if (!cancelled && res.ok) setPreviewTotal(res.output.totalSelectedPages);
         else if (!cancelled) setPreviewTotal(null);
@@ -139,7 +140,7 @@ export default function MergePdf() {
     return () => {
       cancelled = true;
     };
-  }, [files, outputName, metaTitle, metaAuthor, metaSubject]);
+  }, [files, outputName, metaTitle, metaAuthor, metaSubject, interleave]);
 
   async function merge() {
     setWorking(true);
@@ -147,6 +148,7 @@ export default function MergePdf() {
     setResult(null);
     const res = await mergePdfs(files, {
       outputName,
+      interleave,
       metadata: { title: metaTitle, author: metaAuthor, subject: metaSubject },
     });
     setWorking(false);
@@ -365,7 +367,17 @@ export default function MergePdf() {
         </>
       )}
 
-      <ActionBar>
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={interleave}
+              onChange={(e) => setInterleave(e.target.checked)}
+              className="h-4 w-4 accent-primary"
+            />
+            Interleave pages (A1, B1, A2, B2…) — for two-sided scanning of separate files
+          </label>
+
+<ActionBar>
         <RunButton
           onClick={() => void merge()}
           disabled={files.length === 0}

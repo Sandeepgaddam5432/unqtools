@@ -2,3 +2,31 @@
 # Static export: no SPA fallback — let unknown routes hit the real 404.html.
 # Next.js generates out/404.html automatically; Cloudflare Pages serves it for
 # any path that doesn't match a static file.
+
+# ---- v18: merged PDF page tools → PDF Page Manager (301, no links broken) ----
+/tools/delete-pdf-pages /tools/pdf-page-manager 301
+/tools/pdf-delete-pages /tools/pdf-page-manager 301
+/tools/pdf-page-delete-range /tools/pdf-page-manager 301
+/tools/pdf-page-delete-range-tool /tools/pdf-page-manager 301
+/tools/extract-pdf-pages /tools/pdf-page-manager 301
+/tools/pdf-extract-pages /tools/pdf-page-manager 301
+/tools/pdf-page-extract-range /tools/pdf-page-manager 301
+/tools/pdf-page-extract-range-tool /tools/pdf-page-manager 301
+/tools/duplicate-pdf-pages /tools/pdf-page-manager 301
+/tools/pdf-duplicate-pages /tools/pdf-page-manager 301
+/tools/pdf-duplicate-pages-tool /tools/pdf-page-manager 301
+/tools/insert-pdf-pages /tools/pdf-page-manager 301
+/tools/pdf-insert-pages /tools/pdf-page-manager 301
+/tools/pdf-insert-pages-tool /tools/pdf-page-manager 301
+/tools/reorder-pdf-pages /tools/pdf-page-manager 301
+/tools/pdf-reorder-pages /tools/pdf-page-manager 301
+/tools/pdf-page-reorder-custom /tools/pdf-page-manager 301
+/tools/pdf-page-reorder-custom-tool /tools/pdf-page-manager 301
+/tools/rotate-pdf /tools/pdf-page-manager 301
+/tools/pdf-rotate /tools/pdf-page-manager 301
+/tools/pdf-rotate-permanent /tools/pdf-page-manager 301
+/tools/pdf-page-rotate-range /tools/pdf-page-manager 301
+/tools/pdf-page-rotate-range-tool /tools/pdf-page-manager 301
+/tools/reverse-pdf /tools/pdf-page-manager 301
+/tools/pdf-reverse-order /tools/pdf-page-manager 301
+/tools/pdf-reverse-order-tool /tools/pdf-page-manager 301

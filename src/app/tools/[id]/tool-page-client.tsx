@@ -1,12 +1,13 @@
 "use client";
 
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { ToolSkeleton } from "@/components/tool-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useFavorites, useRecentTools } from "@/hooks/use-tool-history";
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Clock,
+  Star,
 } from "lucide-react";
 import type { ToolManifest, ToolCategory } from "@/lib/tool";
 
@@ -294,13 +296,9 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   // PDF tools
   "compress-pdf": () => import("@/tools/pdf/compress-pdf/ui"),
   "crop-pdf": () => import("@/tools/pdf/crop-pdf/ui"),
-  "delete-pdf-pages": () => import("@/tools/pdf/delete-pdf-pages/ui"),
-  "duplicate-pdf-pages": () => import("@/tools/pdf/duplicate-pdf-pages/ui"),
-  "extract-pdf-pages": () => import("@/tools/pdf/extract-pdf-pages/ui"),
   "flatten-pdf": () => import("@/tools/pdf/flatten-pdf/ui"),
   "html-to-pdf": () => import("@/tools/pdf/html-to-pdf/ui"),
   "images-to-pdf": () => import("@/tools/pdf/images-to-pdf/ui"),
-  "insert-pdf-pages": () => import("@/tools/pdf/insert-pdf-pages/ui"),
   "interleave-pdf": () => import("@/tools/pdf/interleave-pdf/ui"),
   "markdown-to-pdf": () => import("@/tools/pdf/markdown-to-pdf/ui"),
   "merge-pdf": () => import("@/tools/pdf/merge-pdf/ui"),
@@ -313,11 +311,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-stamp": () => import("@/tools/pdf/pdf-stamp/ui"),
   "pdf-watermark": () => import("@/tools/pdf/pdf-watermark/ui"),
   "remove-blank-pages": () => import("@/tools/pdf/remove-blank-pages/ui"),
-  "reorder-pdf-pages": () => import("@/tools/pdf/reorder-pdf-pages/ui"),
   "resize-pdf-pages": () => import("@/tools/pdf/resize-pdf-pages/ui"),
   "rtf-to-pdf": () => import("@/tools/pdf/rtf-to-pdf/ui"),
-  "reverse-pdf": () => import("@/tools/pdf/reverse-pdf/ui"),
-  "rotate-pdf": () => import("@/tools/pdf/rotate-pdf/ui"),
   "scale-pdf": () => import("@/tools/pdf/scale-pdf/ui"),
   "split-pdf": () => import("@/tools/pdf/split-pdf/ui"),
   "svg-to-pdf": () => import("@/tools/pdf/svg-to-pdf/ui"),
@@ -1274,7 +1269,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-downsample-images": () => import("@/tools/pdf/pdf-downsample-images/ui"),
   "pdf-toc-generator": () => import("@/tools/pdf/pdf-toc-generator/ui"),
   "pdf-add-attachment": () => import("@/tools/pdf/pdf-add-attachment/ui"),
-  "pdf-rotate": () => import("@/tools/pdf/pdf-rotate/ui"),
   "pdf-add-page-numbers": () => import("@/tools/pdf/pdf-add-page-numbers/ui"),
   "pdf-metadata": () => import("@/tools/pdf/pdf-metadata/ui"),
   "pdf-add-header-footer": () => import("@/tools/pdf/pdf-add-header-footer/ui"),
@@ -1286,18 +1280,15 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-split": () => import("@/tools/pdf/pdf-split/ui"),
   "pdf-merge": () => import("@/tools/pdf/pdf-merge/ui"),
   "pdf-deskew": () => import("@/tools/pdf/pdf-deskew/ui"),
-  "pdf-extract-pages": () => import("@/tools/pdf/pdf-extract-pages/ui"),
   "pdf-to-rtf": () => import("@/tools/pdf/pdf-to-rtf/ui"),
   "pdf-to-excel": () => import("@/tools/pdf/pdf-to-excel/ui"),
   "pdf-linearize": () => import("@/tools/pdf/pdf-linearize/ui"),
   "pdf-add-watermark": () => import("@/tools/pdf/pdf-add-watermark/ui"),
   "pdf-ocr": () => import("@/tools/pdf/pdf-ocr/ui"),
   "pdf-remove-watermark": () => import("@/tools/pdf/pdf-remove-watermark/ui"),
-  "pdf-delete-pages": () => import("@/tools/pdf/pdf-delete-pages/ui"),
   "pdf-protect": () => import("@/tools/pdf/pdf-protect/ui"),
   "pdf-to-tiff": () => import("@/tools/pdf/pdf-to-tiff/ui"),
   "pdf-to-epub": () => import("@/tools/pdf/pdf-to-epub/ui"),
-  "pdf-reorder-pages": () => import("@/tools/pdf/pdf-reorder-pages/ui"),
   "pdf-repair": () => import("@/tools/pdf/pdf-repair/ui"),
   "css-variables-generator": () => import("@/tools/developer/css-variables-generator/ui"),
   "slug-generator-tool": () => import("@/tools/developer/slug-generator-tool/ui"),
@@ -1415,7 +1406,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-split-advanced": () => import("@/tools/pdf/pdf-split-advanced/ui"),
   "pdf-auto-rotate": () => import("@/tools/pdf/pdf-auto-rotate/ui"),
   "office-to-pdf": () => import("@/tools/pdf/office-to-pdf/ui"),
-  "pdf-insert-pages": () => import("@/tools/pdf/pdf-insert-pages/ui"),
   "pdf-scale-fit": () => import("@/tools/pdf/pdf-scale-fit/ui"),
   "pdf-spell-check": () => import("@/tools/pdf/pdf-spell-check/ui"),
   "pdf-rename-content": () => import("@/tools/pdf/pdf-rename-content/ui"),
@@ -1423,7 +1413,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-metadata-viewer": () => import("@/tools/pdf/pdf-metadata-viewer/ui"),
   "pdf-summarize-ai": () => import("@/tools/pdf/pdf-summarize-ai/ui"),
   "pdf-page-label-editor": () => import("@/tools/pdf/pdf-page-label-editor/ui"),
-  "pdf-page-reorder-custom": () => import("@/tools/pdf/pdf-page-reorder-custom/ui"),
   "pdf-stamp-document": () => import("@/tools/pdf/pdf-stamp-document/ui"),
   "pdf-find-replace": () => import("@/tools/pdf/pdf-find-replace/ui"),
   "pdf-page-size": () => import("@/tools/pdf/pdf-page-size/ui"),
@@ -1431,7 +1420,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-batch-processor": () => import("@/tools/pdf/pdf-batch-processor/ui"),
   "pdf-page-blank-insert": () => import("@/tools/pdf/pdf-page-blank-insert/ui"),
   "pdf-attachment-embed": () => import("@/tools/pdf/pdf-attachment-embed/ui"),
-  "pdf-page-delete-range": () => import("@/tools/pdf/pdf-page-delete-range/ui"),
   "pdf-border-frame": () => import("@/tools/pdf/pdf-border-frame/ui"),
   "pdf-toc-from-headings": () => import("@/tools/pdf/pdf-toc-from-headings/ui"),
   "pdf-extract-annotations": () => import("@/tools/pdf/pdf-extract-annotations/ui"),
@@ -1458,7 +1446,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-font-embedder": () => import("@/tools/pdf/pdf-font-embedder/ui"),
   "pdf-extract-text-bulk": () => import("@/tools/pdf/pdf-extract-text-bulk/ui"),
   "pdf-batch-pipeline": () => import("@/tools/pdf/pdf-batch-pipeline/ui"),
-  "pdf-duplicate-pages": () => import("@/tools/pdf/pdf-duplicate-pages/ui"),
   "pdf-background-image": () => import("@/tools/pdf/pdf-background-image/ui"),
   "pdf-export-form-data": () => import("@/tools/pdf/pdf-export-form-data/ui"),
   "pdf-poster-split": () => import("@/tools/pdf/pdf-poster-split/ui"),
@@ -1471,7 +1458,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-import-form-data": () => import("@/tools/pdf/pdf-import-form-data/ui"),
   "pdf-x-export": () => import("@/tools/pdf/pdf-x-export/ui"),
   "pdf-layers-editor": () => import("@/tools/pdf/pdf-layers-editor/ui"),
-  "pdf-page-rotate-range": () => import("@/tools/pdf/pdf-page-rotate-range/ui"),
   "pdf-highlight-markup": () => import("@/tools/pdf/pdf-highlight-markup/ui"),
   "pdf-bookmarks-from-text": () => import("@/tools/pdf/pdf-bookmarks-from-text/ui"),
   "webpage-to-pdf": () => import("@/tools/pdf/webpage-to-pdf/ui"),
@@ -1483,7 +1469,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-split-by-size": () => import("@/tools/pdf/pdf-split-by-size/ui"),
   "pdf-ai-chat": () => import("@/tools/pdf/pdf-ai-chat/ui"),
   "pdf-redact-pattern": () => import("@/tools/pdf/pdf-redact-pattern/ui"),
-  "pdf-reverse-order": () => import("@/tools/pdf/pdf-reverse-order/ui"),
   "pdf-add-page-numbers-advanced": () => import("@/tools/pdf/pdf-add-page-numbers-advanced/ui"),
   "pdf-flipbook": () => import("@/tools/pdf/pdf-flipbook/ui"),
   "pdf-compress-target": () => import("@/tools/pdf/pdf-compress-target/ui"),
@@ -1496,12 +1481,10 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-translate-device": () => import("@/tools/pdf/pdf-translate-device/ui"),
   "epub-to-pdf-tool": () => import("@/tools/pdf/epub-to-pdf-tool/ui"),
   "pdf-clean-metadata": () => import("@/tools/pdf/pdf-clean-metadata/ui"),
-  "pdf-page-extract-range": () => import("@/tools/pdf/pdf-page-extract-range/ui"),
   "pdf-booklet-print": () => import("@/tools/pdf/pdf-booklet-print/ui"),
   "image-to-pdf-tool": () => import("@/tools/pdf/image-to-pdf-tool/ui"),
   "pdf-repair-tool": () => import("@/tools/pdf/pdf-repair-tool/ui"),
   "pdf-to-pdfx": () => import("@/tools/pdf/pdf-to-pdfx/ui"),
-  "pdf-rotate-permanent": () => import("@/tools/pdf/pdf-rotate-permanent/ui"),
   "pdf-summarizer": () => import("@/tools/pdf/pdf-summarizer/ui"),
   "pdf-fill-form": () => import("@/tools/pdf/pdf-fill-form/ui"),
   "pdf-interleave-merge": () => import("@/tools/pdf/pdf-interleave-merge/ui"),
@@ -1532,7 +1515,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-document-assembler-tool": () => import("@/tools/pdf/pdf-document-assembler-tool/ui"),
   "pdf-layers-ocg-manager": () => import("@/tools/pdf/pdf-layers-ocg-manager/ui"),
   "pdf-2up-join-tool": () => import("@/tools/pdf/pdf-2up-join-tool/ui"),
-  "pdf-duplicate-pages-tool": () => import("@/tools/pdf/pdf-duplicate-pages-tool/ui"),
   "pdf-auto-rotate-tool": () => import("@/tools/pdf/pdf-auto-rotate-tool/ui"),
   "pdf-flipbook-generator": () => import("@/tools/pdf/pdf-flipbook-generator/ui"),
   "pdf-find-replace-tool": () => import("@/tools/pdf/pdf-find-replace-tool/ui"),
@@ -1549,10 +1531,8 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-spell-check-tool": () => import("@/tools/pdf/pdf-spell-check-tool/ui"),
   "pdf-portfolio-builder-tool": () => import("@/tools/pdf/pdf-portfolio-builder-tool/ui"),
   "pdf-text-to-speech-tool": () => import("@/tools/pdf/pdf-text-to-speech-tool/ui"),
-  "pdf-reverse-order-tool": () => import("@/tools/pdf/pdf-reverse-order-tool/ui"),
   "pdf-fill-form-tool": () => import("@/tools/pdf/pdf-fill-form-tool/ui"),
   "pdf-highlight-markup-tool": () => import("@/tools/pdf/pdf-highlight-markup-tool/ui"),
-  "pdf-insert-pages-tool": () => import("@/tools/pdf/pdf-insert-pages-tool/ui"),
   "pdf-extract-annotations-tool": () => import("@/tools/pdf/pdf-extract-annotations-tool/ui"),
   "pdf-metadata-viewer-tool": () => import("@/tools/pdf/pdf-metadata-viewer-tool/ui"),
   "pdf-page-label-editor-tool": () => import("@/tools/pdf/pdf-page-label-editor-tool/ui"),
@@ -1619,7 +1599,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-page-resize-individual-tool": () => import("@/tools/pdf/pdf-page-resize-individual-tool/ui"),
   "pdf-grayscale-tool": () => import("@/tools/pdf/pdf-grayscale-tool/ui"),
   "pdf-header-footer-adv": () => import("@/tools/pdf/pdf-header-footer-adv/ui"),
-  "pdf-page-delete-range-tool": () => import("@/tools/pdf/pdf-page-delete-range-tool/ui"),
   "pdf-hyperlink-editor-pdf": () => import("@/tools/pdf/pdf-hyperlink-editor-pdf/ui"),
   "pdf-linearize-web": () => import("@/tools/pdf/pdf-linearize-web/ui"),
   "pdf-layers-ocg-editor-tool": () => import("@/tools/pdf/pdf-layers-ocg-editor-tool/ui"),
@@ -1627,7 +1606,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-despeckle-clean": () => import("@/tools/pdf/pdf-despeckle-clean/ui"),
   "pdf-repair-corrupt": () => import("@/tools/pdf/pdf-repair-corrupt/ui"),
   "pdf-split-advanced-tool": () => import("@/tools/pdf/pdf-split-advanced-tool/ui"),
-  "pdf-page-extract-range-tool": () => import("@/tools/pdf/pdf-page-extract-range-tool/ui"),
   "pdf-portfolio-package-builder": () => import("@/tools/pdf/pdf-portfolio-package-builder/ui"),
   "pdf-watermark-advanced-tool": () => import("@/tools/pdf/pdf-watermark-advanced-tool/ui"),
   "pdf-summarizer-ai": () => import("@/tools/pdf/pdf-summarizer-ai/ui"),
@@ -1648,13 +1626,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "pdf-chat-qa": () => import("@/tools/pdf/pdf-chat-qa/ui"),
   "pdf-page-labels-editor": () => import("@/tools/pdf/pdf-page-labels-editor/ui"),
   "pdf-draw-signature-place": () => import("@/tools/pdf/pdf-draw-signature-place/ui"),
-  "pdf-page-rotate-range-tool": () => import("@/tools/pdf/pdf-page-rotate-range-tool/ui"),
   "pdf-translate-layout": () => import("@/tools/pdf/pdf-translate-layout/ui"),
   "pdf-tables-to-csv": () => import("@/tools/pdf/pdf-tables-to-csv/ui"),
   "office-to-pdf-converter": () => import("@/tools/pdf/office-to-pdf-converter/ui"),
   "pdf-stamp-advanced-tool": () => import("@/tools/pdf/pdf-stamp-advanced-tool/ui"),
   "pdf-export-form-data-fdf": () => import("@/tools/pdf/pdf-export-form-data-fdf/ui"),
-  "pdf-page-reorder-custom-tool": () => import("@/tools/pdf/pdf-page-reorder-custom-tool/ui"),
   "pdf-document-info-viewer": () => import("@/tools/pdf/pdf-document-info-viewer/ui"),
   "pdf-compare-diff-tool": () => import("@/tools/pdf/pdf-compare-diff-tool/ui"),
   "pdf-form-creator-builder": () => import("@/tools/pdf/pdf-form-creator-builder/ui"),
@@ -1761,6 +1737,11 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "mac-address-vendor-oui": () => import("@/tools/network-security/mac-address-vendor-oui/ui"),
   "ai-chat-with-pdf": () => import("@/tools/pdf/ai-chat-with-pdf/ui"),
   "timezone-converter": () => import("@/tools/developer/timezone-converter/ui"),
+  "experiment-tracker": () => import("@/tools/seo/experiment-tracker/ui"),
+  "ai-alt-text-generator": () => import("@/tools/ai/ai-alt-text-generator/ui"),
+  "add-subtract-date-calculator": () => import("@/tools/developer/add-subtract-date-calculator/ui"),
+  "ansi-escape-code-terminal-color-generator": () => import("@/tools/developer/ansi-escape-code-terminal-color-generator/ui"),
+  "pdf-page-manager": () => import("@/tools/pdf/pdf-page-manager/ui"),
   "xml-formatter": () => import("@/tools/developer/xml-formatter/ui"),
   "email-validator": () => import("@/tools/developer/email-validator/ui"),
   "currency-converter": () => import("@/tools/calculators/currency-converter/ui"),
@@ -1777,6 +1758,45 @@ export function ToolPageClient({
   related,
   categoryLabel,
 }: ToolPageClientProps) {
+  const { isFavorite, toggle } = useFavorites();
+  const { record } = useRecentTools();
+  const isFav = isFavorite(tool.id);
+
+  // Track this visit in the site-wide "Recently viewed" list (localStorage only).
+  useEffect(() => {
+    record(tool.id);
+  }, [tool.id, record]);
+
+  // Compact info tabs — About / FAQ / Related live behind tabs so the tool
+  // UI is the hero of the page instead of a wall of explanatory sections.
+  const [infoTab, setInfoTab] = useState<"about" | "faq" | "related">("about");
+  const faqCount = tool.seo?.faq?.length ?? 0;
+
+  function InfoTabButton({
+    id,
+    label,
+  }: {
+    id: "about" | "faq" | "related";
+    label: string;
+  }) {
+    const active = infoTab === id;
+    return (
+      <button
+        type="button"
+        role="tab"
+        aria-selected={active}
+        onClick={() => setInfoTab(id)}
+        className={`-mb-px px-3 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors cursor-pointer touch-target ${
+          active
+            ? "border-primary text-foreground"
+            : "border-transparent text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        {label}
+      </button>
+    );
+  }
+
   const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
   const loader = TOOL_UI_LOADERS[tool.id];
   const ToolUI = loader ? lazy(loader) : null;
@@ -1822,6 +1842,21 @@ export function ToolPageClient({
               <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
                 <Lock className="h-3 w-3" /> Runs in your browser
               </Badge>
+              <Button
+                variant={isFav ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggle(tool.id)}
+                aria-pressed={isFav}
+                aria-label={
+                  isFav
+                    ? `Remove ${tool.name} from favorites`
+                    : `Add ${tool.name} to favorites`
+                }
+                className="gap-1.5 cursor-pointer"
+              >
+                <Star className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
+                <span>{isFav ? "Favorited" : "Favorite"}</span>
+              </Button>
             </motion.div>
 
             <motion.h1
@@ -1865,16 +1900,16 @@ export function ToolPageClient({
               )}
             </motion.div>
 
-            {/* Tool UI */}
-            <Card className="mb-8 card-hover rounded-2xl">
+            {/* Tool UI — the hero of the page */}
+            <Card className="mb-6 card-hover rounded-2xl shadow-lg shadow-black/[0.04]">
               <CardContent className="p-6 md:p-8">
                 {tool.status === "planned" && (
-                  <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200 flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="mb-5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200 flex items-start gap-3">
+                    <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-semibold mb-0.5">Tool Upgrade Coming Soon</p>
+                      <p className="font-semibold">Upgrade coming soon</p>
                       <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-                        This tool is currently a preview template. We are actively upgrading it to 100% blueprint compliance with 10 extra features. Like all UnQTools features, the upgraded version will run 100% locally in your browser with zero network requests.
+                        This preview template is being upgraded with extra features — 100% local, zero network requests.
                       </p>
                     </div>
                   </div>
@@ -1898,50 +1933,47 @@ export function ToolPageClient({
               </CardContent>
             </Card>
 
-            {/* About / How to use */}
-            <div className="unq-animate-fade-in-up mb-8">
-              <h2 className="text-xl font-semibold text-foreground mb-3">About {tool.name}</h2>
-              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                {tool.description} Everything runs locally in your browser — your data never leaves your device.
-              </p>
-              <h3 className="text-sm font-semibold text-foreground mb-2">How to use</h3>
-              <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside mb-4">
-                <li>Enter your input in the tool above.</li>
-                <li>Adjust any options to your preference.</li>
-                <li>Use the Copy or Download buttons to save the result.</li>
-                <li>Everything happens locally — your data never leaves your browser.</li>
-              </ol>
-            </div>
+            {/* Info — compact tabs so the page never becomes a wall of text */}
+            <div className="mb-6">
+              <div role="tablist" aria-label="Tool information" className="flex flex-wrap gap-1 border-b border-border">
+                <InfoTabButton id="about" label="About & how to use" />
+                {faqCount > 0 && <InfoTabButton id="faq" label={`FAQ (${faqCount})`} />}
+                {related.length > 0 && <InfoTabButton id="related" label={`Related (${related.length})`} />}
+              </div>
 
-            {/* FAQ */}
-            {tool.seo?.faq && tool.seo.faq.length > 0 && (
-              <div className="unq-animate-fade-in-up mb-8" style={{ animationDelay: "100ms" }}>
-                <h2 className="text-xl font-semibold text-foreground mb-4">FAQ</h2>
-                <div className="space-y-4">
-                  {tool.seo.faq.map((faq, i) => (
-                    <Card key={i}>
-                      <CardContent className="p-4">
-                        <h3 className="text-sm font-semibold text-foreground mb-1">{faq.q}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
-                      </CardContent>
-                    </Card>
+              {infoTab === "about" && (
+                <div className="pt-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                    {tool.description} Everything runs locally in your browser — your data never leaves your device.
+                  </p>
+                  <h3 className="text-sm font-semibold text-foreground mb-2">How to use</h3>
+                  <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                    <li>Enter your input in the tool above.</li>
+                    <li>Adjust any options to your preference.</li>
+                    <li>Use the Copy or Download buttons to save the result.</li>
+                    <li>Everything happens locally — your data never leaves your browser.</li>
+                  </ol>
+                </div>
+              )}
+
+              {infoTab === "faq" && faqCount > 0 && (
+                <div className="pt-4 space-y-3">
+                  {tool.seo?.faq?.map((faq, i) => (
+                    <div key={i} className="rounded-xl border bg-card p-4">
+                      <h3 className="text-sm font-semibold text-foreground mb-1">{faq.q}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                    </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Related tools */}
-            {related.length > 0 && (
-              <div className="unq-animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                <h2 className="text-xl font-semibold text-foreground mb-4">Related tools</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {infoTab === "related" && related.length > 0 && (
+                <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {related.map((rt) => {
                     const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
                     return (
                       <Link key={rt.id} href={`/tools/${rt.id}`} className="block group h-full">
-                        <div
-                          className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30"
-                        >
+                        <div className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30">
                           <div className="unq-icon-tile h-8 w-8 rounded-lg flex items-center justify-center mb-2">
                             <RIcon className="h-4 w-4 text-primary" />
                           </div>
@@ -1956,8 +1988,8 @@ export function ToolPageClient({
                     );
                   })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Back to tools */}
             <div className="mt-12">

@@ -1,13 +1,15 @@
 /**
  * Precomputed category counts (auto-generated) — tiny, so pages that only
  * need totals/counts don't have to import the 1700-item catalog.
+ *
+ * v18: 26 merged PDF page tools → 1 (PDF Page Manager). 1704 → 1679.
  */
 import type { ToolCategory } from "./tool";
 
-export const TOOL_COUNT = 1704;
+export const TOOL_COUNT = 1679;
 
 export const CATEGORY_COUNTS: Record<ToolCategory, number> = {
-  pdf: 330,
+  pdf: 305,
   image: 178,
   "audio-video": 45,
   developer: 466,
