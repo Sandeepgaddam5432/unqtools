@@ -8146,7 +8146,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Export PDF form field data to FDF, XFDF, or CSV formats.",
     category: "pdf",
     keywords: ["pdf form data","export fdf","export xfdf","form export"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-export-form-data-fdf",
@@ -8202,7 +8202,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Extract all embedded images from PDF. JPEG, PNG, quality preservation, bulk export.",
     category: "pdf",
     keywords: ["extract images pdf","pdf images","get pdf images","pdf extract"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-extract-images-bulk",
@@ -8218,7 +8218,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Extract text content from PDF. Page range, layout preservation, bulk export.",
     category: "pdf",
     keywords: ["pdf to text","extract text pdf","pdf txt","pdf text"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-extract-text-bulk",
@@ -8418,7 +8418,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PDF to grayscale or black & white. Reduce file size, print-friendly.",
     category: "pdf",
     keywords: ["pdf grayscale","black white pdf","bw pdf","pdf mono"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-grayscale-converter",
@@ -8578,7 +8578,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Invert PDF colors for dark mode reading. White text on black background.",
     category: "pdf",
     keywords: ["pdf invert","dark mode pdf","pdf dark","invert colors"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-invert-colors-tool",
@@ -9002,7 +9002,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Split large PDF pages into multiple tiles for poster printing.",
     category: "pdf",
     keywords: ["pdf poster","tile pdf","split poster","pdf tiles"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-poster-tile-split",
@@ -9266,7 +9266,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Split PDF at bookmark locations. Top-level, custom depth, named output.",
     category: "pdf",
     keywords: ["split pdf bookmarks","bookmark split","pdf split","pdf chapters"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-split-by-size",
@@ -9554,7 +9554,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PDF structure to JSON. Page content, metadata, text blocks, images.",
     category: "pdf",
     keywords: ["pdf to json","json from pdf","pdf data","pdf structure"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-to-markdown",
@@ -9562,7 +9562,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PDF to Markdown. Preserve headings, lists, links, code blocks.",
     category: "pdf",
     keywords: ["pdf to markdown","pdf to md","markdown from pdf","pdf md"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-to-mobi-converter",
@@ -9874,7 +9874,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Count words, characters, pages, paragraphs in PDF. Reading time estimate.",
     category: "pdf",
     keywords: ["pdf word count","pdf statistics","count words pdf","pdf text"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-word-count-tool",
