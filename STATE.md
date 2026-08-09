@@ -1,10 +1,10 @@
 # UnQTools — Build State
 
-_Last updated: 2026-08-05 — branch arena/019fd1ad-unqtools. Tool count: 1700 (restored). Perf work (v17.64) intact._
+_Last updated: 2026-08-05 — branch arena/019fd1ad-unqtools. Tool count: 1704. Perf work (v17.64) intact._
 
 ## Current phase
 
-**v17.67 — 1700 tools kept, high-demand gap tools added (owner directive: no removals).**
+**v17.70 — 1704 tools, high-demand gap tools added (owner directive: no removals).**
 
 Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 
@@ -22,10 +22,10 @@ Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 - **v17.64 perf work (on branch):** logo 589KB→12KB, source-maps off, catalog split,
   counts, lazy command palette, hero/LCP fix, framer-motion out of landing route.
 - **Tool removals reverted:** the dedupe/dead-tool removal commits were reverted —
-  **1700 tools live** (no tools removed), as the owner directed.
+  **1704 tools live** (no tools removed), as the owner directed.
 - **State:** working tree clean; lint + tests pass; catalog + sitemap regenerated.
 
-### Tool count: 1700 tools live
+### Tool count: 1704 tools live
 
 | Category | Count |
 |----------|-------|
