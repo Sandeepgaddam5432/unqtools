@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Download, X, Smartphone, Bell, BellRing } from "lucide-react";
 
@@ -92,14 +91,10 @@ export function PWAInstallPrompt() {
   if (isInstalled) return null;
 
   return (
-    <AnimatePresence>
+    <>
       {showPrompt && (
-        <motion.div
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 100 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:w-[400px] z-[100] rounded-2xl border bg-card/95 backdrop-blur-xl shadow-2xl shadow-black/20 p-5"
+        <div
+          className="unq-animate-fade-in-up fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:w-[400px] z-[100] rounded-2xl border bg-card/95 backdrop-blur-xl shadow-2xl shadow-black/20 p-5"
         >
           <button
             onClick={() => setShowPrompt(false)}
@@ -157,9 +152,9 @@ export function PWAInstallPrompt() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 
@@ -211,9 +206,8 @@ export function PWAInstallSection() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Install Card */}
-      <motion.div
-        whileHover={{ y: -4, transition: { duration: 0.2 } }}
-        className="rounded-2xl border bg-card/50 backdrop-blur-sm p-8 relative overflow-hidden group"
+      <div
+        className="rounded-2xl border bg-card/50 backdrop-blur-sm p-8 relative overflow-hidden group transition-transform duration-200 hover:-translate-y-1"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
@@ -245,12 +239,11 @@ export function PWAInstallSection() {
             </div>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Notification Card */}
-      <motion.div
-        whileHover={{ y: -4, transition: { duration: 0.2 } }}
-        className="rounded-2xl border bg-card/50 backdrop-blur-sm p-8 relative overflow-hidden group"
+      <div
+        className="rounded-2xl border bg-card/50 backdrop-blur-sm p-8 relative overflow-hidden group transition-transform duration-200 hover:-translate-y-1"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative">
@@ -281,7 +274,7 @@ export function PWAInstallSection() {
             </Button>
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
