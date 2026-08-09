@@ -4,9 +4,12 @@ _Last updated: 2026-08-05 — branch arena/019fd1ad-unqtools. Tool count: 1700 (
 
 ## Current phase
 
-**v17.64 perf work intact — tool catalog back to 1700 tools (owner directive: no tool removals).**
+**v17.66 — 1700 tools kept, adding high-demand gap tools (owner directive: no removals).**
 
 Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+
+- **v17.66:** Added **Timezone Converter** (developer) — offline, DST-aware.
+  Tool count 1700 → **1701**. Next: Currency, XML formatter, Email validator.
 
 - **v17.64 perf work (on branch):** logo 589KB→12KB, source-maps off, catalog split,
   counts, lazy command palette, hero/LCP fix, framer-motion out of landing route.

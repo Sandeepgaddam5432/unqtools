@@ -49,3 +49,4 @@ v17.64 performance improvements. Take every tool to **god level** — see
 4. **AI-agent-first layer** — natural-language → tool routing, JSON output on
    every tool (folded into the kernel as `src/lib/god/agent.ts`).
 5. Keep documenting every step in `STATE.md` + `docs/PROGRESS.md`.
+| 2026-08-05 | **v17.66: Timezone Converter** | **Added high-demand tool `timezone-converter`** (developer). Fully offline via browser Intl/IANA DB — convert between any two zones, all-zones view, DST-aware, UTC offset, 12/24h toggle, Now/Swap/Copy. Tool count 1700 → **1701**. 4 files + 11 unit tests. Registered in registry + loader; catalog/sitemap regenerated (1716 URLs); lint + tests pass. |

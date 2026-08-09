@@ -6,7 +6,7 @@
  * omitted here — it lives in src/lib/registry.ts and is only imported
  * by server-rendered tool detail pages.
  *
- * 1700 tools. Regenerate with: node scripts/regenerate-catalog.mjs
+ * 1701 tools. Regenerate with: node scripts/regenerate-catalog.mjs
  */
 import type { ToolCategory } from "./tool";
 
@@ -12762,6 +12762,14 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Generate weekly / bi-weekly / semi-monthly / monthly timesheets from clock-in/out entries. Per-entry worked hours with break deduction, weekly totals, overtime (threshold + 1.5x), regular vs overtime pay, gross pay, daily breakdown, weekly summary, text + CSV + printable HTML export, history (localStorage), shareable URL, summary stats, time formatter, break presets. 100% client-side.",
     category: "business",
     keywords: ["timesheet","time card","time sheet","clock in","clock out","punch clock","weekly timesheet","bi-weekly","overtime","hours worked","pay calculator","work hours"],
+    status: "done",
+  },
+  {
+    id: "timezone-converter",
+    name: "Timezone Converter",
+    description: "Convert a date & time between any two IANA timezones — fully offline with the browser's native timezone database. See the result in all timezones at once, with DST handling, UTC offset, and 12/24-hour toggles. 100% private.",
+    category: "developer",
+    keywords: ["timezone converter","time zone converter","world clock","convert time","UTC offset","DST","meeting time","international time","time difference"],
     status: "done",
   },
   {

@@ -1760,6 +1760,7 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "hsts-preload-checker-header": () => import("@/tools/network-security/hsts-preload-checker-header/ui"),
   "mac-address-vendor-oui": () => import("@/tools/network-security/mac-address-vendor-oui/ui"),
   "ai-chat-with-pdf": () => import("@/tools/pdf/ai-chat-with-pdf/ui"),
+  "timezone-converter": () => import("@/tools/developer/timezone-converter/ui"),
 };
 
 interface ToolPageClientProps {

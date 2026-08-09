@@ -1715,6 +1715,7 @@ import { manifest as hstsPreloadCheckerHeader } from "@/tools/network-security/h
 import { manifest as macAddressVendorOui } from "@/tools/network-security/mac-address-vendor-oui/manifest";
 
 import { manifest as aiChatWithPdf } from "@/tools/pdf/ai-chat-with-pdf/manifest";
+import { manifest as timezoneConverter } from "@/tools/developer/timezone-converter/manifest";
 
 export const TOOLS: readonly ToolManifest[] = [
   bmiCalculator,
@@ -3392,6 +3393,7 @@ export const TOOLS: readonly ToolManifest[] = [
   macAddressVendorOui,
 
   aiChatWithPdf,
+  timezoneConverter,
 ]
   .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name));
