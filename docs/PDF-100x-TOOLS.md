@@ -71,3 +71,24 @@
 
 **Wave 2 verified:** 7,486 PDF tests pass (308 files, +50 new); ESLint clean on all touched files;
 backward-compatible signatures (all existing UIs keep working); no tools removed (1,679 intact).
+
+---
+
+## Wave 3 (v18.4) — next 10 PDF tools (8 template shells → real engines)
+
+| # | Tool | Before | After (100x) |
+|---|------|--------|--------------|
+| 21 | **Add Background to PDF** | fake `validate/process` stub | **3 modes** (solid color / image fit-tile-stretch / underlay page from another PDF) + opacity + page ranges — 11 tests |
+| 22 | **Add Page Border to PDF** | fake stub | width + color + **solid/dashed/double** styles + inset + page ranges — 9 tests |
+| 23 | **Add Header & Footer to PDF** | fake stub | header/footer with **{page}/{pages} placeholders**, left/center/right, bold, color, rule lines — 10 tests |
+| 24 | **Add Attachment to PDF** | fake stub | **embed any file** (Filespec + paperclip annot), multiple files, description, list existing — 5 tests |
+| 25 | **Combine Pages Side-by-Side (2-up)** | fake stub | pairs pages per sheet, A4/Letter/custom, orientation, margin+gutter, duplicate-last, divider — 6 tests |
+| 26 | **B&W Scan Optimizer** | fake stub | **real 1-bit conversion**: threshold, Floyd–Steinberg dither, median despeckle (3×3/5×5), embedded-image re-encode — 9 tests |
+| 27 | **EPUB to PDF** | fake stub | **real EPUB parser**: container.xml→OPF→spine→chapters, HTML→text with headings/lists/tables, rendered via Markdown engine — 8 tests |
+| 28 | **Office to PDF** | fake stub | **DOCX (bold/italic), XLSX (shared strings→tables), PPTX (slides), TXT/RTF/CSV** → clean searchable PDF — 10 tests |
+| 29 | **Bates Numbering Tool** | already real | verified — 24 tests pass (planner: presets, 9-grid positions, CSV/report) |
+| 30 | **PDF Accessibility Checker** | already deep | verified — 78 tests pass (2,794 LOC analyzer) |
+
+**Wave 3 verified:** 7,403 PDF tests pass (309 files; +87 new across 8 rebuilt tools);
+ESLint clean on all touched files; no tools removed (1,679 intact). The 8 template-shell
+tools went from fake `validate/process` stubs to real pdf-lib engines with real UIs.

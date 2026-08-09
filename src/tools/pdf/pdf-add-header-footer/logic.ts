@@ -1,153 +1,139 @@
 /**
- * Add Header & Footer to PDF — pure logic.
+ * Add Header & Footer to PDF — real engine.
+ *
+ * Draws header/footer text (with {page} and {pages} placeholders) at
+ * left/center/right positions, font size, bold, color, and per-page ranges.
+ * Optional top/bottom rule lines like a word processor. Pure pdf-lib.
  */
+import { PDFDocument, StandardFonts, rgb, type PDFFont, type RGB } from "pdf-lib";
+import type { ToolResult } from "../../../lib/tool";
+import { parsePageRanges } from "../_shared/page-ranges";
 
-export interface ProcessResult {
-  output: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
+export type HfPosition = "left" | "center" | "right";
+
+export interface HeaderFooterOptions {
+  headerText?: string;
+  footerText?: string;
+  headerPosition?: HfPosition;
+  footerPosition?: HfPosition;
+  fontSize?: number;
+  bold?: boolean;
+  color?: string;
+  /** Draw a thin rule under the header / above the footer. */
+  rules?: boolean;
+  /** Page range to apply to (empty = all). */
+  pages?: string;
+  /** Extra vertical offset from the page edge (pt). */
+  margin?: number;
 }
 
-export interface ValidationIssue {
-  severity: "error" | "warning" | "info";
-  message: string;
-  line?: number;
-  column?: number;
+export interface HeaderFooterResult {
+  bytes: Uint8Array;
+  pagesModified: number;
 }
 
-export function validate(input: string): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  if (!input || !input.trim()) {
-    issues.push({ severity: "error", message: "Input is empty" });
-    return issues;
-  }
-  if (input.length > 10 * 1024 * 1024) {
-    issues.push({ severity: "warning", message: "Input is very large (>10MB) — may be slow" });
-  }
-  return issues;
+export function hexToRgb(hex: string): RGB {
+  const clean = (hex || "#333333").replace("#", "");
+  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const n = parseInt(full, 16);
+  if (Number.isNaN(n)) return rgb(0.2, 0.2, 0.2);
+  return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 }
 
-export function process(input: string, options: Record<string, unknown> = {}): ProcessResult {
-  const issues = validate(input);
-  const errors = issues.filter((i) => i.severity === "error");
-  if (errors.length > 0) {
-    return { output: "", error: errors[0].message };
+/** Resolve placeholders in a template. Pure. */
+export function resolveTemplate(
+  template: string,
+  page: number,
+  total: number
+): string {
+  return template
+    .replace(/\{page\}/gi, String(page))
+    .replace(/\{pages\}/gi, String(total))
+    .replace(/\{date\}/gi, new Date().toLocaleDateString())
+    .replace(/\{time\}/gi, new Date().toLocaleTimeString());
+}
+
+export async function addHeaderFooter(
+  bytes: Uint8Array,
+  options: HeaderFooterOptions = {}
+): Promise<ToolResult<HeaderFooterResult>> {
+  const hasHeader = Boolean(options.headerText?.trim());
+  const hasFooter = Boolean(options.footerText?.trim());
+  if (!hasHeader && !hasFooter) {
+    return { ok: false, error: "Enter a header and/or footer text." };
   }
+
+  let doc: PDFDocument;
   try {
-    // Generic processing — returns input as-is (override in specific tools)
-    const output = input;
-    return {
-      output,
-      metadata: {
-        inputLength: input.length,
-        outputLength: output.length,
-        processingTime: Date.now(),
-      },
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    return { ok: false, error: "Could not read the PDF — it may be corrupted or password-protected." };
+  }
+  const total = doc.getPageCount();
+  let indices: number[];
+  const spec = (options.pages ?? "").trim();
+  if (spec) {
+    const p = parsePageRanges(spec, total);
+    if (!p.ok) return p;
+    indices = [...new Set(p.output)];
+  } else {
+    indices = Array.from({ length: total }, (_, i) => i);
+  }
+  if (indices.length === 0) return { ok: false, error: "No pages matched." };
+
+  const fs = Math.max(6, Math.min(Number(options.fontSize) || 9, 36));
+  const margin = Math.max(6, Math.min(80, Number(options.margin) || 18));
+  const color = hexToRgb(options.color ?? "#333333");
+  const rules = options.rules ?? false;
+
+  try {
+    const font: PDFFont = options.bold
+      ? await doc.embedFont(StandardFonts.HelveticaBold)
+      : await doc.embedFont(StandardFonts.Helvetica);
+    const pages = doc.getPages();
+
+    const drawLine = (
+      page: (typeof pages)[number],
+      text: string,
+      position: HfPosition,
+      y: number
+    ) => {
+      const w = font.widthOfTextAtSize(text, fs);
+      const { width } = page.getSize();
+      const x =
+        position === "left"
+          ? margin
+          : position === "right"
+            ? width - margin - w
+            : (width - w) / 2;
+      page.drawText(text, { x, y, size: fs, font, color });
     };
-  } catch (e) {
-    return { output: "", error: e instanceof Error ? e.message : "Processing failed" };
+
+    for (const i of indices) {
+      const page = pages[i]!;
+      const { width, height } = page.getSize();
+      const pageNo = i + 1;
+
+      if (hasHeader) {
+        const text = resolveTemplate(options.headerText!, pageNo, total);
+        const y = height - margin - fs;
+        drawLine(page, text, options.headerPosition ?? "center", y);
+        if (rules) {
+          page.drawLine({ start: { x: margin, y: y - 3 }, end: { x: width - margin, y: y - 3 }, thickness: 0.6, color: rgb(0.75, 0.75, 0.75) });
+        }
+      }
+      if (hasFooter) {
+        const text = resolveTemplate(options.footerText!, pageNo, total);
+        const y = margin;
+        drawLine(page, text, options.footerPosition ?? "center", y);
+        if (rules) {
+          page.drawLine({ start: { x: margin, y: y + fs + 3 }, end: { x: width - margin, y: y + fs + 3 }, thickness: 0.6, color: rgb(0.75, 0.75, 0.75) });
+        }
+      }
+    }
+
+    return { ok: true, output: { bytes: await doc.save(), pagesModified: indices.length } };
+  } catch {
+    return { ok: false, error: "Something went wrong while adding the header/footer." };
   }
-}
-
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${ms}ms`;
-  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
-  return `${(ms / 3600000).toFixed(1)}h`;
-}
-
-export function randomId(length = 8): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const arr = new Uint8Array(length);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < length; i++) result += chars[arr[i] % chars.length];
-  return result;
-}
-
-export function copyToClipboard(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    return navigator.clipboard.writeText(text);
-  }
-  return Promise.reject(new Error("Clipboard API not available"));
-}
-
-export function downloadFile(content: string | Blob, filename: string, mime = "text/plain"): void {
-  const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-export function detectFileType(bytes: Uint8Array): string | null {
-  if (bytes.length < 4) return null;
-  // PDF
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
-  // PNG
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  // JPEG
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  // GIF
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
-  // ZIP
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03) return "zip";
-  // GZIP
-  if (bytes[0] === 0x1f && bytes[1] === 0x8b) return "gzip";
-  return null;
-}
-
-export function getFileExtension(filename: string): string {
-  const m = filename.match(/\.([a-z0-9]+)$/i);
-  return m ? m[1].toLowerCase() : "";
-}
-
-export function getMimeType(format: string): string {
-  const map: Record<string, string> = {
-    pdf: "application/pdf",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    gif: "image/gif",
-    webp: "image/webp",
-    svg: "image/svg+xml",
-    html: "text/html",
-    css: "text/css",
-    js: "application/javascript",
-    json: "application/json",
-    xml: "application/xml",
-    csv: "text/csv",
-    txt: "text/plain",
-    md: "text/markdown",
-    zip: "application/zip",
-  };
-  return map[format.toLowerCase()] || "application/octet-stream";
-}
-
-export function getStats(input: string, output: string): {
-  inputSize: number;
-  outputSize: number;
-  ratio: number;
-  savings: number;
-} {
-  const inputSize = new TextEncoder().encode(input).length;
-  const outputSize = new TextEncoder().encode(output).length;
-  const ratio = inputSize > 0 ? outputSize / inputSize : 0;
-  const savings = inputSize - outputSize;
-  return { inputSize, outputSize, ratio, savings };
-}
-
-export function bulkProcess(inputs: string[], options?: Record<string, unknown>): ProcessResult[] {
-  return inputs.map((input) => process(input, options));
 }

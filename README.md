@@ -9,6 +9,13 @@ tool-collection sites.
 
 ## Status
 
+**v18.4 — PDF 100x wave 3: 30 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
+
+Waves 1–3 rebuilt 30 PDF tools to the 100x bar and turned 8 fake "planned" template
+shells into real engines (Add Background/Border/Header-Footer/Attachment, 2-up Join,
+B&W Scan Optimizer, EPUB→PDF, Office→PDF). Full comparison:
+[`docs/PDF-100x-TOOLS.md`](./docs/PDF-100x-TOOLS.md).
+
 **v18.3 — PDF 100x wave 2: 20 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
 
 Waves 1+2 rebuilt 20 PDF tools to 100x bar: exact target-size compression with batch+ZIP,

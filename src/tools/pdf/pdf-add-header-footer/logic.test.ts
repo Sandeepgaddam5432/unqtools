@@ -1,114 +1,88 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument } from "pdf-lib";
+import { addHeaderFooter, resolveTemplate, hexToRgb } from "./logic";
 
-describe("Add Header & Footer to PDF", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+async function makePdf(pages: number): Promise<Uint8Array> {
+  const doc = await PDFDocument.create();
+  for (let i = 0; i < pages; i++) {
+    const page = doc.addPage([200, 300]);
+    page.drawText(`body ${i}`, { x: 5, y: 5, size: 6 });
+  }
+  return doc.save();
+}
+
+describe("resolveTemplate", () => {
+  it("replaces page and pages placeholders", () => {
+    expect(resolveTemplate("Page {page} of {pages}", 3, 10)).toBe("Page 3 of 10");
+    expect(resolveTemplate("{page}/{pages}", 1, 5)).toBe("1/5");
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("is case-insensitive for placeholders", () => {
+    expect(resolveTemplate("{PAGE}", 2, 4)).toBe("2");
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("leaves unknown text intact", () => {
+    expect(resolveTemplate("Draft - {page}", 1, 2)).toBe("Draft - 1");
+  });
+});
+
+describe("hexToRgb", () => {
+  it("parses hex to pdf-lib RGB", () => {
+    const c = hexToRgb("#ff0000");
+    expect(c.red).toBe(1);
+    expect(c.green).toBe(0);
+  });
+});
+
+describe("addHeaderFooter", () => {
+  it("adds header and footer to all pages", async () => {
+    const pdf = await makePdf(3);
+    const r = await addHeaderFooter(pdf, {
+      headerText: "Confidential {page}",
+      footerText: "Page {page} of {pages}",
+      fontSize: 9,
+    });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.output.pagesModified).toBe(3);
+      expect((await PDFDocument.load(r.output.bytes)).getPageCount()).toBe(3);
+    }
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("supports positions and bold", async () => {
+    const pdf = await makePdf(2);
+    const r = await addHeaderFooter(pdf, {
+      headerText: "Left head",
+      headerPosition: "left",
+      footerText: "Right foot",
+      footerPosition: "right",
+      bold: true,
+      color: "#0055aa",
+    });
+    expect(r.ok).toBe(true);
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
+  it("draws rule lines when requested", async () => {
+    const pdf = await makePdf(1);
+    const r = await addHeaderFooter(pdf, { headerText: "H", footerText: "F", rules: true });
+    expect(r.ok).toBe(true);
   });
 
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
+  it("applies to selected pages only", async () => {
+    const pdf = await makePdf(4);
+    const r = await addHeaderFooter(pdf, { headerText: "H", pages: "2-3" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.output.pagesModified).toBe(2);
   });
 
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-    expect(formatBytes(1073741824)).toBe("1.00 GB");
+  it("errors when both texts are empty", async () => {
+    const pdf = await makePdf(1);
+    const r = await addHeaderFooter(pdf, {});
+    expect(r.ok).toBe(false);
   });
 
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-    expect(formatDuration(90000)).toBe("1.5m");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    const id1 = randomId();
-    const id2 = randomId();
-    expect(id1).not.toBe(id2);
-  });
-
-  it("detects PDF file type", () => {
-    const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46]);
-    expect(detectFileType(pdfBytes)).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    const pngBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
-    expect(detectFileType(pngBytes)).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    const unknown = new Uint8Array([0x00, 0x00, 0x00, 0x00]);
-    expect(detectFileType(unknown)).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-    expect(getMimeType("json")).toBe("application/json");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.ratio).toBeLessThan(1);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("rejects corrupt PDFs", async () => {
+    const r = await addHeaderFooter(new Uint8Array([9, 9]), { headerText: "x" });
+    expect(r.ok).toBe(false);
   });
 });

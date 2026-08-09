@@ -1,105 +1,92 @@
-import { describe, it, expect } from "vitest";
-import {
-  validate, process, formatBytes, formatDuration, randomId,
-  detectFileType, getFileExtension, getMimeType, getStats, bulkProcess,
-} from "./logic";
+import { describe, expect, it } from "vitest";
+import { PDFDocument } from "pdf-lib";
+import { toBinary, floydSteinberg, medianDespeckle, luminance, canProcessImages, findEmbeddedImages } from "./logic";
 
-describe("Black & White (1-bit) Scan Optimizer", () => {
-  it("validates empty input", () => {
-    const issues = validate("");
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].severity).toBe("error");
+/** Build a small RGBA buffer (w×h) with a helper. */
+function makeRgba(width: number, height: number, fill: (x: number, y: number) => [number, number, number]): Uint8Array {
+  const data = new Uint8Array(width * height * 4);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const [r, g, b] = fill(x, y);
+      const i = (y * width + x) * 4;
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+      data[i + 3] = 255;
+    }
+  }
+  return data;
+}
+
+describe("luminance", () => {
+  it("computes Rec.601 luminance", () => {
+    expect(luminance(255, 255, 255)).toBeCloseTo(255, 1);
+    expect(luminance(0, 0, 0)).toBe(0);
+    expect(luminance(255, 0, 0)).toBeCloseTo(76.2, 1);
+  });
+});
+
+describe("toBinary", () => {
+  it("turns dark pixels black and bright pixels white", () => {
+    const rgba = makeRgba(2, 1, (x) => (x === 0 ? [10, 10, 10] : [240, 240, 240]));
+    const out = toBinary(rgba, 128);
+    expect(out[0]).toBe(0); // black
+    expect(out[4]).toBe(255); // white
   });
 
-  it("validates non-empty input", () => {
-    const issues = validate("test input");
-    expect(issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  it("preserves alpha and length", () => {
+    const rgba = makeRgba(3, 3, () => [100, 100, 100]);
+    const out = toBinary(rgba, 128);
+    expect(out.length).toBe(rgba.length);
+    expect(out[3]).toBe(255);
   });
 
-  it("warns on very large input", () => {
-    const large = "a".repeat(11 * 1024 * 1024);
-    const issues = validate(large);
-    expect(issues.some((i) => i.severity === "warning")).toBe(true);
+  it("respects a custom threshold", () => {
+    const rgba = makeRgba(1, 1, () => [200, 200, 200]);
+    expect(toBinary(rgba, 250)[0]).toBe(0); // 200 < 250 → black
+    expect(toBinary(rgba, 100)[0]).toBe(255); // 200 ≥ 100 → white
+  });
+});
+
+describe("floydSteinberg", () => {
+  it("produces binary output with same dimensions", () => {
+    const rgba = makeRgba(8, 8, (x, y) => [x * 30 + y * 10, 100, 100]);
+    const out = floydSteinberg(rgba, 8, 128);
+    expect(out.length).toBe(rgba.length);
+    for (let i = 0; i < out.length; i += 4) {
+      expect(out[i] === 0 || out[i] === 255).toBe(true);
+    }
+  });
+});
+
+describe("medianDespeckle", () => {
+  it("removes a single noisy pixel", () => {
+    // 3×3 with a lone bright pixel in a dark field.
+    const rgba = makeRgba(3, 3, (x, y) => (x === 1 && y === 1 ? [250, 250, 250] : [10, 10, 10]));
+    const out = medianDespeckle(rgba, 3, 1);
+    const i = (1 * 3 + 1) * 4;
+    expect(out[i]).toBeLessThan(50); // median of neighborhood is dark
   });
 
-  it("processes valid input", () => {
-    const result = process("test");
-    expect(result.error).toBeUndefined();
-    expect(result.output).toBeTruthy();
+  it("returns a copy for radius 0", () => {
+    const rgba = makeRgba(2, 2, () => [1, 2, 3]);
+    const out = medianDespeckle(rgba, 2, 0);
+    expect(out).not.toBe(rgba);
+    expect(out[0]).toBe(1);
+  });
+});
+
+describe("environment helpers", () => {
+  it("canProcessImages is false in Node", () => {
+    expect(canProcessImages()).toBe(false);
   });
 
-  it("returns error for invalid input", () => {
-    const result = process("");
-    expect(result.error).toBeDefined();
-  });
-
-  it("includes metadata in result", () => {
-    const result = process("test");
-    expect(result.metadata).toBeDefined();
-  });
-
-  it("formats bytes correctly", () => {
-    expect(formatBytes(500)).toBe("500 B");
-    expect(formatBytes(1024)).toBe("1.0 KB");
-    expect(formatBytes(1048576)).toBe("1.00 MB");
-  });
-
-  it("formats duration correctly", () => {
-    expect(formatDuration(500)).toBe("500ms");
-    expect(formatDuration(1500)).toBe("1.5s");
-  });
-
-  it("generates random ID", () => {
-    const id = randomId(8);
-    expect(id).toHaveLength(8);
-  });
-
-  it("generates unique random IDs", () => {
-    expect(randomId()).not.toBe(randomId());
-  });
-
-  it("detects PDF file type", () => {
-    expect(detectFileType(new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe("pdf");
-  });
-
-  it("detects PNG file type", () => {
-    expect(detectFileType(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe("png");
-  });
-
-  it("returns null for unknown file type", () => {
-    expect(detectFileType(new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBeNull();
-  });
-
-  it("extracts file extension", () => {
-    expect(getFileExtension("test.pdf")).toBe("pdf");
-    expect(getFileExtension("image.PNG")).toBe("png");
-    expect(getFileExtension("noext")).toBe("");
-  });
-
-  it("gets MIME type", () => {
-    expect(getMimeType("pdf")).toBe("application/pdf");
-    expect(getMimeType("png")).toBe("image/png");
-  });
-
-  it("calculates stats", () => {
-    const stats = getStats("hello", "hi");
-    expect(stats.inputSize).toBe(5);
-    expect(stats.outputSize).toBe(2);
-    expect(stats.savings).toBe(3);
-  });
-
-  it("bulk processes multiple inputs", () => {
-    const results = bulkProcess(["a", "b", "c"]);
-    expect(results).toHaveLength(3);
-  });
-
-  it("handles unicode input", () => {
-    const result = process("héllo wörld");
-    expect(result.error).toBeUndefined();
-  });
-
-  it("handles special characters", () => {
-    const result = process("!@#$%^&*()");
-    expect(result.error).toBeUndefined();
+  it("findEmbeddedImages returns nothing for a text PDF", async () => {
+    const doc = await PDFDocument.create();
+    const page = doc.addPage([200, 300]);
+    page.drawText("hello", { x: 5, y: 5, size: 8 });
+    const bytes = await doc.save();
+    const reloaded = await PDFDocument.load(bytes);
+    expect(findEmbeddedImages(reloaded)).toEqual([]);
   });
 });

@@ -4,6 +4,17 @@ _Last updated: 2026-08-09 — branch arena/019fe601-unqtools. Tool count: 1679. 
 
 ## Current phase
 
+**v18.4 — PDF 100x wave 3: next 10 alphabetical PDF tools; 8 fake template shells became real engines. 1,679 tools live.**
+
+- **v18.4 (PDF 100x wave 3):** The auditor flagged 8 "planned" PDF tools as fake stubs —
+  `validate/process` returned the input unchanged. Rebuilt each with a real pdf-lib
+  engine + real UI + real tests: **Add Background** (color/image/underlay), **Add Border**
+  (3 styles), **Add Header & Footer** ({page}/{pages}), **Add Attachment** (Filespec),
+  **2-up Join** (side-by-side), **B&W Scan Optimizer** (1-bit + dither + despeckle),
+  **EPUB to PDF** (OPF/spine parser), **Office to PDF** (DOCX/XLSX/PPTX/TXT/CSV).
+  Verified Bates Numbering + Accessibility Checker already real (102 tests). 7,403 PDF
+  tests pass (+87 new); no removals. Full table: [`docs/PDF-100x-TOOLS.md`](./PDF-100x-TOOLS.md).
+
 **v18.3 — PDF 100x wave 2: next 10 alphabetical PDF tools rebuilt (flatten, interleave, n-up, markdown, blank-removal, resize, rtf, scale, svg, text). 1,679 tools live.**
 
 - **v18.3 (PDF 100x wave 2):** Continued the 100x program with the next 10 PDF tools:
