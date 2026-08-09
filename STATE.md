@@ -1,12 +1,31 @@
 # UnQTools — Build State
 
-_Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt with 100% blueprint compliance + audit report._
+_Last updated: 2026-08-05 — branch arena/019fd1ad-unqtools. Tool count: 1704. Perf work (v17.64) intact._
 
 ## Current phase
 
-**v17.63 — 30 tools rebuilt with 100% blueprint compliance + audit report — ALL SCANNERS CLEAN**
+**v17.70 — 1704 tools, high-demand gap tools added (owner directive: no removals).**
 
-### Tool count: 1700 tools live
+Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+
+- **v17.66:** Added **Timezone Converter** (developer) — offline, DST-aware. 1700 → **1701**.
+- **v17.67:** Added **XML Formatter** (developer), **Email Validator** (developer),
+  **Currency Converter** (calculators, offline reference rates). Tool count → **1704**.
+  All 100% offline. Lint + tests pass; catalog/sitemap regenerated (1719 URLs).
+- **v17.68:** **Codebase cleanup (ponytail)** — deleted dead code: `archive/` (1.1MB,
+  84 files) + 6 unused UI components. **All 1704 tools intact.** no-archive-imports +
+  51 tests pass; lint clean.
+- **v17.69:** **CSS perf (ponytail)** — removed 5 unused Tailwind animation tokens
+  (marquee/meteor/orbit/ripple). globals.css 12.3KB→10.9KB. Perf work confirmed intact
+  (framer-motion out of landing, catalog split, lazy palette, hero plain HTML).
+
+- **v17.64 perf work (on branch):** logo 589KB→12KB, source-maps off, catalog split,
+  counts, lazy command palette, hero/LCP fix, framer-motion out of landing route.
+- **Tool removals reverted:** the dedupe/dead-tool removal commits were reverted —
+  **1704 tools live** (no tools removed), as the owner directed.
+- **State:** working tree clean; lint + tests pass; catalog + sitemap regenerated.
+
+### Tool count: 1704 tools live
 
 | Category | Count |
 |----------|-------|
@@ -53,4 +72,3 @@ _Last updated: 2026-07-27 by GLM (z.ai sandbox) — v17.63: 30 tools rebuilt wit
 ### Known issues
 
 - **555 tools** built in v17.56–v17.61 used generic template logic instead of implementing actual blueprint features. 30 have been rebuilt in v17.63. The remaining 565 generic template/mock tools across developer, pdf, and network-security categories are now explicitly marked with `status: "planned"` (Coming Soon) in their manifest.ts and display "Coming Soon" badges and alert notices in the UI until they are rebuilt. See `BLUEPRINT-COMPLIANCE-AUDIT.md` for the full list.
-- Build OOMs in 4GB sandbox (local `next build` fails) but Cloudflare 7GB runners handle it successfully.

@@ -31,7 +31,7 @@ import {
   Star,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { TOOLS } from "@/lib/registry";
+import { CATALOG } from "@/lib/catalog";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 
 const RECENTS_KEY = "unq-cmdk-recents";
@@ -89,8 +89,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   }, [open]);
 
   const recentTools = recents
-    .map((id) => TOOLS.find((t) => t.id === id))
-    .filter(Boolean) as Array<(typeof TOOLS)[number]>;
+    .map((id) => CATALOG.find((t) => t.id === id))
+    .filter(Boolean) as Array<(typeof CATALOG)[number]>;
 
   function go(url: string, toolId?: string) {
     if (toolId) saveRecent(toolId);
@@ -109,12 +109,12 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       <DialogHeader className="sr-only">
         <DialogTitle>Search tools and actions</DialogTitle>
         <DialogDescription>
-          Search across all {TOOLS.length} tools, categories, and quick actions.
+          Search across all {CATALOG.length} tools, categories, and quick actions.
         </DialogDescription>
       </DialogHeader>
       <DialogContent className="p-0 overflow-hidden max-w-2xl">
         <Command className="rounded-lg">
-          <CommandInput placeholder={`Search ${TOOLS.length} tools, categories, or actions…`} />
+          <CommandInput placeholder={`Search ${CATALOG.length} tools, categories, or actions…`} />
           <CommandList className="max-h-[400px]">
             <CommandEmpty>No results found.</CommandEmpty>
 
@@ -134,7 +134,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               </CommandItem>
               <CommandItem onSelect={() => go("/tools")} className="cursor-pointer">
                 <Layers className="mr-2 h-4 w-4" />
-                <span>Browse all tools ({TOOLS.length})</span>
+                <span>Browse all tools ({CATALOG.length})</span>
               </CommandItem>
             </CommandGroup>
 
@@ -185,8 +185,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             <CommandSeparator />
 
             {/* All tools */}
-            <CommandGroup heading={`All Tools (${TOOLS.length})`}>
-              {TOOLS.map((tool) => {
+            <CommandGroup heading={`All Tools (${CATALOG.length})`}>
+              {CATALOG.map((tool) => {
                 const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
                 return (
                   <CommandItem

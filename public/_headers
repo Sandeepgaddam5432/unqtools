@@ -14,6 +14,10 @@
 /*.json
   Cache-Control: public, max-age=0, must-revalidate
 
+/logo.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Content-Type: image/svg+xml
+
 /sitemap.xml
   Cache-Control: public, max-age=3600
   Content-Type: application/xml

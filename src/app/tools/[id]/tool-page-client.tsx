@@ -1760,6 +1760,10 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "hsts-preload-checker-header": () => import("@/tools/network-security/hsts-preload-checker-header/ui"),
   "mac-address-vendor-oui": () => import("@/tools/network-security/mac-address-vendor-oui/ui"),
   "ai-chat-with-pdf": () => import("@/tools/pdf/ai-chat-with-pdf/ui"),
+  "timezone-converter": () => import("@/tools/developer/timezone-converter/ui"),
+  "xml-formatter": () => import("@/tools/developer/xml-formatter/ui"),
+  "email-validator": () => import("@/tools/developer/email-validator/ui"),
+  "currency-converter": () => import("@/tools/calculators/currency-converter/ui"),
 };
 
 interface ToolPageClientProps {
@@ -1809,7 +1813,7 @@ export function ToolPageClient({
               transition={MO_HERO_TRANS}
               className="flex flex-wrap items-center gap-3 mb-4"
             >
-              <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <div className="unq-icon-tile h-12 w-12 rounded-2xl flex items-center justify-center shadow-sm">
                 <Icon className="h-6 w-6 text-primary" />
               </div>
               <Badge className="bg-primary/15 text-foreground border-primary/20">
@@ -1862,8 +1866,8 @@ export function ToolPageClient({
             </motion.div>
 
             {/* Tool UI */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
+            <Card className="mb-8 card-hover rounded-2xl">
+              <CardContent className="p-6 md:p-8">
                 {tool.status === "planned" && (
                   <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200 flex items-start gap-3">
                     <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
@@ -1934,16 +1938,16 @@ export function ToolPageClient({
                   {related.map((rt) => {
                     const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
                     return (
-                      <Link key={rt.id} href={`/tools/${rt.id}`} className="block group">
+                      <Link key={rt.id} href={`/tools/${rt.id}`} className="block group h-full">
                         <div
-                          className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30 hover:-translate-y-1"
+                          className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30"
                         >
-                          <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
+                          <div className="unq-icon-tile h-8 w-8 rounded-lg flex items-center justify-center mb-2">
                             <RIcon className="h-4 w-4 text-primary" />
                           </div>
                           <h3 className="font-medium text-sm mb-1">{rt.name}</h3>
                           <p className="text-xs text-muted-foreground line-clamp-2">{rt.description}</p>
-                          <div className="mt-2 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="mt-2 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                             <span>Open</span>
                             <ArrowRight className="h-3 w-3 ml-1" />
                           </div>

@@ -1,11 +1,10 @@
 'use client';
 import React from 'react';
-import type { ComponentProps, ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import type { ReactNode } from 'react';
 import { Github, Heart, Lock, WifiOff, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { TOOLS } from '@/lib/registry';
-import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from '@/lib/tool';
+import { TOOL_COUNT, ACTIVE_CATEGORIES } from '@/lib/counts';
+import { CATEGORY_LABELS, type ToolCategory } from '@/lib/tool';
 
 interface FooterLink {
   title: string;
@@ -17,10 +16,8 @@ interface FooterSection {
   links: FooterLink[];
 }
 
-// Build footer links from actual registry data
-const activeCategories = ALL_CATEGORIES.filter((c) => {
-  return TOOLS.some((t) => t.category === c);
-});
+// Footer links are drawn from the precomputed active categories.
+const activeCategories = ACTIVE_CATEGORIES;
 
 const footerLinks: FooterSection[] = [
   {
@@ -54,7 +51,7 @@ const footerLinks: FooterSection[] = [
       { title: 'Privacy Policy', href: '/' },
       { title: 'Terms of Service', href: '/' },
       { title: 'GitHub', href: 'https://github.com/Sandeepgaddam5432/unqtools' },
-      { title: `All ${TOOLS.length} Tools`, href: '/tools' },
+      { title: `All ${TOOL_COUNT} Tools`, href: '/tools' },
     ],
   },
 ];
@@ -67,13 +64,13 @@ export function Footer() {
       <div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
         <AnimatedContainer className="space-y-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="UnQTools" className="h-8 w-8" />
+            <img src="/logo.svg" alt="UnQTools" width="32" height="32" className="h-8 w-8" />
             <h2 className="text-lg font-bold tracking-tight">
               UnQ<span className="text-primary">Tools</span>
             </h2>
           </div>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            {TOOLS.length} free online tools that run 100% in your browser. No uploads, no tracking, no accounts.
+            {TOOL_COUNT} free online tools that run 100% in your browser. No uploads, no tracking, no accounts.
           </p>
           <div className="flex flex-wrap gap-2 pt-2">
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
@@ -151,26 +148,19 @@ export function Footer() {
 
 type ViewAnimationProps = {
   delay?: number;
-  className?: ComponentProps<typeof motion.div>['className'];
+  className?: string;
   children: ReactNode;
 };
 
+// Pure-CSS fade-in (globals.css `.unq-animate-fade-in`) — no framer-motion
+// dependency. Respects prefers-reduced-motion via the CSS media query.
 function AnimatedContainer({ className, delay = 0.1, children }: ViewAnimationProps) {
-  const shouldReduceMotion = useReducedMotion();
-
-  if (shouldReduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
-    <motion.div
-      initial={{ filter: 'blur(4px)', translateY: -8, opacity: 0 }}
-      whileInView={{ filter: 'blur(0px)', translateY: 0, opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.8 }}
-      className={className}
+    <div
+      className={`unq-animate-fade-in ${className ?? ''}`}
+      style={{ animationDelay: `${delay}s` }}
     >
       {children}
-    </motion.div>
+    </div>
   );
-};
+}
