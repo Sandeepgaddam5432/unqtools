@@ -1,10 +1,10 @@
 # UnQTools — Build State
 
-_Last updated: 2026-08-05 — branch arena/019fd1ad-unqtools. Tool count: 1704. Perf work (v17.64) intact._
+_Last updated: 2026-08-09 — branch arena/019fe5f1-unqtools. Tool count: 1704. Perf work (v17.71) intact._
 
 ## Current phase
 
-**v17.70 — 1704 tools, high-demand gap tools added (owner directive: no removals).**
+**v17.71 — 1704 tools live, perf + high-demand tools + cleanup intact (owner directive: no removals).**
 
 Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 
@@ -16,38 +16,46 @@ Live progress is tracked in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
   84 files) + 6 unused UI components. **All 1704 tools intact.** no-archive-imports +
   51 tests pass; lint clean.
 - **v17.69:** **CSS perf (ponytail)** — removed 5 unused Tailwind animation tokens
-  (marquee/meteor/orbit/ripple). globals.css 12.3KB→10.9KB. Perf work confirmed intact
-  (framer-motion out of landing, catalog split, lazy palette, hero plain HTML).
+  (marquee/meteor/orbit/ripple). globals.css 12.3KB→10.9KB. Perf work confirmed intact.
+- **v17.70:** Fixed stale `counts.ts` (1700→**1704**, matching actual tools — the 4 new tools weren't counted). Added 3 missing category cards (`education`, `social`, `ai`) to home page so all **13 categories** show (was 10).
+- **v17.71:** Removed last `framer-motion` from landing route (`pwa-install.tsx` converted to pure CSS `.unq-animate-fade-in-up` + hover translate). Entire landing route is now 100% framer-motion-free (~62KB gz savings on landing JS).
 
-- **v17.64 perf work (on branch):** logo 589KB→12KB, source-maps off, catalog split,
+- **v17.64 perf work (intact):** logo 589KB→12KB, source-maps off, catalog split,
   counts, lazy command palette, hero/LCP fix, framer-motion out of landing route.
 - **Tool removals reverted:** the dedupe/dead-tool removal commits were reverted —
   **1704 tools live** (no tools removed), as the owner directed.
-- **State:** working tree clean; lint + tests pass; catalog + sitemap regenerated.
+- **State:** working tree clean; lint + tests pass; catalog + sitemap regenerated (1719 URLs).
 
 ### Tool count: 1704 tools live
 
 | Category | Count |
 |----------|-------|
-| pdf | 200+ |
-| developer | 400+ |
-| image | 100+ |
-| seo | 100+ |
-| network-security | 55+ |
-| calculators | 56 |
-| business | 55 |
-| text | 83 |
-| file | 101 |
-| education | 45 |
-| social | 40 |
+| developer | 466 |
+| pdf | 330 |
+| image | 178 |
+| seo | 109 |
+| file | 100 |
 | ai | 100 |
+| network-security | 96 |
+| text | 83 |
+| calculators | 57 |
+| business | 55 |
+| education | 45 |
 | audio-video | 45 |
+| social | 40 |
+| **Total** | **1704** |
 
 ### Recent commits on `main`
 
 | Commit | Description |
 |--------|-------------|
-| tbd | feat: mark 565 generic template/mock tools as Coming Soon (status: planned) + add Coming Soon UI badges |
+| 3e7bf75 | feat: v17.71 — perf + high-demand tools + cleanup (remove framer-motion from landing route) |
+| (v17.70) | fix: v17.70 — fix tool counts in counts.ts (1704) and add 3 missing category cards |
+| (v17.69) | perf: v17.69 — CSS perf, remove unused Tailwind animation tokens |
+| (v17.68) | refactor: v17.68 — codebase cleanup, remove archive/ and unused UI components |
+| (v17.67) | feat: v17.67 — 3 new offline tools (XML Formatter, Email Validator, Currency Converter) |
+| (v17.66) | feat: v17.66 — Timezone Converter tool |
+| 6e15539 | perf: v17.64 — logo 589KB→12KB, source-maps off, catalog split, counts, lazy palette, hero/LCP fix, framer-motion out of landing route |
 | c4c82d0 | feat: v17.63 — Rebuild 30 tools with 100% blueprint compliance + audit report |
 | 57f10c5 | feat: v17.62 — AI Chat with PDF (1 tool, full blueprint compliance) |
 | c2dd8e4 | fix: v17.61.1 — fix duplicate import variable names in registry.ts |

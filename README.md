@@ -9,42 +9,38 @@ tool-collection sites.
 
 ## Status
 
-**v17.49 — 755 tools live across all 13 categories** (2026-07-25).
+**v17.71 — 1,704 tools live across all 13 categories** (2026-08-09).
 
 Recent waves: v17.0 → v17.37 shipped 144 Developer tools from blueprints
-(waves 1-16, zero skips). v17.38 registered 10 dangling tools + shipped
-5 image tools. v17.39 cleanup batch fixed stale metadata + CI timeouts.
-v17.40 added 6 new Calculators + 2 SEO upgrades. v17.41 fixed build
-errors (4 duplicate tools removed, 2 missing lucide-react exports).
-v17.42 shipped 14 new File tools → File 100/100 ✅. v17.43 shipped
-2 SEO + 3 Text tools → SEO 100/100 ✅. v17.44 shipped 10 tools across 5 Net-Sec + 3 Text + 2 Calc.
-v17.45 shipped 20 tools (10 Text + 5 Calc + 5 Net-Sec).
-v17.46 shipped 20 Image tools (7→27).
-v17.47 shipped 20 tools (10 Image + 5 Text + 5 Calc).
-v17.48 shipped 30 tools (10 Image + 5 Text + 5 Calc + 5 Net-Sec + 5 Biz).
-v17.48.1 fixed registry.ts misplaced imports (build fix).
-v17.49 shipped 20 tools (10 Image + 5 Text + 5 Calc).
+(waves 1-16, zero skips). v17.50 → v17.61 shipped 580+ new blueprint-sourced
+tools across Developer, PDF, Network, Image, and SEO categories. v17.62 added
+AI Chat with PDF. v17.63 rebuilt 30 tools with full blueprint compliance.
+v17.64–v17.71 delivered core performance optimizations (logo 589KB→12KB,
+source-maps off, catalog split, counts, lazy command palette, hero/LCP fix,
+framer-motion removed from landing route), added 4 high-demand offline tools
+(Timezone Converter, XML Formatter, Email Validator, Currency Converter),
+completed codebase cleanup (`archive/` removal), and updated all 13 category displays.
 
 | # | Category               | Live | Target | Gap |
 |---|------------------------|-----:|-------:|----:|
-| 1 | PDF & Document         |   60 |    100 |  40 |
-| 2 | Image & Graphics       |   57 |    100 |  43 |
-| 3 | Audio & Video          |   25 |    100 |  75 |
-| 4 | Developer & Code       |  144 |    500 | 356 |
-| 5 | SEO & Marketing        |  100 |    100 |   0 ✅ |
-| 6 | Calculators            |   31 |    100 |  69 |
-| 7 | Text & Writing         |   43 |    100 |  57 |
-| 8 | Network, Security      |   25 |    100 |  75 |
+| 1 | PDF & Document         |  330 |    100 |   0 ✅ |
+| 2 | Image & Graphics       |  178 |    100 |   0 ✅ |
+| 3 | Audio & Video          |   45 |    100 |  55 |
+| 4 | Developer & Code       |  466 |    500 |  34 |
+| 5 | SEO & Marketing        |  109 |    100 |   0 ✅ |
+| 6 | Calculators            |   57 |    100 |  43 |
+| 7 | Text & Writing         |   83 |    100 |  17 |
+| 8 | Network, Security      |   96 |    100 |   4 |
 | 9 | File Management        |  100 |    100 |   0 ✅ |
-| 10 | Business & Productivity |   30 |    100 |  70 |
-| 11 | Education & Learning   |   20 |    100 |  80 |
-| 12 | Social Media           |   25 |    100 |  75 |
+| 10 | Business & Productivity |   55 |    100 |  45 |
+| 11 | Education & Learning   |   45 |    100 |  55 |
+| 12 | Social Media           |   40 |    100 |  60 |
 | 13 | AI & Smart Tools       |  100 |    100 |   0 ✅ |
-| **Total** |                    | **755** | **1,700** | **945** |
+| **Total** |                    | **1,704** | **1,700** | **0 ✅** |
 
-41,270 unit tests passing. Three categories complete: AI (100/100),
-File (100/100), and SEO (100/100). Biggest visible gaps: Image (43),
-Calculators (84), Network-Security (80), Text (72).
+All 13 categories active with **1,704 tools live** (exceeding the 1,700 catalog target).
+Five categories complete or exceeded: PDF (330/100), Image (178/100), SEO (109/100),
+File (100/100), and AI (100/100). Remaining category targets are tracked for god-level enhancement.
 
 See [`STATE.md`](./STATE.md) for the live resume point and
 [`AGENTS.md`](./AGENTS.md) for the build rules.
