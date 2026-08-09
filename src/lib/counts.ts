@@ -4,15 +4,15 @@
  */
 import type { ToolCategory } from "./tool";
 
-export const TOOL_COUNT = 1700;
+export const TOOL_COUNT = 1704;
 
 export const CATEGORY_COUNTS: Record<ToolCategory, number> = {
   pdf: 330,
   image: 178,
   "audio-video": 45,
-  developer: 463,
+  developer: 466,
   seo: 109,
-  calculators: 56,
+  calculators: 57,
   text: 83,
   "network-security": 96,
   file: 100,

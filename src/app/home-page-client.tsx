@@ -115,6 +115,27 @@ const allCategoryCards: {
     icon: ShieldCheck,
     count: counts["network-security"] ?? 0,
   },
+  {
+    href: "/category/education",
+    title: "Education & Learning",
+    description: "Flashcards, quizzes, study planners, unit tutors, math & science practice tools.",
+    icon: Sparkles,
+    count: counts.education ?? 0,
+  },
+  {
+    href: "/category/social",
+    title: "Social Media",
+    description: "Captions, hashtags, post generators, bio optimizers, content calendars for every platform.",
+    icon: Globe,
+    count: counts.social ?? 0,
+  },
+  {
+    href: "/category/ai",
+    title: "AI & Smart Tools",
+    description: "Prompt improvers, content generators, code assistants, and other smart text helpers.",
+    icon: Cpu,
+    count: counts.ai ?? 0,
+  },
 ].filter((c) => c.count > 0);
 
 // ===== TRUST BADGES (concise, factual) =====
