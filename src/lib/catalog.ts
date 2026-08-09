@@ -7714,7 +7714,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Automatically redact PII in PDF. SSN, email, phone, credit card patterns.",
     category: "pdf",
     keywords: ["pdf redact","redact pii","auto redact","pdf privacy"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-auto-redact-pii-tool",
@@ -8106,7 +8106,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "View PDF metadata: title, author, subject, keywords, dates.",
     category: "pdf",
     keywords: ["pdf metadata","pdf info","pdf properties","pdf details"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-downsample-images",
@@ -8258,7 +8258,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Find and replace text in PDF. Regex support, case-sensitive, multiple terms.",
     category: "pdf",
     keywords: ["pdf find replace","pdf search replace","pdf text replace","pdf edit"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-find-replace-tool",
@@ -8522,7 +8522,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Import FDF/XFDF/CSV data into PDF form fields. Bulk fill.",
     category: "pdf",
     keywords: ["import form data","fdf import","xfdf import","form import"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-import-form-data-fdf",
@@ -8714,7 +8714,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Merge multiple PDFs and add bookmarks for each source file. Custom titles.",
     category: "pdf",
     keywords: ["pdf merge","merge pdf bookmarks","pdf combine","pdf merge"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-merge-bookmarks-tool",
@@ -9138,7 +9138,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Attempt to repair corrupted or damaged PDF files. Rebuild xref, fix streams.",
     category: "pdf",
     keywords: ["repair pdf","fix pdf","pdf fix","corrupt pdf"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-repair-corrupt",
@@ -9354,7 +9354,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Summarize PDF content using on-device AI. Key points, abstract, TLDR.",
     category: "pdf",
     keywords: ["pdf summarize","pdf summary","ai summary","pdf tldr"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-summarize-ai-tool",
@@ -9418,7 +9418,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Read PDF text aloud using Web Speech API. Voice, rate, pitch control.",
     category: "pdf",
     keywords: ["pdf read aloud","pdf tts","text to speech pdf","audio pdf"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-text-to-speech-tool",
@@ -9474,7 +9474,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PDF to EPUB e-book format. Chapter detection, reflowable text.",
     category: "pdf",
     keywords: ["pdf to epub","epub from pdf","ebook converter","pdf ebook"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-to-epub-converter",
@@ -9522,7 +9522,7 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PDF to HTML. Preserve layout, extract text and images, CSS styling.",
     category: "pdf",
     keywords: ["pdf to html","pdf converter","html from pdf","pdf web"],
-    status: "planned",
+    status: "done",
   },
   {
     id: "pdf-to-html-converter",
