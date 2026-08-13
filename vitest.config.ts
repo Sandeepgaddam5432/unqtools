@@ -10,10 +10,5 @@ export default defineConfig({
   test: {
     include: ["tests/**/*.test.ts", "src/**/*.test.ts"],
     environment: "node",
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "json-summary"],
-      include: ["src/tools/**/logic.ts", "src/lib/**/*.ts"],
-    },
   },
 });
