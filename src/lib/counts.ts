@@ -1,22 +1,23 @@
 /**
  * Precomputed category counts (auto-generated) — tiny, so pages that only
- * need totals/counts don't have to import the 1700-item catalog.
+ * need totals/counts don't have to import the catalog.
  *
- * v18: 26 merged PDF page tools → 1 (PDF Page Manager). 1704 → 1679.
+ * v18.7.1 ponytail cut: deleted 508 'Coming Soon' stub tools
+ * (developer -276, pdf -207, network-security -25). 1679 → 1171.
  */
 import type { ToolCategory } from "./tool";
 
-export const TOOL_COUNT = 1679;
+export const TOOL_COUNT = 1171;
 
 export const CATEGORY_COUNTS: Record<ToolCategory, number> = {
-  pdf: 305,
+  pdf: 98,
   image: 178,
   "audio-video": 45,
-  developer: 466,
+  developer: 190,
   seo: 109,
   calculators: 57,
   text: 83,
-  "network-security": 96,
+  "network-security": 71,
   file: 100,
   business: 55,
   education: 45,

@@ -9,6 +9,16 @@ tool-collection sites.
 
 ## Status
 
+**v18.7.1 — Ponytail cut: 1,171 tools, all real** (2026-08-26).
+
+Ponytail audit deleted 508 fake "Coming Soon" stubs (developer −276,
+pdf −207, network-security −25), 27 unused dependencies, and 6 dead
+component/hook files. Every remaining tool now ships a real engine
+(`status: "done"`), a real UI, and real unit tests — no more dead-click
+bounces. Smaller `package.json`, faster install, smaller bundle, no
+security advisory surface from unused deps. See the full changelog in
+[`STATE.md`](./STATE.md).
+
 **v18.7 — PDF 100x wave 6: 60 PDF tools now beat iLovePDF / SmallPDF / Sejda** (2026-08-09).
 
 Waves 1–6 rebuilt/added 60 PDF tools to the 100x bar — PDF↔HTML/EPUB/JSON/Markdown,
@@ -79,22 +89,23 @@ completed codebase cleanup (`archive/` removal), and updated all 13 category dis
 
 | # | Category               | Live | Target | Gap |
 |---|------------------------|-----:|-------:|----:|
-| 1 | PDF & Document         |  305 |    100 |   0 ✅ |
+| 1 | PDF & Document         |   98 |    100 |   2 |
 | 2 | Image & Graphics       |  178 |    100 |   0 ✅ |
 | 3 | Audio & Video          |   45 |    100 |  55 |
-| 4 | Developer & Code       |  466 |    500 |  34 |
+| 4 | Developer & Code       |  190 |    500 | 310 |
 | 5 | SEO & Marketing        |  109 |    100 |   0 ✅ |
 | 6 | Calculators            |   57 |    100 |  43 |
 | 7 | Text & Writing         |   83 |    100 |  17 |
-| 8 | Network, Security      |   96 |    100 |   4 |
+| 8 | Network, Security      |   71 |    100 |  29 |
 | 9 | File Management        |  100 |    100 |   0 ✅ |
 | 10 | Business & Productivity |   55 |    100 |  45 |
 | 11 | Education & Learning   |   45 |    100 |  55 |
 | 12 | Social Media           |   40 |    100 |  60 |
 | 13 | AI & Smart Tools       |  100 |    100 |   0 ✅ |
-| **Total** |                    | **1,679** |     —    |    —    |
+| **Total** |                    | **1,171** |     —    |    —    |
 
-All 13 categories active with **1,679 tools live** after v18.0 consolidation (26 overlapping PDF page tools merged into one PDF Page Manager).
+All 13 categories active with **1,171 real tools live** after the v18.7.1
+ponytail cut (508 fake stubs deleted).
 Five categories complete or exceeded: PDF (305/100), Image (178/100), SEO (109/100),
 File (100/100), and AI (100/100). Remaining category targets are tracked for god-level enhancement.
 
