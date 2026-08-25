@@ -1,0 +1,24 @@
+/**
+ * Protect/Unlock PDF — Tool Manifest
+ */
+import type { ToolManifest } from "../../../lib/tool";
+
+export const manifest: ToolManifest = {
+  id: "pdf-protect-encrypt",
+  name: "Protect/Unlock PDF",
+  description: "Add or remove PDF password protection. Encrypt/decrypt, permissions.",
+  category: "pdf",
+  keywords: ["pdf protect", "pdf password", "encrypt pdf", "decrypt pdf"],
+  icon: "Lock",
+  requiresNetwork: false,
+  seo: {
+    title: "Protect/Unlock PDF — 100% Private, Offline | UnQTools",
+    faq: [
+      { q: "What does this tool do?", a: "Add or remove PDF password protection. Encrypt/decrypt, permissions." },
+      { q: "Is my data sent to a server?", a: "No. This tool runs 100% in your browser. Nothing is uploaded, tracked, or stored remotely." },
+      { q: "What extra features does this tool have?", a: "Extras: (1) Drag-and-drop file upload; (2) Bulk processing; (3) Live preview; (4) Multiple format support; (5) Quality/size controls; (6) Preset configurations; (7) Export as ZIP; (8) Copy to clipboard; (9) History (localStorage); (10) PWA offline; (11) Privacy-first; (12) WCAG compliant." },
+      { q: "Does this work offline?", a: "Yes — install as a PWA and use it without network." },
+    ],
+  },
+  status: "planned",
+};
