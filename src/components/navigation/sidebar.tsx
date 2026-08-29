@@ -95,7 +95,7 @@ export function SidebarNav() {
         </div>
         <div
           className={cn(
-            "overflow-hidden whitespace-nowrap transition-all duration-200",
+            "overflow-hidden whitespace-nowrap transition-[opacity,width] duration-200",
             collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
           )}
         >
@@ -114,7 +114,7 @@ export function SidebarNav() {
           <div key={section.label}>
             <p
               className={cn(
-                "px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground overflow-hidden transition-all duration-200",
+                "px-3 mb-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground overflow-hidden transition-[opacity,height] duration-200",
                 collapsed ? "h-0 opacity-0" : "h-auto opacity-100"
               )}
             >
@@ -134,14 +134,16 @@ export function SidebarNav() {
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
-                      "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                      // Apple sidebar row: solid accent tint when selected, hairline
+                      // indicator bar; color-only transitions (200ms ease).
+                      "group relative flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium transition-[background-color,color] duration-200",
                       active
-                        ? "bg-gradient-to-r from-primary/20 to-primary/5 text-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-primary/12 text-foreground"
+                        : "text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground"
                     )}
                   >
                     {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-primary to-amber-500" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary" />
                     )}
                     <Icon
                       className={cn(
@@ -153,7 +155,7 @@ export function SidebarNav() {
                     />
                     <span
                       className={cn(
-                        "flex-1 overflow-hidden whitespace-nowrap transition-all duration-200",
+                        "flex-1 overflow-hidden whitespace-nowrap transition-[opacity,width] duration-200",
                         collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
                       )}
                     >
@@ -194,7 +196,7 @@ export function SidebarNav() {
           )}
           <span
             className={cn(
-              "text-sm overflow-hidden whitespace-nowrap transition-all duration-200",
+              "text-sm overflow-hidden whitespace-nowrap transition-[opacity,width] duration-200",
               collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
             )}
           >
@@ -203,7 +205,7 @@ export function SidebarNav() {
         </Button>
         <div
           className={cn(
-            "flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground overflow-hidden transition-all duration-200",
+            "flex items-center justify-center gap-1 pt-2 text-[10px] text-muted-foreground overflow-hidden transition-[opacity,height] duration-200",
             collapsed ? "h-0 opacity-0" : "h-auto opacity-100"
           )}
         >

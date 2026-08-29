@@ -1,7 +1,6 @@
 "use client";
 
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { ToolSkeleton } from "@/components/tool-skeleton";
@@ -31,14 +30,6 @@ import {
 import type { ToolManifest, ToolCategory } from "@/lib/tool";
 
 // ---- Named motion constants (avoids double-brace push hazard) ----
-const MO_HIDDEN = { opacity: 0, y: 10 };
-const MO_HERO = { opacity: 0, y: 20 };
-const MO_VISIBLE = { opacity: 1, y: 0 };
-const MO_NAV_TRANS = { duration: 0.4 };
-const MO_HERO_TRANS = { duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as number[] };
-const MO_H1_TRANS = { duration: 0.6, delay: 0.1 };
-const MO_P_TRANS = { duration: 0.6, delay: 0.2 };
-const MO_BADGES_TRANS = { duration: 0.6, delay: 0.3 };
 const MO_SCROLL_TRANS = { duration: 0.6 };
 const MO_VIEWPORT = { once: true, margin: "-50px" };
 const MO_HOVER = { y: -4, transition: { duration: 0.2 } };
@@ -1809,11 +1800,8 @@ export function ToolPageClient({
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
 
             {/* Breadcrumb */}
-            <motion.nav
-              initial={MO_HIDDEN}
-              animate={MO_VISIBLE}
-              transition={MO_NAV_TRANS}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6"
+            <nav
+              className="unq-animate-fade-in-up flex items-center gap-1.5 text-sm text-muted-foreground mb-6"
             >
               <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -1824,14 +1812,11 @@ export function ToolPageClient({
               </Link>
               <ChevronRight className="h-3.5 w-3.5" />
               <span className="text-foreground font-medium">{tool.name}</span>
-            </motion.nav>
+            </nav>
 
             {/* Tool header */}
-            <motion.div
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_HERO_TRANS}
-              className="flex flex-wrap items-center gap-3 mb-4"
+            <div
+              className="unq-animate-fade-in-up unq-stagger-1 flex flex-wrap items-center gap-3 mb-4"
             >
               <div className="unq-icon-tile h-12 w-12 rounded-2xl flex items-center justify-center shadow-sm">
                 <Icon className="h-6 w-6 text-primary" />
@@ -1839,7 +1824,7 @@ export function ToolPageClient({
               <Badge className="bg-primary/15 text-foreground border-primary/20">
                 {categoryLabel.split(" ")[0]}
               </Badge>
-              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
+              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1">
                 <Lock className="h-3 w-3" /> Runs in your browser
               </Badge>
               <Button
@@ -1857,32 +1842,23 @@ export function ToolPageClient({
                 <Star className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
                 <span>{isFav ? "Favorited" : "Favorite"}</span>
               </Button>
-            </motion.div>
+            </div>
 
-            <motion.h1
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_H1_TRANS}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight text-balance"
+            <h1
+              className="unq-animate-fade-in-up unq-stagger-2 text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight text-balance"
             >
               {tool.name}
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_P_TRANS}
-              className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl text-pretty"
+            <p
+              className="unq-animate-fade-in-up unq-stagger-3 text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl text-pretty"
             >
               {tool.description}
-            </motion.p>
+            </p>
 
             {/* Trust badges */}
-            <motion.div
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_BADGES_TRANS}
-              className="flex flex-wrap items-center gap-3 mb-8"
+            <div
+              className="unq-animate-fade-in-up unq-stagger-4 flex flex-wrap items-center gap-3 mb-8"
             >
               <Badge variant="outline" className="gap-1">
                 <Lock className="h-3 w-3" /> 100% Private
@@ -1894,11 +1870,11 @@ export function ToolPageClient({
                 <Zap className="h-3 w-3" /> Instant
               </Badge>
               {tool.status === "planned" && (
-                <Badge variant="outline" className="gap-1 bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold">
+                <Badge variant="outline" className="gap-1 bg-primary/10 text-primary border-primary/20 font-semibold">
                   <Clock className="h-3 w-3" /> Coming Soon
                 </Badge>
               )}
-            </motion.div>
+            </div>
 
             {/* Tool UI — the hero of the page */}
             <Card className="mb-6 card-hover rounded-2xl shadow-lg shadow-black/[0.04]">
@@ -1973,13 +1949,13 @@ export function ToolPageClient({
                     const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
                     return (
                       <Link key={rt.id} href={`/tools/${rt.id}`} className="block group h-full">
-                        <div className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30">
+                        <div className="card-hover rounded-xl border bg-card p-4 h-full">
                           <div className="unq-icon-tile h-8 w-8 rounded-lg flex items-center justify-center mb-2">
                             <RIcon className="h-4 w-4 text-primary" />
                           </div>
                           <h3 className="font-medium text-sm mb-1">{rt.name}</h3>
                           <p className="text-xs text-muted-foreground line-clamp-2">{rt.description}</p>
-                          <div className="mt-2 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
+                          <div className="mt-2 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 [transition-timing-function:var(--ease-out)] translate-x-1 group-hover:translate-x-0">
                             <span>Open</span>
                             <ArrowRight className="h-3 w-3 ml-1" />
                           </div>
