@@ -246,8 +246,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
  * Listens for ⌘K / Ctrl+K and the custom `unq:open-command-bar` event.
  * Mount this once in the root layout.
  */
-export function CommandPaletteMount() {
-  const [open, setOpen] = useState(false);
+export function CommandPaletteMount({ initialOpen = false }: { initialOpen?: boolean } = {}) {
+  const [open, setOpen] = useState(initialOpen);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

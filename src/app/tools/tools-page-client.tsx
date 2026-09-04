@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, Suspense } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
@@ -156,6 +156,20 @@ function ToolsPageContent() {
     }
     return list;
   }, [query, activeView, favorites, recent, idToTool]);
+
+  // ===== RENDER WINDOWING =====
+  // Rendering all 1,679 cards at once costs ~7s of main-thread work on
+  // mobile (Lighthouse TBT). Render the first batch only, then grow on
+  // demand. content-visibility:auto on each card skips off-screen paint.
+  const [visibleCount, setVisibleCount] = useState(96);
+  useEffect(() => {
+    setVisibleCount(96);
+  }, [query, activeView]);
+  const visibleTools = useMemo(
+    () => filteredTools.slice(0, visibleCount),
+    [filteredTools, visibleCount]
+  );
+  const remainingCount = filteredTools.length - visibleCount;
 
   return (
     <div className="flex min-h-dvh bg-background">
@@ -387,14 +401,14 @@ function ToolsPageContent() {
                 key={`${activeView}-${query}`}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               >
-                {filteredTools.map((tool, index) => {
+                {visibleTools.map((tool, index) => {
                   const Icon = CATEGORY_ICONS[tool.category] ?? Wand2;
                   const fav = isFavorite(tool.id);
                   return (
                     <div
                       key={tool.id}
-                      className="unq-animate-fade-in-up relative"
-                      style={{ animationDelay: `${Math.min(index * 30, 600)}ms` }}
+                      className="unq-animate-fade-in-up relative [content-visibility:auto] [contain-intrinsic-size:auto_210px]"
+                      style={{ animationDelay: `${Math.min(index * 30, 320)}ms` }}
                     >
                       <Link href={`/tools/${tool.id}`} className="block group h-full">
                         <div
@@ -446,6 +460,21 @@ function ToolsPageContent() {
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* Load-more: grow the render window instead of painting 1,679
+                cards upfront. Keeps main-thread work small on first paint. */}
+            {remainingCount > 0 && filteredTools.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="gap-2 cursor-pointer touch-target"
+                  onClick={() => setVisibleCount((c) => c + 192)}
+                >
+                  Show more tools ({remainingCount.toLocaleString()} remaining)
+                </Button>
               </div>
             )}
           </div>

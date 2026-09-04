@@ -220,8 +220,8 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                         return (
                           <div
                             key={tool.id}
-                            className="unq-animate-fade-in-up"
-                            style={{ animationDelay: `${Math.min((gi * 7 + index) * 25, 500)}ms` }}
+                            className="unq-animate-fade-in-up [content-visibility:auto] [contain-intrinsic-size:auto_210px]"
+                            style={{ animationDelay: `${Math.min((gi * 7 + index) * 25, 320)}ms` }}
                           >
                             <Link href={`/tools/${tool.id}`} className="block group h-full">
                               <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30">
