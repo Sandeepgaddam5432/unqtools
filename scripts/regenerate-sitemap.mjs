@@ -23,7 +23,10 @@ const src = fs.readFileSync(REGISTRY, "utf8");
 const toolRegex = /from\s+\"@\/tools\/([a-z-]+)\/([a-z0-9-]+)\/manifest\"/g;
 const tools = [];
 let m;
+const seenIds = new Set();
 while ((m = toolRegex.exec(src)) !== null) {
+  if (seenIds.has(m[2])) continue; // registry has a few duplicate imports
+  seenIds.add(m[2]);
   tools.push({ category: m[1], id: m[2] });
 }
 

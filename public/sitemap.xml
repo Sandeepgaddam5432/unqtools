@@ -2911,18 +2911,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-to-word-converter</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-to-excel-converter</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/pdf-form-filler</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -3074,12 +3062,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/pdf-form-field-extractor</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/pdf-to-powerpoint-converter</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -9433,12 +9415,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://unqtools.pages.dev/tools/epub-to-pdf-converter</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://unqtools.pages.dev/tools/image-to-pdf-jpg-png</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -9746,12 +9722,6 @@
   </url>
   <url>
     <loc>https://unqtools.pages.dev/tools/text-to-array-converter</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unqtools.pages.dev/tools/xml-to-json-converter</loc>
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
