@@ -4,76 +4,74 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Apple light palette */
-  --card: #ffffff;
-  --ring: #0071e3;
-  --input: #d2d2d7;
-  --muted: #f5f5f7;
-  --accent: #e8e8ed;
-  --border: #d2d2d7;
-  --radius: 0.75rem;
-  --chart-1: #0071e3;
-  --chart-2: #6e6e73;
-  --chart-3: #d2d2d7;
-  --chart-4: #a1a1a6;
-  --chart-5: #2997ff;
+  --card: #faf9f5;
+  --ring: #b5562d;
+  --input: #b4b2a7;
+  --muted: #ede9de;
+  --accent: #e9e6dc;
+  --border: #dad9d4;
+  --radius: 0.5rem;
+  --chart-1: #b05730;
+  --chart-2: #9c87f5;
+  --chart-3: #ded8c4;
+  --chart-4: #dbd3f0;
+  --chart-5: #b4552d;
   --popover: #ffffff;
-  --primary: #0071e3;
-  --sidebar: #f5f5f7;
-  --secondary: #e8e8ed;
-  --background: #f5f5f7;
-  --foreground: #1d1d1f;
-  --destructive: #ff3b30;
-  --sidebar-ring: #0071e3;
-  --sidebar-accent: #e8e8ed;
-  --sidebar-border: #d2d2d7;
-  --card-foreground: #1d1d1f;
-  --sidebar-primary: #0071e3;
-  --muted-foreground: #6e6e73;
-  --accent-foreground: #1d1d1f;
-  --popover-foreground: #1d1d1f;
+  --primary: #b5562d;
+  --sidebar: #f5f4ee;
+  --secondary: #e9e6dc;
+  --background: #faf9f5;
+  --foreground: #3d3929;
+  --destructive: #141413;
+  --sidebar-ring: #b5b5b5;
+  --sidebar-accent: #e9e6dc;
+  --sidebar-border: #ebebeb;
+  --card-foreground: #141413;
+  --sidebar-primary: #b5562d;
+  --muted-foreground: #6e6c66;
+  --accent-foreground: #28261b;
+  --popover-foreground: #28261b;
   --primary-foreground: #ffffff;
-  --sidebar-foreground: #1d1d1f;
-  --secondary-foreground: #1d1d1f;
+  --sidebar-foreground: #3d3d3a;
+  --secondary-foreground: #535146;
   --destructive-foreground: #ffffff;
-  --sidebar-accent-foreground: #1d1d1f;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent-foreground: #343434;
+  --sidebar-primary-foreground: #fbfbfb;
 }
 
 .dark {
-  /* Apple dark palette — true black base, raised surfaces lighter */
-  --card: #1d1d1f;
-  --ring: #2997ff;
-  --input: #424245;
-  --muted: #161617;
-  --accent: #2d2d2f;
-  --border: #424245;
-  --chart-1: #2997ff;
-  --chart-2: #a1a1a6;
-  --chart-3: #424245;
-  --chart-4: #6e6e73;
-  --chart-5: #0a84ff;
-  --popover: #1d1d1f;
-  --primary: #2997ff;
-  --sidebar: #161617;
-  --secondary: #2d2d2f;
-  --background: #000000;
-  --foreground: #f5f5f7;
-  --destructive: #ff453a;
-  --sidebar-ring: #2997ff;
-  --sidebar-accent: #2d2d2f;
-  --sidebar-border: #424245;
-  --card-foreground: #f5f5f7;
-  --sidebar-primary: #2997ff;
-  --muted-foreground: #a1a1a6;
-  --accent-foreground: #f5f5f7;
-  --popover-foreground: #f5f5f7;
+  --card: #262624;
+  --ring: #d97757;
+  --input: #52514a;
+  --muted: #1b1b19;
+  --accent: #1a1915;
+  --border: #3e3e38;
+  --chart-1: #b05730;
+  --chart-2: #9c87f5;
+  --chart-3: #1a1915;
+  --chart-4: #2f2b48;
+  --chart-5: #b4552d;
+  --popover: #30302e;
+  --primary: #d97757;
+  --sidebar: #1f1e1d;
+  --secondary: #faf9f5;
+  --background: #262624;
+  --foreground: #c3c0b6;
+  --destructive: #ef4444;
+  --sidebar-ring: #b5b5b5;
+  --sidebar-accent: #0f0f0e;
+  --sidebar-border: #ebebeb;
+  --card-foreground: #faf9f5;
+  --sidebar-primary: #343434;
+  --muted-foreground: #b7b5a9;
+  --accent-foreground: #f5f4ee;
+  --popover-foreground: #e5e5e2;
   --primary-foreground: #ffffff;
-  --sidebar-foreground: #f5f5f7;
-  --secondary-foreground: #f5f5f7;
+  --sidebar-foreground: #c3c0b6;
+  --secondary-foreground: #30302e;
   --destructive-foreground: #ffffff;
-  --sidebar-accent-foreground: #f5f5f7;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent-foreground: #c3c0b6;
+  --sidebar-primary-foreground: #fbfbfb;
 }
 
 @theme inline {
@@ -112,19 +110,10 @@
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --radius-sm: calc(var(--radius) - 6px);
-  --radius-md: calc(var(--radius) - 3px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  /* Motion tokens — Emil Kowalski / Apple spring easings.
-     Strong curves; built-in CSS easings are too weak. */
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* iOS sheet curve */
-  --animate-ease-out: var(--ease-out);
-  --animate-ease-in-out: var(--ease-in-out);
-  --animate-ease-drawer: var(--ease-drawer);
 }
 
 @layer base {
@@ -182,46 +171,20 @@ html {
 }
 
 .unq-animate-fade-in-up {
-  animation: unq-fade-in-up 0.25s var(--ease-out) both;
+  animation: unq-fade-in-up 0.35s ease-out both;
 }
 
 .unq-animate-fade-in {
-  animation: unq-fade-in 0.2s var(--ease-out) both;
+  animation: unq-fade-in 0.3s ease-out both;
 }
 
-/* Stagger: CSS-only cascade for grids and stacked headers.
-   50ms steps, capped — long delays make the UI feel slow, and the
-   delay never blocks interaction (animations are non-blocking). */
-.unq-stagger-1 { animation-delay: 50ms; }
-.unq-stagger-2 { animation-delay: 100ms; }
-.unq-stagger-3 { animation-delay: 150ms; }
-.unq-stagger-4 { animation-delay: 200ms; }
-.unq-stagger-item {
-  animation: unq-fade-in-up 0.25s var(--ease-out) both;
-}
-.unq-stagger-item:nth-child(1) { animation-delay: 0ms; }
-.unq-stagger-item:nth-child(2) { animation-delay: 45ms; }
-.unq-stagger-item:nth-child(3) { animation-delay: 90ms; }
-.unq-stagger-item:nth-child(4) { animation-delay: 135ms; }
-.unq-stagger-item:nth-child(5) { animation-delay: 180ms; }
-.unq-stagger-item:nth-child(6) { animation-delay: 225ms; }
-.unq-stagger-item:nth-child(7) { animation-delay: 270ms; }
-.unq-stagger-item:nth-child(n+8) { animation-delay: 315ms; }
-
-/* Respect reduced motion preference — gentler, not zero: keep opacity
-   fades that aid comprehension, drop all transform-based movement. */
+/* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .unq-animate-fade-in-up,
-  .unq-stagger-item {
-    animation: unq-fade-in 0.2s ease both;
-    animation-delay: 0ms !important;
-    transform: none !important;
-  }
   .unq-animate-fade-in {
-    animation: unq-fade-in 0.2s ease both;
-  }
-  .pressable:active {
-    transform: none;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
@@ -401,60 +364,40 @@ img {
   min-width: 44px;
 }
 
-/* Card hover: gentle lift + soft depth shadow + accent hairline border.
-   Motion is gated behind (hover:hover) so touch devices don't get
-   false hover states on tap; reduced-motion keeps the border/shadow
-   change but drops the lift. */
+/* Card hover: gentle lift + soft depth shadow + ring-colored border glow.
+   Transitions come from each card's own `transition-all duration-*`; this
+   block only adds the elevated shadow/border so it composes cleanly. */
 .card-hover {
-  transition: transform 250ms var(--ease-out), box-shadow 250ms var(--ease-out), border-color 200ms ease;
+  --card-glow: 0 18px 40px -20px rgba(0, 0, 0, 0.32);
 }
-@media (hover: hover) and (pointer: fine) {
-  .card-hover:hover {
-    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.18);
-    border-color: color-mix(in srgb, var(--ring) 35%, transparent);
-    transform: translateY(-2px);
-  }
-  .dark .card-hover:hover {
-    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6);
-  }
+.card-hover:hover {
+  box-shadow: var(--card-glow);
+  border-color: color-mix(in srgb, var(--ring) 45%, transparent);
+  transform: translateY(-3px);
+}
+.dark .card-hover {
+  --card-glow: 0 22px 50px -22px rgba(0, 0, 0, 0.7);
 }
 
-/* Press feedback — Apple: response lives on pointer-down, and it's instant. */
-.pressable {
-  transition: transform 160ms var(--ease-out);
-}
-.pressable:active {
-  transform: scale(0.97);
-}
-
-/* Frosted-glass surface for nav / overlays / hero chips — Apple material:
-   translucency + saturation, with a bright top edge catching light. */
+/* Frosted-glass surface for nav / overlays / hero chips. */
 .unq-glass {
   background: color-mix(in srgb, var(--card) 72%, transparent);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-.dark .unq-glass {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-@media (prefers-reduced-transparency: reduce) {
-  .unq-glass {
-    background: var(--card);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
-/* Headline accent — solid Apple blue instead of gradient. Gradient text
-   reserved for nothing; restraint beats decoration (Apple §16 simplicity). */
+/* Signature gradient headline accent (copper → amber → copper). */
 .unq-gradient-text {
-  color: var(--primary);
+  background-image: linear-gradient(110deg, var(--primary) 0%, #f2a35e 45%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* Accent "tile" behind category/tool icons in cards & headers. */
+/* Gradient "tile" behind category/tool icons in cards & headers. */
 .unq-icon-tile {
-  background: color-mix(in srgb, var(--ring) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--ring) 18%, transparent);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--ring) 22%, transparent), color-mix(in srgb, var(--ring) 6%, transparent));
+  border: 1px solid color-mix(in srgb, var(--ring) 28%, transparent);
 }
 
 /* Soft ring glow on focused interactive elements (keyboard nav). */
@@ -462,7 +405,7 @@ img {
   outline: none;
 }
 :where(a, button, input, textarea, select, [role="button"], [tabindex]):focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 45%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 55%, transparent);
 }
 
 /* Accessible text-selection tint */
@@ -476,36 +419,11 @@ img {
   color-scheme: dark;
 }
 
-/* Reduced motion: card-hover keeps border/shadow feedback but no lift */
+/* Reduced motion: kill the card-hover lift too */
 @media (prefers-reduced-motion: reduce) {
-  .card-hover,
   .card-hover:hover {
     transform: none;
-    transition-duration: 150ms;
   }
 }
 
 } /* end @layer components */
-
-/* Apple typography discipline: tracking is size-specific — large display
-   text tightens, body stays near zero, small text opens up slightly. */
-@layer base {
-  h1, .display-1 {
-    letter-spacing: -0.022em;
-    line-height: 1.08;
-  }
-  h2 {
-    letter-spacing: -0.018em;
-    line-height: 1.12;
-  }
-  h3 {
-    letter-spacing: -0.012em;
-    line-height: 1.2;
-  }
-  body {
-    letter-spacing: -0.003em;
-  }
-  small, caption {
-    letter-spacing: 0.01em;
-  }
-}

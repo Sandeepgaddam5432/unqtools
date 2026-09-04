@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, type Transition, type Variants } from "framer-motion";
 import Link from "next/link";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import { Badge } from "@/components/ui/badge";
@@ -20,10 +21,36 @@ import {
 import { type ToolCategory, type ToolManifest } from "@/lib/tool";
 import { groupTools } from "@/lib/tool-groups";
 
-// Animation: CSS-only (`.unq-animate-fade-in-up` + `.unq-stagger-*`).
-// Framer-motion was removed — CSS animations run off the JS load path,
-// so the header can never render blank waiting for hydration, and they
-// stay smooth while the page is busy loading bundles.
+// ===== ANIMATION CONSTANTS (named, so JSX props stay single-brace) =====
+
+const FADE_UP = { opacity: 0, y: 20 };
+const FADE_UP_LG = { opacity: 0, y: 30 };
+const SHOWN = { opacity: 1, y: 0 };
+const HIDDEN = { opacity: 0 };
+const VISIBLE = { opacity: 1 };
+const T_BADGE: Transition = { duration: 0.6 };
+const T_TITLE: Transition = { duration: 0.8, ease: [0.25, 0.4, 0.25, 1] };
+const T_SUBTITLE: Transition = { duration: 0.8, delay: 0.2 };
+const T_TRUST: Transition = { duration: 0.8, delay: 0.3 };
+const GRID_VIEWPORT = { once: true, margin: "-50px" as const };
+const HOVER_LIFT = { y: -6, transition: { duration: 0.25 } };
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05, delayChildren: 0.1 },
+  },
+};
+
+const staggerItem: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
@@ -59,41 +86,53 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
         {/* ===== HERO ===== */}
         <section className="relative section-padding pt-2 pb-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
-            <div
-              className="unq-glass unq-animate-fade-in-up inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/70 mb-6"
+            <motion.div
+              initial={FADE_UP}
+              animate={SHOWN}
+              transition={T_BADGE}
+              className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6"
             >
               <Icon className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">
                 {tools.length > 0 ? `${tools.length} tools` : "Coming soon"}
               </span>
-            </div>
-            <h1
-              className="unq-animate-fade-in-up unq-stagger-1 text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance"
+            </motion.div>
+            <motion.h1
+              initial={FADE_UP_LG}
+              animate={SHOWN}
+              transition={T_TITLE}
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance"
             >
               {label}
-            </h1>
-            <p
-              className="unq-animate-fade-in-up unq-stagger-2 text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
+            </motion.h1>
+            <motion.p
+              initial={FADE_UP}
+              animate={SHOWN}
+              transition={T_SUBTITLE}
+              className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
             >
               {tools.length > 0
                 ? `${tools.length} tool${tools.length === 1 ? "" : "s"} in this category — all running 100% in your browser. No uploads, no tracking, no accounts.`
                 : `${label} tools are coming soon — and like every UnQTools tool, they will run 100% in your browser. No uploads, no tracking, no accounts.`}
-            </p>
+            </motion.p>
 
             {/* Trust badges */}
-            <div
-              className="unq-animate-fade-in-up unq-stagger-3 flex flex-wrap items-center gap-3 mb-8"
+            <motion.div
+              initial={FADE_UP}
+              animate={SHOWN}
+              transition={T_TRUST}
+              className="flex flex-wrap items-center gap-3 mb-8"
             >
               <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
                 <Lock className="h-3 w-3" /> 100% Private
               </Badge>
-              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1">
+              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
                 <WifiOff className="h-3 w-3" /> Works Offline
               </Badge>
-              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1">
+              <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20 gap-1">
                 <Zap className="h-3 w-3" /> Instant
               </Badge>
-            </div>
+            </motion.div>
 
             <Button asChild variant="outline" size="sm" className="gap-2">
               <Link href="/tools">
@@ -137,7 +176,7 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
         <section className="section-padding pb-24">
           <div className="container mx-auto px-4 md:px-6 space-y-14">
             {tools.length === 0 ? (
-              <div className="unq-animate-fade-in text-center py-24">
+              <motion.div initial={HIDDEN} animate={VISIBLE} className="text-center py-24">
                 <div className="unq-icon-tile h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <Icon className="h-8 w-8 text-primary" />
                 </div>
@@ -151,7 +190,7 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                     Browse available tools <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-              </div>
+              </motion.div>
             ) : (
               grouped.map((g, gi) => {
                 const gid = g.group ? g.group.id : "other";
@@ -182,10 +221,10 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                           <div
                             key={tool.id}
                             className="unq-animate-fade-in-up"
-                            style={{ animationDelay: `${Math.min((gi * 7 + index) * 40, 320)}ms` }}
+                            style={{ animationDelay: `${Math.min((gi * 7 + index) * 25, 500)}ms` }}
                           >
                             <Link href={`/tools/${tool.id}`} className="block group h-full">
-                              <div className="card-hover rounded-2xl border bg-card p-6 h-full">
+                              <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30">
                                 <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
                                   <ToolIcon className="h-5 w-5 text-primary" />
                                 </div>
@@ -196,12 +235,12 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-1.5">
                                     {tool.status === "planned" && (
-                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
+                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
                                         Coming Soon
                                       </Badge>
                                     )}
                                   </div>
-                                  <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 [transition-timing-function:var(--ease-out)] translate-x-1 group-hover:translate-x-0">
+                                  <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                                     <span>Open</span>
                                     <ArrowRight className="h-3.5 w-3.5 ml-1" />
                                   </div>

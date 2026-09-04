@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import {
@@ -35,6 +36,34 @@ import { CATALOG, countByCategory } from "@/lib/catalog";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 import { searchTools } from "@/lib/search";
 import { useFavorites, useRecentTools } from "@/hooks/use-tool-history";
+
+// ===== ANIMATION VARIANTS =====
+
+const sectionVariants: Variants = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.25, 0.4, 0.25, 1] },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05, delayChildren: 0.1 },
+  },
+};
+
+const staggerItem: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
@@ -135,48 +164,63 @@ function ToolsPageContent() {
         {/* ===== HERO ===== */}
         <section className="relative section-padding pt-2 pb-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
-            <div
-              className="unq-animate-fade-in-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
             >
               <Layers className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">{CATALOG.length} Tools Available</span>
-            </div>
-            <h1
-              className="unq-animate-fade-in-up unq-stagger-1 text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance"
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance"
             >
               Every tool you need,
               <br />
-              <span className="unq-gradient-text">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-amber-500 to-primary">
                 all in your browser
               </span>
-            </h1>
-            <p
-              className="unq-animate-fade-in-up unq-stagger-2 text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
             >
               {CATALOG.length} fast, free, offline-capable browser tools — converters,
               calculators, generators, formatters. No uploads, no tracking, no accounts.
-            </p>
+            </motion.p>
 
             {/* Trust badges */}
-            <div
-              className="unq-animate-fade-in-up unq-stagger-3 flex flex-wrap items-center gap-3 mb-8"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-3 mb-8"
             >
               <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
                 <Lock className="h-3 w-3" /> 100% Private
               </Badge>
-              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1">
+              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
                 <WifiOff className="h-3 w-3" /> Works Offline
               </Badge>
-              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1">
+              <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20 gap-1">
                 <Zap className="h-3 w-3" /> Instant
               </Badge>
-            </div>
+            </motion.div>
 
             {/* Search */}
-            <div
-              className="unq-animate-fade-in-up unq-stagger-4 max-w-xl"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="max-w-xl"
             >
-              <div className="unq-glass relative flex items-center rounded-2xl border border-border bg-card/60 shadow-lg shadow-black/[0.04] transition-[border-color,box-shadow] duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
+              <div className="unq-glass relative flex items-center rounded-2xl border border-border bg-card/60 shadow-lg shadow-black/[0.04] transition-all duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
@@ -186,81 +230,90 @@ function ToolsPageContent() {
                   className="h-12 w-full border-0 bg-transparent pl-10 pr-4 text-base rounded-2xl focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ===== CATEGORY FILTERS ===== */}
         <section className="section-padding pb-8">
           <div className="container mx-auto px-4 md:px-6">
-            <div
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={staggerContainer}
               className="flex flex-wrap gap-2"
             >
-              <button
+              <motion.button
+                variants={staggerItem}
                 onClick={() => setActiveView("favorites")}
                 aria-pressed={activeView === "favorites"}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-[background-color,color,border-color,box-shadow] duration-200 cursor-pointer flex items-center gap-1.5 touch-target ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
                   activeView === "favorites"
-                    ? "bg-primary text-primary-foreground shadow-md"
+                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 <Star className={`h-3.5 w-3.5 ${activeView === "favorites" ? "fill-current" : ""}`} />
                 Favorites ({favorites.length})
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                variants={staggerItem}
                 onClick={() => setActiveView("recent")}
                 aria-pressed={activeView === "recent"}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-[background-color,color,border-color,box-shadow] duration-200 cursor-pointer flex items-center gap-1.5 touch-target ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
                   activeView === "recent"
-                    ? "bg-primary text-primary-foreground shadow-md"
+                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 <Clock className="h-3.5 w-3.5" />
                 Recent ({recent.length})
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                variants={staggerItem}
                 onClick={() => setActiveView("ready")}
                 aria-pressed={activeView === "ready"}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-[background-color,color,border-color,box-shadow] duration-200 cursor-pointer touch-target ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
                   activeView === "ready"
-                    ? "bg-primary text-primary-foreground shadow-md"
+                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 Ready now ({readyCount})
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                variants={staggerItem}
                 onClick={() => setActiveView("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-[background-color,color,border-color,box-shadow] duration-200 cursor-pointer touch-target ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
                   activeView === "all"
-                    ? "bg-primary text-primary-foreground shadow-md"
+                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 All ({CATALOG.length})
-              </button>
+              </motion.button>
               {activeCats.map((cat) => {
                 const Icon = CATEGORY_ICONS[cat] ?? Layers;
                 // Strip trailing comma/punctuation for short label (e.g. "Network," → "Network")
                 const label = CATEGORY_LABELS[cat].split(" ")[0].replace(/[,.;:]$/, "");
                 return (
-                  <button
+                  <motion.button
                     key={cat}
+                    variants={staggerItem}
                     onClick={() => setActiveView(cat)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-[background-color,color,border-color,box-shadow] duration-200 cursor-pointer flex items-center gap-1.5 touch-target ${
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
                       activeView === cat
-                        ? "bg-primary text-primary-foreground shadow-md"
+                        ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                         : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
                     {label} ({counts[cat] ?? 0})
-                  </button>
+                  </motion.button>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -287,8 +340,10 @@ function ToolsPageContent() {
             )}
 
             {filteredTools.length === 0 ? (
-              <div
-                className="unq-animate-fade-in text-center py-24"
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-24"
               >
                 {activeView === "favorites" ? (
                   <>
@@ -322,7 +377,7 @@ function ToolsPageContent() {
                     </p>
                   </>
                 )}
-              </div>
+              </motion.div>
             ) : (
               // CSS-based animation — bulletproof, no JS dependency, no hydration
               // issues. Each card gets a staggered animation-delay via inline style.
@@ -343,7 +398,7 @@ function ToolsPageContent() {
                     >
                       <Link href={`/tools/${tool.id}`} className="block group h-full">
                         <div
-                          className="card-hover rounded-2xl border bg-card p-6 h-full"
+                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
                         >
                           <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
                             <Icon className="h-5 w-5 text-primary" />
@@ -358,12 +413,12 @@ function ToolsPageContent() {
                                 {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
                               </Badge>
                               {tool.status === "planned" && (
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
+                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
                                   Coming Soon
                                 </Badge>
                               )}
                             </div>
-                            <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 [transition-timing-function:var(--ease-out)] translate-x-1 group-hover:translate-x-0">
+                            <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                               <span>Open</span>
                               <ArrowRight className="h-3.5 w-3.5 ml-1" />
                             </div>
@@ -380,7 +435,7 @@ function ToolsPageContent() {
                             : `Add ${tool.name} to favorites`
                         }
                         title={fav ? "Remove from favorites" : "Add to favorites"}
-                        className={`absolute top-4 right-4 z-10 rounded-lg p-1.5 transition-[background-color,color,transform] duration-150 cursor-pointer touch-target ${
+                        className={`absolute top-4 right-4 z-10 rounded-lg p-1.5 transition-all cursor-pointer touch-target ${
                           fav
                             ? "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20"
                             : "text-muted-foreground/50 hover:text-amber-500 hover:bg-amber-500/10"

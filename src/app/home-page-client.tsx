@@ -300,20 +300,24 @@ export default function Home() {
       <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
         {/* ===== SECTION 1: HERO ===== */}
         <section className="relative section-padding pt-16 pb-20 md:pt-24 md:pb-32 overflow-hidden">
-          {/* Apple restraint: one faint ambient wash, no orbs, no dot grid.
-              The type carries the page, not the decoration. */}
+          {/* Ambient gradient background with soft glow orbs */}
           <div className="absolute inset-0 -z-10" aria-hidden="true">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.05] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-primary/15 blur-3xl opacity-40" />
+            <div className="absolute top-32 -left-24 w-72 h-72 rounded-full bg-amber-400/10 blur-3xl" />
+            <div className="absolute top-64 -right-24 w-80 h-80 rounded-full bg-rose-400/10 blur-3xl" />
+            {/* Subtle dot grid */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,var(--border)_0.75px,transparent_0)] bg-[size:26px_26px] opacity-[0.35] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" />
           </div>
 
-          <div className="container mx-auto px-4 md:px-6 max-w-5xl text-center">
+          <div className="container mx-auto px-4 md:px-6 max-w-5xl">
             {/* NOTE: The hero above-the-fold content is intentionally plain
                 HTML (no framer-motion / no opacity:0). This makes it visible
                 in the SSR HTML immediately, so LCP ≈ FCP on slow connections.
                 Below-the-fold sections keep their whileInView animations. */}
-            <div className="unq-glass inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/70 mb-8">
+            <div className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="text-[13px] text-muted-foreground font-medium">
+              <span className="text-sm text-foreground font-medium">
                 {toolCount} free browser tools — no signup, no tracking
               </span>
             </div>
@@ -325,43 +329,42 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed text-pretty">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed text-pretty">
               {toolCount} fast, free, offline-capable browser tools — converters,
               calculators, generators, formatters, PDF utilities, SEO tools. Everything
               runs 100% in your browser. No uploads, no accounts, no tracking.
             </p>
 
-            {/* Hero quick-search — Apple Spotlight-style pill */}
+            {/* Hero quick-search */}
             <form
               onSubmit={submitHeroSearch}
-              className="max-w-xl mx-auto mb-10"
+              className="max-w-xl mb-8"
             >
-              <div className="unq-glass group flex items-center gap-2.5 rounded-full border border-border bg-card pl-5 pr-2 py-2 shadow-sm transition-[border-color,box-shadow] duration-200 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
-                <Search className="h-[18px] w-[18px] text-muted-foreground shrink-0" />
+              <div className="unq-glass group flex items-center gap-2 rounded-2xl border border-border bg-card/60 pl-3.5 pr-1.5 py-1.5 shadow-lg shadow-black/[0.04] transition-all duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
+                <Search className="h-5 w-5 text-muted-foreground shrink-0" />
                 <input
                   type="text"
                   value={heroQuery}
                   onChange={(e) => setHeroQuery(e.target.value)}
                   placeholder={`Search ${toolCount} tools…`}
                   aria-label="Search tools"
-                  className="h-10 w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground/70 outline-none"
+                  className="h-11 w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground/70 outline-none"
                 />
                 <Button
                   type="submit"
                   size="sm"
-                  className="shrink-0 rounded-full px-5 h-9 bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
+                  className="gap-1.5 shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
                 >
                   Search
                 </Button>
               </div>
             </form>
 
-            {/* Apple CTA pair: pill button + quiet text link with chevron */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10">
               <Button
                 asChild
                 size="lg"
-                className="gap-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-7 h-12 text-base cursor-pointer touch-target"
+                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 text-base cursor-pointer touch-target shadow-lg shadow-primary/20"
               >
                 <Link href="/tools">
                   Browse {toolCount} Tools <ArrowRight className="h-4 w-4" />
@@ -369,16 +372,16 @@ export default function Home() {
               </Button>
               <Button
                 asChild
-                variant="link"
+                variant="outline"
                 size="lg"
-                className="gap-1 text-base text-primary cursor-pointer touch-target"
+                className="gap-2 px-6 text-base cursor-pointer touch-target"
               >
-                <Link href="/category/seo">Explore Categories <ArrowRight className="h-4 w-4" /></Link>
+                <Link href="/category/seo">Explore Categories</Link>
               </Button>
             </div>
 
             {/* Trust badges */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+            <div className="flex flex-wrap items-center gap-3 mb-10">
               {trustBadges.map((b) => {
                 const Icon = b.icon;
                 return (
@@ -435,7 +438,7 @@ export default function Home() {
                     href={task.href}
                     className="block group"
                   >
-                    <div className="card-hover rounded-2xl border bg-card p-5 h-full flex items-start gap-4">
+                    <div className="card-hover rounded-2xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30 flex items-start gap-4">
                       <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center shrink-0">
                         <TaskIcon className="h-5 w-5 text-primary" />
                       </div>
@@ -447,7 +450,7 @@ export default function Home() {
                           {task.description}
                         </p>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-1 ml-auto opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 [transition-timing-function:var(--ease-out)] translate-x-1 group-hover:translate-x-0" />
+                      <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-1 ml-auto opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0" />
                     </div>
                   </Link>
                 );
@@ -490,13 +493,13 @@ export default function Home() {
                 return (
                   <div key={tool.id}>
                     <Link href={`/tools/${tool.id}`} className="block group h-full">
-                      <div className="card-hover rounded-2xl border bg-card p-5 h-full">
+                      <div className="card-hover rounded-2xl border bg-card p-5 h-full transition-all duration-200 hover:border-primary/30">
                         <div className="flex items-center justify-between mb-3">
                           <div className="unq-icon-tile h-9 w-9 rounded-lg flex items-center justify-center">
                             <Icon className="h-4.5 w-4.5 text-primary" />
                           </div>
                           {tool.status === "planned" && (
-                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
                               Coming Soon
                             </Badge>
                           )}
@@ -505,7 +508,7 @@ export default function Home() {
                         <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                           {tool.description}
                         </p>
-                        <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 [transition-timing-function:var(--ease-out)] translate-x-1 group-hover:translate-x-0">
+                        <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                           <span>Open</span>
                           <ArrowRight className="h-3 w-3 ml-1" />
                         </div>
@@ -545,7 +548,7 @@ export default function Home() {
                   <div key={cat.href}>
                     <Link
                       href={cat.href}
-                      className="block group card-hover rounded-2xl border bg-card p-6 h-full"
+                      className="block group card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center">
@@ -559,7 +562,7 @@ export default function Home() {
                       <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                         {cat.description}
                       </p>
-                      <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 [transition-timing-function:var(--ease-out)] translate-x-1 group-hover:translate-x-0">
+                      <div className="flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
                         <span>Explore</span>
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </div>
@@ -603,25 +606,25 @@ export default function Home() {
                   icon: WifiOff,
                   title: "Works Offline",
                   description: "Install as a PWA and use all tools without network access. Service worker caches everything after first load.",
-                  color: "text-primary",
+                  color: "text-emerald-500",
                 },
                 {
                   icon: Search,
                   title: "No Sign-up",
                   description: "No accounts, no email walls, no paywalls. Just open a tool and use it. Instantly.",
-                  color: "text-primary",
+                  color: "text-amber-500",
                 },
                 {
                   icon: ShieldCheck,
                   title: "No Tracking",
                   description: "No analytics, no cookies, no fingerprinting. What you do with the tools stays between you and your browser.",
-                  color: "text-primary",
+                  color: "text-rose-500",
                 },
               ].map((f) => {
                 const Icon = f.icon;
                 return (
                   <div key={f.title} className="h-full">
-                    <div className="card-hover rounded-2xl border bg-card p-6 h-full">
+                    <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/25">
                       <div className={`unq-icon-tile h-10 w-10 rounded-lg flex items-center justify-center mb-3`}>
                         <Icon className={`h-5 w-5 ${f.color}`} />
                       </div>

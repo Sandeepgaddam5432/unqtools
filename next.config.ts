@@ -2,8 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  // Allow the E2B preview proxy host to access dev resources (HMR, fonts).
-  allowedDevOrigins: ["*.e2b.app", "e2b.app"],
   typescript: {
     ignoreBuildErrors: true,
   },
