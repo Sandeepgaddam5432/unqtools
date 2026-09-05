@@ -3589,14 +3589,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "epub-to-pdf-dev",
-    name: "EPUB to PDF",
-    description: "Convert EPUB e-books to PDF. Preserve chapters, styling, TOC.",
-    category: "pdf",
-    keywords: ["epub to pdf","epub converter","ebook to pdf","epub pdf"],
-    status: "done",
-  },
-  {
     id: "epub-to-pdf-tool",
     name: "EPUB to PDF",
     description: "Convert EPUB e-books to PDF. Preserve chapters, styling, table of contents.",
@@ -9501,14 +9493,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "pdf-to-excel-converter-pdf",
-    name: "PDF to Excel Converter",
-    description: "Extract tables from PDF and convert to Excel (.xlsx), CSV, HTML, or JSON in your browser. Detects tables by clustering text on a y/x grid, handles multiple tables per page, detects headers, infers cell types (number/date/text/currency), and builds a minimal valid .xlsx (OOXML ZIP) entirely client-side. Includes history, shareable URL, summary stats, and table quality scoring. 100% private — no uploads.",
-    category: "pdf",
-    keywords: ["pdf to excel","pdf to xlsx","pdf table extractor","extract pdf table","pdf to csv","pdf to html table","pdf to json","convert pdf table","spreadsheet from pdf","pdf data extractor"],
-    status: "done",
-  },
-  {
     id: "pdf-to-gif",
     name: "PDF to GIF Converter",
     description: "Convert PDF pages to animated GIF. Frame delay, loop count, size control.",
@@ -9661,14 +9645,6 @@ export const CATALOG: readonly CatalogItem[] = [
     status: "done",
   },
   {
-    id: "pdf-to-powerpoint-converter-pdf",
-    name: "PDF to PowerPoint Converter",
-    description: "Convert PDF pages into presentation slides — one slide per page — and export as a minimal valid .pptx (OOXML ZIP), a navigable HTML slide deck, or Marp-compatible Markdown. Choose from 4 slide layouts, preserve PDF aspect ratio, extract speaker notes from page text, and auto-generate slide titles from headings. Includes a pure-JS ZIP builder, copy + download, history, and shareable URL. 100% client-side — no uploads.",
-    category: "pdf",
-    keywords: ["pdf to powerpoint","pdf to pptx","pdf to slides","pdf presentation","pdf to ppt","convert pdf to powerpoint","pdf slide maker","pdf to html slides","pdf to marp","pdf to markdown slides"],
-    status: "done",
-  },
-  {
     id: "pdf-to-rtf",
     name: "PDF to RTF Converter",
     description: "Convert PDF to Rich Text Format (.rtf). Preserve formatting, fonts, colors.",
@@ -9730,14 +9706,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Convert PDF files to DOCX (Microsoft Word) in the browser — pure JavaScript PDF text extractor + OOXML generator. Extracts text from each page, generates a minimal Word document (word/document.xml), and packages it as a .docx ZIP. 100% client-side.",
     category: "file",
     keywords: ["pdf to word","pdf to docx","convert pdf to word","pdf to doc","pdf word converter","extract text from pdf to word","pdf-to-word-converter","pdf docx","pdf to office"],
-    status: "done",
-  },
-  {
-    id: "pdf-to-word-converter-pdf",
-    name: "PDF to Word Converter",
-    description: "Convert PDF to DOCX, HTML, Markdown, or plain text in your browser. Extracts text and structure, detects headings via font-size analysis, preserves paragraphs and page breaks, and builds a minimal valid .docx (OOXML ZIP) entirely client-side. Includes history, shareable URL, summary stats, and document-structure analyzer. 100% private — no uploads.",
-    category: "pdf",
-    keywords: ["pdf to word","pdf to docx","pdf converter","convert pdf","pdf to html","pdf to markdown","pdf to text","docx generator","extract pdf structure"],
     status: "done",
   },
   {
@@ -10954,14 +10922,6 @@ export const CATALOG: readonly CatalogItem[] = [
     description: "Unified, transparent on-page SEO audit of pasted content or HTML — combining title/meta, headings, keyword coverage, content depth, links, images/alt, schema, and readability into a prioritized, evidence-backed scorecard. 100% client-side.",
     category: "seo",
     keywords: ["seo content audit tool","on-page seo checker","content score tool free","seo scorecard","content quality audit"],
-    status: "done",
-  },
-  {
-    id: "seo-experiment-tracker",
-    name: "SEO Experiment Tracker",
-    description: "Track SEO A/B experiments — title tag tests, meta description tests, content changes. Parse before/after CSV per page, compute deltas, % change, winners/losers/neutral, aggregate totals, basic statistical significance check, recommendation (roll out / roll back / extend), experiment status (planned/running/completed/paused), confidence score, filters, copy + download .txt + download CSV, history (localStorage), shareable URL. 100% client-side.",
-    category: "seo",
-    keywords: ["seo experiment","ab test seo","seo test","title tag test","meta description test","content test","experiment tracker","seo split test","before after seo"],
     status: "done",
   },
   {
@@ -13387,14 +13347,6 @@ export const CATALOG: readonly CatalogItem[] = [
     category: "file",
     keywords: ["xml to json","xml parser","convert xml","json from xml","attributes","namespace","cdata","array detection","pretty print","xml converter","xml json","dom parser"],
     status: "done",
-  },
-  {
-    id: "xml-to-json-dev",
-    name: "XML to JSON Converter",
-    description: "Convert XML to JSON. Attributes, namespaces, arrays, text content.",
-    category: "developer",
-    keywords: ["xml to json","xml converter","json from xml","xml json"],
-    status: "planned",
   },
   {
     id: "xor-cipher",
