@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import { SidebarNav } from "@/components/navigation/sidebar";
 import {
@@ -35,34 +34,6 @@ import { CATALOG, countByCategory } from "@/lib/catalog";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 import { searchTools } from "@/lib/search";
 import { useFavorites, useRecentTools } from "@/hooks/use-tool-history";
-
-// ===== ANIMATION VARIANTS =====
-
-const sectionVariants: Variants = {
-  hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.25, 0.4, 0.25, 1] },
-  },
-};
-
-const staggerContainer: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05, delayChildren: 0.1 },
-  },
-};
-
-const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
-  },
-};
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
@@ -168,43 +139,34 @@ function ToolsPageContent() {
         {/* ===== HERO ===== */}
         <section className="relative section-padding pt-2 pb-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6 unq-animate-fade-in-up"
             >
               <Layers className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm text-foreground font-medium">{CATALOG.length} Tools Available</span>
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance"
+            </div>
+            <h1
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance unq-animate-fade-in-up"
+              style={{ animationDelay: "60ms" }}
             >
               Every tool you need,
               <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-amber-500 to-primary">
                 all in your browser
               </span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty"
+            </h1>
+            <p
+              className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty unq-animate-fade-in-up"
+              style={{ animationDelay: "200ms" }}
             >
               {CATALOG.length} fast, free, offline-capable browser tools — converters,
               calculators, generators, formatters. No uploads, no tracking, no accounts.
-            </motion.p>
+            </p>
 
             {/* Trust badges */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-3 mb-8"
+            <div
+              className="flex flex-wrap items-center gap-3 mb-8 unq-animate-fade-in-up"
+              style={{ animationDelay: "300ms" }}
             >
               <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
                 <Lock className="h-3 w-3" /> 100% Private
@@ -215,14 +177,12 @@ function ToolsPageContent() {
               <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20 gap-1">
                 <Zap className="h-3 w-3" /> Instant
               </Badge>
-            </motion.div>
+            </div>
 
             {/* Search */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="max-w-xl"
+            <div
+              className="max-w-xl unq-animate-fade-in-up"
+              style={{ animationDelay: "400ms" }}
             >
               <div className="unq-glass relative flex items-center rounded-2xl border border-border bg-card/60 shadow-lg shadow-black/[0.04] transition-all duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -234,25 +194,18 @@ function ToolsPageContent() {
                   className="h-12 w-full border-0 bg-transparent pl-10 pr-4 text-base rounded-2xl focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ===== CATEGORY FILTERS ===== */}
         <section className="section-padding pb-8">
           <div className="container mx-auto px-4 md:px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={staggerContainer}
-              className="flex flex-wrap gap-2"
-            >
-              <motion.button
-                variants={staggerItem}
+            <div className="flex flex-wrap gap-2">
+              <button
                 onClick={() => setActiveView("favorites")}
                 aria-pressed={activeView === "favorites"}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
+                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
                   activeView === "favorites"
                     ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
@@ -260,12 +213,12 @@ function ToolsPageContent() {
               >
                 <Star className={`h-3.5 w-3.5 ${activeView === "favorites" ? "fill-current" : ""}`} />
                 Favorites ({favorites.length})
-              </motion.button>
-              <motion.button
-                variants={staggerItem}
+              </button>
+              <button
+                style={{ animationDelay: "40ms" }}
                 onClick={() => setActiveView("recent")}
                 aria-pressed={activeView === "recent"}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
+                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
                   activeView === "recent"
                     ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
@@ -273,40 +226,40 @@ function ToolsPageContent() {
               >
                 <Clock className="h-3.5 w-3.5" />
                 Recent ({recent.length})
-              </motion.button>
-              <motion.button
-                variants={staggerItem}
+              </button>
+              <button
+                style={{ animationDelay: "80ms" }}
                 onClick={() => setActiveView("ready")}
                 aria-pressed={activeView === "ready"}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
+                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
                   activeView === "ready"
                     ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 Ready now ({readyCount})
-              </motion.button>
-              <motion.button
-                variants={staggerItem}
+              </button>
+              <button
+                style={{ animationDelay: "120ms" }}
                 onClick={() => setActiveView("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
+                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
                   activeView === "all"
                     ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                     : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 All ({CATALOG.length})
-              </motion.button>
-              {activeCats.map((cat) => {
+              </button>
+              {activeCats.map((cat, idx) => {
                 const Icon = CATEGORY_ICONS[cat] ?? Layers;
                 // Strip trailing comma/punctuation for short label (e.g. "Network," → "Network")
                 const label = CATEGORY_LABELS[cat].split(" ")[0].replace(/[,.;:]$/, "");
                 return (
-                  <motion.button
+                  <button
                     key={cat}
-                    variants={staggerItem}
+                    style={{ animationDelay: `${Math.min(160 + idx * 30, 480)}ms` }}
                     onClick={() => setActiveView(cat)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
+                    className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
                       activeView === cat
                         ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
                         : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
@@ -314,10 +267,10 @@ function ToolsPageContent() {
                   >
                     <Icon className="h-3.5 w-3.5" />
                     {label} ({counts[cat] ?? 0})
-                  </motion.button>
+                  </button>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -344,11 +297,7 @@ function ToolsPageContent() {
             )}
 
             {filteredTools.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-24"
-              >
+              <div className="text-center py-24 unq-animate-fade-in">
                 {activeView === "favorites" ? (
                   <>
                     <Star className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
@@ -381,7 +330,7 @@ function ToolsPageContent() {
                     </p>
                   </>
                 )}
-              </motion.div>
+              </div>
             ) : (
               // CSS-based animation — bulletproof, no JS dependency, no hydration
               // issues. Each card gets a staggered animation-delay via inline style.
