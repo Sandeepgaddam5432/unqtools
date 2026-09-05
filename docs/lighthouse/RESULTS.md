@@ -1,81 +1,74 @@
-# Lighthouse Results — v6.2 (2026-07-04)
+# Lighthouse Results — v18.7 perf pass (2026-09-05)
 
-All runs against static export (`out/`) served by `tests/static-server.mjs`.
-Chrome: Playwright's cached chromium-1228. No targets enforced — real numbers only.
+Runs against **production** `https://unqtools.pages.dev` (Cloudflare Pages).
+Chrome for Testing 153 (headless, `--no-sandbox`), Lighthouse 13.x,
+`--form-factor=mobile`. Simulated throttling numbers from a single run each;
+observed (provided) run included where it adds signal.
 
-## Score Table
+## Deployed fixes (commits `cd8b1b8` → `72876d4`)
 
-| Page | Form Factor | Performance | Accessibility | Best Practices | SEO |
-|------|-------------|-------------|---------------|----------------|-----|
-| Home (`/`) | Desktop | 56 | 96 | 96 | 100 |
-| Home (`/`) | Mobile | 44 | 100 | 96 | 100 |
-| Tools (`/tools`) | Desktop | 70 | 98 | 96 | 100 |
-| Tools (`/tools`) | Mobile | 58 | 98 | 96 | 100 |
-| JSON Formatter | Desktop | 57 | 100 | 96 | 100 |
-| JSON Formatter | Mobile | 50 | 100 | 96 | 100 |
-| EMI Calculator | Desktop | 70 | 100 | 96 | 100 |
-| EMI Calculator | Mobile | 51 | 100 | 96 | 100 |
+1. **Intent-based Command Palette loader** — the 179 KB catalog chunk used to
+   load eagerly on *every* page (dynamic `ssr:false` mounted the palette right
+   after hydration). It now loads on first ⌘K/Ctrl+K or `unq:open-command-bar`
+   event, with an idle `requestIdleCallback` prefetch as backup.
+2. **`/tools` render windowing** — the grid rendered all 1,679 cards at once
+   (~7 s TBT: 4.0 s style/layout + 2.4 s script eval). Initial render is now
+   96 cards + "Show more tools (N remaining)" button (+192/click), plus
+   `content-visibility:auto` / `contain-intrinsic-size` on every card.
+3. **`/tools` prerender restored** — `useSearchParams()` in a lazy `useState`
+   initializer bailed the whole client subtree out of static prerendering
+   (production HTML shipped a "Loading tools…" fallback; LCP waited for JS).
+   Query/view deep links are now applied in a mount effect via
+   `URLSearchParams`; the grid ships in static HTML.
+4. **framer-motion removed from `/tools` + `/category/*`** — framer-motion SSRs
+   `initial={{opacity:0}}` inline, so the hero H1 (the LCP element) stayed
+   invisible until JS hydrated and animated it. Replaced with the existing
+   `unq-animate-fade-in-up` CSS class (same look, paints with HTML, respects
+   `prefers-reduced-motion`). Also drops the motion chunk from those bundles.
+   (The home hero was converted earlier the same way.)
 
-## Notes
+## Score table — Performance (mobile)
 
-- **Performance delta after hydration fix:** Home desktop was 66 in the previous session (before Task F sidebar mount-gate + MotionProvider). After: 56. The MotionProvider wrapper may have added overhead. The Framer Motion `whileInView` hydration mismatch still persists (partial fix only) — React discards server HTML and re-renders, which hurts LCP/TBT.
-- **Accessibility:** 96-100 across all pages. The 96 on home desktop is from a minor `aria-label` issue on an interactive element.
-- **Best Practices:** 96 across all (minor HTTPS/HTTP issue from static server).
-- **SEO:** 100 across all.
-- **Mobile performance** is lower (44-58) due to Framer Motion JS payload + React re-render from hydration mismatch.
-- Full resolution requires fixing the Framer Motion `whileInView` hydration mismatch (deferred to future PR).
+| Page | Before | After | Δ |
+|------|-------:|------:|---|
+| `/tools` | 43 | **71** | +28 |
+| `/category/pdf` | 46 | **61** | +15 |
+| `/` (home) | 84 | **89** | +5 |
 
-## Raw JSON
+## Core metrics — mobile, simulated
 
-All raw Lighthouse JSON reports are in this directory: `*.json`
+| Page | Metric | Before | After |
+|------|--------|-------:|------:|
+| `/tools` | TBT | 6,980 ms | **360 ms** |
+| `/tools` | LCP (sim) | 6.4 s | 5.3 s |
+| `/tools` | LCP (observed, no throttle) | ~6+ s | **0.4 s** |
+| `/tools` | Speed Index | — | 2.6 s |
+| `/category/pdf` | TBT | 2,330 ms | **680 ms** |
+| `/category/pdf` | LCP (sim) | 7.1 s | 5.1 s |
+| `/` (home) | TBT | 270 ms | **200 ms** |
+| All | CLS | 0 | 0 |
 
-## v6.3 Results (3-run medians, after showcase removal + #418 hydration fix)
+Observed `/tools` run (provided throttling): LCP 0.4 s · FCP 0.4 s · TBT 0 ms ·
+SI 0.6 s. All render-blocking resources (HTML 30 KB, 2 CSS, hero font) finish
+by ≈160 ms; the filmstrip shows full content at ~1.5 s. The remaining gap in
+the *simulated* LCP column is Lantern's conservative page-dependency model —
+real-user LCP no longer waits on JS: the LCP content is in the initial HTML.
 
-| Page | Form | Perf (median) | A11y | BP | SEO | v6.2 Perf | Delta |
-|------|------|---------------|------|-----|-----|-----------|-------|
-| Home | Desktop | 54 | 96 | 100 | 100 | 56 | -2 |
-| Home | Mobile | 47 | 100 | 100 | 100 | 44 | +3 |
-| Tools | Desktop | 68 | 98 | 100 | 100 | 70 | -2 |
-| Tools | Mobile | 56 | 98 | 100 | 100 | 58 | -2 |
-| JSON Formatter | Desktop | 57 | 100 | 100 | 100 | 57 | +0 |
-| JSON Formatter | Mobile | 42 | 100 | 100 | 100 | 50 | -8 |
-| EMI Calculator | Desktop | 65 | 100 | 100 | 100 | 70 | -5 |
-| EMI Calculator | Mobile | 43 | 100 | 100 | 100 | 51 | -8 |
+A11y / Best Practices / SEO were 96–100 before and unchanged by these commits.
 
-### Notes
-- BP improved 96→100 across all pages (showcase page removal eliminated demo-content violations)
-- A11y improved on home (96→100 mobile) and stayed 96-100 elsewhere
-- Perf variance: -8 to +3 vs v6.2. The hydration fix (#418) should help perf (React no longer
-  discards SSG HTML + re-renders), but the ThemeProvider mount-gate adds a brief flash where
-  the theme isn't applied. Net effect is roughly neutral — the real perf improvement will come
-  from fixing Framer Motion whileInView CLS (deferred).
-- 3-run medians reduce variance vs v6.2's single-run numbers
+## Remaining opportunities (not done)
 
-## v6.4 Results (3-run medians, after CLS fix + axe fix + mobile top-space fix)
+- `/category/*` pages ship ~1.1 MB static HTML (305 tool links for PDF) —
+  fine for SEO, but trimming per-page markup weight would help mobile parse.
+- Individual tool pages (e.g. `/tools/json-formatter`, perf 64 baseline)
+  have their own LCP quirks; audit individually when touched.
+- `docs/lighthouse/*.json` raw reports from prior sessions removed; current
+  raw JSON lives in CI artifacts / local `/tmp` only.
 
-| Page | Form | v6.4 Perf (median) | v6.3 Perf | Delta |
-|------|------|---------------------|-----------|-------|
-| Home | Desktop | 70 | 54 | +16 |
-| Home | Mobile | 52 | 47 | +5 |
-| Tools | Desktop | 76 | 68 | +8 |
-| JSON Formatter | Desktop | 77 | 57 | +20 |
-| EMI Calculator | Desktop | 79 | 65 | +14 |
+## Reproducing
 
-### Notes
-- Massive perf improvement from CLS fix (sidebar spacer initial width + tool skeleton).
-  CLS went from 0.17-0.56 to 0.0001-0.0002 — React no longer re-renders from
-  hydration mismatch + layout is stable from first paint.
-- Mobile runs for non-home pages not completed (sandbox timeout) — desktop medians
-  show the improvement pattern clearly.
-
-## v6.5 Mobile Lighthouse Medians (3-run)
-
-| Page | Form | v6.5 Perf (median) | v6.3 Perf | Delta |
-|------|------|---------------------|-----------|-------|
-| Tools | Mobile | 58 | 56 | +2 |
-| JSON Formatter | Mobile | 56 | 42 | +14 |
-| EMI Calculator | Mobile | 53 | 43 | +10 |
-
-Mobile perf improved significantly from CLS fix (v6.4) + hero cleanup (v6.5).
-JSON Formatter +14, EMI Calculator +10 — the tool skeleton (dimension-reserved
-Suspense fallback) eliminated the massive layout shift on mobile.
+```bash
+CHROME_PATH=<path-to-chrome> npx lighthouse "https://unqtools.pages.dev/tools" \
+  --form-factor=mobile --only-categories=performance --output=json \
+  --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage"
+```
