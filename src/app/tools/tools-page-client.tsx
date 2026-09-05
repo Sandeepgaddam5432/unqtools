@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import { SidebarNav } from "@/components/navigation/sidebar";
@@ -85,34 +84,25 @@ const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
 // ===== PAGE COMPONENT =====
 
 export default function ToolsPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-dvh bg-background">
-          <SidebarNav />
-          <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
-            <div className="section-padding py-24 text-center text-muted-foreground">
-              Loading tools…
-            </div>
-          </main>
-        </div>
-      }
-    >
-      <ToolsPageContent />
-    </Suspense>
-  );
+  return <ToolsPageContent />;
 }
 
 type ViewFilter = ToolCategory | "all" | "favorites" | "recent" | "ready";
 
 function ToolsPageContent() {
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState(() => searchParams?.get("q") ?? "");
-  const [activeView, setActiveView] = useState<ViewFilter>(() => {
-    const v = searchParams?.get("view");
-    if (v === "favorites" || v === "recent" || v === "ready") return v;
-    return "ready";
-  });
+  const [query, setQuery] = useState("");
+  const [activeView, setActiveView] = useState<ViewFilter>("ready");
+
+  // Apply ?q= / ?view= deep links after mount. Reading them via useSearchParams
+  // during render would bail the whole grid out of static prerendering
+  // (LCP regression); window.location keeps initial paint server-rendered.
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const q = sp.get("q");
+    if (q) setQuery(q);
+    const v = sp.get("view");
+    if (v === "favorites" || v === "recent" || v === "ready") setActiveView(v);
+  }, []);
   const { favorites, toggle, isFavorite, clear: clearFavorites } = useFavorites();
   const { recent, clear: clearRecent } = useRecentTools();
 
