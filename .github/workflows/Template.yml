@@ -1,0 +1,36 @@
+name: Download and Extract Template
+
+on:
+  workflow_dispatch: # Idi pettadam valla nuvvu manual ga "Run workflow" button click chesi run chesukovachu
+
+permissions:
+  contents: write # Repo lo files commit chesi push cheyadaniki permission
+
+jobs:
+  download-and-extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .template directory
+        run: |
+          mkdir -p .template
+
+      - name: Download zip file
+        run: |
+          curl -L -o template.zip "https://stocks-miller-pulled-incorporate.trycloudflare.com/unqtools-template.zip"
+
+      - name: Extract zip into .template directory
+        run: |
+          unzip -o template.zip -d .template
+          rm template.zip # Zip file extract ayyaka temp zip file delete chestunnam
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .template
+          git commit -m "Add extracted files to .template directory" || echo "No changes to commit"
+          git push
