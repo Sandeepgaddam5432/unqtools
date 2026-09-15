@@ -2,25 +2,14 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { SidebarNav } from "@/components/navigation/sidebar";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/template-utils";
 import {
   Search,
-  Sparkles,
   ArrowRight,
   Lock,
   WifiOff,
   Zap,
-  Wand2,
+  Sparkles,
   Code2,
   Type,
   Calculator,
@@ -29,13 +18,17 @@ import {
   Star,
   Clock,
   Trash2,
+  ChevronRight,
 } from "lucide-react";
 import { CATALOG, countByCategory } from "@/lib/catalog";
 import { CATEGORY_LABELS, ALL_CATEGORIES, type ToolCategory } from "@/lib/tool";
 import { searchTools } from "@/lib/search";
 import { useFavorites, useRecentTools } from "@/hooks/use-tool-history";
+import {
+  CATEGORIES as TEMPLATE_CATEGORIES,
+} from "@/lib/template-data";
+import TemplateShell, { TemplateFooter } from "@/components/template/TemplateShell";
 
-// ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
   text: Type,
@@ -52,28 +45,30 @@ const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   ai: Sparkles,
 };
 
-// ===== PAGE COMPONENT =====
+type ViewFilter = ToolCategory | "all" | "favorites" | "recent" | "ready";
 
 export default function ToolsPage() {
-  return <ToolsPageContent />;
+  return (
+    <TemplateShell footer={<TemplateFooter />}>
+      <ToolsPageContent />
+    </TemplateShell>
+  );
 }
-
-type ViewFilter = ToolCategory | "all" | "favorites" | "recent" | "ready";
 
 function ToolsPageContent() {
   const [query, setQuery] = useState("");
   const [activeView, setActiveView] = useState<ViewFilter>("ready");
 
-  // Apply ?q= / ?view= deep links after mount. Reading them via useSearchParams
-  // during render would bail the whole grid out of static prerendering
-  // (LCP regression); window.location keeps initial paint server-rendered.
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
     const q = sp.get("q");
     if (q) setQuery(q);
     const v = sp.get("view");
-    if (v === "favorites" || v === "recent" || v === "ready") setActiveView(v);
+    if (v === "favorites" || v === "recent" || v === "ready" || v === "all") {
+      setActiveView(v);
+    }
   }, []);
+
   const { favorites, toggle, isFavorite, clear: clearFavorites } = useFavorites();
   const { recent, clear: clearRecent } = useRecentTools();
 
@@ -118,10 +113,6 @@ function ToolsPageContent() {
     return list;
   }, [query, activeView, favorites, recent, idToTool]);
 
-  // ===== RENDER WINDOWING =====
-  // Rendering all 1,679 cards at once costs ~7s of main-thread work on
-  // mobile (Lighthouse TBT). Render the first batch only, then grow on
-  // demand. content-visibility:auto on each card skips off-screen paint.
   const [visibleCount, setVisibleCount] = useState(96);
   useEffect(() => {
     setVisibleCount(96);
@@ -133,292 +124,250 @@ function ToolsPageContent() {
   const remainingCount = filteredTools.length - visibleCount;
 
   return (
-    <div className="flex min-h-dvh bg-background">
-      <SidebarNav />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
-        {/* ===== HERO ===== */}
-        <section className="relative section-padding pt-2 pb-16 md:py-24">
-          <div className="container mx-auto px-4 md:px-6">
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6 unq-animate-fade-in-up"
-            >
-              <Layers className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-foreground font-medium">{CATALOG.length} Tools Available</span>
-            </div>
-            <h1
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance unq-animate-fade-in-up"
-              style={{ animationDelay: "60ms" }}
-            >
-              Every tool you need,
-              <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-amber-500 to-primary">
-                all in your browser
-              </span>
-            </h1>
-            <p
-              className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty unq-animate-fade-in-up"
-              style={{ animationDelay: "200ms" }}
-            >
-              {CATALOG.length} fast, free, offline-capable browser tools — converters,
-              calculators, generators, formatters. No uploads, no tracking, no accounts.
-            </p>
+    <div className="mx-auto max-w-7xl px-3 pb-32 pt-4 sm:px-6 sm:pt-6 md:pb-12">
+      {/* Hero */}
+      <section className="mb-8 rounded-3xl border border-white/[0.06] bg-[#0c1018]/55 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-8">
+        <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-400/20 bg-cyan-400/[0.08] px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-cyan-300">
+          <Layers className="size-3" /> Directory
+        </div>
+        <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight sm:text-[34px]">
+          Every tool you need,
+          <br />
+          <span className="bg-gradient-to-r from-cyan-300 via-amber-300 to-cyan-200 bg-clip-text text-transparent">
+            all in your browser
+          </span>
+        </h1>
+        <p className="mt-2 text-[13px] text-white/55 sm:text-[14.5px]">
+          {CATALOG.length.toLocaleString()} fast, free, offline-capable browser tools — converters,
+          calculators, generators, formatters. No uploads, no tracking, no accounts.
+        </p>
 
-            {/* Trust badges */}
-            <div
-              className="flex flex-wrap items-center gap-3 mb-8 unq-animate-fade-in-up"
-              style={{ animationDelay: "300ms" }}
-            >
-              <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
-                <Lock className="h-3 w-3" /> 100% Private
-              </Badge>
-              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
-                <WifiOff className="h-3 w-3" /> Works Offline
-              </Badge>
-              <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20 gap-1">
-                <Zap className="h-3 w-3" /> Instant
-              </Badge>
-            </div>
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-emerald-300">
+            <Lock className="size-3" /> 100% Private
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/20 bg-cyan-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-cyan-300">
+            <WifiOff className="size-3" /> Works Offline
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-amber-300">
+            <Zap className="size-3" /> Instant
+          </span>
+        </div>
 
-            {/* Search */}
-            <div
-              className="max-w-xl unq-animate-fade-in-up"
-              style={{ animationDelay: "400ms" }}
-            >
-              <div className="unq-glass relative flex items-center rounded-2xl border border-border bg-card/60 shadow-lg shadow-black/[0.04] transition-all duration-200 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/15">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder={`What do you want to do? e.g. “make my PDF smaller”`}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="h-12 w-full border-0 bg-transparent pl-10 pr-4 text-base rounded-2xl focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ===== CATEGORY FILTERS ===== */}
-        <section className="section-padding pb-8">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="flex flex-wrap gap-2">
+        <div className="mt-5 max-w-xl">
+          <label className="group relative flex h-11 items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] focus-within:border-white/[0.18]">
+            <Search className="size-3.5 text-white/45" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder='Try “merge pdf” or “json formatter”…'
+              className="w-full bg-transparent text-[13px] text-white placeholder:text-white/35 outline-none"
+              aria-label="Search tools"
+            />
+            {query && (
               <button
-                onClick={() => setActiveView("favorites")}
-                aria-pressed={activeView === "favorites"}
-                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
-                  activeView === "favorites"
-                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
-                    : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
-                }`}
+                type="button"
+                onClick={() => setQuery("")}
+                className="cursor-pointer rounded-full px-1.5 text-[10px] font-bold text-white/45 hover:text-white/85"
               >
-                <Star className={`h-3.5 w-3.5 ${activeView === "favorites" ? "fill-current" : ""}`} />
-                Favorites ({favorites.length})
+                clear
               </button>
-              <button
-                style={{ animationDelay: "40ms" }}
-                onClick={() => setActiveView("recent")}
-                aria-pressed={activeView === "recent"}
-                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
-                  activeView === "recent"
-                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
-                    : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
-                }`}
-              >
-                <Clock className="h-3.5 w-3.5" />
-                Recent ({recent.length})
-              </button>
-              <button
-                style={{ animationDelay: "80ms" }}
-                onClick={() => setActiveView("ready")}
-                aria-pressed={activeView === "ready"}
-                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
-                  activeView === "ready"
-                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
-                    : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
-                }`}
-              >
-                Ready now ({readyCount})
-              </button>
-              <button
-                style={{ animationDelay: "120ms" }}
-                onClick={() => setActiveView("all")}
-                className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer touch-target ${
-                  activeView === "all"
-                    ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
-                    : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
-                }`}
-              >
-                All ({CATALOG.length})
-              </button>
-              {activeCats.map((cat, idx) => {
-                const Icon = CATEGORY_ICONS[cat] ?? Layers;
-                // Strip trailing comma/punctuation for short label (e.g. "Network," → "Network")
-                const label = CATEGORY_LABELS[cat].split(" ")[0].replace(/[,.;:]$/, "");
-                return (
-                  <button
-                    key={cat}
-                    style={{ animationDelay: `${Math.min(160 + idx * 30, 480)}ms` }}
-                    onClick={() => setActiveView(cat)}
-                    className={`unq-animate-fade-in-up px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 touch-target ${
-                      activeView === cat
-                        ? "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground shadow-md shadow-primary/25"
-                        : "bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground"
-                    }`}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    {label} ({counts[cat] ?? 0})
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ===== CATALOG GRID ===== */}
-        <section className="section-padding pb-24">
-          <div className="container mx-auto px-4 md:px-6">
-            {(activeView === "favorites" || activeView === "recent") && (
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-                <p className="text-sm text-muted-foreground">
-                  {activeView === "favorites"
-                    ? `${filteredTools.length} favorited tool${filteredTools.length === 1 ? "" : "s"} — saved only in your browser`
-                    : `${filteredTools.length} recently viewed tool${filteredTools.length === 1 ? "" : "s"} — most recent first`}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer"
-                  onClick={() => (activeView === "favorites" ? clearFavorites() : clearRecent())}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Clear {activeView}
-                </Button>
-              </div>
             )}
+          </label>
+        </div>
+      </section>
 
-            {filteredTools.length === 0 ? (
-              <div className="text-center py-24 unq-animate-fade-in">
-                {activeView === "favorites" ? (
-                  <>
-                    <Star className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-                    <p className="text-lg font-medium text-foreground mb-1">No favorites yet</p>
-                    <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
-                      Tap the ★ on any tool card or tool page to save it here for one-tap access.
-                      Favorites never leave your browser.
-                    </p>
-                    <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => setActiveView("all")}>
-                      Browse all tools <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : activeView === "recent" ? (
-                  <>
-                    <Clock className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-                    <p className="text-lg font-medium text-foreground mb-1">Nothing viewed yet</p>
-                    <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
-                      Tools you open will appear here, most recent first — all stored locally.
-                    </p>
-                    <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => setActiveView("all")}>
-                      Browse all tools <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Search className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-                    <p className="text-lg font-medium text-foreground mb-1">No tools found</p>
-                    <p className="text-sm text-muted-foreground">
-                      Try a different search or category.
-                    </p>
-                  </>
+      {/* Category strip — secondary, mobile-friendly */}
+      <section className="mb-8">
+        <div className="no-scrollbar -mx-2 flex gap-1.5 overflow-x-auto px-2 pb-1">
+          <button
+            onClick={() => setActiveView("favorites")}
+            className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-all",
+              activeView === "favorites"
+                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md"
+                : "border border-white/[0.07] bg-white/[0.04] text-white/60 hover:bg-white/[0.07]"
+            )}
+          >
+            <Star className={cn("size-3.5", activeView === "favorites" && "fill-current")} />
+            Favorites ({favorites.length})
+          </button>
+          <button
+            onClick={() => setActiveView("recent")}
+            className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-all",
+              activeView === "recent"
+                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md"
+                : "border border-white/[0.07] bg-white/[0.04] text-white/60 hover:bg-white/[0.07]"
+            )}
+          >
+            <Clock className="size-3.5" />
+            Recent ({recent.length})
+          </button>
+          <button
+            onClick={() => setActiveView("ready")}
+            className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-all",
+              activeView === "ready"
+                ? "bg-gradient-to-r from-cyan-400 to-blue-600 text-white shadow-md"
+                : "border border-white/[0.07] bg-white/[0.04] text-white/60 hover:bg-white/[0.07]"
+            )}
+          >
+            Ready now ({readyCount.toLocaleString()})
+          </button>
+          <button
+            onClick={() => setActiveView("all")}
+            className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-all",
+              activeView === "all"
+                ? "bg-gradient-to-r from-cyan-400 to-blue-600 text-white shadow-md"
+                : "border border-white/[0.07] bg-white/[0.04] text-white/60 hover:bg-white/[0.07]"
+            )}
+          >
+            All ({CATALOG.length.toLocaleString()})
+          </button>
+          {activeCats.map((cat) => {
+            const Icon = CATEGORY_ICONS[cat] ?? Layers;
+            const label = CATEGORY_LABELS[cat].split(" ")[0].replace(/[,.;:]$/, "");
+            const tc = TEMPLATE_CATEGORIES.find((c) => c.id === cat);
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveView(cat)}
+                className={cn(
+                  "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-all",
+                  activeView === cat
+                    ? `bg-gradient-to-r ${tc?.iconTile ?? "from-slate-400 to-slate-600"} text-white shadow-md`
+                    : "border border-white/[0.07] bg-white/[0.04] text-white/60 hover:bg-white/[0.07]"
                 )}
-              </div>
-            ) : (
-              // CSS-based animation — bulletproof, no JS dependency, no hydration
-              // issues. Each card gets a staggered animation-delay via inline style.
-              // This replaces the old framer-motion whileInView pattern which
-              // failed when switching category tabs (new cards stayed invisible).
-              <div
-                key={`${activeView}-${query}`}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               >
-                {visibleTools.map((tool, index) => {
-                  const Icon = CATEGORY_ICONS[tool.category] ?? Wand2;
-                  const fav = isFavorite(tool.id);
-                  return (
-                    <div
-                      key={tool.id}
-                      className="unq-animate-fade-in-up relative [content-visibility:auto] [contain-intrinsic-size:auto_210px]"
-                      style={{ animationDelay: `${Math.min(index * 30, 320)}ms` }}
-                    >
-                      <Link href={`/tools/${tool.id}`} className="block group h-full">
-                        <div
-                          className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30"
-                        >
-                          <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
-                            <Icon className="h-5 w-5 text-primary" />
-                          </div>
-                          <h3 className="font-semibold mb-1 leading-tight">{tool.name}</h3>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                            {tool.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
-                              <Badge className="bg-muted text-foreground/80 border-border text-[10px] px-1.5 py-0">
-                                {CATEGORY_LABELS[tool.category].split(" ")[0].replace(/[,.;:]$/, "")}
-                              </Badge>
-                              {tool.status === "planned" && (
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
-                                  Coming Soon
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
-                              <span>Open</span>
-                              <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => toggle(tool.id)}
-                        aria-pressed={fav}
-                        aria-label={
-                          fav
-                            ? `Remove ${tool.name} from favorites`
-                            : `Add ${tool.name} to favorites`
-                        }
-                        title={fav ? "Remove from favorites" : "Add to favorites"}
-                        className={`absolute top-4 right-4 z-10 rounded-lg p-1.5 transition-all cursor-pointer touch-target ${
-                          fav
-                            ? "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20"
-                            : "text-muted-foreground/50 hover:text-amber-500 hover:bg-amber-500/10"
-                        }`}
-                      >
-                        <Star className={`h-4 w-4 ${fav ? "fill-current" : ""}`} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                <Icon className="size-3.5" />
+                {label} ({counts[cat] ?? 0})
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
-            {/* Load-more: grow the render window instead of painting 1,679
-                cards upfront. Keeps main-thread work small on first paint. */}
-            {remainingCount > 0 && filteredTools.length > 0 && (
-              <div className="flex justify-center mt-8">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="gap-2 cursor-pointer touch-target"
-                  onClick={() => setVisibleCount((c) => c + 192)}
-                >
-                  Show more tools ({remainingCount.toLocaleString()} remaining)
-                </Button>
-              </div>
-            )}
+      {/* Catalog grid */}
+      <section className="rounded-3xl border border-white/[0.06] bg-[#0c1018]/55 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-6">
+        {(activeView === "favorites" || activeView === "recent") && (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[12.5px] text-white/55">
+              {activeView === "favorites"
+                ? `${filteredTools.length} favorited — saved only in your browser`
+                : `${filteredTools.length} recently viewed — most recent first`}
+            </p>
+            <button
+              type="button"
+              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-[11.5px] text-white/65 hover:bg-white/[0.1]"
+              onClick={() => (activeView === "favorites" ? clearFavorites() : clearRecent())}
+            >
+              <Trash2 className="size-3.5" />
+              Clear {activeView}
+            </button>
           </div>
-        </section>
-      </main>
+        )}
+
+        {filteredTools.length === 0 ? (
+          <div className="py-16 text-center">
+            <Search className="mx-auto mb-4 size-12 text-white/30" />
+            <p className="text-[16px] font-medium">No tools found</p>
+            <p className="mt-1 text-[13px] text-white/45">
+              {activeView === "favorites"
+                ? "Tap the ★ on any tool card or tool page to save it here for one-tap access."
+                : activeView === "recent"
+                ? "Tools you open will appear here, most recent first — all stored locally."
+                : "Try a different search or category."}
+            </p>
+          </div>
+        ) : (
+          <ul
+            key={`${activeView}-${query}`}
+            className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
+            {visibleTools.map((tool) => {
+              const Icon = CATEGORY_ICONS[tool.category] ?? Layers;
+              const fav = isFavorite(tool.id);
+              const tc = TEMPLATE_CATEGORIES.find((c) => c.id === tool.category);
+              const tileClass = tc?.iconTile ?? "from-slate-400 to-slate-600";
+              return (
+                <li key={tool.id} className="relative">
+                  <Link
+                    href={`/tools/${tool.id}`}
+                    className="group relative flex h-full w-full items-center gap-3 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] px-3 py-2.5 text-left transition-all hover:-translate-y-0.5 hover:border-white/[0.15] hover:bg-white/[0.06]"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none absolute -right-10 -top-12 size-24 rounded-full opacity-50 blur-3xl transition-opacity group-hover:opacity-100",
+                        tc?.blob ?? "bg-slate-500/20"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "relative flex size-8 shrink-0 items-center justify-center rounded-lg text-white shadow ring-1 ring-white/15 bg-gradient-to-br",
+                        tileClass
+                      )}
+                    >
+                      <Icon className="size-4" />
+                    </span>
+                    <span className="relative min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="truncate text-[12.5px] font-semibold tracking-tight">
+                          {tool.name}
+                        </span>
+                        {tool.status === "planned" && (
+                          <span className="hidden shrink-0 rounded-full border border-amber-400/20 bg-amber-400/[0.08] px-1.5 py-0.5 text-[9px] font-medium text-amber-300 sm:inline">
+                            Soon
+                          </span>
+                        )}
+                      </span>
+                      <span className="line-clamp-1 text-[10.5px] text-white/45">
+                        {tool.description}
+                      </span>
+                    </span>
+                    <ChevronRight className="size-3.5 shrink-0 text-white/25 transition-all group-hover:translate-x-0.5 group-hover:text-white/65" aria-hidden="true" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggle(tool.id);
+                    }}
+                    aria-pressed={fav}
+                    aria-label={fav ? `Remove ${tool.name} from favorites` : `Add ${tool.name} to favorites`}
+                    title={fav ? "Remove from favorites" : "Add to favorites"}
+                    className={cn(
+                      "absolute right-2 top-2 z-10 rounded-md p-1 transition-all cursor-pointer",
+                      fav
+                        ? "text-amber-300"
+                        : "text-white/40 hover:text-amber-300"
+                    )}
+                  >
+                    <Star className={cn("size-3.5", fav && "fill-current")} />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {remainingCount > 0 && filteredTools.length > 0 && (
+          <div className="mt-6 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((c) => c + 192)}
+              className="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.05] px-5 py-2.5 text-[12px] font-semibold text-white/75 transition-colors hover:bg-white/[0.1]"
+            >
+              Show more tools ({remainingCount.toLocaleString()} remaining)
+              <ArrowRight className="size-3.5" />
+            </button>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

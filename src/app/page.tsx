@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import HomePageClient from "./home-page-client";
+import Dashboard from "@/components/template/Dashboard";
 
 const SITE_URL = "https://unqtools.pages.dev";
 
@@ -29,5 +29,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomePageClient />;
+  return <Dashboard />;
 }

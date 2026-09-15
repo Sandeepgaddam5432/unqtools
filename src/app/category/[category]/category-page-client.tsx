@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { SidebarNav } from "@/components/navigation/sidebar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
   ArrowLeft,
@@ -16,11 +13,16 @@ import {
   Image as ImageIcon,
   Layers,
   Sparkles,
+  ChevronRight,
 } from "lucide-react";
 import { type ToolCategory, type ToolManifest } from "@/lib/tool";
 import { groupTools } from "@/lib/tool-groups";
+import TemplateShell, { TemplateFooter } from "@/components/template/TemplateShell";
+import {
+  CATEGORIES as TEMPLATE_CATEGORIES,
+} from "@/lib/template-data";
+import { cn } from "@/lib/template-utils";
 
-// ===== CATEGORY ICONS =====
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
   text: Type,
@@ -47,176 +49,221 @@ export function CategoryPageClient({ category, label, tools }: CategoryPageClien
   const Icon = CATEGORY_ICONS[category] ?? Layers;
   const grouped = groupTools(category, tools);
 
+  // Pull style from template-data for consistency.
+  const tc = TEMPLATE_CATEGORIES.find((c) => c.id === category);
+  const tileClass = tc?.iconTile ?? "from-slate-400 to-slate-600";
+  const tcShort = tc?.short ?? label.split(" ")[0];
+
   return (
-    <div className="flex min-h-dvh bg-background">
-      <SidebarNav />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
-        {/* ===== HERO ===== */}
-        <section className="relative section-padding pt-2 pb-16 md:py-24">
-          <div className="container mx-auto px-4 md:px-6">
-            <div
-              className="unq-glass inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 mb-6 unq-animate-fade-in-up"
-            >
-              <Icon className="h-3.5 w-3.5 text-primary" />
-              <span className="text-sm text-foreground font-medium">
-                {tools.length > 0 ? `${tools.length} tools` : "Coming soon"}
-              </span>
-            </div>
-            <h1
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4 tracking-tight text-balance unq-animate-fade-in-up"
-              style={{ animationDelay: "60ms" }}
-            >
-              {label}
-            </h1>
-            <p
-              className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8 text-pretty unq-animate-fade-in-up"
-              style={{ animationDelay: "200ms" }}
-            >
-              {tools.length > 0
-                ? `${tools.length} tool${tools.length === 1 ? "" : "s"} in this category — all running 100% in your browser. No uploads, no tracking, no accounts.`
-                : `${label} tools are coming soon — and like every UnQTools tool, they will run 100% in your browser. No uploads, no tracking, no accounts.`}
-            </p>
+    <TemplateShell footer={<TemplateFooter />}>
+      <div className="mx-auto max-w-7xl px-3 pb-32 pt-4 sm:px-6 sm:pt-6 md:pb-12">
+        {/* Hero card */}
+        <header className="relative mb-8 overflow-hidden rounded-3xl border border-white/[0.07] bg-[#0c1018]/85 p-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_18px_44px_-20px_rgba(0,0,0,0.7)] sm:p-8">
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute -right-24 -top-24 size-72 rounded-full opacity-50 blur-3xl",
+              tc?.blob ?? "bg-slate-500/20"
+            )}
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          />
 
-            {/* Trust badges */}
-            <div
-              className="flex flex-wrap items-center gap-3 mb-8 unq-animate-fade-in-up"
-              style={{ animationDelay: "300ms" }}
+          <div className="relative mb-5 flex flex-wrap items-center gap-3">
+            <span
+              className={cn(
+                "flex size-12 items-center justify-center rounded-2xl text-white shadow-[0_12px_28px_-8px_rgba(34,211,238,0.6),inset_0_1px_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20 bg-gradient-to-br",
+                tileClass
+              )}
             >
-              <Badge className="bg-primary/15 text-foreground border-primary/20 gap-1">
-                <Lock className="h-3 w-3" /> 100% Private
-              </Badge>
-              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
-                <WifiOff className="h-3 w-3" /> Works Offline
-              </Badge>
-              <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20 gap-1">
-                <Zap className="h-3 w-3" /> Instant
-              </Badge>
-            </div>
-
-            <Button asChild variant="outline" size="sm" className="gap-2">
-              <Link href="/tools">
-                <ArrowLeft className="h-4 w-4" /> All tools
-              </Link>
-            </Button>
+              <Icon className="size-5" />
+            </span>
+            <span className="rounded-full border border-white/[0.09] bg-white/[0.05] px-2.5 py-1 text-[10.5px] font-semibold text-white/75">
+              {tools.length > 0 ? `${tools.length} tools` : "Coming soon"}
+            </span>
           </div>
-        </section>
 
-        {/* ===== GROUP JUMP LINKS ===== */}
+          <h1 className="relative text-balance text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-[44px]">
+            {label}
+          </h1>
+          <p className="relative mt-3 max-w-2xl text-[14px] text-white/55 sm:text-[15.5px]">
+            {tools.length > 0
+              ? `${tools.length} tool${tools.length === 1 ? "" : "s"} in this category — all running 100% in your browser. No uploads, no tracking, no accounts.`
+              : `${label} tools are coming soon — and like every UnQTools tool, they will run 100% in your browser. No uploads, no tracking, no accounts.`}
+          </p>
+
+          <div className="relative mt-5 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-emerald-300">
+              <Lock className="size-3" /> 100% Private
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/20 bg-cyan-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-cyan-300">
+              <WifiOff className="size-3" /> Works Offline
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-amber-300">
+              <Zap className="size-3" /> Instant
+            </span>
+          </div>
+
+          <Link
+            href="/tools"
+            className="relative mt-6 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.05] px-3.5 py-2 text-[12px] text-white/75 transition-colors hover:bg-white/[0.1]"
+          >
+            <ArrowLeft className="size-3.5" /> All tools
+          </Link>
+        </header>
+
+        {/* Group jump links */}
         {grouped.length > 1 && (
-          <section className="section-padding pb-0 -mt-6">
-            <div className="container mx-auto px-4 md:px-6">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">
-                What do you want to do? Jump to a section
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {grouped.map((g) => {
-                  const gid = g.group ? g.group.id : "other";
-                  const total = g.items.length;
-                  const doneCount = g.items.filter((t) => t.status !== "planned").length;
-                  return (
-                    <a
-                      key={gid}
-                      href={`#group-${gid}`}
-                      className="px-3 py-1.5 rounded-full border bg-card text-xs font-medium text-foreground/80 hover:border-primary/40 hover:text-foreground transition-colors"
-                    >
-                      {g.group?.label ?? "More tools"}{" "}
-                      <span className="text-muted-foreground">
-                        ({doneCount} ready{total > doneCount ? ` +${total - doneCount} soon` : ""})
-                      </span>
-                    </a>
-                  );
-                })}
-              </div>
+          <section className="mb-8">
+            <p className="mb-2.5 text-[10.5px] font-semibold uppercase tracking-wider text-white/45">
+              What do you want to do? Jump to a section
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {grouped.map((g) => {
+                const gid = g.group ? g.group.id : "other";
+                const total = g.items.length;
+                const doneCount = g.items.filter((t) => t.status !== "planned").length;
+                return (
+                  <a
+                    key={gid}
+                    href={`#group-${gid}`}
+                    className="rounded-full border border-white/[0.07] bg-white/[0.04] px-3 py-1.5 text-[11.5px] font-medium text-white/75 transition-colors hover:border-white/[0.18] hover:text-white"
+                  >
+                    {g.group?.label ?? "More tools"}{" "}
+                    <span className="text-white/45">
+                      ({doneCount} ready{total > doneCount ? ` +${total - doneCount} soon` : ""})
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </section>
         )}
 
-        {/* ===== GROUPED TOOLS ===== */}
-        <section className="section-padding pb-24">
-          <div className="container mx-auto px-4 md:px-6 space-y-14">
-            {tools.length === 0 ? (
-              <div className="text-center py-24 unq-animate-fade-in">
-                <div className="unq-icon-tile h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Icon className="h-8 w-8 text-primary" />
-                </div>
-                <p className="text-2xl font-bold text-foreground mb-2">Coming soon</p>
-                <p className="text-sm text-muted-foreground max-w-md mx-auto mb-8">
-                  We&apos;re building {label} tools right now — private, offline-capable,
-                  and free, like everything else on UnQTools.
-                </p>
-                <Button asChild size="sm" className="gap-2">
-                  <Link href="/tools">
-                    Browse available tools <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            ) : (
-              grouped.map((g, gi) => {
-                const gid = g.group ? g.group.id : "other";
-                const doneCount = g.items.filter((t) => t.status !== "planned").length;
-                const soonCount = g.items.length - doneCount;
-                return (
-                  <div key={gid} id={`group-${gid}`} className="scroll-mt-24">
-                    <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
-                      <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                        {g.group?.label ?? "More tools"}
-                      </h2>
-                      <p className="text-xs text-muted-foreground">
-                        {doneCount} ready{soonCount > 0 ? ` · ${soonCount} coming soon` : ""}
-                      </p>
-                    </div>
-                    {g.group && (
-                      <p className="text-sm text-muted-foreground mb-5">{g.group.blurb}</p>
-                    )}
-                    {!g.group && (
-                      <p className="text-sm text-muted-foreground mb-5">
-                        Everything else in this category.
-                      </p>
-                    )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                      {g.items.map((tool, index) => {
-                        const ToolIcon = CATEGORY_ICONS[tool.category] ?? Layers;
-                        return (
-                          <div
-                            key={tool.id}
-                            className="unq-animate-fade-in-up [content-visibility:auto] [contain-intrinsic-size:auto_210px]"
-                            style={{ animationDelay: `${Math.min((gi * 7 + index) * 25, 320)}ms` }}
-                          >
-                            <Link href={`/tools/${tool.id}`} className="block group h-full">
-                              <div className="card-hover rounded-2xl border bg-card p-6 h-full transition-all duration-200 hover:border-primary/30">
-                                <div className="unq-icon-tile h-10 w-10 rounded-xl flex items-center justify-center mb-3">
-                                  <ToolIcon className="h-5 w-5 text-primary" />
-                                </div>
-                                <h3 className="font-semibold mb-1 leading-tight">{tool.name}</h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                                  {tool.description}
-                                </p>
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-1.5">
-                                    {tool.status === "planned" && (
-                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
-                                        Coming Soon
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
-                                    <span>Open</span>
-                                    <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                                  </div>
-                                </div>
-                              </div>
-                            </Link>
-                          </div>
-                        );
-                      })}
-                    </div>
+        {/* Grouped tools */}
+        <section className="space-y-10">
+          {tools.length === 0 ? (
+            <div className="rounded-3xl border border-white/[0.07] bg-[#0c1018]/55 py-16 text-center">
+              <span className="mx-auto mb-5 inline-flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 text-white shadow-md">
+                <Layers className="size-6" />
+              </span>
+              <p className="text-[18px] font-bold">Coming soon</p>
+              <p className="mx-auto mt-2 max-w-md text-[13px] text-white/45">
+                We&apos;re building {label} tools right now — private, offline-capable,
+                and free, like everything else on UnQTools.
+              </p>
+              <Link
+                href="/tools"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 px-4 py-2 text-[12px] font-semibold text-white shadow-md"
+              >
+                Browse available tools <ArrowRight className="size-3.5" />
+              </Link>
+            </div>
+          ) : (
+            grouped.map((g, gi) => {
+              const gid = g.group ? g.group.id : "other";
+              const doneCount = g.items.filter((t) => t.status !== "planned").length;
+              const soonCount = g.items.length - doneCount;
+              return (
+                <div key={gid} id={`group-${gid}`} className="scroll-mt-24">
+                  <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 className="text-xl font-bold tracking-tight md:text-2xl">
+                      {g.group?.label ?? "More tools"}
+                    </h2>
+                    <p className="text-[11px] text-white/45">
+                      {doneCount} ready{soonCount > 0 ? ` · ${soonCount} coming soon` : ""}
+                    </p>
                   </div>
-                );
-              })
-            )}
-          </div>
+                  {g.group && (
+                    <p className="mb-5 text-[13px] text-white/55">{g.group.blurb}</p>
+                  )}
+                  {!g.group && (
+                    <p className="mb-5 text-[13px] text-white/55">
+                      Everything else in this category.
+                    </p>
+                  )}
+                  <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {g.items.map((tool) => {
+                      const ToolIcon = CATEGORY_ICONS[tool.category] ?? Layers;
+                      return (
+                        <li key={tool.id}>
+                          <Link
+                            href={`/tools/${tool.id}`}
+                            className="group relative flex h-full w-full items-center gap-3 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] px-3 py-2.5 text-left transition-all hover:-translate-y-0.5 hover:border-white/[0.15] hover:bg-white/[0.06]"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={cn(
+                                "pointer-events-none absolute -right-10 -top-12 size-24 rounded-full opacity-50 blur-3xl transition-opacity group-hover:opacity-100",
+                                tc?.blob ?? "bg-slate-500/20"
+                              )}
+                            />
+                            <span
+                              className={cn(
+                                "relative flex size-8 shrink-0 items-center justify-center rounded-lg text-white shadow ring-1 ring-white/15 bg-gradient-to-br",
+                                tileClass
+                              )}
+                            >
+                              <ToolIcon className="size-4" />
+                            </span>
+                            <span className="relative min-w-0 flex-1">
+                              <span className="flex items-center gap-1.5">
+                                <span className="truncate text-[12.5px] font-semibold tracking-tight">
+                                  {tool.name}
+                                </span>
+                                {tool.status === "planned" && (
+                                  <span className="hidden shrink-0 rounded-full border border-amber-400/20 bg-amber-400/[0.08] px-1.5 py-0.5 text-[9px] font-medium text-amber-300 sm:inline">
+                                    Soon
+                                  </span>
+                                )}
+                              </span>
+                              <span className="line-clamp-1 text-[10.5px] text-white/45">
+                                {tool.description}
+                              </span>
+                            </span>
+                            <ChevronRight
+                              className="size-3.5 shrink-0 text-white/25 transition-all group-hover:translate-x-0.5 group-hover:text-white/65"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })
+          )}
         </section>
-      </main>
-    </div>
+
+        {/* Helpful cross-category */}
+        {tools.length > 0 && (
+          <section className="mt-12 rounded-3xl border border-white/[0.06] bg-[#0c1018]/55 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            <h3 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-white/45">
+              Explore other categories
+            </h3>
+            <ul className="flex flex-wrap gap-1.5">
+              {TEMPLATE_CATEGORIES.filter((c) => c.id !== category).map((c) => {
+                const CIcon = c.icon;
+                return (
+                  <li key={c.id}>
+                    <Link
+                      href={`/category/${c.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.04] px-3 py-1.5 text-[11.5px] font-semibold text-white/75 transition-colors hover:bg-white/[0.08]"
+                    >
+                      <CIcon className="size-3.5" />
+                      {c.short}
+                      <span className="tabular text-white/45">{c.count}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </div>
+    </TemplateShell>
   );
 }

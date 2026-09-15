@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/pwa-install";
-import { CommandPaletteLazy } from "@/components/command-palette-lazy";
+import { CommandPaletteMount } from "@/components/command-palette";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,12 +18,19 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
-  preload: false, // Don't preload mono — it's only used for code blocks
+  preload: false,
 });
 
 const SITE_URL = "https://unqtools.pages.dev";
 const SITE_NAME = "UnQTools";
-const SITE_DESCRIPTION = "UnQTools is a 100% static, privacy-first, offline-capable PWA of 1700+ fast browser-based tools — converters, calculators, generators, formatters, PDF utilities, SEO tools, developer tools, image tools. No uploads, no tracking, no accounts.";
+const SITE_DESCRIPTION =
+  "UnQTools is a 100% static, privacy-first, offline-capable PWA of 1700+ fast browser-based tools — converters, calculators, generators, formatters, PDF utilities, SEO tools, developer tools, image tools. No uploads, no tracking, no accounts.";
+
+export const viewport: Viewport = {
+  themeColor: "#090D16",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -103,7 +110,6 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD structured data for the website
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -150,7 +156,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#090D16] text-white`}
       >
         <ThemeProvider
           attribute="class"
@@ -161,7 +167,11 @@ export default function RootLayout({
           {children}
           <Toaster />
           <PWAInstallPrompt />
-          <CommandPaletteLazy />
+          {/* Global ⌘K listener. The TemplateShell + Dashboard have their
+              own palette listeners, but this guarantees ⌘K works everywhere
+              (and provides the original cmdk-style palette for pages that
+              don't mount TemplateShell). */}
+          <CommandPaletteMount />
         </ThemeProvider>
       </body>
     </html>

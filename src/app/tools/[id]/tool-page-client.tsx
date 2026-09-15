@@ -1,17 +1,8 @@
 "use client";
 
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { SidebarNav } from "@/components/navigation/sidebar";
-import { ToolSkeleton } from "@/components/tool-skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useFavorites, useRecentTools } from "@/hooks/use-tool-history";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
@@ -27,10 +18,16 @@ import {
   ChevronRight,
   Clock,
   Star,
+  Sparkles,
 } from "lucide-react";
 import type { ToolManifest, ToolCategory } from "@/lib/tool";
+import { useFavorites, useRecentTools } from "@/hooks/use-tool-history";
+import TemplateShell, { TemplateFooter } from "@/components/template/TemplateShell";
+import {
+  CATEGORIES as TEMPLATE_CATEGORIES,
+} from "@/lib/template-data";
+import { cn } from "@/lib/template-utils";
 
-// ---- Named motion constants (avoids double-brace push hazard) ----
 const MO_HIDDEN = { opacity: 0, y: 10 };
 const MO_HERO = { opacity: 0, y: 20 };
 const MO_VISIBLE = { opacity: 1, y: 0 };
@@ -39,9 +36,7 @@ const MO_HERO_TRANS = { duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as number[] };
 const MO_H1_TRANS = { duration: 0.6, delay: 0.1 };
 const MO_P_TRANS = { duration: 0.6, delay: 0.2 };
 const MO_BADGES_TRANS = { duration: 0.6, delay: 0.3 };
-const MO_SCROLL_TRANS = { duration: 0.6 };
 const MO_VIEWPORT = { once: true, margin: "-50px" };
-const MO_HOVER = { y: -4, transition: { duration: 0.2 } };
 
 const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   developer: Code2,
@@ -59,7 +54,6 @@ const CATEGORY_ICONS: Record<ToolCategory, typeof Code2> = {
   ai: ShieldCheck,
 };
 
-// Lazy-loaded tool UI registry — only the active tool's JS ships to the client.
 const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentType }>> = {
   "json-formatter": () => import("@/tools/developer/json-formatter/ui"),
   base64: () => import("@/tools/developer/base64/ui"),
@@ -112,144 +106,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "base64-to-image": () => import("@/tools/image/base64-to-image/ui"),
   "image-watermark-adder": () => import("@/tools/image/image-watermark-adder/ui"),
   "image-color-inverter": () => import("@/tools/image/image-color-inverter/ui"),
-  "image-grayscale-converter": () => import("@/tools/image/image-grayscale-converter/ui"),
-  "image-sepia-filter": () => import("@/tools/image/image-sepia-filter/ui"),
-  "image-blur-tool": () => import("@/tools/image/image-blur-tool/ui"),
-  "image-sharpener": () => import("@/tools/image/image-sharpener/ui"),
-  "image-brightness-adjuster": () => import("@/tools/image/image-brightness-adjuster/ui"),
-  "image-contrast-adjuster": () => import("@/tools/image/image-contrast-adjuster/ui"),
-  "image-saturation-adjuster": () => import("@/tools/image/image-saturation-adjuster/ui"),
-  "image-hue-rotator": () => import("@/tools/image/image-hue-rotator/ui"),
-  "image-thumbnail-maker": () => import("@/tools/image/image-thumbnail-maker/ui"),
-  "image-bg-remover-simple": () => import("@/tools/image/image-bg-remover-simple/ui"),
-  "image-collage-maker": () => import("@/tools/image/image-collage-maker/ui"),
-  "image-color-extractor": () => import("@/tools/image/image-color-extractor/ui"),
-  "image-edge-detector": () => import("@/tools/image/image-edge-detector/ui"),
-  "image-noise-reducer": () => import("@/tools/image/image-noise-reducer/ui"),
-  "image-vignette-tool": () => import("@/tools/image/image-vignette-tool/ui"),
-  "image-gradient-maker": () => import("@/tools/image/image-gradient-maker/ui"),
-  "image-border-adder": () => import("@/tools/image/image-border-adder/ui"),
-  "image-round-corners": () => import("@/tools/image/image-round-corners/ui"),
-  "image-pixelate-tool": () => import("@/tools/image/image-pixelate-tool/ui"),
-  "image-posterize-tool": () => import("@/tools/image/image-posterize-tool/ui"),
-  "image-threshold-tool": () => import("@/tools/image/image-threshold-tool/ui"),
-  "image-channel-mixer": () => import("@/tools/image/image-channel-mixer/ui"),
-  "image-fisheye-tool": () => import("@/tools/image/image-fisheye-tool/ui"),
-  "image-droste-effect": () => import("@/tools/image/image-droste-effect/ui"),
-  "image-glitch-art": () => import("@/tools/image/image-glitch-art/ui"),
-  "image-pixel-sorter": () => import("@/tools/image/image-pixel-sorter/ui"),
-  "image-color-picker-tool": () => import("@/tools/image/image-color-picker-tool/ui"),
-  "image-exposure-adjuster": () => import("@/tools/image/image-exposure-adjuster/ui"),
-  "image-gamma-corrector": () => import("@/tools/image/image-gamma-corrector/ui"),
-  "image-dither-tool": () => import("@/tools/image/image-dither-tool/ui"),
-  "image-solarize-tool": () => import("@/tools/image/image-solarize-tool/ui"),
-  "image-emboss-tool": () => import("@/tools/image/image-emboss-tool/ui"),
-  "image-anaglyph-maker": () => import("@/tools/image/image-anaglyph-maker/ui"),
-  "image-kaleidoscope": () => import("@/tools/image/image-kaleidoscope/ui"),
-  "image-tile-maker": () => import("@/tools/image/image-tile-maker/ui"),
-  "image-stitcher": () => import("@/tools/image/image-stitcher/ui"),
-  "image-splitter": () => import("@/tools/image/image-splitter/ui"),
-  "image-gif-frame-extractor": () => import("@/tools/image/image-gif-frame-extractor/ui"),
-  "image-color-overlay": () => import("@/tools/image/image-color-overlay/ui"),
-  "image-mosaic-blend": () => import("@/tools/image/image-mosaic-blend/ui"),
-  "image-dehaze-tool": () => import("@/tools/image/image-dehaze-tool/ui"),
-  "image-shadows-highlights": () => import("@/tools/image/image-shadows-highlights/ui"),
-  // File tools
-  "csv-file-joiner": () => import("@/tools/file/csv-file-joiner/ui"),
-  "csv-file-splitter": () => import("@/tools/file/csv-file-splitter/ui"),
-  "csv-to-tsv-converter": () => import("@/tools/file/csv-to-tsv-converter/ui"),
-  "duplicate-file-finder": () => import("@/tools/file/duplicate-file-finder/ui"),
-  "file-hash-checker": () => import("@/tools/file/file-hash-checker/ui"),
-  "file-metadata-viewer": () => import("@/tools/file/file-metadata-viewer/ui"),
-  "file-rename-utility": () => import("@/tools/file/file-rename-utility/ui"),
-  "json-to-xml-converter": () => import("@/tools/file/json-to-xml-converter/ui"),
-  "text-file-joiner": () => import("@/tools/file/text-file-joiner/ui"),
-  "tsv-to-csv-converter": () => import("@/tools/file/tsv-to-csv-converter/ui"),
-  "xml-to-json-converter": () => import("@/tools/file/xml-to-json-converter/ui"),
-  "base64-file-encoder": () => import("@/tools/file/base64-file-encoder/ui"),
-  "base64-file-decoder": () => import("@/tools/file/base64-file-decoder/ui"),
-  "binary-file-viewer": () => import("@/tools/file/binary-file-viewer/ui"),
-  "file-extension-changer": () => import("@/tools/file/file-extension-changer/ui"),
-  "hex-viewer": () => import("@/tools/file/hex-viewer/ui"),
-  "large-file-generator": () => import("@/tools/file/large-file-generator/ui"),
-  "online-file-merger": () => import("@/tools/file/online-file-merger/ui"),
-  "online-file-splitter": () => import("@/tools/file/online-file-splitter/ui"),
-  "empty-file-creator": () => import("@/tools/file/empty-file-creator/ui"),
-  "cbz-comic-book-reader": () => import("@/tools/file/cbz-comic-book-reader/ui"),
-  "csv-to-excel-converter": () => import("@/tools/file/csv-to-excel-converter/ui"),
-  "epub-reader": () => import("@/tools/file/epub-reader/ui"),
-  "excel-to-csv-converter": () => import("@/tools/file/excel-to-csv-converter/ui"),
-  "file-metadata-stripper": () => import("@/tools/file/file-metadata-stripper/ui"),
-  "gzip-compressor": () => import("@/tools/file/gzip-compressor/ui"),
-  "gzip-decompressor": () => import("@/tools/file/gzip-decompressor/ui"),
-  "json-to-excel-converter": () => import("@/tools/file/json-to-excel-converter/ui"),
-  "local-file-integrity-auditor": () => import("@/tools/file/local-file-integrity-auditor/ui"),
-  "tar-extractor": () => import("@/tools/file/tar-extractor/ui"),
-  "apk-extractor": () => import("@/tools/file/apk-extractor/ui"),
-  "chm-extractor": () => import("@/tools/file/chm-extractor/ui"),
-  "excel-to-json-converter": () => import("@/tools/file/excel-to-json-converter/ui"),
-  "fb2-reader": () => import("@/tools/file/fb2-reader/ui"),
-  "iso-extractor": () => import("@/tools/file/iso-extractor/ui"),
-  "jar-extractor": () => import("@/tools/file/jar-extractor/ui"),
-  "lzh-extractor": () => import("@/tools/file/lzh-extractor/ui"),
-  "mobi-reader": () => import("@/tools/file/mobi-reader/ui"),
-  "online-zip-compressor": () => import("@/tools/file/online-zip-compressor/ui"),
-  "online-zip-extractor": () => import("@/tools/file/online-zip-extractor/ui"),
-  "deb-extractor": () => import("@/tools/file/deb-extractor/ui"),
-  "cab-file-extractor": () => import("@/tools/file/cab-file-extractor/ui"),
-  "odt-to-pdf-converter": () => import("@/tools/file/odt-to-pdf-converter/ui"),
-  "ods-to-pdf-converter": () => import("@/tools/file/ods-to-pdf-converter/ui"),
-  "odp-to-pdf-converter": () => import("@/tools/file/odp-to-pdf-converter/ui"),
-  "pdf-to-html-converter": () => import("@/tools/file/pdf-to-html-converter/ui"),
-  "pdf-to-text-converter": () => import("@/tools/file/pdf-to-text-converter/ui"),
-  "pdf-to-word-converter": () => import("@/tools/file/pdf-to-word-converter/ui"),
-  "pdf-to-excel-converter": () => import("@/tools/file/pdf-to-excel-converter/ui"),
-  "pdf-to-rtf-converter": () => import("@/tools/file/pdf-to-rtf-converter/ui"),
-  "pdf-to-image-converter": () => import("@/tools/file/pdf-to-image-converter/ui"),
-  "pdf-to-epub-converter": () => import("@/tools/file/pdf-to-epub-converter/ui"),
-  "pdf-to-powerpoint-converter": () => import("@/tools/file/pdf-to-powerpoint-converter/ui"),
-  "pdf-to-odt-converter": () => import("@/tools/file/pdf-to-odt-converter/ui"),
-  "pdf-to-ods-converter": () => import("@/tools/file/pdf-to-ods-converter/ui"),
-  "pdf-to-odp-converter": () => import("@/tools/file/pdf-to-odp-converter/ui"),
-  "pdf-to-postscript-converter": () => import("@/tools/file/pdf-to-postscript-converter/ui"),
-  "pdf-to-mobi-converter": () => import("@/tools/file/pdf-to-mobi-converter/ui"),
-  "pdf-to-azw3-converter": () => import("@/tools/file/pdf-to-azw3-converter/ui"),
-  "pdf-to-djvu-converter": () => import("@/tools/file/pdf-to-djvu-converter/ui"),
-  "dmg-extractor": () => import("@/tools/file/dmg-extractor/ui"),
-  "keynote-to-pdf-converter": () => import("@/tools/file/keynote-to-pdf-converter/ui"),
-  "numbers-to-pdf-converter": () => import("@/tools/file/numbers-to-pdf-converter/ui"),
-  "pages-to-pdf-converter": () => import("@/tools/file/pages-to-pdf-converter/ui"),
-  "epub-to-mobi-converter": () => import("@/tools/file/epub-to-mobi-converter/ui"),
-  "epub-to-azw3-converter": () => import("@/tools/file/epub-to-azw3-converter/ui"),
-  "mobi-to-epub-converter": () => import("@/tools/file/mobi-to-epub-converter/ui"),
-  "lit-to-pdf-converter": () => import("@/tools/file/lit-to-pdf-converter/ui"),
-  "lrf-to-pdf-converter": () => import("@/tools/file/lrf-to-pdf-converter/ui"),
-  // Network, Security & Privacy tools
-  "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
-  "csp-evaluator": () => import("@/tools/network-security/csp-evaluator/ui"),
-  "data-url-converter": () => import("@/tools/network-security/data-url-converter/ui"),
-  "http-status-code-reference": () => import("@/tools/network-security/http-status-code-reference/ui"),
-  "ip-subnet-calculator": () => import("@/tools/network-security/ip-subnet-calculator/ui"),
-  "jwt-decoder": () => import("@/tools/network-security/jwt-decoder/ui"),
-  "mime-type-lookup": () => import("@/tools/network-security/mime-type-lookup/ui"),
-  "password-generator": () => import("@/tools/network-security/password-generator/ui"),
-  "totp-generator": () => import("@/tools/network-security/totp-generator/ui"),
-  "aes-256-encryptor-decryptor": () => import("@/tools/network-security/aes-256-encryptor-decryptor/ui"),
-  "password-strength-checker": () => import("@/tools/network-security/password-strength-checker/ui"),
-  "htaccess-generator": () => import("@/tools/network-security/htaccess-generator/ui"),
-  "ssh-key-fingerprint-explorer": () => import("@/tools/network-security/ssh-key-fingerprint-explorer/ui"),
-  "hash-verifier": () => import("@/tools/network-security/hash-verifier/ui"),
-  "text-entropy-calculator": () => import("@/tools/network-security/text-entropy-calculator/ui"),
-  "mac-address-generator": () => import("@/tools/network-security/mac-address-generator/ui"),
-  "uuid-version-detector": () => import("@/tools/network-security/uuid-version-detector/ui"),
-  "secure-random-generator": () => import("@/tools/network-security/secure-random-generator/ui"),
-  "certificate-pem-parser": () => import("@/tools/network-security/certificate-pem-parser/ui"),
-  "cron-expression-parser": () => import("@/tools/network-security/cron-expression-parser/ui"),
-  "jwt-claim-extractor": () => import("@/tools/network-security/jwt-claim-extractor/ui"),
-  "dns-record-validator": () => import("@/tools/network-security/dns-record-validator/ui"),
-  "ipv6-subnet-calc": () => import("@/tools/network-security/ipv6-subnet-calc/ui"),
-  "http-header-parser": () => import("@/tools/network-security/http-header-parser/ui"),
-  "url-parser": () => import("@/tools/network-security/url-parser/ui"),
   "add-line-breaks": () => import("@/tools/text/add-line-breaks/ui"),
   "add-prefix-suffix": () => import("@/tools/text/add-prefix-suffix/ui"),
   "big-text-generator": () => import("@/tools/text/big-text-generator/ui"),
@@ -270,30 +126,6 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "lorem-ipsum-generator": () => import("@/tools/text/lorem-ipsum-generator/ui"),
   "text-to-binary": () => import("@/tools/text/text-to-binary/ui"),
   "binary-to-text": () => import("@/tools/text/binary-to-text/ui"),
-  "text-case-advancer": () => import("@/tools/text/text-case-advancer/ui"),
-  "text-stripper": () => import("@/tools/text/text-stripper/ui"),
-  "text-words-extractor": () => import("@/tools/text/text-words-extractor/ui"),
-  "text-accent-remover": () => import("@/tools/text/text-accent-remover/ui"),
-  "text-accent-adder": () => import("@/tools/text/text-accent-adder/ui"),
-  "text-phonetic-generator": () => import("@/tools/text/text-phonetic-generator/ui"),
-  "text-pig-latin": () => import("@/tools/text/text-pig-latin/ui"),
-  "text-leetspeak": () => import("@/tools/text/text-leetspeak/ui"),
-  "text-rot13-cipher": () => import("@/tools/text/text-rot13-cipher/ui"),
-  "text-vigenere-cipher": () => import("@/tools/text/text-vigenere-cipher/ui"),
-  "text-atbash-cipher": () => import("@/tools/text/text-atbash-cipher/ui"),
-  "text-caesar-bruteforce": () => import("@/tools/text/text-caesar-bruteforce/ui"),
-  "text-morse-decoder": () => import("@/tools/text/text-morse-decoder/ui"),
-  "text-finder-replacer": () => import("@/tools/text/text-finder-replacer/ui"),
-  "text-statistics": () => import("@/tools/text/text-statistics/ui"),
-  "text-deduplicator": () => import("@/tools/text/text-deduplicator/ui"),
-  "text-encoder-decoder": () => import("@/tools/text/text-encoder-decoder/ui"),
-  "text-column-formatter": () => import("@/tools/text/text-column-formatter/ui"),
-  "text-indentation-fixer": () => import("@/tools/text/text-indentation-fixer/ui"),
-  "text-aligner": () => import("@/tools/text/text-aligner/ui"),
-  "text-redactor": () => import("@/tools/text/text-redactor/ui"),
-  "unicode-explorer": () => import("@/tools/text/unicode-explorer/ui"),
-  "text-width-measurer": () => import("@/tools/text/text-width-measurer/ui"),
-  // PDF tools
   "compress-pdf": () => import("@/tools/pdf/compress-pdf/ui"),
   "crop-pdf": () => import("@/tools/pdf/crop-pdf/ui"),
   "flatten-pdf": () => import("@/tools/pdf/flatten-pdf/ui"),
@@ -317,1434 +149,17 @@ const TOOL_UI_LOADERS: Record<string, () => Promise<{ default: React.ComponentTy
   "split-pdf": () => import("@/tools/pdf/split-pdf/ui"),
   "svg-to-pdf": () => import("@/tools/pdf/svg-to-pdf/ui"),
   "text-to-pdf": () => import("@/tools/pdf/text-to-pdf/ui"),
-  "base64": () => import("@/tools/developer/base64/ui"),
-  "7z-extractor": () => import("@/tools/file/7z-extractor/ui"),
-  "arj-extractor": () => import("@/tools/file/arj-extractor/ui"),
-  "bzip2-compressor": () => import("@/tools/file/bzip2-compressor/ui"),
-  "bzip2-decompressor": () => import("@/tools/file/bzip2-decompressor/ui"),
-  "cbr-comic-book-reader": () => import("@/tools/file/cbr-comic-book-reader/ui"),
-  "lit-to-epub-converter": () => import("@/tools/file/lit-to-epub-converter/ui"),
-  "lrf-to-epub-converter": () => import("@/tools/file/lrf-to-epub-converter/ui"),
-  "pdf-password-encryptor": () => import("@/tools/file/pdf-password-encryptor/ui"),
-  "pdf-security-remover": () => import("@/tools/file/pdf-security-remover/ui"),
-  "postscript-to-pdf-converter": () => import("@/tools/file/postscript-to-pdf-converter/ui"),
-  "prc-to-epub-converter": () => import("@/tools/file/prc-to-epub-converter/ui"),
-  "rar-extractor": () => import("@/tools/file/rar-extractor/ui"),
-  "rpm-extractor": () => import("@/tools/file/rpm-extractor/ui"),
-  "tcr-to-epub-converter": () => import("@/tools/file/tcr-to-epub-converter/ui"),
-  "wim-extractor": () => import("@/tools/file/wim-extractor/ui"),
-  "xar-extractor": () => import("@/tools/file/xar-extractor/ui"),
-  "z-compressor": () => import("@/tools/file/z-compressor/ui"),
-  "azw3-to-pdf-converter": () => import("@/tools/file/azw3-to-pdf-converter/ui"),
-  "bulk-file-timestamp-changer": () => import("@/tools/file/bulk-file-timestamp-changer/ui"),
-  "djvu-to-pdf-converter": () => import("@/tools/file/djvu-to-pdf-converter/ui"),
-  "encoding-detector": () => import("@/tools/file/encoding-detector/ui"),
-  "epub-to-pdf-converter": () => import("@/tools/file/epub-to-pdf-converter/ui"),
-  "file-tree-printer": () => import("@/tools/file/file-tree-printer/ui"),
-  "file-type-detector": () => import("@/tools/file/file-type-detector/ui"),
-  "line-ending-converter": () => import("@/tools/file/line-ending-converter/ui"),
-  "mobi-to-pdf-converter": () => import("@/tools/file/mobi-to-pdf-converter/ui"),
-  "pdf-form-flattener": () => import("@/tools/file/pdf-form-flattener/ui"),
-  "pdf-page-organizer": () => import("@/tools/file/pdf-page-organizer/ui"),
-  "pdf-to-xps-converter": () => import("@/tools/file/pdf-to-xps-converter/ui"),
-  "text-encoding-converter": () => import("@/tools/file/text-encoding-converter/ui"),
-  "xps-to-pdf-converter": () => import("@/tools/file/xps-to-pdf-converter/ui"),
-  "canonical-tag-generator": () => import("@/tools/seo/canonical-tag-generator/ui"),
-  "faq-schema-generator": () => import("@/tools/seo/faq-schema-generator/ui"),
-  "hreflang-tag-generator": () => import("@/tools/seo/hreflang-tag-generator/ui"),
-  "meta-tag-generator": () => import("@/tools/seo/meta-tag-generator/ui"),
-  "open-graph-generator": () => import("@/tools/seo/open-graph-generator/ui"),
-  "robots-txt-generator": () => import("@/tools/seo/robots-txt-generator/ui"),
-  "schema-jsonld-generator": () => import("@/tools/seo/schema-jsonld-generator/ui"),
-  "serp-snippet-preview": () => import("@/tools/seo/serp-snippet-preview/ui"),
-  "utm-url-builder": () => import("@/tools/seo/utm-url-builder/ui"),
-  "xml-sitemap-generator": () => import("@/tools/seo/xml-sitemap-generator/ui"),
-  "breadcrumb-schema-generator": () => import("@/tools/seo/breadcrumb-schema-generator/ui"),
-  "how-to-schema-generator": () => import("@/tools/seo/how-to-schema-generator/ui"),
-  "content-readability-analyzer": () => import("@/tools/seo/content-readability-analyzer/ui"),
-  "content-word-count": () => import("@/tools/seo/content-word-count/ui"),
-  "heading-structure-analyzer": () => import("@/tools/seo/heading-structure-analyzer/ui"),
-  "content-outline-generator": () => import("@/tools/seo/content-outline-generator/ui"),
-  "content-brief-generator": () => import("@/tools/seo/content-brief-generator/ui"),
-  "keyword-density-analyzer": () => import("@/tools/seo/keyword-density-analyzer/ui"),
-  "content-gap-analyzer": () => import("@/tools/seo/content-gap-analyzer/ui"),
-  "redirect-chain-checker": () => import("@/tools/seo/redirect-chain-checker/ui"),
-  "disavow-file-generator": () => import("@/tools/seo/disavow-file-generator/ui"),
-  "keyword-match-type-builder": () => import("@/tools/seo/keyword-match-type-builder/ui"),
-  "outreach-email-template": () => import("@/tools/seo/outreach-email-template/ui"),
-  "html-to-text-ratio-checker": () => import("@/tools/seo/html-to-text-ratio-checker/ui"),
-  "image-seo-alt-text-auditor": () => import("@/tools/seo/image-seo-alt-text-auditor/ui"),
-  "anchor-text-distribution-analyzer": () => import("@/tools/seo/anchor-text-distribution-analyzer/ui"),
-  "nap-citation-consistency-checker": () => import("@/tools/seo/nap-citation-consistency-checker/ui"),
-  "google-analytics-4-event-builder": () => import("@/tools/seo/google-analytics-4-event-builder/ui"),
-  "conversion-tracking-tag-generator": () => import("@/tools/seo/conversion-tracking-tag-generator/ui"),
-  "responsive-search-ad-builder": () => import("@/tools/seo/responsive-search-ad-builder/ui"),
-  "seo-slug-generator": () => import("@/tools/seo/seo-slug-generator/ui"),
-  "meta-description-generator": () => import("@/tools/seo/meta-description-generator/ui"),
-  "title-tag-optimizer": () => import("@/tools/seo/title-tag-optimizer/ui"),
-  "internal-linking-suggester": () => import("@/tools/seo/internal-linking-suggester/ui"),
-  "keyword-cannibalization-detector": () => import("@/tools/seo/keyword-cannibalization-detector/ui"),
-  "long-tail-keyword-generator": () => import("@/tools/seo/long-tail-keyword-generator/ui"),
-  "keyword-grouping-tool": () => import("@/tools/seo/keyword-grouping-tool/ui"),
-  "people-also-ask-extractor": () => import("@/tools/seo/people-also-ask-extractor/ui"),
-  "redirect-htaccess-generator": () => import("@/tools/seo/redirect-htaccess-generator/ui"),
-  "seo-content-scorecard": () => import("@/tools/seo/seo-content-scorecard/ui"),
-  "keyword-research-explorer": () => import("@/tools/seo/keyword-research-explorer/ui"),
-  "keyword-difficulty-estimator": () => import("@/tools/seo/keyword-difficulty-estimator/ui"),
-  "search-intent-classifier": () => import("@/tools/seo/search-intent-classifier/ui"),
-  "tf-idf-content-optimizer": () => import("@/tools/seo/tf-idf-content-optimizer/ui"),
-  "serp-competitor-analysis": () => import("@/tools/seo/serp-competitor-analysis/ui"),
-  "local-business-schema-generator": () => import("@/tools/seo/local-business-schema-generator/ui"),
-  "open-graph-image-generator": () => import("@/tools/seo/open-graph-image-generator/ui"),
-  "title-meta-pixel-checker": () => import("@/tools/seo/title-meta-pixel-checker/ui"),
-  "structured-data-validator": () => import("@/tools/seo/structured-data-validator/ui"),
-  "backlink-profile-analyzer": () => import("@/tools/seo/backlink-profile-analyzer/ui"),
-  "keyword-rank-tracker": () => import("@/tools/seo/keyword-rank-tracker/ui"),
-  "serp-position-checker": () => import("@/tools/seo/serp-position-checker/ui"),
-  "rank-change-visualizer": () => import("@/tools/seo/rank-change-visualizer/ui"),
-  "share-of-voice-calculator": () => import("@/tools/seo/share-of-voice-calculator/ui"),
-  "competitor-rank-comparison": () => import("@/tools/seo/competitor-rank-comparison/ui"),
-  "backlink-quality-scorer": () => import("@/tools/seo/backlink-quality-scorer/ui"),
-  "lost-new-backlink-tracker": () => import("@/tools/seo/lost-new-backlink-tracker/ui"),
-  "backlink-gap-analyzer": () => import("@/tools/seo/backlink-gap-analyzer/ui"),
-  "link-prospecting-builder": () => import("@/tools/seo/link-prospecting-builder/ui"),
-  "guest-post-finder": () => import("@/tools/seo/guest-post-finder/ui"),
-  "content-pruning-auditor": () => import("@/tools/seo/content-pruning-auditor/ui"),
-  "orphan-page-detector": () => import("@/tools/seo/orphan-page-detector/ui"),
-  "crawl-budget-estimator": () => import("@/tools/seo/crawl-budget-estimator/ui"),
-  "pagination-seo-checker": () => import("@/tools/seo/pagination-seo-checker/ui"),
-  "faceted-nav-seo-analyzer": () => import("@/tools/seo/faceted-nav-seo-analyzer/ui"),
-  "javascript-seo-render-tester": () => import("@/tools/seo/javascript-seo-render-tester/ui"),
-  "log-file-analyzer": () => import("@/tools/seo/log-file-analyzer/ui"),
-  "index-coverage-reporter": () => import("@/tools/seo/index-coverage-reporter/ui"),
-  "page-experience-signal-checker": () => import("@/tools/seo/page-experience-signal-checker/ui"),
-  "e-commerce-product-seo-optimizer": () => import("@/tools/seo/e-commerce-product-seo-optimizer/ui"),
-  "local-rank-tracker": () => import("@/tools/seo/local-rank-tracker/ui"),
-  "google-business-profile-optimizer": () => import("@/tools/seo/google-business-profile-optimizer/ui"),
-  "citation-finder": () => import("@/tools/seo/citation-finder/ui"),
-  "review-sentiment-analyzer": () => import("@/tools/seo/review-sentiment-analyzer/ui"),
-  "youtube-video-seo-optimizer": () => import("@/tools/seo/youtube-video-seo-optimizer/ui"),
-  "video-schema-generator": () => import("@/tools/seo/video-schema-generator/ui"),
-  "content-calendar-planner": () => import("@/tools/seo/content-calendar-planner/ui"),
-  "topic-cluster-builder": () => import("@/tools/seo/topic-cluster-builder/ui"),
-  "content-distribution-planner": () => import("@/tools/seo/content-distribution-planner/ui"),
-  "brand-mention-monitor": () => import("@/tools/seo/brand-mention-monitor/ui"),
-  "international-seo-planner": () => import("@/tools/seo/international-seo-planner/ui"),
-  "locale-keyword-researcher": () => import("@/tools/seo/locale-keyword-researcher/ui"),
-  "affiliate-link-cloaker": () => import("@/tools/seo/affiliate-link-cloaker/ui"),
-  "timesheet-calc": () => import("@/tools/business/timesheet-calc/ui"),
-  "meeting-duration-calc": () => import("@/tools/business/meeting-duration-calc/ui"),
-  "payslip-generator": () => import("@/tools/business/payslip-generator/ui"),
-  "shift-scheduler": () => import("@/tools/business/shift-scheduler/ui"),
-  "work-order-generator": () => import("@/tools/business/work-order-generator/ui"),
-  "affiliate-commission-calculator": () => import("@/tools/seo/affiliate-commission-calculator/ui"),
-  "product-review-schema-generator": () => import("@/tools/seo/product-review-schema-generator/ui"),
-  "seo-report-generator": () => import("@/tools/seo/seo-report-generator/ui"),
-  "seo-kpi-dashboard-builder": () => import("@/tools/seo/seo-kpi-dashboard-builder/ui"),
-  "competitor-website-analyzer": () => import("@/tools/seo/competitor-website-analyzer/ui"),
-  "seo-experiment-tracker": () => import("@/tools/seo/experiment-tracker/ui"),
-  "search-console-data-analyzer": () => import("@/tools/seo/search-console-data-analyzer/ui"),
-  "audio-recorder": () => import("@/tools/audio-video/audio-recorder/ui"),
-  "audio-trimmer": () => import("@/tools/audio-video/audio-trimmer/ui"),
-  "audio-converter": () => import("@/tools/audio-video/audio-converter/ui"),
-  "audio-volume-normalizer": () => import("@/tools/audio-video/audio-volume-normalizer/ui"),
-  "audio-speed-changer": () => import("@/tools/audio-video/audio-speed-changer/ui"),
-  "audio-reverser": () => import("@/tools/audio-video/audio-reverser/ui"),
-  "audio-merger": () => import("@/tools/audio-video/audio-merger/ui"),
-  "audio-splitter": () => import("@/tools/audio-video/audio-splitter/ui"),
-  "audio-fade-generator": () => import("@/tools/audio-video/audio-fade-generator/ui"),
-  "audio-metadata-editor": () => import("@/tools/audio-video/audio-metadata-editor/ui"),
-  "audio-spectrum-analyzer": () => import("@/tools/audio-video/audio-spectrum-analyzer/ui"),
-  "audio-waveform-viewer": () => import("@/tools/audio-video/audio-waveform-viewer/ui"),
-  "audio-noise-reducer": () => import("@/tools/audio-video/audio-noise-reducer/ui"),
-  "audio-equalizer": () => import("@/tools/audio-video/audio-equalizer/ui"),
-  "video-trimmer": () => import("@/tools/audio-video/video-trimmer/ui"),
-  "video-compressor": () => import("@/tools/audio-video/video-compressor/ui"),
-  "video-metadata-viewer": () => import("@/tools/audio-video/video-metadata-viewer/ui"),
-  "video-frame-extractor": () => import("@/tools/audio-video/video-frame-extractor/ui"),
-  "audio-format-detector": () => import("@/tools/audio-video/audio-format-detector/ui"),
-  "audio-bitrate-calculator": () => import("@/tools/audio-video/audio-bitrate-calculator/ui"),
-  "invoice-generator": () => import("@/tools/business/invoice-generator/ui"),
-  "quote-generator": () => import("@/tools/business/quote-generator/ui"),
-  "receipt-maker": () => import("@/tools/business/receipt-maker/ui"),
-  "tax-calculator": () => import("@/tools/business/tax-calculator/ui"),
-  "payroll-calculator": () => import("@/tools/business/payroll-calculator/ui"),
-  "time-tracker": () => import("@/tools/business/time-tracker/ui"),
-  "timesheet-generator": () => import("@/tools/business/timesheet-generator/ui"),
-  "pomodoro-timer": () => import("@/tools/business/pomodoro-timer/ui"),
-  "work-hours-calculator": () => import("@/tools/business/work-hours-calculator/ui"),
-  "expense-tracker": () => import("@/tools/business/expense-tracker/ui"),
-  "budget-planner": () => import("@/tools/business/budget-planner/ui"),
-  "roi-calculator": () => import("@/tools/business/roi-calculator/ui"),
-  "break-even-calculator": () => import("@/tools/business/break-even-calculator/ui"),
-  "loan-amortization-schedule": () => import("@/tools/business/loan-amortization-schedule/ui"),
-  "project-task-tracker": () => import("@/tools/business/project-task-tracker/ui"),
-  "gantt-chart-maker": () => import("@/tools/business/gantt-chart-maker/ui"),
-  "meeting-agenda-maker": () => import("@/tools/business/meeting-agenda-maker/ui"),
-  "decision-matrix-builder": () => import("@/tools/business/decision-matrix-builder/ui"),
-  "contract-template-generator": () => import("@/tools/business/contract-template-generator/ui"),
-  "email-template-manager": () => import("@/tools/business/email-template-manager/ui"),
-  "meeting-notes-maker": () => import("@/tools/business/meeting-notes-maker/ui"),
-  "sop-generator": () => import("@/tools/business/sop-generator/ui"),
-  "sales-pipeline-tracker": () => import("@/tools/business/sales-pipeline-tracker/ui"),
-  "customer-tracker": () => import("@/tools/business/customer-tracker/ui"),
-  "commission-tracker": () => import("@/tools/business/commission-tracker/ui"),
-  "flashcard-maker": () => import("@/tools/education/flashcard-maker/ui"),
-  "quiz-generator": () => import("@/tools/education/quiz-generator/ui"),
-  "study-planner": () => import("@/tools/education/study-planner/ui"),
-  "grade-calculator": () => import("@/tools/education/grade-calculator/ui"),
-  "vocabulary-builder": () => import("@/tools/education/vocabulary-builder/ui"),
-  "typing-practice": () => import("@/tools/education/typing-practice/ui"),
-  "multiplication-tables-generator": () => import("@/tools/education/multiplication-tables-generator/ui"),
-  "unit-converter-educational": () => import("@/tools/education/unit-converter-educational/ui"),
-  "periodic-table-reference": () => import("@/tools/education/periodic-table-reference/ui"),
-  "math-practice-generator": () => import("@/tools/education/math-practice-generator/ui"),
-  "spelling-bee-practice": () => import("@/tools/education/spelling-bee-practice/ui"),
-  "language-translator-helper": () => import("@/tools/education/language-translator-helper/ui"),
-  "history-timeline-maker": () => import("@/tools/education/history-timeline-maker/ui"),
-  "geography-quiz": () => import("@/tools/education/geography-quiz/ui"),
-  "citation-generator": () => import("@/tools/education/citation-generator/ui"),
-  "reading-list-tracker": () => import("@/tools/education/reading-list-tracker/ui"),
-  "chemistry-formula-calculator": () => import("@/tools/education/chemistry-formula-calculator/ui"),
-  "physics-formula-reference": () => import("@/tools/education/physics-formula-reference/ui"),
-  "study-notes-organizer": () => import("@/tools/education/study-notes-organizer/ui"),
-  "presentation-slide-outliner": () => import("@/tools/education/presentation-slide-outliner/ui"),
-  "social-media-post-generator": () => import("@/tools/social/social-media-post-generator/ui"),
-  "hashtag-generator": () => import("@/tools/social/hashtag-generator/ui"),
-  "caption-generator": () => import("@/tools/social/caption-generator/ui"),
-  "social-media-bio-generator": () => import("@/tools/social/social-media-bio-generator/ui"),
-  "emoji-picker-keyboard": () => import("@/tools/social/emoji-picker-keyboard/ui"),
-  "social-media-image-resizer": () => import("@/tools/social/social-media-image-resizer/ui"),
-  "tweet-thread-planner": () => import("@/tools/social/tweet-thread-planner/ui"),
-  "instagram-story-planner": () => import("@/tools/social/instagram-story-planner/ui"),
-  "linkedin-post-formatter": () => import("@/tools/social/linkedin-post-formatter/ui"),
-  "youtube-thumbnail-text-overlay": () => import("@/tools/social/youtube-thumbnail-text-overlay/ui"),
-  "content-calendar-scheduler": () => import("@/tools/social/content-calendar-scheduler/ui"),
-  "social-media-character-counter": () => import("@/tools/social/social-media-character-counter/ui"),
-  "tiktok-video-description-generator": () => import("@/tools/social/tiktok-video-description-generator/ui"),
-  "pinterest-pin-description-generator": () => import("@/tools/social/pinterest-pin-description-generator/ui"),
-  "social-media-engagement-tracker": () => import("@/tools/social/social-media-engagement-tracker/ui"),
-  "social-media-mention-tracker": () => import("@/tools/social/social-media-mention-tracker/ui"),
-  "social-media-hashtag-analyzer": () => import("@/tools/social/social-media-hashtag-analyzer/ui"),
-  "social-media-trend-detector": () => import("@/tools/social/social-media-trend-detector/ui"),
-  "social-media-contest-planner": () => import("@/tools/social/social-media-contest-planner/ui"),
-  "social-media-collab-finder": () => import("@/tools/social/social-media-collab-finder/ui"),
-  "social-media-analytics-dashboard": () => import("@/tools/social/social-media-analytics-dashboard/ui"),
-  "social-media-content-repurposer": () => import("@/tools/social/social-media-content-repurposer/ui"),
-  "social-media-comment-responder": () => import("@/tools/social/social-media-comment-responder/ui"),
-  "social-media-emoji-translator": () => import("@/tools/social/social-media-emoji-translator/ui"),
-  "social-media-poll-generator": () => import("@/tools/social/social-media-poll-generator/ui"),
-  "pdf-ocr-text-extractor": () => import("@/tools/pdf/pdf-ocr-text-extractor/ui"),
-  "pdf-to-word-converter-pdf": () => import("@/tools/pdf/pdf-to-word-converter/ui"),
-  "pdf-to-excel-converter-pdf": () => import("@/tools/pdf/pdf-to-excel-converter/ui"),
-  "pdf-form-filler": () => import("@/tools/pdf/pdf-form-filler/ui"),
-  "pdf-redaction-tool": () => import("@/tools/pdf/pdf-redaction-tool/ui"),
-  "pdf-compare": () => import("@/tools/pdf/pdf-compare/ui"),
-  "pdf-booklet-maker": () => import("@/tools/pdf/pdf-booklet-maker/ui"),
-  "pdf-imposition": () => import("@/tools/pdf/pdf-imposition/ui"),
-  "pdf-color-separation": () => import("@/tools/pdf/pdf-color-separation/ui"),
-  "pdf-grayscale-converter": () => import("@/tools/pdf/pdf-grayscale-converter/ui"),
-  "pdf-bleed-adder": () => import("@/tools/pdf/pdf-bleed-adder/ui"),
-  "pdf-crop-marks": () => import("@/tools/pdf/pdf-crop-marks/ui"),
-  "pdf-ink-coverage-analyzer": () => import("@/tools/pdf/pdf-ink-coverage-analyzer/ui"),
-  "pdf-font-extractor": () => import("@/tools/pdf/pdf-font-extractor/ui"),
-  "pdf-font-subsetter": () => import("@/tools/pdf/pdf-font-subsetter/ui"),
-  "pdf-accessibility-checker": () => import("@/tools/pdf/pdf-accessibility-checker/ui"),
-  "pdf-alt-text-generator": () => import("@/tools/pdf/pdf-alt-text-generator/ui"),
-  "pdf-tag-tree-viewer": () => import("@/tools/pdf/pdf-tag-tree-viewer/ui"),
-  "pdf-thumbnail-generator": () => import("@/tools/pdf/pdf-thumbnail-generator/ui"),
-  "pdf-zip-bundler": () => import("@/tools/pdf/pdf-zip-bundler/ui"),
-  "pdf-size-optimizer": () => import("@/tools/pdf/pdf-size-optimizer/ui"),
-  "pdf-version-converter": () => import("@/tools/pdf/pdf-version-converter/ui"),
-  "pdf-qr-code-stamper": () => import("@/tools/pdf/pdf-qr-code-stamper/ui"),
-  "pdf-barcode-stamper": () => import("@/tools/pdf/pdf-barcode-stamper/ui"),
-  "pdf-header-footer-adder": () => import("@/tools/pdf/pdf-header-footer-adder/ui"),
-  "pdf-bookmark-from-headings": () => import("@/tools/pdf/pdf-bookmark-from-headings/ui"),
-  "pdf-translation-overlay": () => import("@/tools/pdf/pdf-translation-overlay/ui"),
-  "pdf-table-extractor": () => import("@/tools/pdf/pdf-table-extractor/ui"),
-  "pdf-form-field-extractor": () => import("@/tools/pdf/pdf-form-field-extractor/ui"),
-  "pdf-to-powerpoint-converter-pdf": () => import("@/tools/pdf/pdf-to-powerpoint-converter/ui"),  "ai-alt-text-generator": () => import("@/tools/ai/ai-alt-text-generator/ui"),
-  "ai-analogies-generator": () => import("@/tools/ai/ai-analogies-generator/ui"),
-  "ai-api-payload-mocking-tool": () => import("@/tools/ai/ai-api-payload-mocking-tool/ui"),
-  "ai-article-headline-generator": () => import("@/tools/ai/ai-article-headline-generator/ui"),
-  "ai-bias-checker": () => import("@/tools/ai/ai-bias-checker/ui"),
-  "ai-book-summary-generator": () => import("@/tools/ai/ai-book-summary-generator/ui"),
-  "ai-brand-positioning-statement-generator": () => import("@/tools/ai/ai-brand-positioning-statement-generator/ui"),
-  "ai-brand-tone-of-voice-builder": () => import("@/tools/ai/ai-brand-tone-of-voice-builder/ui"),
-  "ai-business-name-ideator": () => import("@/tools/ai/ai-business-name-ideator/ui"),
-  "ai-business-pitch-deck-outline-generator": () => import("@/tools/ai/ai-business-pitch-deck-outline-generator/ui"),
-  "ai-character-name-generator": () => import("@/tools/ai/ai-character-name-generator/ui"),
-  "ai-chatbot-emulator": () => import("@/tools/ai/ai-chatbot-emulator/ui"),
-  "ai-chrome-extension-boilerplate-generator": () => import("@/tools/ai/ai-chrome-extension-boilerplate-generator/ui"),
-  "ai-citation-formatter": () => import("@/tools/ai/ai-citation-formatter/ui"),
-  "ai-code-converter": () => import("@/tools/ai/ai-code-converter/ui"),
-  "ai-code-debugger": () => import("@/tools/ai/ai-code-debugger/ui"),
-  "ai-code-explainer": () => import("@/tools/ai/ai-code-explainer/ui"),
-  "ai-coding-pattern-refactorer": () => import("@/tools/ai/ai-coding-pattern-refactorer/ui"),
-  "ai-cold-email-personalizer": () => import("@/tools/ai/ai-cold-email-personalizer/ui"),
-  "ai-competitor-analysis-framework": () => import("@/tools/ai/ai-competitor-analysis-framework/ui"),
-  "ai-copywriting-framework-assistant": () => import("@/tools/ai/ai-copywriting-framework-assistant/ui"),
-  "ai-cover-letter-writer": () => import("@/tools/ai/ai-cover-letter-writer/ui"),
-  "ai-cron-job-scheduler-builder": () => import("@/tools/ai/ai-cron-job-scheduler-builder/ui"),
-  "ai-css-ui-component-generator": () => import("@/tools/ai/ai-css-ui-component-generator/ui"),
-  "ai-cta-generator": () => import("@/tools/ai/ai-cta-generator/ui"),
-  "ai-customer-support-script-writer": () => import("@/tools/ai/ai-customer-support-script-writer/ui"),
-  "ai-db-schema-diagram-builder": () => import("@/tools/ai/ai-db-schema-diagram-builder/ui"),
-  "ai-dockerfile-builder": () => import("@/tools/ai/ai-dockerfile-builder/ui"),
-  "ai-domain-name-generator": () => import("@/tools/ai/ai-domain-name-generator/ui"),
-  "ai-email-draft-generator": () => import("@/tools/ai/ai-email-draft-generator/ui"),
-  "ai-emoji-translator": () => import("@/tools/ai/ai-emoji-translator/ui"),
-  "ai-essay-outline-generator": () => import("@/tools/ai/ai-essay-outline-generator/ui"),
-  "ai-faq-generator": () => import("@/tools/ai/ai-faq-generator/ui"),
-  "ai-fiction-story-generator": () => import("@/tools/ai/ai-fiction-story-generator/ui"),
-  "ai-financial-goal-planner": () => import("@/tools/ai/ai-financial-goal-planner/ui"),
-  "ai-flashcard-qa-generator": () => import("@/tools/ai/ai-flashcard-qa-generator/ui"),
-  "ai-gift-idea-generator": () => import("@/tools/ai/ai-gift-idea-generator/ui"),
-  "ai-git-commit-message-generator": () => import("@/tools/ai/ai-git-commit-message-generator/ui"),
-  "ai-grammar-correction-tool": () => import("@/tools/ai/ai-grammar-correction-tool/ui"),
-  "ai-htaccess-redirect-generator": () => import("@/tools/ai/ai-htaccess-redirect-generator/ui"),
-  "ai-html-landing-page-generator": () => import("@/tools/ai/ai-html-landing-page-generator/ui"),
-  "ai-instagram-bio-generator": () => import("@/tools/ai/ai-instagram-bio-generator/ui"),
-  "ai-interview-question-generator": () => import("@/tools/ai/ai-interview-question-generator/ui"),
-  "ai-jargon-simplifier": () => import("@/tools/ai/ai-jargon-simplifier/ui"),
-  "ai-js-object-to-json-schema-converter": () => import("@/tools/ai/ai-js-object-to-json-schema-converter/ui"),
-  "ai-json-mock-data-generator": () => import("@/tools/ai/ai-json-mock-data-generator/ui"),
-  "ai-keyword-extractor": () => import("@/tools/ai/ai-keyword-extractor/ui"),
-  "ai-kubernetes-manifest-generator": () => import("@/tools/ai/ai-kubernetes-manifest-generator/ui"),
-  "ai-linkedin-bio-optimizer": () => import("@/tools/ai/ai-linkedin-bio-optimizer/ui"),
-  "ai-logical-fallacy-detector": () => import("@/tools/ai/ai-logical-fallacy-detector/ui"),
-  "ai-markdown-readme-generator": () => import("@/tools/ai/ai-markdown-readme-generator/ui"),
-  "ai-markdown-table-generator": () => import("@/tools/ai/ai-markdown-table-generator/ui"),
-  "ai-math-word-problem-solver": () => import("@/tools/ai/ai-math-word-problem-solver/ui"),
-  "ai-meeting-minutes-summarizer": () => import("@/tools/ai/ai-meeting-minutes-summarizer/ui"),
-  "ai-mermaid-flowchart-generator": () => import("@/tools/ai/ai-mermaid-flowchart-generator/ui"),
-  "ai-meta-tag-builder": () => import("@/tools/ai/ai-meta-tag-builder/ui"),
-  "ai-multi-language-translator": () => import("@/tools/ai/ai-multi-language-translator/ui"),
-  "ai-newsletter-subject-line-ab-tester": () => import("@/tools/ai/ai-newsletter-subject-line-ab-tester/ui"),
-  "ai-nginx-config-rule-builder": () => import("@/tools/ai/ai-nginx-config-rule-builder/ui"),
-  "ai-paragraph-summarizer": () => import("@/tools/ai/ai-paragraph-summarizer/ui"),
-  "ai-paraphrasing-rewriter-tool": () => import("@/tools/ai/ai-paraphrasing-rewriter-tool/ui"),
-  "ai-passive-active-voice-converter": () => import("@/tools/ai/ai-passive-active-voice-converter/ui"),
-  "ai-passive-aggressive-email-translator": () => import("@/tools/ai/ai-passive-aggressive-email-translator/ui"),
-  "ai-podcast-episode-planner": () => import("@/tools/ai/ai-podcast-episode-planner/ui"),
-  "ai-poem-lyrics-writer": () => import("@/tools/ai/ai-poem-lyrics-writer/ui"),
-  "ai-presentation-outline-generator": () => import("@/tools/ai/ai-presentation-outline-generator/ui"),
-  "ai-press-release-draft-builder": () => import("@/tools/ai/ai-press-release-draft-builder/ui"),
-  "ai-product-description-writer": () => import("@/tools/ai/ai-product-description-writer/ui"),
-  "ai-product-feature-prioritization-helper": () => import("@/tools/ai/ai-product-feature-prioritization-helper/ui"),
-  "ai-prompt-improver": () => import("@/tools/ai/ai-prompt-improver/ui"),
-  "ai-recipe-generator": () => import("@/tools/ai/ai-recipe-generator/ui"),
-  "ai-reddit-post-title-optimizer": () => import("@/tools/ai/ai-reddit-post-title-optimizer/ui"),
-  "ai-regex-builder": () => import("@/tools/ai/ai-regex-builder/ui"),
-  "ai-resume-bullet-point-optimizer": () => import("@/tools/ai/ai-resume-bullet-point-optimizer/ui"),
-  "ai-robots-txt": () => import("@/tools/ai/ai-robots-txt/ui"),
-  "ai-salary-negotiation-script-writer": () => import("@/tools/ai/ai-salary-negotiation-script-writer/ui"),
-  "ai-sentiment-analysis-tool": () => import("@/tools/ai/ai-sentiment-analysis-tool/ui"),
-  "ai-shell-bash-script-writer": () => import("@/tools/ai/ai-shell-bash-script-writer/ui"),
-  "ai-slogan-tagline-generator": () => import("@/tools/ai/ai-slogan-tagline-generator/ui"),
-  "ai-social-media-caption-writer": () => import("@/tools/ai/ai-social-media-caption-writer/ui"),
-  "ai-sql-query-generator": () => import("@/tools/ai/ai-sql-query-generator/ui"),
-  "ai-study-guide-generator": () => import("@/tools/ai/ai-study-guide-generator/ui"),
-  "ai-svg-vector-art-generator": () => import("@/tools/ai/ai-svg-vector-art-generator/ui"),
-  "ai-swot-analysis-creator": () => import("@/tools/ai/ai-swot-analysis-creator/ui"),
-  "ai-tailwind-css-palette-generator": () => import("@/tools/ai/ai-tailwind-css-palette-generator/ui"),
-  "ai-target-audience-demographics-profiler": () => import("@/tools/ai/ai-target-audience-demographics-profiler/ui"),
-  "ai-tech-stack-recommender": () => import("@/tools/ai/ai-tech-stack-recommender/ui"),
-  "ai-text-based-adventure-game-engine": () => import("@/tools/ai/ai-text-based-adventure-game-engine/ui"),
-  "ai-text-simplifier-eli5": () => import("@/tools/ai/ai-text-simplifier-eli5/ui"),
-  "ai-text-to-image-generator": () => import("@/tools/ai/ai-text-to-image-generator/ui"),
-  "ai-thesis-statement-generator": () => import("@/tools/ai/ai-thesis-statement-generator/ui"),
-  "ai-travel-itinerary-planner": () => import("@/tools/ai/ai-travel-itinerary-planner/ui"),
-  "ai-typescript-interface-generator": () => import("@/tools/ai/ai-typescript-interface-generator/ui"),
-  "ai-unit-test-case-generator": () => import("@/tools/ai/ai-unit-test-case-generator/ui"),
-  "ai-user-persona-creator": () => import("@/tools/ai/ai-user-persona-creator/ui"),
-  "ai-user-story-creator": () => import("@/tools/ai/ai-user-story-creator/ui"),
-  "ai-video-script-outliner": () => import("@/tools/ai/ai-video-script-outliner/ui"),
-  "ai-website-sitemap-generator": () => import("@/tools/ai/ai-website-sitemap-generator/ui"),
-  "ai-weekly-meal-planner": () => import("@/tools/ai/ai-weekly-meal-planner/ui"),
-  "ai-workout-planner": () => import("@/tools/ai/ai-workout-planner/ui"),  "add-subtract-date-calculator": () => import("@/tools/developer/add-subtract-date-calculator/ui"),
-  "age-calculator": () => import("@/tools/developer/age-calculator/ui"),
-  "awk-command-builder-tester": () => import("@/tools/developer/awk-command-builder-tester/ui"),
-  "bash-script-generator-boilerplate": () => import("@/tools/developer/bash-script-generator-boilerplate/ui"),
-  "business-working-days-calculator": () => import("@/tools/developer/business-working-days-calculator/ui"),
-  "chmod-calculator": () => import("@/tools/developer/chmod-calculator/ui"),
-  "connection-string-builder-parser": () => import("@/tools/developer/connection-string-builder-parser/ui"),
-  "countdown-timer-generator": () => import("@/tools/developer/countdown-timer-generator/ui"),
-  "create-table-generator": () => import("@/tools/developer/create-table-generator/ui"),
-  "credit-card-test-number-generator": () => import("@/tools/developer/credit-card-test-number-generator/ui"),
-  "csv-to-sql-insert-converter": () => import("@/tools/developer/csv-to-sql-insert-converter/ui"),
-  "database-schema-diff": () => import("@/tools/developer/database-schema-diff/ui"),
-  "date-difference-calculator": () => import("@/tools/developer/date-difference-calculator/ui"),
-  "date-format-converter-strftime": () => import("@/tools/developer/date-format-converter-strftime/ui"),
-  "day-of-the-week-finder": () => import("@/tools/developer/day-of-the-week-finder/ui"),
-  "dice-roller-random-picker": () => import("@/tools/developer/dice-roller-random-picker/ui"),
-  "email-address-generator-validator": () => import("@/tools/developer/email-address-generator-validator/ui"),
-  "er-diagram-designer": () => import("@/tools/developer/er-diagram-designer/ui"),
-  "fake-data-generator": () => import("@/tools/developer/fake-data-generator/ui"),
-  "iban-generator-validator": () => import("@/tools/developer/iban-generator-validator/ui"),
-  "in-browser-sql-playground": () => import("@/tools/developer/in-browser-sql-playground/ui"),
-  "isbn-generator-validator": () => import("@/tools/developer/isbn-generator-validator/ui"),
-  "iso-8601-date-parser-formatter": () => import("@/tools/developer/iso-8601-date-parser-formatter/ui"),
-  "jq-playground-filter-builder": () => import("@/tools/developer/jq-playground-filter-builder/ui"),
-  "julian-date-astronomical-time-converter": () => import("@/tools/developer/julian-date-astronomical-time-converter/ui"),
-  "luhn-credit-card-validator": () => import("@/tools/developer/luhn-credit-card-validator/ui"),
-  "mock-csv-data-generator": () => import("@/tools/developer/mock-csv-data-generator/ui"),
-  "mock-graphql-response-generator": () => import("@/tools/developer/mock-graphql-response-generator/ui"),
-  "mock-sql-data-generator": () => import("@/tools/developer/mock-sql-data-generator/ui"),
-  "mongodb-aggregation-pipeline-builder": () => import("@/tools/developer/mongodb-aggregation-pipeline-builder/ui"),
-  "mongodb-query-builder": () => import("@/tools/developer/mongodb-query-builder/ui"),
-  "naughty-string-generator": () => import("@/tools/developer/naughty-string-generator/ui"),
-  "number-base-converter": () => import("@/tools/developer/number-base-converter/ui"),
-  "online-stopwatch-timer": () => import("@/tools/developer/online-stopwatch-timer/ui"),
-  "phone-number-generator-validator": () => import("@/tools/developer/phone-number-generator-validator/ui"),
-  "printable-calendar-generator": () => import("@/tools/developer/printable-calendar-generator/ui"),
-  "random-date-time-generator": () => import("@/tools/developer/random-date-time-generator/ui"),
-  "random-ip-mac-address-generator": () => import("@/tools/developer/random-ip-mac-address-generator/ui"),
-  "random-number-generator-seeded": () => import("@/tools/developer/random-number-generator-seeded/ui"),
-  "random-user-profile-generator": () => import("@/tools/developer/random-user-profile-generator/ui"),
-  "recurring-date-rrule-generator": () => import("@/tools/developer/recurring-date-rrule-generator/ui"),
-  "redis-command-reference-builder": () => import("@/tools/developer/redis-command-reference-builder/ui"),
-  "relative-time-formatter": () => import("@/tools/developer/relative-time-formatter/ui"),
-  "sample-json-mock-api-response-generator": () => import("@/tools/developer/sample-json-mock-api-response-generator/ui"),
-  "sed-command-builder-tester": () => import("@/tools/developer/sed-command-builder-tester/ui"),
-  "shell-command-explainer": () => import("@/tools/developer/shell-command-explainer/ui"),
-  "sql-ddl-to-er-diagram-generator": () => import("@/tools/developer/sql-ddl-to-er-diagram-generator/ui"),
-  "sql-dialect-converter": () => import("@/tools/developer/sql-dialect-converter/ui"),
-  "sql-explain-plan-visualizer": () => import("@/tools/developer/sql-explain-plan-visualizer/ui"),
-  "sql-formatter-beautifier": () => import("@/tools/developer/sql-formatter-beautifier/ui"),
-  "sql-index-advisor": () => import("@/tools/developer/sql-index-advisor/ui"),
-  "sql-join-visualizer": () => import("@/tools/developer/sql-join-visualizer/ui"),
-  "sql-minifier": () => import("@/tools/developer/sql-minifier/ui"),
-  "sql-result-to-csv-json-exporter": () => import("@/tools/developer/sql-result-to-csv-json-exporter/ui"),
-  "sql-to-orm-code-converter": () => import("@/tools/developer/sql-to-orm-code-converter/ui"),
-  "test-data-anonymizer": () => import("@/tools/developer/test-data-anonymizer/ui"),
-  "test-dummy-file-generator": () => import("@/tools/developer/test-dummy-file-generator/ui"),
-  "test-id-generator": () => import("@/tools/developer/test-id-generator/ui"),
-  "time-duration-calculator": () => import("@/tools/developer/time-duration-calculator/ui"),
-  "time-unit-converter": () => import("@/tools/developer/time-unit-converter/ui"),
-  "time-zone-abbreviation-utc-offset-reference": () => import("@/tools/developer/time-zone-abbreviation-utc-offset-reference/ui"),
-  "time-zone-converter": () => import("@/tools/developer/time-zone-converter/ui"),
-  "unix-timestamp-epoch-converter": () => import("@/tools/developer/unix-timestamp-epoch-converter/ui"),
-  "user-agent-string-generator-parser": () => import("@/tools/developer/user-agent-string-generator-parser/ui"),
-  "visual-sql-query-builder": () => import("@/tools/developer/visual-sql-query-builder/ui"),
-  "week-number-iso-calculator": () => import("@/tools/developer/week-number-iso-calculator/ui"),
-  "world-clock-meeting-planner": () => import("@/tools/developer/world-clock-meeting-planner/ui"),  "ansi-escape-code-terminal-color-generator": () => import("@/tools/developer/ansi-escape-code-terminal-color-generator/ui"),
-  "bash-prompt-ps1-generator": () => import("@/tools/developer/bash-prompt-ps1-generator/ui"),
-  "bashrc-zshrc-alias-config-manager": () => import("@/tools/developer/bashrc-zshrc-alias-config-manager/ui"),
-  "bitwise-operation-calculator": () => import("@/tools/developer/bitwise-operation-calculator/ui"),
-  "bit-shift-rotate-visualizer": () => import("@/tools/developer/bit-shift-rotate-visualizer/ui"),
-  "bit-field-bitmask-flags-designer-decoder": () => import("@/tools/developer/bit-field-bitmask-flags-designer-decoder/ui"),
-  "endianness-byte-order-converter": () => import("@/tools/developer/endianness-byte-order-converter/ui"),
-  "dotfiles-manager-generator": () => import("@/tools/developer/dotfiles-manager-generator/ui"),
-  "find-command-builder": () => import("@/tools/developer/find-command-builder/ui"),
-  "glob-pattern-tester": () => import("@/tools/developer/glob-pattern-tester/ui"),
-  "grep-ripgrep-command-builder": () => import("@/tools/developer/grep-ripgrep-command-builder/ui"),
-  "rsync-command-builder": () => import("@/tools/developer/rsync-command-builder/ui"),
-  "tar-archive-command-builder": () => import("@/tools/developer/tar-archive-command-builder/ui"),
-  "tmux-config-generator-cheatsheet": () => import("@/tools/developer/tmux-config-generator-cheatsheet/ui"),
-  "vim-cheatsheet-keybinding-reference": () => import("@/tools/developer/vim-cheatsheet-keybinding-reference/ui"),
-  "ssh-config-generator": () => import("@/tools/developer/ssh-config-generator/ui"),
-  "man-page-tldr-command-reference": () => import("@/tools/developer/man-page-tldr-command-reference/ui"),
-  "exit-code-signal-reference": () => import("@/tools/developer/exit-code-signal-reference/ui"),
-  "twos-complement-signed-integer-calculator": () => import("@/tools/developer/twos-complement-signed-integer-calculator/ui"),
-  "crontab-generator": () => import("@/tools/developer/crontab-generator/ui"),
-  "markdown-live-editor-previewer": () => import("@/tools/developer/markdown-live-editor-previewer/ui"),
-  "markdown-table-generator": () => import("@/tools/developer/markdown-table-generator/ui"),
-  "markdown-table-of-contents-generator": () => import("@/tools/developer/markdown-table-of-contents-generator/ui"),
-  "readme-generator": () => import("@/tools/developer/readme-generator/ui"),
-  "github-badge-shields-io-generator": () => import("@/tools/developer/github-badge-shields-io-generator/ui"),
-  "mermaid-diagram-live-editor": () => import("@/tools/developer/mermaid-diagram-live-editor/ui"),
-  "plantuml-diagram-editor": () => import("@/tools/developer/plantuml-diagram-editor/ui"),
-  "markdown-to-slides-presentation-generator": () => import("@/tools/developer/markdown-to-slides-presentation-generator/ui"),
-  "markdown-syntax-cheatsheet-reference": () => import("@/tools/developer/markdown-syntax-cheatsheet-reference/ui"),
-  "markdown-linter-formatter": () => import("@/tools/developer/markdown-linter-formatter/ui"),
-  "ieee-754-floating-point-converter": () => import("@/tools/developer/ieee-754-floating-point-converter/ui"),
-  "fixed-point-q-format-converter": () => import("@/tools/developer/fixed-point-q-format-converter/ui"),
-  "big-integer-arbitrary-precision-calculator": () => import("@/tools/developer/big-integer-arbitrary-precision-calculator/ui"),
-  "hex-dump-hex-viewer-editor": () => import("@/tools/developer/hex-dump-hex-viewer-editor/ui"),
-  "binary-file-signature-magic-number-inspector": () => import("@/tools/developer/binary-file-signature-magic-number-inspector/ui"),
-  "ascii-art-text-banner-generator": () => import("@/tools/developer/ascii-art-text-banner-generator/ui"),
-  "integer-data-type-range-overflow-reference": () => import("@/tools/developer/integer-data-type-range-overflow-reference/ui"),
-  "roman-numeral-converter": () => import("@/tools/developer/roman-numeral-converter/ui"),
-  "scientific-engineering-notation-converter": () => import("@/tools/developer/scientific-engineering-notation-converter/ui"),
-  "modular-arithmetic-gcd-lcm-calculator": () => import("@/tools/developer/modular-arithmetic-gcd-lcm-calculator/ui"),
-  "prime-number-checker-factorization-tool": () => import("@/tools/developer/prime-number-checker-factorization-tool/ui"),
-  "ascii-unicode-code-point-explorer": () => import("@/tools/developer/ascii-unicode-code-point-explorer/ui"),
-  "checksum-parity-bit-calculator": () => import("@/tools/developer/checksum-parity-bit-calculator/ui"),
-  "gray-code-converter": () => import("@/tools/developer/gray-code-converter/ui"),
-  "hamming-code-error-correction-calculator": () => import("@/tools/developer/hamming-code-error-correction-calculator/ui"),
-  "ipv4-subnet-calculator-cidr-vlsm": () => import("@/tools/developer/ipv4-subnet-calculator-cidr-vlsm/ui"),
-  "ipv6-subnet-calculator": () => import("@/tools/developer/ipv6-subnet-calculator/ui"),
-  "cidr-ip-range-netmask-converter": () => import("@/tools/developer/cidr-ip-range-netmask-converter/ui"),
-  "ip-address-format-converter": () => import("@/tools/developer/ip-address-format-converter/ui"),
-  "ipv6-address-expander-compressor-validator": () => import("@/tools/developer/ipv6-address-expander-compressor-validator/ui"),
-  "mac-address-vendor-oui-lookup-formatter": () => import("@/tools/developer/mac-address-vendor-oui-lookup-formatter/ui"),
-  "dns-record-lookup-reference": () => import("@/tools/developer/dns-record-lookup-reference/ui"),
-  "reverse-dns-ptr-lookup-generator": () => import("@/tools/developer/reverse-dns-ptr-lookup-generator/ui"),
-  "dns-propagation-checker-reference": () => import("@/tools/developer/dns-propagation-checker-reference/ui"),
-  "whois-domain-ip-lookup": () => import("@/tools/developer/whois-domain-ip-lookup/ui"),
-  "spf-record-generator-validator": () => import("@/tools/developer/spf-record-generator-validator/ui"),
-  "dkim-record-generator-validator": () => import("@/tools/developer/dkim-record-generator-validator/ui"),
-  "dmarc-record-generator-validator": () => import("@/tools/developer/dmarc-record-generator-validator/ui"),
-  "ssl-tls-certificate-decoder-checker": () => import("@/tools/developer/ssl-tls-certificate-decoder-checker/ui"),
-  "well-known-common-ports-reference": () => import("@/tools/developer/well-known-common-ports-reference/ui"),
-  "ping-latency-tester-browser": () => import("@/tools/developer/ping-latency-tester-browser/ui"),
-  "traceroute-visualizer": () => import("@/tools/developer/traceroute-visualizer/ui"),
-  "public-ip-geolocation-lookup": () => import("@/tools/developer/public-ip-geolocation-lookup/ui"),
-  "dns-over-https-doh-query-tool": () => import("@/tools/developer/dns-over-https-doh-query-tool/ui"),
-  "cidr-aggregator-network-summarizer": () => import("@/tools/developer/cidr-aggregator-network-summarizer/ui"),
-  "sorting-algorithm-visualizer": () => import("@/tools/developer/sorting-algorithm-visualizer/ui"),
-  "pathfinding-algorithm-visualizer": () => import("@/tools/developer/pathfinding-algorithm-visualizer/ui"),
-  "binary-search-tree-bst-visualizer": () => import("@/tools/developer/binary-search-tree-bst-visualizer/ui"),
-  "heap-priority-queue-visualizer": () => import("@/tools/developer/heap-priority-queue-visualizer/ui"),
-  "trie-prefix-tree-visualizer": () => import("@/tools/developer/trie-prefix-tree-visualizer/ui"),
-  "avl-tree-visualizer": () => import("@/tools/developer/avl-tree-visualizer/ui"),
-  "red-black-tree-visualizer": () => import("@/tools/developer/red-black-tree-visualizer/ui"),
-  "broken-backlink-finder": () => import("@/tools/seo/broken-backlink-finder/ui"),
-  "broken-link-checker": () => import("@/tools/seo/broken-link-checker/ui"),
-  "core-web-vitals-analyzer": () => import("@/tools/seo/core-web-vitals-analyzer/ui"),
-  "gtm-datalayer-helper": () => import("@/tools/seo/gtm-datalayer-helper/ui"),
-  "meta-robots-tester": () => import("@/tools/seo/meta-robots-tester/ui"),
-  "mobile-friendly-tester": () => import("@/tools/seo/mobile-friendly-tester/ui"),
-  "referring-domains-explorer": () => import("@/tools/seo/referring-domains-explorer/ui"),
-  "ssl-https-checker": () => import("@/tools/seo/ssl-https-checker/ui"),
-  "open-graph-social-card-generator": () => import("@/tools/seo/open-graph-social-card-generator/ui"),
-  "twitter-card-preview-tool": () => import("@/tools/seo/twitter-card-preview-tool/ui"),
-  "image-lens-flare": () => import("@/tools/image/image-lens-flare/ui"),
-  "image-bloom-tool": () => import("@/tools/image/image-bloom-tool/ui"),
-  "image-ascii-bw": () => import("@/tools/image/image-ascii-bw/ui"),
-  "image-charcoal-tool": () => import("@/tools/image/image-charcoal-tool/ui"),
-  "image-oil-paint": () => import("@/tools/image/image-oil-paint/ui"),
-  "image-watercolor": () => import("@/tools/image/image-watercolor/ui"),
-  "image-pencil-sketch": () => import("@/tools/image/image-pencil-sketch/ui"),
-  "image-neon-glow": () => import("@/tools/image/image-neon-glow/ui"),
-  "image-duotone-maker": () => import("@/tools/image/image-duotone-maker/ui"),
-  "image-thermal-cam": () => import("@/tools/image/image-thermal-cam/ui"),
-  "text-reverse-words": () => import("@/tools/text/text-reverse-words/ui"),
-  "text-scrambler": () => import("@/tools/text/text-scrambler/ui"),
-  "text-mirror-text": () => import("@/tools/text/text-mirror-text/ui"),
-  "text-rainbow-text": () => import("@/tools/text/text-rainbow-text/ui"),
-  "text-typewriter-effect": () => import("@/tools/text/text-typewriter-effect/ui"),
-  "fraction-calculator": () => import("@/tools/calculators/fraction-calculator/ui"),
-  "ratio-calculator": () => import("@/tools/calculators/ratio-calculator/ui"),
-  "probability-calc": () => import("@/tools/calculators/probability-calc/ui"),
-  "odds-calculator": () => import("@/tools/calculators/odds-calculator/ui"),
-  "scale-calculator": () => import("@/tools/calculators/scale-calculator/ui"),
-  "subnet-mask-validator": () => import("@/tools/network-security/subnet-mask-validator/ui"),
-  "tls-version-checker": () => import("@/tools/network-security/tls-version-checker/ui"),
-  "cert-signing-request-gen": () => import("@/tools/network-security/cert-signing-request-gen/ui"),
-  "password-policy-checker": () => import("@/tools/network-security/password-policy-checker/ui"),
-  "hash-identifier": () => import("@/tools/network-security/hash-identifier/ui"),
-  "meeting-room-booker": () => import("@/tools/business/meeting-room-booker/ui"),
-  "business-card-maker": () => import("@/tools/business/business-card-maker/ui"),
-  "inventory-tracker": () => import("@/tools/business/inventory-tracker/ui"),
-  "project-budget-calc": () => import("@/tools/business/project-budget-calc/ui"),
-  "contract-date-calc": () => import("@/tools/business/contract-date-calc/ui"),
-  "vocabulary-trainer": () => import("@/tools/education/vocabulary-trainer/ui"),
-  "quiz-maker": () => import("@/tools/education/quiz-maker/ui"),
-  "math-drill-generator": () => import("@/tools/education/math-drill-generator/ui"),
-  "periodic-table-lookup": () => import("@/tools/education/periodic-table-lookup/ui"),
-  "grammar-checker-basic": () => import("@/tools/education/grammar-checker-basic/ui"),
-  "social-media-post-scheduler": () => import("@/tools/social/social-media-post-scheduler/ui"),
-  "hashtag-density-checker": () => import("@/tools/social/hashtag-density-checker/ui"),
-  "social-media-influencer-calc": () => import("@/tools/social/social-media-influencer-calc/ui"),
-  "social-media-ab-tester": () => import("@/tools/social/social-media-ab-tester/ui"),
-  "social-media-story-template": () => import("@/tools/social/social-media-story-template/ui"),
-  "image-clahe-tool": () => import("@/tools/image/image-clahe-tool/ui"),
-  "image-starry-night": () => import("@/tools/image/image-starry-night/ui"),
-  "image-dot-pattern": () => import("@/tools/image/image-dot-pattern/ui"),
-  "image-screen-tone": () => import("@/tools/image/image-screen-tone/ui"),
-  "image-crosshatch": () => import("@/tools/image/image-crosshatch/ui"),
-  "image-plasma-effect": () => import("@/tools/image/image-plasma-effect/ui"),
-  "image-fractal-tool": () => import("@/tools/image/image-fractal-tool/ui"),
-  "image-rainbow-noise": () => import("@/tools/image/image-rainbow-noise/ui"),
-  "image-old-photo": () => import("@/tools/image/image-old-photo/ui"),
-  "image-tv-static": () => import("@/tools/image/image-tv-static/ui"),
-  "text-binary-to-octal": () => import("@/tools/text/text-binary-to-octal/ui"),
-  "text-octal-to-binary": () => import("@/tools/text/text-octal-to-binary/ui"),
-  "text-hex-to-text": () => import("@/tools/text/text-hex-to-text/ui"),
-  "text-text-to-hex": () => import("@/tools/text/text-text-to-hex/ui"),
-  "text-base32-encoder": () => import("@/tools/text/text-base32-encoder/ui"),
-  "text-base58-encoder": () => import("@/tools/text/text-base58-encoder/ui"),
-  "text-base85-encoder": () => import("@/tools/text/text-base85-encoder/ui"),
-  "text-url-decode": () => import("@/tools/text/text-url-decode/ui"),
-  "text-html-decode": () => import("@/tools/text/text-html-decode/ui"),
-  "text-xml-escape": () => import("@/tools/text/text-xml-escape/ui"),
-  "concentration-calc": () => import("@/tools/calculators/concentration-calc/ui"),
-  "molarity-calc": () => import("@/tools/calculators/molarity-calc/ui"),
-  "dilution-calc": () => import("@/tools/calculators/dilution-calc/ui"),
-  "enzyme-activity-calc": () => import("@/tools/calculators/enzyme-activity-calc/ui"),
-  "molecular-weight-calc": () => import("@/tools/calculators/molecular-weight-calc/ui"),
-  "subnet-cidr-merger": () => import("@/tools/network-security/subnet-cidr-merger/ui"),
-  "ipv4-range-splitter": () => import("@/tools/network-security/ipv4-range-splitter/ui"),
-  "port-range-scanner-ref": () => import("@/tools/network-security/port-range-scanner-ref/ui"),
-  "wifi-password-gen": () => import("@/tools/network-security/wifi-password-gen/ui"),
-  "pem-key-parser": () => import("@/tools/network-security/pem-key-parser/ui"),
-  "audio-format-reference": () => import("@/tools/audio-video/audio-format-reference/ui"),
-  "video-format-reference": () => import("@/tools/audio-video/video-format-reference/ui"),
-  "codec-comparison": () => import("@/tools/audio-video/codec-comparison/ui"),
-  "bitrate-calc": () => import("@/tools/audio-video/bitrate-calc/ui"),
-  "sample-rate-converter": () => import("@/tools/audio-video/sample-rate-converter/ui"),
-  "flashcard-importer": () => import("@/tools/education/flashcard-importer/ui"),
-  "lesson-plan-generator": () => import("@/tools/education/lesson-plan-generator/ui"),
-  "grade-calc": () => import("@/tools/education/grade-calc/ui"),
-  "gpa-calculator": () => import("@/tools/education/gpa-calculator/ui"),
-  "rubric-maker": () => import("@/tools/education/rubric-maker/ui"),
-  "social-media-contest-runner": () => import("@/tools/social/social-media-contest-runner/ui"),
-  "social-media-giveaway": () => import("@/tools/social/social-media-giveaway/ui"),
-  "social-content-calendar": () => import("@/tools/social/social-content-calendar/ui"),
-  "social-engagement-predictor": () => import("@/tools/social/social-engagement-predictor/ui"),
-  "social-hashtag-generator": () => import("@/tools/social/social-hashtag-generator/ui"),
-  "employee-shift-trader": () => import("@/tools/business/employee-shift-trader/ui"),
-  "inventory-forecast": () => import("@/tools/business/inventory-forecast/ui"),
-  "markup-calc-adv": () => import("@/tools/business/markup-calc-adv/ui"),
-  "break-even-analyzer": () => import("@/tools/business/break-even-analyzer/ui"),
-  "cash-flow-projector": () => import("@/tools/business/cash-flow-projector/ui"),
-  "image-histogram-viewer": () => import("@/tools/image/image-histogram-viewer/ui"),
-  "image-annotation-tool": () => import("@/tools/image/image-annotation-tool/ui"),
-  "image-frame-maker": () => import("@/tools/image/image-frame-maker/ui"),
-  "image-text-caption": () => import("@/tools/image/image-text-caption/ui"),
-  "image-meme-generator": () => import("@/tools/image/image-meme-generator/ui"),
-  "image-passport-photo": () => import("@/tools/image/image-passport-photo/ui"),
-  "image-profile-pic-cropper": () => import("@/tools/image/image-profile-pic-cropper/ui"),
-  "image-placeholder-gen": () => import("@/tools/image/image-placeholder-gen/ui"),
-  "image-solid-color-gen": () => import("@/tools/image/image-solid-color-gen/ui"),
-  "image-upscaler": () => import("@/tools/image/image-upscaler/ui"),
-  "text-acronym-expander": () => import("@/tools/text/text-acronym-expander/ui"),
-  "text-oxford-comma-fixer": () => import("@/tools/text/text-oxford-comma-fixer/ui"),
-  "text-sentence-splitter": () => import("@/tools/text/text-sentence-splitter/ui"),
-  "text-morse-encoder": () => import("@/tools/text/text-morse-encoder/ui"),
-  "text-pig-latin-decoder": () => import("@/tools/text/text-pig-latin-decoder/ui"),
-  "data-unit-converter": () => import("@/tools/calculators/data-unit-converter/ui"),
-  "percentage-of-calc": () => import("@/tools/calculators/percentage-of-calc/ui"),
-  "mortgage-insurance-calc": () => import("@/tools/calculators/mortgage-insurance-calc/ui"),
-  "stamp-duty-calc": () => import("@/tools/calculators/stamp-duty-calc/ui"),
-  "capital-gains-calc": () => import("@/tools/calculators/capital-gains-calc/ui"),
-  "audio-reverb-reference": () => import("@/tools/audio-video/audio-reverb-reference/ui"),
-  "audio-noise-floor-ref": () => import("@/tools/audio-video/audio-noise-floor-ref/ui"),
-  "video-fps-reference": () => import("@/tools/audio-video/video-fps-reference/ui"),
-  "video-bitrate-guide": () => import("@/tools/audio-video/video-bitrate-guide/ui"),
-  "audio-lufs-reference": () => import("@/tools/audio-video/audio-lufs-reference/ui"),
-  "flashcard-deck-organizer": () => import("@/tools/education/flashcard-deck-organizer/ui"),
-  "class-schedule-maker": () => import("@/tools/education/class-schedule-maker/ui"),
-  "word-search-maker": () => import("@/tools/education/word-search-maker/ui"),
-  "crossword-clue-gen": () => import("@/tools/education/crossword-clue-gen/ui"),
-  "assignment-rubric-maker": () => import("@/tools/education/assignment-rubric-maker/ui"),
-  "social-media-bio-optimizer": () => import("@/tools/social/social-media-bio-optimizer/ui"),
-  "social-thread-generator": () => import("@/tools/social/social-thread-generator/ui"),
-  "social-poll-creator": () => import("@/tools/social/social-poll-creator/ui"),
-  "social-content-ideas": () => import("@/tools/social/social-content-ideas/ui"),
-  "social-engagement-tracker-2": () => import("@/tools/social/social-engagement-tracker-2/ui"),
-  "invoice-template-gen": () => import("@/tools/business/invoice-template-gen/ui"),
-  "purchase-order-gen": () => import("@/tools/business/purchase-order-gen/ui"),
-  "tax-calculator-pro": () => import("@/tools/business/tax-calculator-pro/ui"),
-  "depreciation-calc": () => import("@/tools/business/depreciation-calc/ui"),
-  "inventory-reorder-calc": () => import("@/tools/business/inventory-reorder-calc/ui"),
-  "image-halftone-generator": () => import("@/tools/image/image-halftone-generator/ui"),
-  "image-cartoonizer": () => import("@/tools/image/image-cartoonizer/ui"),
-  "image-transparent-png-maker": () => import("@/tools/image/image-transparent-png-maker/ui"),
-  "image-dpi-changer": () => import("@/tools/image/image-dpi-changer/ui"),
-  "image-print-size-calc": () => import("@/tools/image/image-print-size-calc/ui"),
-  "image-tiling-pattern": () => import("@/tools/image/image-tiling-pattern/ui"),
-  "image-polaroid-maker": () => import("@/tools/image/image-polaroid-maker/ui"),
-  "image-instagram-grid": () => import("@/tools/image/image-instagram-grid/ui"),
-  "image-gif-maker": () => import("@/tools/image/image-gif-maker/ui"),
-  "image-diff-compare": () => import("@/tools/image/image-diff-compare/ui"),
-  "text-acronym-generator": () => import("@/tools/text/text-acronym-generator/ui"),
-  "text-headline-analyzer": () => import("@/tools/text/text-headline-analyzer/ui"),
-  "text-hidden-chars-detector": () => import("@/tools/text/text-hidden-chars-detector/ui"),
-  "text-letter-counter": () => import("@/tools/text/text-letter-counter/ui"),
-  "text-palindrome-checker": () => import("@/tools/text/text-palindrome-checker/ui"),
-  "text-syllable-counter": () => import("@/tools/text/text-syllable-counter/ui"),
-  "text-reducer": () => import("@/tools/text/text-reducer/ui"),
-  "text-antonym-finder": () => import("@/tools/text/text-antonym-finder/ui"),
-  "text-cliche-finder": () => import("@/tools/text/text-cliche-finder/ui"),
-  "text-reading-level": () => import("@/tools/text/text-reading-level/ui"),
-  "binary-calculator": () => import("@/tools/calculators/binary-calculator/ui"),
-  "hexadecimal-calculator": () => import("@/tools/calculators/hexadecimal-calculator/ui"),
-  "fibonacci-generator": () => import("@/tools/calculators/fibonacci-generator/ui"),
-  "standard-deviation-calc": () => import("@/tools/calculators/standard-deviation-calc/ui"),
-  "scientific-notation-converter": () => import("@/tools/calculators/scientific-notation-converter/ui"),
-  "audio-converter-ref": () => import("@/tools/audio-video/audio-converter-ref/ui"),
-  "video-compression-guide": () => import("@/tools/audio-video/video-compression-guide/ui"),
-  "audio-trimmer-ref": () => import("@/tools/audio-video/audio-trimmer-ref/ui"),
-  "video-merger-ref": () => import("@/tools/audio-video/video-merger-ref/ui"),
-  "audio-equalizer-ref": () => import("@/tools/audio-video/audio-equalizer-ref/ui"),
-  "bates-numbering-tool": () => import("@/tools/pdf/bates-numbering-tool/ui"),
-  "pdf-deskew-tool": () => import("@/tools/pdf/pdf-deskew-tool/ui"),
-  "pdf-combine-pages": () => import("@/tools/pdf/pdf-combine-pages/ui"),
-  "pdf-crop-to-content": () => import("@/tools/pdf/pdf-crop-to-content/ui"),
-  "pdf-scan-optimizer": () => import("@/tools/pdf/pdf-scan-optimizer/ui"),
-  "burn-rate-calc": () => import("@/tools/business/burn-rate-calc/ui"),
-  "churn-rate-calc": () => import("@/tools/business/churn-rate-calc/ui"),
-  "annuity-calculator": () => import("@/tools/business/annuity-calculator/ui"),
-  "bond-yield-calc": () => import("@/tools/business/bond-yield-calc/ui"),
-  "checklist-creator": () => import("@/tools/business/checklist-creator/ui"),
-  "anagram-solver": () => import("@/tools/education/anagram-solver/ui"),
-  "braille-translator": () => import("@/tools/education/braille-translator/ui"),
-  "chemical-equation-balancer": () => import("@/tools/education/chemical-equation-balancer/ui"),
-  "bibliography-generator": () => import("@/tools/education/bibliography-generator/ui"),
-  "binary-decimal-hex-converter": () => import("@/tools/education/binary-decimal-hex-converter/ui"),
-  "argon2-param-calculator": () => import("@/tools/network-security/argon2-param-calculator/ui"),
-  "rsa-encryption-tool": () => import("@/tools/network-security/rsa-encryption-tool/ui"),
-  "xss-sanitizer": () => import("@/tools/network-security/xss-sanitizer/ui"),
-  "ssl-expiry-tracker": () => import("@/tools/network-security/ssl-expiry-tracker/ui"),
-  "nslookup-reference": () => import("@/tools/network-security/nslookup-reference/ui"),
-  "image-color-contrast-checker": () => import("@/tools/image/image-color-contrast-checker/ui"),
-  "image-color-mixer": () => import("@/tools/image/image-color-mixer/ui"),
-  "image-favicon-generator": () => import("@/tools/image/image-favicon-generator/ui"),
-  "image-app-icon-generator": () => import("@/tools/image/image-app-icon-generator/ui"),
-  "image-gif-optimizer": () => import("@/tools/image/image-gif-optimizer/ui"),
-  "image-gif-splitter": () => import("@/tools/image/image-gif-splitter/ui"),
-  "image-dimensions-inspector": () => import("@/tools/image/image-dimensions-inspector/ui"),
-  "image-noise-texture-gen": () => import("@/tools/image/image-noise-texture-gen/ui"),
-  "image-photo-grid": () => import("@/tools/image/image-photo-grid/ui"),
-  "image-vintage-filter": () => import("@/tools/image/image-vintage-filter/ui"),
-  "tone-generator": () => import("@/tools/audio-video/tone-generator/ui"),
-  "noise-generator": () => import("@/tools/audio-video/noise-generator/ui"),
-  "metronome": () => import("@/tools/audio-video/metronome/ui"),
-  "bpm-detector": () => import("@/tools/audio-video/bpm-detector/ui"),
-  "subtitle-editor": () => import("@/tools/audio-video/subtitle-editor/ui"),
-  "video-aspect-ratio-changer": () => import("@/tools/audio-video/video-aspect-ratio-changer/ui"),
-  "video-loop-maker": () => import("@/tools/audio-video/video-loop-maker/ui"),
-  "slow-motion-maker": () => import("@/tools/audio-video/slow-motion-maker/ui"),
-  "time-lapse-maker": () => import("@/tools/audio-video/time-lapse-maker/ui"),
-  "audiogram-maker": () => import("@/tools/audio-video/audiogram-maker/ui"),
-  "text-active-voice-suggester": () => import("@/tools/text/text-active-voice-suggester/ui"),
-  "text-definition-lookup": () => import("@/tools/text/text-definition-lookup/ui"),
-  "text-bibliography-citation": () => import("@/tools/text/text-bibliography-citation/ui"),
-  "text-abstract-generator": () => import("@/tools/text/text-abstract-generator/ui"),
-  "text-reading-time-estimator": () => import("@/tools/text/text-reading-time-estimator/ui"),
-  "text-word-cloud-data": () => import("@/tools/text/text-word-cloud-data/ui"),
-  "text-grammar-fixer": () => import("@/tools/text/text-grammar-fixer/ui"),
-  "text-plagiarism-checker": () => import("@/tools/text/text-plagiarism-checker/ui"),
-  "text-tone-analyzer": () => import("@/tools/text/text-tone-analyzer/ui"),
-  "text-keyword-extractor": () => import("@/tools/text/text-keyword-extractor/ui"),
-  "calorie-calculator": () => import("@/tools/calculators/calorie-calculator/ui"),
-  "salary-tax-calculator": () => import("@/tools/calculators/salary-tax-calculator/ui"),
-  "steps-to-miles-converter": () => import("@/tools/calculators/steps-to-miles-converter/ui"),
-  "speed-converter": () => import("@/tools/calculators/speed-converter/ui"),
-  "area-converter": () => import("@/tools/calculators/area-converter/ui"),
-  "acceleration-force-calc": () => import("@/tools/education/acceleration-force-calc/ui"),
-  "3d-shape-constructor": () => import("@/tools/education/3d-shape-constructor/ui"),
-  "audiobook-player-ref": () => import("@/tools/education/audiobook-player-ref/ui"),
-  "periodic-table-quiz": () => import("@/tools/education/periodic-table-quiz/ui"),
-  "unit-conversion-tutor": () => import("@/tools/education/unit-conversion-tutor/ui"),
-  "arr-calculator": () => import("@/tools/business/arr-calculator/ui"),
-  "crypto-price-widget": () => import("@/tools/business/crypto-price-widget/ui"),
-  "stock-ticker-widget": () => import("@/tools/business/stock-ticker-widget/ui"),
-  "email-signature-generator": () => import("@/tools/business/email-signature-generator/ui"),
-  "meeting-minutes-template": () => import("@/tools/business/meeting-minutes-template/ui"),
-  "htaccess-rules-generator": () => import("@/tools/network-security/htaccess-rules-generator/ui"),
-  "free-proxy-verifier": () => import("@/tools/network-security/free-proxy-verifier/ui"),
-  "mx-blacklist-checker": () => import("@/tools/network-security/mx-blacklist-checker/ui"),
-  "blacklist-ip-checker": () => import("@/tools/network-security/blacklist-ip-checker/ui"),
-  "user-agent-generator": () => import("@/tools/network-security/user-agent-generator/ui"),
-  "jwt-debugger": () => import("@/tools/network-security/jwt-debugger/ui"),
-  "file-hash-validator": () => import("@/tools/network-security/file-hash-validator/ui"),
-  "mac-address-vendor-lookup": () => import("@/tools/network-security/mac-address-vendor-lookup/ui"),
-  "password-strength-meter": () => import("@/tools/network-security/password-strength-meter/ui"),
-  "strong-password-generator": () => import("@/tools/network-security/strong-password-generator/ui"),
-  "hashing-tool": () => import("@/tools/network-security/hashing-tool/ui"),
-  "email-header-analyzer": () => import("@/tools/network-security/email-header-analyzer/ui"),
-  "user-agent-parser": () => import("@/tools/network-security/user-agent-parser/ui"),
-  "csp-generator": () => import("@/tools/network-security/csp-generator/ui"),
-  "cidr-ip-calculator": () => import("@/tools/network-security/cidr-ip-calculator/ui"),
-  "seo-content-scorecard-audit": () => import("@/tools/seo/seo-content-scorecard-audit/ui"),
-  "title-tag-ctr-estimator": () => import("@/tools/seo/title-tag-ctr-estimator/ui"),
-  "google-serp-snippet-preview": () => import("@/tools/seo/google-serp-snippet-preview/ui"),
-  "meta-description-ab-tester": () => import("@/tools/seo/meta-description-ab-tester/ui"),
-  "add-line-numbers": () => import("@/tools/developer/add-line-numbers/ui"),
-  "css-transform-generator": () => import("@/tools/developer/css-transform-generator/ui"),
-  "css-font-face-generator": () => import("@/tools/developer/css-font-face-generator/ui"),
-  "css-text-shadow-generator": () => import("@/tools/developer/css-text-shadow-generator/ui"),
-  "argon2-hash-generator": () => import("@/tools/developer/argon2-hash-generator/ui"),
-  "css-border-radius-generator": () => import("@/tools/developer/css-border-radius-generator/ui"),
-  "css-blend-mode-previewer": () => import("@/tools/developer/css-blend-mode-previewer/ui"),
-  "css-triangle-generator": () => import("@/tools/developer/css-triangle-generator/ui"),
-  "css-specificity-calculator": () => import("@/tools/developer/css-specificity-calculator/ui"),
-  "css-selector-tester": () => import("@/tools/developer/css-selector-tester/ui"),
-  "atbash-cipher": () => import("@/tools/developer/atbash-cipher/ui"),
-  "css-transition-generator": () => import("@/tools/developer/css-transition-generator/ui"),
-  "css-button-generator": () => import("@/tools/developer/css-button-generator/ui"),
-  "autoprefixer": () => import("@/tools/developer/autoprefixer/ui"),
-  "bcrypt-generator-verifier": () => import("@/tools/developer/bcrypt-generator-verifier/ui"),
-  "css-beautifier": () => import("@/tools/developer/css-beautifier/ui"),
-  "css-color-format-converter": () => import("@/tools/developer/css-color-format-converter/ui"),
-  "css-glassmorphism-generator": () => import("@/tools/developer/css-glassmorphism-generator/ui"),
-  "base58-encode-decode": () => import("@/tools/developer/base58-encode-decode/ui"),
-  "base64-image-encode-decode": () => import("@/tools/developer/base64-image-encode-decode/ui"),
-  "css-neumorphism-generator": () => import("@/tools/developer/css-neumorphism-generator/ui"),
-  "css-background-pattern-generator": () => import("@/tools/developer/css-background-pattern-generator/ui"),
-  "css-filter-generator": () => import("@/tools/developer/css-filter-generator/ui"),
-  "css-cubic-bezier-editor": () => import("@/tools/developer/css-cubic-bezier-editor/ui"),
-  "css-scrollbar-styler": () => import("@/tools/developer/css-scrollbar-styler/ui"),
-  "css-clip-path-generator": () => import("@/tools/developer/css-clip-path-generator/ui"),
-  "aes-encrypt-decrypt": () => import("@/tools/developer/aes-encrypt-decrypt/ui"),
-  "css-units-converter": () => import("@/tools/developer/css-units-converter/ui"),
-  "css-animation-keyframes-generator": () => import("@/tools/developer/css-animation-keyframes-generator/ui"),
-  "cors-tester-config-generator": () => import("@/tools/developer/cors-tester-config-generator/ui"),
-  "base64-to-hex-converter": () => import("@/tools/developer/base64-to-hex-converter/ui"),
-  "base32-encode-decode": () => import("@/tools/developer/base32-encode-decode/ui"),
-  "css-loader-spinner-generator": () => import("@/tools/developer/css-loader-spinner-generator/ui"),
-  "css-minifier": () => import("@/tools/developer/css-minifier/ui"),
-  "css-box-shadow-generator": () => import("@/tools/developer/css-box-shadow-generator/ui"),
-  "css-flexbox-playground": () => import("@/tools/developer/css-flexbox-playground/ui"),
-  "css-grid-generator": () => import("@/tools/developer/css-grid-generator/ui"),
-  "base64-encode-decode": () => import("@/tools/developer/base64-encode-decode/ui"),
-  "css-gradient-generator": () => import("@/tools/developer/css-gradient-generator/ui"),
-  "binary-encode-decode": () => import("@/tools/developer/binary-encode-decode/ui"),
-  "css-media-query-generator": () => import("@/tools/developer/css-media-query-generator/ui"),
-  "css-tooltip-generator": () => import("@/tools/developer/css-tooltip-generator/ui"),
-  "arrow-function-converter": () => import("@/tools/developer/arrow-function-converter/ui"),
-  "css-aspect-ratio-helper": () => import("@/tools/developer/css-aspect-ratio-helper/ui"),
-  "crc32-calculator": () => import("@/tools/developer/crc32-calculator/ui"),
-  "redirect-generator": () => import("@/tools/seo/redirect-generator/ui"),
-  "serp-feature-detector": () => import("@/tools/seo/serp-feature-detector/ui"),
-  "anchor-text-optimizer-analyzer": () => import("@/tools/seo/anchor-text-optimizer-analyzer/ui"),
-  "canonical-tag-checker": () => import("@/tools/seo/canonical-tag-checker/ui"),
-  "content-word-count-tool": () => import("@/tools/seo/content-word-count-tool/ui"),
-  "image-saturation-hue-editor": () => import("@/tools/image/image-saturation-hue-editor/ui"),
-  "color-blindness-simulator": () => import("@/tools/image/color-blindness-simulator/ui"),
-  "aspect-ratio-crop-presets": () => import("@/tools/image/aspect-ratio-crop-presets/ui"),
-  "gif-resizer": () => import("@/tools/image/gif-resizer/ui"),
-  "noise-texture-generator": () => import("@/tools/image/noise-texture-generator/ui"),
-  "bulk-image-converter": () => import("@/tools/image/bulk-image-converter/ui"),
-  "meme-generator": () => import("@/tools/image/meme-generator/ui"),
-  "base64-to-image-decoder": () => import("@/tools/image/base64-to-image-decoder/ui"),
-  "image-sharpen": () => import("@/tools/image/image-sharpen/ui"),
-  "hex-rgb-hsl-converter": () => import("@/tools/image/hex-rgb-hsl-converter/ui"),
-  "image-background-changer": () => import("@/tools/image/image-background-changer/ui"),
-  "round-corners-tool": () => import("@/tools/image/round-corners-tool/ui"),
-  "svg-optimizer-minifier": () => import("@/tools/image/svg-optimizer-minifier/ui"),
-  "photo-grid-maker": () => import("@/tools/image/photo-grid-maker/ui"),
-  "complementary-color-finder": () => import("@/tools/image/complementary-color-finder/ui"),
-  "image-sprite-sheet-generator": () => import("@/tools/image/image-sprite-sheet-generator/ui"),
-  "image-brightness-contrast-editor": () => import("@/tools/image/image-brightness-contrast-editor/ui"),
-  "image-text-caption-adder": () => import("@/tools/image/image-text-caption-adder/ui"),
-  "image-placeholder-generator": () => import("@/tools/image/image-placeholder-generator/ui"),
-  "bulk-image-resizer": () => import("@/tools/image/bulk-image-resizer/ui"),
-  "image-exif-stripper": () => import("@/tools/image/image-exif-stripper/ui"),
-  "image-color-picker": () => import("@/tools/image/image-color-picker/ui"),
-  "bulk-watermark": () => import("@/tools/image/bulk-watermark/ui"),
-  "screenshot-beautifier": () => import("@/tools/image/screenshot-beautifier/ui"),
-  "app-icon-generator": () => import("@/tools/image/app-icon-generator/ui"),
-  "image-drawing-markup": () => import("@/tools/image/image-drawing-markup/ui"),
-  "gif-maker": () => import("@/tools/image/gif-maker/ui"),
-  "image-to-svg-vectorizer": () => import("@/tools/image/image-to-svg-vectorizer/ui"),
-  "sprite-sheet-splitter": () => import("@/tools/image/sprite-sheet-splitter/ui"),
-  "browser-frame-mockup": () => import("@/tools/image/browser-frame-mockup/ui"),
-  "qr-code-scanner": () => import("@/tools/image/qr-code-scanner/ui"),
-  "gradient-image-generator": () => import("@/tools/image/gradient-image-generator/ui"),
-  "svg-to-png-converter": () => import("@/tools/image/svg-to-png-converter/ui"),
-  "image-filter-effects": () => import("@/tools/image/image-filter-effects/ui"),
-  "blob-shape-generator": () => import("@/tools/image/blob-shape-generator/ui"),
-  "color-palette-extractor": () => import("@/tools/image/color-palette-extractor/ui"),
-  "webp-animation-maker": () => import("@/tools/image/webp-animation-maker/ui"),
-  "png-to-ico-converter": () => import("@/tools/image/png-to-ico-converter/ui"),
-  "image-exif-viewer": () => import("@/tools/image/image-exif-viewer/ui"),
-  "image-steganography-decoder": () => import("@/tools/image/image-steganography-decoder/ui"),
-  "solid-color-image-generator": () => import("@/tools/image/solid-color-image-generator/ui"),
-  "image-format-converter": () => import("@/tools/image/image-format-converter/ui"),
-  "wave-divider-svg-generator": () => import("@/tools/image/wave-divider-svg-generator/ui"),
-  "favicon-generator": () => import("@/tools/image/favicon-generator/ui"),
-  "apng-maker": () => import("@/tools/image/apng-maker/ui"),
+  "bcrypt-hash-generator": () => import("@/tools/network-security/bcrypt-hash-generator/ui"),
+  "csp-evaluator": () => import("@/tools/network-security/csp-evaluator/ui"),
+  "data-url-converter": () => import("@/tools/network-security/data-url-converter/ui"),
+  "http-status-code-reference": () => import("@/tools/network-security/http-status-code-reference/ui"),
+  "ip-subnet-calculator": () => import("@/tools/network-security/ip-subnet-calculator/ui"),
+  "jwt-decoder": () => import("@/tools/network-security/jwt-decoder/ui"),
+  "mime-type-lookup": () => import("@/tools/network-security/mime-type-lookup/ui"),
+  "password-generator": () => import("@/tools/network-security/password-generator/ui"),
+  "totp-generator": () => import("@/tools/network-security/totp-generator/ui"),
+  "aes-256-encryptor-decryptor": () => import("@/tools/network-security/aes-256-encryptor-decryptor/ui"),
   "qr-code-generator-image": () => import("@/tools/image/qr-code-generator-image/ui"),
-  "photo-vintage-retro-filter": () => import("@/tools/image/photo-vintage-retro-filter/ui"),
-  "device-mockup-generator": () => import("@/tools/image/device-mockup-generator/ui"),
-  "image-rotator-flipper": () => import("@/tools/image/image-rotator-flipper/ui"),
-  "gif-optimizer": () => import("@/tools/image/gif-optimizer/ui"),
-  "duotone-image-maker": () => import("@/tools/image/duotone-image-maker/ui"),
-  "profile-picture-cropper": () => import("@/tools/image/profile-picture-cropper/ui"),
-  "color-shades-tints-generator": () => import("@/tools/image/color-shades-tints-generator/ui"),
-  "pattern-generator-svg-css": () => import("@/tools/image/pattern-generator-svg-css/ui"),
-  "gif-splitter": () => import("@/tools/image/gif-splitter/ui"),
-  "passport-id-photo-maker": () => import("@/tools/image/passport-id-photo-maker/ui"),
-  "dummy-image-generator": () => import("@/tools/image/dummy-image-generator/ui"),
-  "image-steganography-hide": () => import("@/tools/image/image-steganography-hide/ui"),
-  "bulk-image-compressor": () => import("@/tools/image/bulk-image-compressor/ui"),
-  "color-mixer-blender": () => import("@/tools/image/color-mixer-blender/ui"),
-  "image-to-base64-encoder": () => import("@/tools/image/image-to-base64-encoder/ui"),
-  "color-contrast-checker": () => import("@/tools/image/color-contrast-checker/ui"),
-  "virustotal-style-scanner": () => import("@/tools/network-security/virustotal-style-scanner/ui"),
-  "content-readability-seo-analyzer": () => import("@/tools/network-security/content-readability-seo-analyzer/ui"),
-  "keyword-density-analyzer-seo": () => import("@/tools/network-security/keyword-density-analyzer-seo/ui"),
-  "api-authentication-header-builder": () => import("@/tools/network-security/api-authentication-header-builder/ui"),
-  "cryptographic-key-generator": () => import("@/tools/network-security/cryptographic-key-generator/ui"),
-  "dmarc-record-analyzer": () => import("@/tools/network-security/dmarc-record-analyzer/ui"),
-  "cors-test": () => import("@/tools/network-security/cors-test/ui"),
-  "dnssec-validator": () => import("@/tools/network-security/dnssec-validator/ui"),
-  "traceroute-online": () => import("@/tools/network-security/traceroute-online/ui"),
-  "ping-online": () => import("@/tools/network-security/ping-online/ui"),
-  "hsts-preload-checker": () => import("@/tools/network-security/hsts-preload-checker/ui"),
-  "ssl-tls-certificate-validator": () => import("@/tools/network-security/ssl-tls-certificate-validator/ui"),
-  "http-security-headers-test": () => import("@/tools/network-security/http-security-headers-test/ui"),
-  "ssl-tls-cipher-suite-analyzer": () => import("@/tools/network-security/ssl-tls-cipher-suite-analyzer/ui"),
-  "whois-domain-checker": () => import("@/tools/network-security/whois-domain-checker/ui"),
-  "terms-conditions-generator": () => import("@/tools/network-security/terms-conditions-generator/ui"),
-  "cookie-consent-banner-generator": () => import("@/tools/network-security/cookie-consent-banner-generator/ui"),
-  "tor-node-checker": () => import("@/tools/network-security/tor-node-checker/ui"),
-  "dns-leak-test": () => import("@/tools/network-security/dns-leak-test/ui"),
-  "spf-record-checker": () => import("@/tools/network-security/spf-record-checker/ui"),
-  "port-scan": () => import("@/tools/network-security/port-scan/ui"),
-  "subdomain-finder": () => import("@/tools/network-security/subdomain-finder/ui"),
-  "disclaimer-generator": () => import("@/tools/network-security/disclaimer-generator/ui"),
-  "ip-geolocation": () => import("@/tools/network-security/ip-geolocation/ui"),
-  "proxy-vpn-detection": () => import("@/tools/network-security/proxy-vpn-detection/ui"),
-  "webrtc-leak-test": () => import("@/tools/network-security/webrtc-leak-test/ui"),
-  "dkim-record-validator": () => import("@/tools/network-security/dkim-record-validator/ui"),
-  "robots-txt-parser-validator": () => import("@/tools/network-security/robots-txt-parser-validator/ui"),
-  "my-ip-address": () => import("@/tools/network-security/my-ip-address/ui"),
-  "reverse-ip-lookup": () => import("@/tools/network-security/reverse-ip-lookup/ui"),
-  "url-sandbox-link-scanner": () => import("@/tools/network-security/url-sandbox-link-scanner/ui"),
-  "privacy-policy-generator": () => import("@/tools/network-security/privacy-policy-generator/ui"),
-  "breach-pwned-email-checker": () => import("@/tools/network-security/breach-pwned-email-checker/ui"),
-  "html-form-builder": () => import("@/tools/developer/html-form-builder/ui"),
-  "json-schema-validator": () => import("@/tools/developer/json-schema-validator/ui"),
-  "html5-semantic-checker": () => import("@/tools/developer/html5-semantic-checker/ui"),
-  "html-email-css-inliner": () => import("@/tools/developer/html-email-css-inliner/ui"),
-  "json-validator": () => import("@/tools/developer/json-validator/ui"),
-  "html-escape-unescape": () => import("@/tools/developer/html-escape-unescape/ui"),
-  "json-schema-generator": () => import("@/tools/developer/json-schema-generator/ui"),
-  "hmac-generator": () => import("@/tools/developer/hmac-generator/ui"),
-  "data-uri-generator": () => import("@/tools/developer/data-uri-generator/ui"),
-  "csv-column-reorder": () => import("@/tools/developer/csv-column-reorder/ui"),
-  "hex-encode-decode": () => import("@/tools/developer/hex-encode-decode/ui"),
-  "json-flattener": () => import("@/tools/developer/json-flattener/ui"),
-  "json-to-csv": () => import("@/tools/developer/json-to-csv/ui"),
-  "json-diff-compare": () => import("@/tools/developer/json-diff-compare/ui"),
-  "regex-tester": () => import("@/tools/developer/regex-tester/ui"),
-  "csv-to-json": () => import("@/tools/developer/csv-to-json/ui"),
-  "html-to-plain-text": () => import("@/tools/developer/html-to-plain-text/ui"),
-  "cron-expression-builder": () => import("@/tools/developer/cron-expression-builder/ui"),
-  "file-hash-calculator": () => import("@/tools/developer/file-hash-calculator/ui"),
-  "html-live-preview-editor": () => import("@/tools/developer/html-live-preview-editor/ui"),
-  "html-to-jsx-converter": () => import("@/tools/developer/html-to-jsx-converter/ui"),
-  "url-encode-decode": () => import("@/tools/developer/url-encode-decode/ui"),
-  "regex-generator": () => import("@/tools/developer/regex-generator/ui"),
-  "html-validator": () => import("@/tools/developer/html-validator/ui"),
-  "uuid-generator-v2": () => import("@/tools/developer/uuid-generator-v2/ui"),
-  "json-viewer-tree": () => import("@/tools/developer/json-viewer-tree/ui"),
-  "html-image-extractor": () => import("@/tools/developer/html-image-extractor/ui"),
-  "data-uri-decoder": () => import("@/tools/developer/data-uri-decoder/ui"),
-  "markdown-preview": () => import("@/tools/developer/markdown-preview/ui"),
-  "html-to-pug-converter": () => import("@/tools/developer/html-to-pug-converter/ui"),
-  "checksum-verifier": () => import("@/tools/developer/checksum-verifier/ui"),
-  "html-to-markdown": () => import("@/tools/developer/html-to-markdown/ui"),
-  "html-minifier": () => import("@/tools/developer/html-minifier/ui"),
-  "json-to-c-class": () => import("@/tools/developer/json-to-c-class/ui"),
-  "base64-decode-image": () => import("@/tools/developer/base64-decode-image/ui"),
-  "html-entity-encode-decode": () => import("@/tools/developer/html-entity-encode-decode/ui"),
-  "html-boilerplate-generator": () => import("@/tools/developer/html-boilerplate-generator/ui"),
-  "json-minifier": () => import("@/tools/developer/json-minifier/ui"),
-  "html-link-extractor": () => import("@/tools/developer/html-link-extractor/ui"),
-  "json-to-go-struct": () => import("@/tools/developer/json-to-go-struct/ui"),
-  "json-key-sorter": () => import("@/tools/developer/json-key-sorter/ui"),
-  "gzip-deflate-text": () => import("@/tools/developer/gzip-deflate-text/ui"),
-  "html-beautifier": () => import("@/tools/developer/html-beautifier/ui"),
-  "markdown-to-html": () => import("@/tools/developer/markdown-to-html/ui"),
-  "html-table-to-csv": () => import("@/tools/developer/html-table-to-csv/ui"),
-  "html-table-generator": () => import("@/tools/developer/html-table-generator/ui"),
-  "hex-to-base64-converter": () => import("@/tools/developer/hex-to-base64-converter/ui"),
-  "pdf-extract-images": () => import("@/tools/pdf/pdf-extract-images/ui"),
-  "pdf-crop": () => import("@/tools/pdf/pdf-crop/ui"),
-  "pdf-to-markdown": () => import("@/tools/pdf/pdf-to-markdown/ui"),
-  "pdf-to-images": () => import("@/tools/pdf/pdf-to-images/ui"),
-  "pdf-to-single-image": () => import("@/tools/pdf/pdf-to-single-image/ui"),
-  "pdf-to-word": () => import("@/tools/pdf/pdf-to-word/ui"),
-  "pdf-to-html": () => import("@/tools/pdf/pdf-to-html/ui"),
-  "pdf-add-margins": () => import("@/tools/pdf/pdf-add-margins/ui"),
-  "pdf-to-json": () => import("@/tools/pdf/pdf-to-json/ui"),
-  "pdf-unlock": () => import("@/tools/pdf/pdf-unlock/ui"),
-  "pdf-add-border": () => import("@/tools/pdf/pdf-add-border/ui"),
-  "pdf-page-labels": () => import("@/tools/pdf/pdf-page-labels/ui"),
-  "pdf-add-stamp": () => import("@/tools/pdf/pdf-add-stamp/ui"),
-  "pdf-extract-attachments": () => import("@/tools/pdf/pdf-extract-attachments/ui"),
-  "pdf-compress": () => import("@/tools/pdf/pdf-compress/ui"),
-  "pdf-add-background": () => import("@/tools/pdf/pdf-add-background/ui"),
-  "pdf-bw-optimize": () => import("@/tools/pdf/pdf-bw-optimize/ui"),
-  "pdf-to-powerpoint": () => import("@/tools/pdf/pdf-to-powerpoint/ui"),
-  "pdf-permissions": () => import("@/tools/pdf/pdf-permissions/ui"),
-  "pdf-to-gif": () => import("@/tools/pdf/pdf-to-gif/ui"),
-  "pdf-downsample-images": () => import("@/tools/pdf/pdf-downsample-images/ui"),
-  "pdf-toc-generator": () => import("@/tools/pdf/pdf-toc-generator/ui"),
-  "pdf-add-attachment": () => import("@/tools/pdf/pdf-add-attachment/ui"),
-  "pdf-add-page-numbers": () => import("@/tools/pdf/pdf-add-page-numbers/ui"),
-  "pdf-metadata": () => import("@/tools/pdf/pdf-metadata/ui"),
-  "pdf-add-header-footer": () => import("@/tools/pdf/pdf-add-header-footer/ui"),
-  "pdf-to-xml": () => import("@/tools/pdf/pdf-to-xml/ui"),
-  "pdf-to-svg": () => import("@/tools/pdf/pdf-to-svg/ui"),
-  "pdf-despeckle": () => import("@/tools/pdf/pdf-despeckle/ui"),
-  "pdf-bookmarks": () => import("@/tools/pdf/pdf-bookmarks/ui"),
-  "pdf-extract-text": () => import("@/tools/pdf/pdf-extract-text/ui"),
-  "pdf-split": () => import("@/tools/pdf/pdf-split/ui"),
-  "pdf-merge": () => import("@/tools/pdf/pdf-merge/ui"),
-  "pdf-deskew": () => import("@/tools/pdf/pdf-deskew/ui"),
-  "pdf-to-rtf": () => import("@/tools/pdf/pdf-to-rtf/ui"),
-  "pdf-to-excel": () => import("@/tools/pdf/pdf-to-excel/ui"),
-  "pdf-linearize": () => import("@/tools/pdf/pdf-linearize/ui"),
-  "pdf-add-watermark": () => import("@/tools/pdf/pdf-add-watermark/ui"),
-  "pdf-ocr": () => import("@/tools/pdf/pdf-ocr/ui"),
-  "pdf-remove-watermark": () => import("@/tools/pdf/pdf-remove-watermark/ui"),
-  "pdf-protect": () => import("@/tools/pdf/pdf-protect/ui"),
-  "pdf-to-tiff": () => import("@/tools/pdf/pdf-to-tiff/ui"),
-  "pdf-to-epub": () => import("@/tools/pdf/pdf-to-epub/ui"),
-  "pdf-repair": () => import("@/tools/pdf/pdf-repair/ui"),
-  "css-variables-generator": () => import("@/tools/developer/css-variables-generator/ui"),
-  "slug-generator-tool": () => import("@/tools/developer/slug-generator-tool/ui"),
-  "punycode-converter": () => import("@/tools/developer/punycode-converter/ui"),
-  "less-to-css": () => import("@/tools/developer/less-to-css/ui"),
-  "js-linter": () => import("@/tools/developer/js-linter/ui"),
-  "count-occurrences": () => import("@/tools/developer/count-occurrences/ui"),
-  "totp-generator-tool": () => import("@/tools/developer/totp-generator-tool/ui"),
-  "word-char-counter": () => import("@/tools/developer/word-char-counter/ui"),
-  "remove-duplicate-lines": () => import("@/tools/developer/remove-duplicate-lines/ui"),
-  "css-sprite-tool": () => import("@/tools/developer/css-sprite-tool/ui"),
-  "commonjs-to-esm": () => import("@/tools/developer/commonjs-to-esm/ui"),
-  "json-to-graphql-schema": () => import("@/tools/developer/json-to-graphql-schema/ui"),
-  "sort-lines-tool": () => import("@/tools/developer/sort-lines-tool/ui"),
-  "jwt-verifier": () => import("@/tools/developer/jwt-verifier/ui"),
-  "rate-limit-calculator": () => import("@/tools/developer/rate-limit-calculator/ui"),
-  "random-string-generator": () => import("@/tools/developer/random-string-generator/ui"),
-  "percent-encoding": () => import("@/tools/developer/percent-encoding/ui"),
-  "string-reverser": () => import("@/tools/developer/string-reverser/ui"),
-  "string-escape": () => import("@/tools/developer/string-escape/ui"),
-  "pbkdf2-generator": () => import("@/tools/developer/pbkdf2-generator/ui"),
-  "open-graph-tag-generator": () => import("@/tools/developer/open-graph-tag-generator/ui"),
-  "sha3-hash-generator": () => import("@/tools/developer/sha3-hash-generator/ui"),
-  "find-replace-multi": () => import("@/tools/developer/find-replace-multi/ui"),
-  "css-to-scss": () => import("@/tools/developer/css-to-scss/ui"),
-  "mock-api-generator": () => import("@/tools/developer/mock-api-generator/ui"),
-  "js-bundle-analyzer": () => import("@/tools/developer/js-bundle-analyzer/ui"),
-  "secret-key-generator": () => import("@/tools/developer/secret-key-generator/ui"),
-  "graphql-explorer": () => import("@/tools/developer/graphql-explorer/ui"),
-  "json-to-kotlin": () => import("@/tools/developer/json-to-kotlin/ui"),
-  "json-to-rust": () => import("@/tools/developer/json-to-rust/ui"),
-  "remove-line-breaks": () => import("@/tools/developer/remove-line-breaks/ui"),
-  "json-to-typescript": () => import("@/tools/developer/json-to-typescript/ui"),
-  "jsx-to-js": () => import("@/tools/developer/jsx-to-js/ui"),
-  "utf8-viewer": () => import("@/tools/developer/utf8-viewer/ui"),
-  "sse-tester": () => import("@/tools/developer/sse-tester/ui"),
-  "openapi-viewer": () => import("@/tools/developer/openapi-viewer/ui"),
-  "json-to-yaml": () => import("@/tools/developer/json-to-yaml/ui"),
-  "quoted-printable": () => import("@/tools/developer/quoted-printable/ui"),
-  "html-entity-reference": () => import("@/tools/developer/html-entity-reference/ui"),
-  "json-rpc-builder": () => import("@/tools/developer/json-rpc-builder/ui"),
-  "scss-to-css": () => import("@/tools/developer/scss-to-css/ui"),
-  "typescript-playground": () => import("@/tools/developer/typescript-playground/ui"),
-  "css-grid-builder": () => import("@/tools/developer/css-grid-builder/ui"),
-  "sha1-hash-generator": () => import("@/tools/developer/sha1-hash-generator/ui"),
-  "js-to-typescript": () => import("@/tools/developer/js-to-typescript/ui"),
-  "nanoid-generator": () => import("@/tools/developer/nanoid-generator/ui"),
-  "json-to-query-string": () => import("@/tools/developer/json-to-query-string/ui"),
-  "js-unit-test-runner": () => import("@/tools/developer/js-unit-test-runner/ui"),
-  "favicon-link-generator": () => import("@/tools/developer/favicon-link-generator/ui"),
-  "iframe-generator": () => import("@/tools/developer/iframe-generator/ui"),
-  "jsonpath-evaluator": () => import("@/tools/developer/jsonpath-evaluator/ui"),
-  "curl-builder": () => import("@/tools/developer/curl-builder/ui"),
-  "ecdsa-key-generator": () => import("@/tools/developer/ecdsa-key-generator/ui"),
-  "remove-console-log": () => import("@/tools/developer/remove-console-log/ui"),
-  "random-bytes-generator": () => import("@/tools/developer/random-bytes-generator/ui"),
-  "css-reset-generator": () => import("@/tools/developer/css-reset-generator/ui"),
-  "url-safe-base64-tool": () => import("@/tools/developer/url-safe-base64-tool/ui"),
-  "xor-cipher": () => import("@/tools/developer/xor-cipher/ui"),
-  "js-minifier": () => import("@/tools/developer/js-minifier/ui"),
-  "rsa-key-generator": () => import("@/tools/developer/rsa-key-generator/ui"),
-  "js-playground": () => import("@/tools/developer/js-playground/ui"),
-  "js-obfuscator": () => import("@/tools/developer/js-obfuscator/ui"),
-  "jwt-generator": () => import("@/tools/developer/jwt-generator/ui"),
-  "trim-whitespace": () => import("@/tools/developer/trim-whitespace/ui"),
-  "ts-to-js": () => import("@/tools/developer/ts-to-js/ui"),
-  "cache-control-builder": () => import("@/tools/developer/cache-control-builder/ui"),
-  "json-to-python": () => import("@/tools/developer/json-to-python/ui"),
-  "text-to-array": () => import("@/tools/developer/text-to-array/ui"),
-  "json-to-java": () => import("@/tools/developer/json-to-java/ui"),
-  "tailwind-to-css": () => import("@/tools/developer/tailwind-to-css/ui"),
-  "webhook-tester": () => import("@/tools/developer/webhook-tester/ui"),
-  "whitespace-detector": () => import("@/tools/developer/whitespace-detector/ui"),
-  "ndjson-viewer": () => import("@/tools/developer/ndjson-viewer/ui"),
-  "rsa-encrypt-decrypt-tool": () => import("@/tools/developer/rsa-encrypt-decrypt-tool/ui"),
-  "var-to-let-const": () => import("@/tools/developer/var-to-let-const/ui"),
-  "passphrase-generator": () => import("@/tools/developer/passphrase-generator/ui"),
-  "sha256-hash-generator": () => import("@/tools/developer/sha256-hash-generator/ui"),
-  "openapi-to-client": () => import("@/tools/developer/openapi-to-client/ui"),
-  "content-negotiation-helper": () => import("@/tools/developer/content-negotiation-helper/ui"),
-  "text-diff": () => import("@/tools/developer/text-diff/ui"),
-  "json-escape-unescape": () => import("@/tools/developer/json-escape-unescape/ui"),
-  "morse-code-converter": () => import("@/tools/developer/morse-code-converter/ui"),
-  "json-to-js-object": () => import("@/tools/developer/json-to-js-object/ui"),
-  "semver-calculator": () => import("@/tools/developer/semver-calculator/ui"),
-  "websocket-tester": () => import("@/tools/developer/websocket-tester/ui"),
-  "curl-to-code": () => import("@/tools/developer/curl-to-code/ui"),
-  "js-complexity-analyzer": () => import("@/tools/developer/js-complexity-analyzer/ui"),
-  "json-to-sql": () => import("@/tools/developer/json-to-sql/ui"),
-  "reverse-lines": () => import("@/tools/developer/reverse-lines/ui"),
-  "js-deobfuscator": () => import("@/tools/developer/js-deobfuscator/ui"),
-  "callback-to-promise": () => import("@/tools/developer/callback-to-promise/ui"),
-  "json-to-toml": () => import("@/tools/developer/json-to-toml/ui"),
-  "unicode-escape": () => import("@/tools/developer/unicode-escape/ui"),
-  "multi-to-single-line": () => import("@/tools/developer/multi-to-single-line/ui"),
-  "jsdoc-generator": () => import("@/tools/developer/jsdoc-generator/ui"),
-  "js-beautifier": () => import("@/tools/developer/js-beautifier/ui"),
-  "json-to-xml": () => import("@/tools/developer/json-to-xml/ui"),
-  "rest-api-client": () => import("@/tools/developer/rest-api-client/ui"),
-  "esm-to-commonjs": () => import("@/tools/developer/esm-to-commonjs/ui"),
-  "uuid-v1-tool": () => import("@/tools/developer/uuid-v1-tool/ui"),
-  "sha512-hash-generator": () => import("@/tools/developer/sha512-hash-generator/ui"),
-  "css-unused-rules": () => import("@/tools/developer/css-unused-rules/ui"),
-  "uuid-v4-tool": () => import("@/tools/developer/uuid-v4-tool/ui"),
-  "ulid-generator": () => import("@/tools/developer/ulid-generator/ui"),
-  "uuid-v5-tool": () => import("@/tools/developer/uuid-v5-tool/ui"),
-  "md5-hash-generator": () => import("@/tools/developer/md5-hash-generator/ui"),
-  "rot13-rot47": () => import("@/tools/developer/rot13-rot47/ui"),
-  "scrypt-generator": () => import("@/tools/developer/scrypt-generator/ui"),
-  "http-headers-analyzer": () => import("@/tools/developer/http-headers-analyzer/ui"),
-  "pdf-sanitize": () => import("@/tools/pdf/pdf-sanitize/ui"),
-  "pdf-word-count": () => import("@/tools/pdf/pdf-word-count/ui"),
-  "pdf-merge-bookmarks": () => import("@/tools/pdf/pdf-merge-bookmarks/ui"),
-  "pdf-n-up": () => import("@/tools/pdf/pdf-n-up/ui"),
-  "pdf-split-advanced": () => import("@/tools/pdf/pdf-split-advanced/ui"),
-  "pdf-auto-rotate": () => import("@/tools/pdf/pdf-auto-rotate/ui"),
-  "office-to-pdf": () => import("@/tools/pdf/office-to-pdf/ui"),
-  "pdf-scale-fit": () => import("@/tools/pdf/pdf-scale-fit/ui"),
-  "pdf-spell-check": () => import("@/tools/pdf/pdf-spell-check/ui"),
-  "pdf-rename-content": () => import("@/tools/pdf/pdf-rename-content/ui"),
-  "pdf-grayscale": () => import("@/tools/pdf/pdf-grayscale/ui"),
-  "pdf-metadata-viewer": () => import("@/tools/pdf/pdf-metadata-viewer/ui"),
-  "pdf-summarize-ai": () => import("@/tools/pdf/pdf-summarize-ai/ui"),
-  "pdf-page-label-editor": () => import("@/tools/pdf/pdf-page-label-editor/ui"),
-  "pdf-stamp-document": () => import("@/tools/pdf/pdf-stamp-document/ui"),
-  "pdf-find-replace": () => import("@/tools/pdf/pdf-find-replace/ui"),
-  "pdf-page-size": () => import("@/tools/pdf/pdf-page-size/ui"),
-  "pdf-ocr-searchable": () => import("@/tools/pdf/pdf-ocr-searchable/ui"),
-  "pdf-batch-processor": () => import("@/tools/pdf/pdf-batch-processor/ui"),
-  "pdf-page-blank-insert": () => import("@/tools/pdf/pdf-page-blank-insert/ui"),
-  "pdf-attachment-embed": () => import("@/tools/pdf/pdf-attachment-embed/ui"),
-  "pdf-border-frame": () => import("@/tools/pdf/pdf-border-frame/ui"),
-  "pdf-toc-from-headings": () => import("@/tools/pdf/pdf-toc-from-headings/ui"),
-  "pdf-extract-annotations": () => import("@/tools/pdf/pdf-extract-annotations/ui"),
-  "pdf-to-odt": () => import("@/tools/pdf/pdf-to-odt/ui"),
-  "pdf-visual-diff": () => import("@/tools/pdf/pdf-visual-diff/ui"),
-  "pdf-compare-diff": () => import("@/tools/pdf/pdf-compare-diff/ui"),
-  "pdf-permanent-redact": () => import("@/tools/pdf/pdf-permanent-redact/ui"),
-  "pdf-font-lister": () => import("@/tools/pdf/pdf-font-lister/ui"),
-  "pdf-margin-padding": () => import("@/tools/pdf/pdf-margin-padding/ui"),
-  "pdf-translate": () => import("@/tools/pdf/pdf-translate/ui"),
-  "pdf-organize": () => import("@/tools/pdf/pdf-organize/ui"),
-  "pdf-ua-accessibility": () => import("@/tools/pdf/pdf-ua-accessibility/ui"),
-  "pdf-auto-redact-pii": () => import("@/tools/pdf/pdf-auto-redact-pii/ui"),
-  "pdf-to-pdfa": () => import("@/tools/pdf/pdf-to-pdfa/ui"),
-  "pdf-portfolio-builder": () => import("@/tools/pdf/pdf-portfolio-builder/ui"),
-  "pdf-hyperlink-editor": () => import("@/tools/pdf/pdf-hyperlink-editor/ui"),
-  "pdf-highlight-extractor": () => import("@/tools/pdf/pdf-highlight-extractor/ui"),
-  "pdf-digital-signature": () => import("@/tools/pdf/pdf-digital-signature/ui"),
-  "pdf-thumbnail-sheet": () => import("@/tools/pdf/pdf-thumbnail-sheet/ui"),
-  "pdf-2up-join": () => import("@/tools/pdf/pdf-2up-join/ui"),
-  "pdf-protect-encrypt": () => import("@/tools/pdf/pdf-protect-encrypt/ui"),
-  "pdf-annotate": () => import("@/tools/pdf/pdf-annotate/ui"),
-  "pdf-split-by-bookmarks": () => import("@/tools/pdf/pdf-split-by-bookmarks/ui"),
-  "pdf-font-embedder": () => import("@/tools/pdf/pdf-font-embedder/ui"),
-  "pdf-extract-text-bulk": () => import("@/tools/pdf/pdf-extract-text-bulk/ui"),
-  "pdf-batch-pipeline": () => import("@/tools/pdf/pdf-batch-pipeline/ui"),
-  "pdf-background-image": () => import("@/tools/pdf/pdf-background-image/ui"),
-  "pdf-export-form-data": () => import("@/tools/pdf/pdf-export-form-data/ui"),
-  "pdf-poster-split": () => import("@/tools/pdf/pdf-poster-split/ui"),
-  "pdf-measure-calibrate": () => import("@/tools/pdf/pdf-measure-calibrate/ui"),
-  "pdf-annotation-summary": () => import("@/tools/pdf/pdf-annotation-summary/ui"),
-  "pdf-split-spreads": () => import("@/tools/pdf/pdf-split-spreads/ui"),
-  "pdf-measure-tool": () => import("@/tools/pdf/pdf-measure-tool/ui"),
-  "pdf-extract-attachments-bulk": () => import("@/tools/pdf/pdf-extract-attachments-bulk/ui"),
-  "pdf-document-assembler": () => import("@/tools/pdf/pdf-document-assembler/ui"),
-  "pdf-import-form-data": () => import("@/tools/pdf/pdf-import-form-data/ui"),
-  "pdf-x-export": () => import("@/tools/pdf/pdf-x-export/ui"),
-  "pdf-layers-editor": () => import("@/tools/pdf/pdf-layers-editor/ui"),
-  "pdf-highlight-markup": () => import("@/tools/pdf/pdf-highlight-markup/ui"),
-  "pdf-bookmarks-from-text": () => import("@/tools/pdf/pdf-bookmarks-from-text/ui"),
-  "webpage-to-pdf": () => import("@/tools/pdf/webpage-to-pdf/ui"),
-  "pdf-stamp-confidential": () => import("@/tools/pdf/pdf-stamp-confidential/ui"),
-  "pdf-layers-manager": () => import("@/tools/pdf/pdf-layers-manager/ui"),
-  "pdf-readability": () => import("@/tools/pdf/pdf-readability/ui"),
-  "pdf-stamp-advanced": () => import("@/tools/pdf/pdf-stamp-advanced/ui"),
-  "pdf-tables-csv": () => import("@/tools/pdf/pdf-tables-csv/ui"),
-  "pdf-split-by-size": () => import("@/tools/pdf/pdf-split-by-size/ui"),
-  "pdf-ai-chat": () => import("@/tools/pdf/pdf-ai-chat/ui"),
-  "pdf-redact-pattern": () => import("@/tools/pdf/pdf-redact-pattern/ui"),
-  "pdf-add-page-numbers-advanced": () => import("@/tools/pdf/pdf-add-page-numbers-advanced/ui"),
-  "pdf-flipbook": () => import("@/tools/pdf/pdf-flipbook/ui"),
-  "pdf-compress-target": () => import("@/tools/pdf/pdf-compress-target/ui"),
-  "pdf-full-text-search": () => import("@/tools/pdf/pdf-full-text-search/ui"),
-  "pdf-merge-combine-multiple": () => import("@/tools/pdf/pdf-merge-combine-multiple/ui"),
-  "pdf-draw-signature": () => import("@/tools/pdf/pdf-draw-signature/ui"),
-  "pdf-extract-images-bulk": () => import("@/tools/pdf/pdf-extract-images-bulk/ui"),
-  "pdf-invert-colors": () => import("@/tools/pdf/pdf-invert-colors/ui"),
-  "pdf-watermark-advanced": () => import("@/tools/pdf/pdf-watermark-advanced/ui"),
-  "pdf-translate-device": () => import("@/tools/pdf/pdf-translate-device/ui"),
-  "epub-to-pdf-tool": () => import("@/tools/pdf/epub-to-pdf-tool/ui"),
-  "pdf-clean-metadata": () => import("@/tools/pdf/pdf-clean-metadata/ui"),
-  "pdf-booklet-print": () => import("@/tools/pdf/pdf-booklet-print/ui"),
-  "image-to-pdf-tool": () => import("@/tools/pdf/image-to-pdf-tool/ui"),
-  "pdf-repair-tool": () => import("@/tools/pdf/pdf-repair-tool/ui"),
-  "pdf-to-pdfx": () => import("@/tools/pdf/pdf-to-pdfx/ui"),
-  "pdf-summarizer": () => import("@/tools/pdf/pdf-summarizer/ui"),
-  "pdf-fill-form": () => import("@/tools/pdf/pdf-fill-form/ui"),
-  "pdf-interleave-merge": () => import("@/tools/pdf/pdf-interleave-merge/ui"),
-  "pdf-chat": () => import("@/tools/pdf/pdf-chat/ui"),
-  "pdf-page-resize-individual": () => import("@/tools/pdf/pdf-page-resize-individual/ui"),
-  "pdf-redact-search": () => import("@/tools/pdf/pdf-redact-search/ui"),
-  "pdf-text-to-speech": () => import("@/tools/pdf/pdf-text-to-speech/ui"),
-  "pdf-header-footer-advanced": () => import("@/tools/pdf/pdf-header-footer-advanced/ui"),
-  "pdf-remove-blank-pages": () => import("@/tools/pdf/pdf-remove-blank-pages/ui"),
-  "pdf-form-builder": () => import("@/tools/pdf/pdf-form-builder/ui"),
-  "pdf-organize-tool": () => import("@/tools/pdf/pdf-organize-tool/ui"),
-  "pdf-auto-redact-pii-tool": () => import("@/tools/pdf/pdf-auto-redact-pii-tool/ui"),
-  "pdf-measure-distance-area": () => import("@/tools/pdf/pdf-measure-distance-area/ui"),
-  "pdf-to-pdfx-print": () => import("@/tools/pdf/pdf-to-pdfx-print/ui"),
-  "pdf-hyperlink-editor-tool": () => import("@/tools/pdf/pdf-hyperlink-editor-tool/ui"),
-  "pdf-import-form-data-tool": () => import("@/tools/pdf/pdf-import-form-data-tool/ui"),
-  "pdf-digital-signature-tool": () => import("@/tools/pdf/pdf-digital-signature-tool/ui"),
-  "pdf-merge-bookmarks-tool": () => import("@/tools/pdf/pdf-merge-bookmarks-tool/ui"),
-  "pdf-compress-target-size": () => import("@/tools/pdf/pdf-compress-target-size/ui"),
-  "pdf-highlight-extractor-tool": () => import("@/tools/pdf/pdf-highlight-extractor-tool/ui"),
-  "pdf-interleave-merge-tool": () => import("@/tools/pdf/pdf-interleave-merge-tool/ui"),
-  "pdf-full-text-search-tool": () => import("@/tools/pdf/pdf-full-text-search-tool/ui"),
-  "pdf-annotate-tool": () => import("@/tools/pdf/pdf-annotate-tool/ui"),
-  "pdf-draw-signature-tool": () => import("@/tools/pdf/pdf-draw-signature-tool/ui"),
-  "pdf-font-lister-tool": () => import("@/tools/pdf/pdf-font-lister-tool/ui"),
-  "pdf-annotation-summary-tool": () => import("@/tools/pdf/pdf-annotation-summary-tool/ui"),
-  "pdf-n-up-booklet": () => import("@/tools/pdf/pdf-n-up-booklet/ui"),
-  "pdf-document-assembler-tool": () => import("@/tools/pdf/pdf-document-assembler-tool/ui"),
-  "pdf-layers-ocg-manager": () => import("@/tools/pdf/pdf-layers-ocg-manager/ui"),
-  "pdf-2up-join-tool": () => import("@/tools/pdf/pdf-2up-join-tool/ui"),
-  "pdf-auto-rotate-tool": () => import("@/tools/pdf/pdf-auto-rotate-tool/ui"),
-  "pdf-flipbook-generator": () => import("@/tools/pdf/pdf-flipbook-generator/ui"),
-  "pdf-find-replace-tool": () => import("@/tools/pdf/pdf-find-replace-tool/ui"),
-  "pdf-font-embedder-tool": () => import("@/tools/pdf/pdf-font-embedder-tool/ui"),
-  "pdf-word-count-tool": () => import("@/tools/pdf/pdf-word-count-tool/ui"),
-  "pdf-form-builder-tool": () => import("@/tools/pdf/pdf-form-builder-tool/ui"),
-  "pdf-to-pdfa-archive": () => import("@/tools/pdf/pdf-to-pdfa-archive/ui"),
-  "pdf-export-form-data-tool": () => import("@/tools/pdf/pdf-export-form-data-tool/ui"),
-  "pdf-layers-ocg-editor": () => import("@/tools/pdf/pdf-layers-ocg-editor/ui"),
-  "pdf-crop-marks-bleed": () => import("@/tools/pdf/pdf-crop-marks-bleed/ui"),
-  "pdf-stamp-overlay-tool": () => import("@/tools/pdf/pdf-stamp-overlay-tool/ui"),
-  "pdf-batch-processor-tool": () => import("@/tools/pdf/pdf-batch-processor-tool/ui"),
-  "pdf-rename-from-content": () => import("@/tools/pdf/pdf-rename-from-content/ui"),
-  "pdf-spell-check-tool": () => import("@/tools/pdf/pdf-spell-check-tool/ui"),
-  "pdf-portfolio-builder-tool": () => import("@/tools/pdf/pdf-portfolio-builder-tool/ui"),
-  "pdf-text-to-speech-tool": () => import("@/tools/pdf/pdf-text-to-speech-tool/ui"),
-  "pdf-fill-form-tool": () => import("@/tools/pdf/pdf-fill-form-tool/ui"),
-  "pdf-highlight-markup-tool": () => import("@/tools/pdf/pdf-highlight-markup-tool/ui"),
-  "pdf-extract-annotations-tool": () => import("@/tools/pdf/pdf-extract-annotations-tool/ui"),
-  "pdf-metadata-viewer-tool": () => import("@/tools/pdf/pdf-metadata-viewer-tool/ui"),
-  "pdf-page-label-editor-tool": () => import("@/tools/pdf/pdf-page-label-editor-tool/ui"),
-  "pdf-thumbnail-contact-sheet": () => import("@/tools/pdf/pdf-thumbnail-contact-sheet/ui"),
-  "pdf-readability-stats": () => import("@/tools/pdf/pdf-readability-stats/ui"),
-  "pdf-redact-pattern-tool": () => import("@/tools/pdf/pdf-redact-pattern-tool/ui"),
-  "pdf-split-spreads-tool": () => import("@/tools/pdf/pdf-split-spreads-tool/ui"),
-  "pdf-permanent-redact-tool": () => import("@/tools/pdf/pdf-permanent-redact-tool/ui"),
-  "pdf-measure-calibrate-tool": () => import("@/tools/pdf/pdf-measure-calibrate-tool/ui"),
-  "js-playground-repl": () => import("@/tools/developer/js-playground-repl/ui"),
-  "json-to-ts-interface": () => import("@/tools/developer/json-to-ts-interface/ui"),
-  "gitlab-ci-generator": () => import("@/tools/developer/gitlab-ci-generator/ui"),
-  "json-to-java-pojo": () => import("@/tools/developer/json-to-java-pojo/ui"),
-  "css-reset-normalize": () => import("@/tools/developer/css-reset-normalize/ui"),
-  "git-command-builder": () => import("@/tools/developer/git-command-builder/ui"),
-  "js-bundle-size-analyzer": () => import("@/tools/developer/js-bundle-size-analyzer/ui"),
-  "dockerfile-generator": () => import("@/tools/developer/dockerfile-generator/ui"),
-  "js-to-typescript-converter": () => import("@/tools/developer/js-to-typescript-converter/ui"),
-  "js-object-to-json": () => import("@/tools/developer/js-object-to-json/ui"),
-  "helm-values-helper": () => import("@/tools/developer/helm-values-helper/ui"),
-  "css-animation-generator": () => import("@/tools/developer/css-animation-generator/ui"),
-  "markdown-to-html-converter": () => import("@/tools/developer/markdown-to-html-converter/ui"),
-  "javascript-minifier": () => import("@/tools/developer/javascript-minifier/ui"),
-  "json-to-python-class": () => import("@/tools/developer/json-to-python-class/ui"),
-  "css-to-scss-converter": () => import("@/tools/developer/css-to-scss-converter/ui"),
-  "less-to-css-compiler": () => import("@/tools/developer/less-to-css-compiler/ui"),
-  "code-to-image": () => import("@/tools/developer/code-to-image/ui"),
-  "merge-conflict-resolver": () => import("@/tools/developer/merge-conflict-resolver/ui"),
-  "ast-explorer": () => import("@/tools/developer/ast-explorer/ui"),
-  "changelog-generator": () => import("@/tools/developer/changelog-generator/ui"),
-  "kubernetes-manifest": () => import("@/tools/developer/kubernetes-manifest/ui"),
-  "dependency-graph-visualizer": () => import("@/tools/developer/dependency-graph-visualizer/ui"),
-  "git-diff-viewer": () => import("@/tools/developer/git-diff-viewer/ui"),
-  "eslint-config-generator": () => import("@/tools/developer/eslint-config-generator/ui"),
-  "column-extractor": () => import("@/tools/developer/column-extractor/ui"),
-  "json-flattener-tool": () => import("@/tools/developer/json-flattener-tool/ui"),
-  "mock-rest-api": () => import("@/tools/developer/mock-rest-api/ui"),
-  "apache-htaccess-generator": () => import("@/tools/developer/apache-htaccess-generator/ui"),
-  "json-to-js-literal": () => import("@/tools/developer/json-to-js-literal/ui"),
-  "multi-line-to-single": () => import("@/tools/developer/multi-line-to-single/ui"),
-  "json-to-rust-struct": () => import("@/tools/developer/json-to-rust-struct/ui"),
-  "makefile-generator": () => import("@/tools/developer/makefile-generator/ui"),
-  "github-actions-generator": () => import("@/tools/developer/github-actions-generator/ui"),
-  "conventional-commit-builder": () => import("@/tools/developer/conventional-commit-builder/ui"),
-  "javascript-obfuscator": () => import("@/tools/developer/javascript-obfuscator/ui"),
-  "jwt-signer": () => import("@/tools/developer/jwt-signer/ui"),
-  "js-linter-browser": () => import("@/tools/developer/js-linter-browser/ui"),
-  "javascript-beautifier": () => import("@/tools/developer/javascript-beautifier/ui"),
-  "json-to-kotlin-class": () => import("@/tools/developer/json-to-kotlin-class/ui"),
-  "git-branch-naming": () => import("@/tools/developer/git-branch-naming/ui"),
-  "jsx-to-js-compiler": () => import("@/tools/developer/jsx-to-js-compiler/ui"),
-  "graphql-client": () => import("@/tools/developer/graphql-client/ui"),
-  "circleci-config-generator": () => import("@/tools/developer/circleci-config-generator/ui"),
-  "pdf-booklet-print-layout": () => import("@/tools/pdf/pdf-booklet-print-layout/ui"),
-  "pdf-sanitize-remove-js": () => import("@/tools/pdf/pdf-sanitize-remove-js/ui"),
-  "bw-scan-optimizer": () => import("@/tools/pdf/bw-scan-optimizer/ui"),
-  "pdf-deskew-straighten": () => import("@/tools/pdf/pdf-deskew-straighten/ui"),
-  "pdf-ua-accessibility-tool": () => import("@/tools/pdf/pdf-ua-accessibility-tool/ui"),
-  "pdf-summarize-ai-tool": () => import("@/tools/pdf/pdf-summarize-ai-tool/ui"),
-  "pdf-measure-calibrate-distance": () => import("@/tools/pdf/pdf-measure-calibrate-distance/ui"),
-  "pdf-scale-fit-page": () => import("@/tools/pdf/pdf-scale-fit-page/ui"),
-  "pdf-crop-content-autotrim": () => import("@/tools/pdf/pdf-crop-content-autotrim/ui"),
-  "pdf-digital-signature-cert": () => import("@/tools/pdf/pdf-digital-signature-cert/ui"),
-  "pdf-page-resize-individual-tool": () => import("@/tools/pdf/pdf-page-resize-individual-tool/ui"),
-  "pdf-grayscale-tool": () => import("@/tools/pdf/pdf-grayscale-tool/ui"),
-  "pdf-header-footer-adv": () => import("@/tools/pdf/pdf-header-footer-adv/ui"),
-  "pdf-hyperlink-editor-pdf": () => import("@/tools/pdf/pdf-hyperlink-editor-pdf/ui"),
-  "pdf-linearize-web": () => import("@/tools/pdf/pdf-linearize-web/ui"),
-  "pdf-layers-ocg-editor-tool": () => import("@/tools/pdf/pdf-layers-ocg-editor-tool/ui"),
-  "pdf-margin-padding-tool": () => import("@/tools/pdf/pdf-margin-padding-tool/ui"),
-  "pdf-despeckle-clean": () => import("@/tools/pdf/pdf-despeckle-clean/ui"),
-  "pdf-repair-corrupt": () => import("@/tools/pdf/pdf-repair-corrupt/ui"),
-  "pdf-split-advanced-tool": () => import("@/tools/pdf/pdf-split-advanced-tool/ui"),
-  "pdf-portfolio-package-builder": () => import("@/tools/pdf/pdf-portfolio-package-builder/ui"),
-  "pdf-watermark-advanced-tool": () => import("@/tools/pdf/pdf-watermark-advanced-tool/ui"),
-  "pdf-summarizer-ai": () => import("@/tools/pdf/pdf-summarizer-ai/ui"),
-  "pdf-font-lister-embedder": () => import("@/tools/pdf/pdf-font-lister-embedder/ui"),
-  "pdf-stamp-confidential-tool": () => import("@/tools/pdf/pdf-stamp-confidential-tool/ui"),
-  "pdf-ai-chat-qa": () => import("@/tools/pdf/pdf-ai-chat-qa/ui"),
-  "pdf-background-image-tool": () => import("@/tools/pdf/pdf-background-image-tool/ui"),
-  "pdf-merge-combine-multiple-tool": () => import("@/tools/pdf/pdf-merge-combine-multiple-tool/ui"),
-  "pdf-font-embedder-subsetter": () => import("@/tools/pdf/pdf-font-embedder-subsetter/ui"),
-  "pdf-poster-tile-split": () => import("@/tools/pdf/pdf-poster-tile-split/ui"),
-  "pdf-border-frame-tool": () => import("@/tools/pdf/pdf-border-frame-tool/ui"),
-  "pdf-add-page-numbers-adv": () => import("@/tools/pdf/pdf-add-page-numbers-adv/ui"),
-  "pdf-page-blank-insert-tool": () => import("@/tools/pdf/pdf-page-blank-insert-tool/ui"),
-  "epub-to-pdf-dev": () => import("@/tools/pdf/epub-to-pdf-converter/ui"),
-  "image-to-pdf-jpg-png": () => import("@/tools/pdf/image-to-pdf-jpg-png/ui"),
-  "pdf-protect-unlock": () => import("@/tools/pdf/pdf-protect-unlock/ui"),
-  "pdf-page-size-change": () => import("@/tools/pdf/pdf-page-size-change/ui"),
-  "pdf-chat-qa": () => import("@/tools/pdf/pdf-chat-qa/ui"),
-  "pdf-page-labels-editor": () => import("@/tools/pdf/pdf-page-labels-editor/ui"),
-  "pdf-draw-signature-place": () => import("@/tools/pdf/pdf-draw-signature-place/ui"),
-  "pdf-translate-layout": () => import("@/tools/pdf/pdf-translate-layout/ui"),
-  "pdf-tables-to-csv": () => import("@/tools/pdf/pdf-tables-to-csv/ui"),
-  "office-to-pdf-converter": () => import("@/tools/pdf/office-to-pdf-converter/ui"),
-  "pdf-stamp-advanced-tool": () => import("@/tools/pdf/pdf-stamp-advanced-tool/ui"),
-  "pdf-export-form-data-fdf": () => import("@/tools/pdf/pdf-export-form-data-fdf/ui"),
-  "pdf-document-info-viewer": () => import("@/tools/pdf/pdf-document-info-viewer/ui"),
-  "pdf-compare-diff-tool": () => import("@/tools/pdf/pdf-compare-diff-tool/ui"),
-  "pdf-form-creator-builder": () => import("@/tools/pdf/pdf-form-creator-builder/ui"),
-  "webpage-url-to-pdf": () => import("@/tools/pdf/webpage-url-to-pdf/ui"),
-  "bates-numbering-legal": () => import("@/tools/pdf/bates-numbering-legal/ui"),
-  "pdf-bookmarks-outline-editor": () => import("@/tools/pdf/pdf-bookmarks-outline-editor/ui"),
-  "pdf-attachment-embed-tool": () => import("@/tools/pdf/pdf-attachment-embed-tool/ui"),
-  "pdf-fill-forms-tool": () => import("@/tools/pdf/pdf-fill-forms-tool/ui"),
-  "pdf-redact-search-tool": () => import("@/tools/pdf/pdf-redact-search-tool/ui"),
-  "pdf-invert-colors-tool": () => import("@/tools/pdf/pdf-invert-colors-tool/ui"),
-  "pdf-import-form-data-fdf": () => import("@/tools/pdf/pdf-import-form-data-fdf/ui"),
-  "text-txt-to-pdf": () => import("@/tools/pdf/text-txt-to-pdf/ui"),
-  "pdf-overlay-stamp-document": () => import("@/tools/pdf/pdf-overlay-stamp-document/ui"),
-  "json-to-rust-struct-v2": () => import("@/tools/developer/json-to-rust-struct-v2/ui"),
-  "ndjson-viewer-tool": () => import("@/tools/developer/ndjson-viewer-tool/ui"),
-  "api-auth-header-builder": () => import("@/tools/developer/api-auth-header-builder/ui"),
-  "uuid-v4-generator": () => import("@/tools/developer/uuid-v4-generator/ui"),
-  "regex-to-code": () => import("@/tools/developer/regex-to-code/ui"),
-  "env-file-parser": () => import("@/tools/developer/env-file-parser/ui"),
-  "toml-to-json-converter": () => import("@/tools/developer/toml-to-json-converter/ui"),
-  "json-flattener-tool-v2": () => import("@/tools/developer/json-flattener-tool-v2/ui"),
-  "typescript-to-js": () => import("@/tools/developer/typescript-to-js/ui"),
-  "sha1-hash-tool": () => import("@/tools/developer/sha1-hash-tool/ui"),
-  "openapi-to-client-sdk": () => import("@/tools/developer/openapi-to-client-sdk/ui"),
-  "regex-replace-tool": () => import("@/tools/developer/regex-replace-tool/ui"),
-  "jsx-to-js-compiler-v2": () => import("@/tools/developer/jsx-to-js-compiler-v2/ui"),
-  "gitattributes-generator": () => import("@/tools/developer/gitattributes-generator/ui"),
-  "sha512-hash-tool": () => import("@/tools/developer/sha512-hash-tool/ui"),
-  "nginx-config-generator": () => import("@/tools/developer/nginx-config-generator/ui"),
-  "docker-compose-generator": () => import("@/tools/developer/docker-compose-generator/ui"),
-  "openapi-viewer-editor": () => import("@/tools/developer/openapi-viewer-editor/ui"),
-  "json-to-python-class-v2": () => import("@/tools/developer/json-to-python-class-v2/ui"),
-  "js-object-to-json-converter": () => import("@/tools/developer/js-object-to-json-converter/ui"),
-  "jwt-generator-signer": () => import("@/tools/developer/jwt-generator-signer/ui"),
-  "js-beautifier-formatter": () => import("@/tools/developer/js-beautifier-formatter/ui"),
-  "text-diff-compare": () => import("@/tools/developer/text-diff-compare/ui"),
-  "uuid-v5-generator": () => import("@/tools/developer/uuid-v5-generator/ui"),
-  "query-string-parser": () => import("@/tools/developer/query-string-parser/ui"),
-  "websocket-client": () => import("@/tools/developer/websocket-client/ui"),
-  "sort-lines-tool-v2": () => import("@/tools/developer/sort-lines-tool-v2/ui"),
-  "text-to-array-converter": () => import("@/tools/developer/text-to-array-converter/ui"),
-  "xml-to-json-dev": () => import("@/tools/developer/xml-to-json-converter/ui"),
-  "word-char-line-counter": () => import("@/tools/developer/word-char-line-counter/ui"),
-  "css-grid-template-builder": () => import("@/tools/developer/css-grid-template-builder/ui"),
-  "editorconfig-generator": () => import("@/tools/developer/editorconfig-generator/ui"),
-  "protobuf-decoder": () => import("@/tools/developer/protobuf-decoder/ui"),
-  "secret-key-base64": () => import("@/tools/developer/secret-key-base64/ui"),
-  "scrypt-hash-tool": () => import("@/tools/developer/scrypt-hash-tool/ui"),
-  "json-to-java-pojo-v2": () => import("@/tools/developer/json-to-java-pojo-v2/ui"),
-  "json-to-ts-interface-v2": () => import("@/tools/developer/json-to-ts-interface-v2/ui"),
-  "systemd-unit-generator": () => import("@/tools/developer/systemd-unit-generator/ui"),
-  "rsa-key-pair-generator": () => import("@/tools/developer/rsa-key-pair-generator/ui"),
-  "string-escape-tool": () => import("@/tools/developer/string-escape-tool/ui"),
-  "json-rpc-request-builder": () => import("@/tools/developer/json-rpc-request-builder/ui"),
-  "curl-to-code-converter": () => import("@/tools/developer/curl-to-code-converter/ui"),
-  "semver-calculator-tool": () => import("@/tools/developer/semver-calculator-tool/ui"),
-  "jsdoc-comment-generator": () => import("@/tools/developer/jsdoc-comment-generator/ui"),
-  "regex-cheatsheet": () => import("@/tools/developer/regex-cheatsheet/ui"),
-  "regex-match-highlighter": () => import("@/tools/developer/regex-match-highlighter/ui"),
-  "uuid-v1-generator": () => import("@/tools/developer/uuid-v1-generator/ui"),
-  "webhook-inspector": () => import("@/tools/developer/webhook-inspector/ui"),
-  "scss-to-css-compiler": () => import("@/tools/developer/scss-to-css-compiler/ui"),
-  "totp-2fa-generator": () => import("@/tools/developer/totp-2fa-generator/ui"),
-  "reverse-lines-text": () => import("@/tools/developer/reverse-lines-text/ui"),
-  "source-map-visualizer": () => import("@/tools/developer/source-map-visualizer/ui"),
-  "tailwind-to-css-tool": () => import("@/tools/developer/tailwind-to-css-tool/ui"),
-  "prettier-config-generator": () => import("@/tools/developer/prettier-config-generator/ui"),
-  "gitignore-generator": () => import("@/tools/developer/gitignore-generator/ui"),
-  "package-json-generator": () => import("@/tools/developer/package-json-generator/ui"),
-  "console-log-remover": () => import("@/tools/developer/console-log-remover/ui"),
-  "sha3-hash-tool": () => import("@/tools/developer/sha3-hash-tool/ui"),
-  "regex-tester-debugger": () => import("@/tools/developer/regex-tester-debugger/ui"),
-  "cron-parser-readable": () => import("@/tools/developer/cron-parser-readable/ui"),
-  "yaml-to-json-converter": () => import("@/tools/developer/yaml-to-json-converter/ui"),
-  "css-sprite-generator-tool": () => import("@/tools/developer/css-sprite-generator-tool/ui"),
-  "svg-to-jsx-converter": () => import("@/tools/developer/svg-to-jsx-converter/ui"),
-  "json-to-kotlin-class-v2": () => import("@/tools/developer/json-to-kotlin-class-v2/ui"),
-  "svg-path-editor": () => import("@/tools/developer/svg-path-editor/ui"),
-  "css-unused-rules-finder": () => import("@/tools/developer/css-unused-rules-finder/ui"),
-  "tsconfig-generator": () => import("@/tools/developer/tsconfig-generator/ui"),
-  "regex-explainer": () => import("@/tools/developer/regex-explainer/ui"),
-  "curl-command-builder": () => import("@/tools/developer/curl-command-builder/ui"),
-  "shell-script-linter": () => import("@/tools/developer/shell-script-linter/ui"),
-  "utf8-byte-viewer": () => import("@/tools/developer/utf8-byte-viewer/ui"),
-  "dockerignore-generator": () => import("@/tools/developer/dockerignore-generator/ui"),
-  "quoted-printable-tool": () => import("@/tools/developer/quoted-printable-tool/ui"),
-  "sha256-hash-tool": () => import("@/tools/developer/sha256-hash-tool/ui"),
-  "device-mockup-generator-phone-laptop": () => import("@/tools/image/device-mockup-generator-phone-laptop/ui"),
-  "favicon-generator-multi-size": () => import("@/tools/image/favicon-generator-multi-size/ui"),
-  "color-contrast-checker-wcag": () => import("@/tools/image/color-contrast-checker-wcag/ui"),
-  "gif-maker-from-images": () => import("@/tools/image/gif-maker-from-images/ui"),
-  "browser-frame-mockup-maker": () => import("@/tools/image/browser-frame-mockup-maker/ui"),
-  "blob-shape-generator-svg": () => import("@/tools/image/blob-shape-generator-svg/ui"),
-  "app-icon-generator-ios-android": () => import("@/tools/image/app-icon-generator-ios-android/ui"),
-  "gif-optimizer-compressor": () => import("@/tools/image/gif-optimizer-compressor/ui"),
-  "gif-splitter-to-frames": () => import("@/tools/image/gif-splitter-to-frames/ui"),
-  "port-scanner-tool": () => import("@/tools/network-security/port-scanner-tool/ui"),
-  "cryptographic-key-generator-aes-rsa": () => import("@/tools/network-security/cryptographic-key-generator-aes-rsa/ui"),
-  "hashing-tool-md5-sha1-sha256": () => import("@/tools/network-security/hashing-tool-md5-sha1-sha256/ui"),
-  "my-ip-address-lookup": () => import("@/tools/network-security/my-ip-address-lookup/ui"),
-  "csp-content-security-policy": () => import("@/tools/network-security/csp-content-security-policy/ui"),
-  "privacy-policy-generator-gdpr-ccpa": () => import("@/tools/network-security/privacy-policy-generator-gdpr-ccpa/ui"),
-  "hsts-preload-checker-header": () => import("@/tools/network-security/hsts-preload-checker-header/ui"),
-  "mac-address-vendor-oui": () => import("@/tools/network-security/mac-address-vendor-oui/ui"),
-  "ai-chat-with-pdf": () => import("@/tools/pdf/ai-chat-with-pdf/ui"),
-  "timezone-converter": () => import("@/tools/developer/timezone-converter/ui"),
-  "experiment-tracker": () => import("@/tools/seo/experiment-tracker/ui"),
-  "ai-alt-text-generator": () => import("@/tools/ai/ai-alt-text-generator/ui"),
-  "add-subtract-date-calculator": () => import("@/tools/developer/add-subtract-date-calculator/ui"),
-  "ansi-escape-code-terminal-color-generator": () => import("@/tools/developer/ansi-escape-code-terminal-color-generator/ui"),
-  "pdf-page-manager": () => import("@/tools/pdf/pdf-page-manager/ui"),
-  "xml-formatter": () => import("@/tools/developer/xml-formatter/ui"),
-  "email-validator": () => import("@/tools/developer/email-validator/ui"),
-  "currency-converter": () => import("@/tools/calculators/currency-converter/ui"),
 };
 
 interface ToolPageClientProps {
@@ -1762,23 +177,14 @@ export function ToolPageClient({
   const { record } = useRecentTools();
   const isFav = isFavorite(tool.id);
 
-  // Track this visit in the site-wide "Recently viewed" list (localStorage only).
   useEffect(() => {
     record(tool.id);
   }, [tool.id, record]);
 
-  // Compact info tabs — About / FAQ / Related live behind tabs so the tool
-  // UI is the hero of the page instead of a wall of explanatory sections.
   const [infoTab, setInfoTab] = useState<"about" | "faq" | "related">("about");
   const faqCount = tool.seo?.faq?.length ?? 0;
 
-  function InfoTabButton({
-    id,
-    label,
-  }: {
-    id: "about" | "faq" | "related";
-    label: string;
-  }) {
+  function InfoTabButton({ id, label }: { id: "about" | "faq" | "related"; label: string }) {
     const active = infoTab === id;
     return (
       <button
@@ -1786,11 +192,12 @@ export function ToolPageClient({
         role="tab"
         aria-selected={active}
         onClick={() => setInfoTab(id)}
-        className={`-mb-px px-3 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors cursor-pointer touch-target ${
+        className={cn(
+          "-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors cursor-pointer touch-target rounded-t-lg",
           active
-            ? "border-primary text-foreground"
-            : "border-transparent text-muted-foreground hover:text-foreground"
-        }`}
+            ? "border-cyan-400 text-white"
+            : "border-transparent text-white/45 hover:text-white/85"
+        )}
       >
         {label}
       </button>
@@ -1801,208 +208,259 @@ export function ToolPageClient({
   const loader = TOOL_UI_LOADERS[tool.id];
   const ToolUI = loader ? lazy(loader) : null;
 
+  // Pull style + tint from template category data so the page matches the dashboard palette.
+  const tc = TEMPLATE_CATEGORIES.find((c) => c.id === tool.category);
+  const tileClass = tc?.iconTile ?? "from-slate-400 to-slate-600";
+
   return (
-    <div className="flex min-h-dvh bg-background">
-      <SidebarNav />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 md:pt-0">
-        <div className="section-padding pt-2 pb-8 md:py-12">
-          <div className="container mx-auto px-4 md:px-6 max-w-5xl">
+    <TemplateShell footer={<TemplateFooter />}>
+      <div className="mx-auto max-w-5xl px-3 pb-32 pt-3 sm:px-6 sm:pt-5 md:pb-14">
+        {/* Breadcrumb */}
+        <motion.nav
+          initial={MO_HIDDEN}
+          animate={MO_VISIBLE}
+          transition={MO_NAV_TRANS}
+          className="mb-6 flex items-center gap-1.5 text-[12.5px] text-white/45"
+        >
+          <Link href="/" className="hover:text-white transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="size-3" />
+          <Link href="/tools" className="hover:text-white transition-colors">
+            Tools
+          </Link>
+          <ChevronRight className="size-3" />
+          <Link
+            href={`/category/${tool.category}`}
+            className="hover:text-white transition-colors"
+          >
+            {categoryLabel.split(" ")[0]}
+          </Link>
+          <ChevronRight className="size-3" />
+          <span className="font-medium text-white">{tool.name}</span>
+        </motion.nav>
 
-            {/* Breadcrumb */}
-            <motion.nav
-              initial={MO_HIDDEN}
-              animate={MO_VISIBLE}
-              transition={MO_NAV_TRANS}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6"
-            >
-              <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <Link href="/tools" className="hover:text-foreground transition-colors">Tools</Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <Link href={`/category/${tool.category}`} className="hover:text-foreground transition-colors">
-                {categoryLabel.split(" ")[0]}
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <span className="text-foreground font-medium">{tool.name}</span>
-            </motion.nav>
+        {/* Header card — bento style */}
+        <motion.div
+          initial={MO_HERO}
+          animate={MO_VISIBLE}
+          transition={MO_HERO_TRANS}
+          className="relative mb-6 overflow-hidden rounded-3xl border border-white/[0.07] bg-[#111726]/85 p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_0_rgba(0,0,0,0.4),0_24px_60px_-28px_rgba(0,0,0,0.85)] backdrop-blur-2xl sm:p-8"
+        >
+          {/* Ambient blob */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute -right-20 -top-20 size-72 rounded-full opacity-50 blur-3xl",
+              tc?.blob ?? "bg-slate-500/20"
+            )}
+          />
+          <span className="pointer-events-none absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" aria-hidden="true" />
 
-            {/* Tool header */}
-            <motion.div
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_HERO_TRANS}
-              className="flex flex-wrap items-center gap-3 mb-4"
-            >
-              <div className="unq-icon-tile h-12 w-12 rounded-2xl flex items-center justify-center shadow-sm">
-                <Icon className="h-6 w-6 text-primary" />
-              </div>
-              <Badge className="bg-primary/15 text-foreground border-primary/20">
-                {categoryLabel.split(" ")[0]}
-              </Badge>
-              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1">
-                <Lock className="h-3 w-3" /> Runs in your browser
-              </Badge>
-              <Button
-                variant={isFav ? "default" : "outline"}
-                size="sm"
-                onClick={() => toggle(tool.id)}
-                aria-pressed={isFav}
-                aria-label={
-                  isFav
-                    ? `Remove ${tool.name} from favorites`
-                    : `Add ${tool.name} to favorites`
-                }
-                className="gap-1.5 cursor-pointer"
-              >
-                <Star className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
-                <span>{isFav ? "Favorited" : "Favorite"}</span>
-              </Button>
-            </motion.div>
-
-            <motion.h1
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_H1_TRANS}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight text-balance"
-            >
-              {tool.name}
-            </motion.h1>
-
-            <motion.p
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_P_TRANS}
-              className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl text-pretty"
-            >
-              {tool.description}
-            </motion.p>
-
-            {/* Trust badges */}
-            <motion.div
-              initial={MO_HERO}
-              animate={MO_VISIBLE}
-              transition={MO_BADGES_TRANS}
-              className="flex flex-wrap items-center gap-3 mb-8"
-            >
-              <Badge variant="outline" className="gap-1">
-                <Lock className="h-3 w-3" /> 100% Private
-              </Badge>
-              <Badge variant="outline" className="gap-1">
-                <WifiOff className="h-3 w-3" /> Works Offline
-              </Badge>
-              <Badge variant="outline" className="gap-1">
-                <Zap className="h-3 w-3" /> Instant
-              </Badge>
-              {tool.status === "planned" && (
-                <Badge variant="outline" className="gap-1 bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold">
-                  <Clock className="h-3 w-3" /> Coming Soon
-                </Badge>
+          <div className="relative flex flex-wrap items-center gap-3">
+            <span
+              className={cn(
+                "flex size-12 items-center justify-center rounded-2xl text-white shadow-[0_12px_28px_-8px_rgba(34,211,238,0.6),inset_0_1px_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20 bg-gradient-to-br",
+                tileClass
               )}
-            </motion.div>
-
-            {/* Tool UI — the hero of the page */}
-            <Card className="mb-6 card-hover rounded-2xl shadow-lg shadow-black/[0.04]">
-              <CardContent className="p-6 md:p-8">
-                {tool.status === "planned" && (
-                  <div className="mb-5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200 flex items-start gap-3">
-                    <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold">Upgrade coming soon</p>
-                      <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-                        This preview template is being upgraded with extra features — 100% local, zero network requests.
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {ToolUI ? (
-                  <Suspense fallback={<ToolSkeleton />}>
-                    <ToolUI />
-                  </Suspense>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center mb-4">
-                      <Layers className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <p className="text-lg font-medium text-foreground mb-1">UI coming soon</p>
-                    <p className="text-sm text-muted-foreground max-w-sm">
-                      The {tool.name} logic is implemented and tested — the UI is
-                      being rebuilt in Phase 2 of the v6.0 migration. Check back shortly.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Info — compact tabs so the page never becomes a wall of text */}
-            <div className="mb-6">
-              <div role="tablist" aria-label="Tool information" className="flex flex-wrap gap-1 border-b border-border">
-                <InfoTabButton id="about" label="About & how to use" />
-                {faqCount > 0 && <InfoTabButton id="faq" label={`FAQ (${faqCount})`} />}
-                {related.length > 0 && <InfoTabButton id="related" label={`Related (${related.length})`} />}
-              </div>
-
-              {infoTab === "about" && (
-                <div className="pt-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                    {tool.description} Everything runs locally in your browser — your data never leaves your device.
-                  </p>
-                  <h3 className="text-sm font-semibold text-foreground mb-2">How to use</h3>
-                  <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                    <li>Enter your input in the tool above.</li>
-                    <li>Adjust any options to your preference.</li>
-                    <li>Use the Copy or Download buttons to save the result.</li>
-                    <li>Everything happens locally — your data never leaves your browser.</li>
-                  </ol>
-                </div>
+            >
+              <Icon className="size-5" />
+            </span>
+            <span className="rounded-full border border-white/[0.09] bg-white/[0.05] px-2.5 py-1 text-[10.5px] font-semibold text-white/75">
+              {categoryLabel.split(" ")[0]}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-emerald-300">
+              <Lock className="size-3" /> Runs in your browser
+            </span>
+            <button
+              type="button"
+              onClick={() => toggle(tool.id)}
+              aria-pressed={isFav}
+              aria-label={
+                isFav ? `Remove ${tool.name} from favorites` : `Add ${tool.name} to favorites`
+              }
+              className={cn(
+                "flex cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-2 text-[12px] font-semibold transition-colors",
+                isFav
+                  ? "border-amber-300/40 bg-amber-300/[0.12] text-amber-300"
+                  : "border-white/[0.1] bg-white/[0.05] text-white/75 hover:bg-white/[0.1]"
               )}
-
-              {infoTab === "faq" && faqCount > 0 && (
-                <div className="pt-4 space-y-3">
-                  {tool.seo?.faq?.map((faq, i) => (
-                    <div key={i} className="rounded-xl border bg-card p-4">
-                      <h3 className="text-sm font-semibold text-foreground mb-1">{faq.q}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {infoTab === "related" && related.length > 0 && (
-                <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {related.map((rt) => {
-                    const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
-                    return (
-                      <Link key={rt.id} href={`/tools/${rt.id}`} className="block group h-full">
-                        <div className="card-hover rounded-xl border bg-card p-4 h-full transition-all duration-200 hover:border-primary/30">
-                          <div className="unq-icon-tile h-8 w-8 rounded-lg flex items-center justify-center mb-2">
-                            <RIcon className="h-4 w-4 text-primary" />
-                          </div>
-                          <h3 className="font-medium text-sm mb-1">{rt.name}</h3>
-                          <p className="text-xs text-muted-foreground line-clamp-2">{rt.description}</p>
-                          <div className="mt-2 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
-                            <span>Open</span>
-                            <ArrowRight className="h-3 w-3 ml-1" />
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Back to tools */}
-            <div className="mt-12">
-              <Button asChild variant="outline" size="sm" className="gap-2">
-                <Link href="/tools">
-                  <ArrowLeft className="h-4 w-4" /> All tools
-                </Link>
-              </Button>
-            </div>
-
+            >
+              <Star className={cn("size-3.5", isFav && "fill-current")} />
+              <span>{isFav ? "Favorited" : "Favorite"}</span>
+            </button>
           </div>
+
+          <motion.h1
+            initial={MO_HERO}
+            animate={MO_VISIBLE}
+            transition={MO_H1_TRANS}
+            className="relative mt-4 text-balance text-3xl font-bold tracking-tight sm:text-4xl md:text-[44px]"
+          >
+            {tool.name}
+          </motion.h1>
+          <motion.p
+            initial={MO_HERO}
+            animate={MO_VISIBLE}
+            transition={MO_P_TRANS}
+            className="relative mt-3 max-w-2xl text-[14.5px] text-white/55 sm:text-base"
+          >
+            {tool.description}
+          </motion.p>
+
+          <motion.div
+            initial={MO_HERO}
+            animate={MO_VISIBLE}
+            transition={MO_BADGES_TRANS}
+            className="relative mt-6 flex flex-wrap items-center gap-2"
+          >
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.04] px-2.5 py-1 text-[10.5px] text-white/55">
+              <Lock className="size-3" /> 100% Private
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.04] px-2.5 py-1 text-[10.5px] text-white/55">
+              <WifiOff className="size-3" /> Works Offline
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.04] px-2.5 py-1 text-[10.5px] text-white/55">
+              <Zap className="size-3" /> Instant
+            </span>
+            {tool.status === "planned" && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/[0.08] px-2.5 py-1 text-[10.5px] font-semibold text-amber-300">
+                <Clock className="size-3" /> Coming Soon
+              </span>
+            )}
+          </motion.div>
+        </motion.div>
+
+        {/* Tool UI */}
+        <section
+          className="relative mb-8 overflow-hidden rounded-3xl border border-white/[0.07] bg-[#0c1018]/85 p-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_18px_44px_-20px_rgba(0,0,0,0.7)] sm:p-8"
+        >
+          <span className="pointer-events-none absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
+          {tool.status === "planned" && (
+            <div className="relative mb-5 flex items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/[0.08] p-3.5 text-[13px] text-amber-200">
+              <Clock className="mt-0.5 size-4 shrink-0 text-amber-300" />
+              <div>
+                <p className="font-semibold">Upgrade coming soon</p>
+                <p className="mt-0.5 text-[11.5px] leading-relaxed text-amber-200/80">
+                  This preview template is being upgraded with extra features — 100% local, zero network requests.
+                </p>
+              </div>
+            </div>
+          )}
+          {ToolUI ? (
+            <Suspense
+              fallback={
+                <div className="flex min-h-[120px] items-center justify-center py-8 text-center text-[12.5px] text-white/45">
+                  <Sparkles className="mr-2 size-4 animate-pulse" /> Loading tool…
+                </div>
+              }
+            >
+              <ToolUI />
+            </Suspense>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <span className="mb-3 inline-flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 text-white shadow-md">
+                <Layers className="size-5" />
+              </span>
+              <p className="text-[16px] font-semibold">UI coming soon</p>
+              <p className="mt-1 max-w-sm text-[12.5px] text-white/55">
+                The {tool.name} logic is implemented and tested — UI is being rebuilt. Check back shortly.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* Info tabs */}
+        <div className="mb-6">
+          <div
+            role="tablist"
+            aria-label="Tool information"
+            className="flex flex-wrap gap-1 border-b border-white/[0.07]"
+          >
+            <InfoTabButton id="about" label="About" />
+            {faqCount > 0 && <InfoTabButton id="faq" label={`FAQ (${faqCount})`} />}
+            {related.length > 0 && (
+              <InfoTabButton id="related" label={`Related (${related.length})`} />
+            )}
+          </div>
+
+          {infoTab === "about" && (
+            <div className="pt-4 text-[13.5px] text-white/55">
+              <p className="mb-3 leading-relaxed">
+                {tool.description} Everything runs locally in your browser — your data
+                never leaves your device.
+              </p>
+              <h3 className="mb-2 text-[14.5px] font-semibold text-white">How to use</h3>
+              <ol className="ml-4 list-decimal space-y-1">
+                <li>Enter your input in the tool above.</li>
+                <li>Adjust any options to your preference.</li>
+                <li>Use the Copy or Download buttons to save the result.</li>
+                <li>Everything happens locally — your data never leaves your browser.</li>
+              </ol>
+            </div>
+          )}
+
+          {infoTab === "faq" && faqCount > 0 && (
+            <div className="space-y-3 pt-4">
+              {tool.seo?.faq?.map((faq, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4"
+                >
+                  <h3 className="mb-1 text-[13.5px] font-semibold">{faq.q}</h3>
+                  <p className="text-[12.5px] leading-relaxed text-white/55">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {infoTab === "related" && related.length > 0 && (
+            <div className="grid grid-cols-1 gap-3 pt-4 sm:grid-cols-2 md:grid-cols-3">
+              {related.map((rt) => {
+                const RIcon = CATEGORY_ICONS[rt.category] ?? Layers;
+                const rtc = TEMPLATE_CATEGORIES.find((c) => c.id === rt.category);
+                return (
+                  <Link
+                    key={rt.id}
+                    href={`/tools/${rt.id}`}
+                    className="group block h-full"
+                  >
+                    <div className="flex h-full items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 transition-all hover:-translate-y-0.5 hover:border-white/[0.15]">
+                      <span
+                        className={cn(
+                          "flex size-9 shrink-0 items-center justify-center rounded-xl text-white shadow-md ring-1 ring-white/15 bg-gradient-to-br",
+                          rtc?.iconTile ?? "from-slate-400 to-slate-600"
+                        )}
+                      >
+                        <RIcon className="size-4" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-[12.5px] font-semibold">{rt.name}</h3>
+                        <p className="line-clamp-2 text-[11px] text-white/45">
+                          {rt.description}
+                        </p>
+                        <div className="mt-1 inline-flex items-center gap-1 text-[10px] text-cyan-300 opacity-0 transition-all group-hover:opacity-100">
+                          Open <ArrowRight className="size-3" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
-      </main>
-    </div>
+
+        {/* Back link */}
+        <div className="mt-10">
+          <Link
+            href="/tools"
+            className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.05] px-3.5 py-2 text-[12px] text-white/75 transition-colors hover:bg-white/[0.1]"
+          >
+            <ArrowLeft className="size-3.5" /> All tools
+          </Link>
+        </div>
+      </div>
+    </TemplateShell>
   );
 }
