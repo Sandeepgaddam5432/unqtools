@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>UnQTools — Viral Reel (60s · 1080x1920)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300..900&family=Geist+Mono:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="60"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- ============ persistent background ============ -->
+      <div id="bg" class="clip bg-base" data-start="0" data-duration="60" data-track-index="0">
+        <div class="bg-grid"></div>
+        <div class="orb orb--violet" id="orb-v"></div>
+        <div class="orb orb--teal" id="orb-t"></div>
+        <div class="rim"></div>
+        <div class="vignette"></div>
+      </div>
+
+      <!-- ============ S1 · HOOK (0.0–3.2) ============ -->
+      <section id="s1-hook" class="clip scene" data-start="0" data-duration="3.2" data-track-index="1">
+        <div class="upload-glyph" id="s1-glyph">
+          <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0l-5 5m5-5l5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        </div>
+        <div id="s1-stop">STOP.</div>
+        <div id="s1-line">uploading your files to <em>strangers' servers?</em></div>
+      </section>
+
+      <!-- ============ S2 · REVEAL (3.0–12.0) — drop beat-locked 3.01s ============ -->
+      <section id="s2-reveal" class="clip scene" data-start="3.0" data-duration="9.0" data-track-index="1">
+        <div class="shockwave" id="sw1"></div>
+        <div class="shockwave" id="sw2"></div>
+        <div class="wordmark" id="s2-mark">UnQ<span class="grad-text">Tools</span></div>
+        <div class="uq-badge" id="s2-badge">
+          <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.7L20 10l-5.4 2.4L12 21l-2.6-8.6L4 10l6.1-1.3z"/></svg>
+          1,679 free browser tools — no signup, no tracking
+        </div>
+        <div class="big-count">
+          <div class="num grad-violet" id="s2-count">0</div>
+          <div class="lbl" id="s2-count-lbl">browser tools</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-chip" id="s2-st1"><div class="v">13</div><div class="k">Categories</div></div>
+          <div class="stat-chip" id="s2-st2"><div class="v">41.3K</div><div class="k">Tests</div></div>
+          <div class="stat-chip" id="s2-st3"><div class="v">100%</div><div class="k">Private</div></div>
+        </div>
+        <div id="s2-tagline">Private tools that <span class="grad-text">respect you</span></div>
+      </section>
+
+      <!-- ============ S3 · SEARCH (12.0–20.6) ============ -->
+      <section id="s3-search" class="clip scene" data-start="12.0" data-duration="8.6" data-track-index="1">
+        <div class="browser" id="s3-browser">
+          <div class="browser__chrome">
+            <div class="browser__lights"><i></i><i></i><i></i></div>
+            <div class="browser__tabs">
+              <div class="tab tab--active"><i></i>UnQTools — Private, offline browser tools</div>
+            </div>
+            <div class="browser__addr">
+              <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              <span><span class="host">https://unqtools.pages.dev</span><span class="path">/</span></span>
+            </div>
+          </div>
+          <div class="browser__view" style="min-height: 900px; display:flex; flex-direction:column; gap:38px; justify-content:center;">
+            <div class="uq-hero-h1" id="s3-h1">Private tools that <span class="grad-text">respect you</span></div>
+            <div>
+              <div class="searchbar" id="s3-bar">
+                <svg class="mag" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                <div class="field"><span class="ph" id="s3-ph">Search 1,679 tools…</span><span class="ch">m</span><span class="ch">a</span><span class="ch">k</span><span class="ch">e</span><span class="ch">&nbsp;</span><span class="ch">m</span><span class="ch">y</span><span class="ch">&nbsp;</span><span class="ch">P</span><span class="ch">D</span><span class="ch">F</span><span class="ch">&nbsp;</span><span class="ch">s</span><span class="ch">m</span><span class="ch">a</span><span class="ch">l</span><span class="ch">l</span><span class="ch">e</span><span class="ch">r</span><span class="caret" id="s3-caret"></span></div>
+                <div class="go">Search</div>
+              </div>
+              <div class="dropdown" id="s3-dd">
+                <div class="dd-row hit">
+                  <div class="ic">🗜️</div>
+                  <div><div class="nm">Compress PDF</div><div class="ds">make my PDF smaller — exact target size</div></div>
+                  <div class="enter" id="s3-enter">↵</div>
+                </div>
+                <div class="dd-row">
+                  <div class="ic">🧩</div>
+                  <div><div class="nm">Merge PDF</div><div class="ds">join two pdfs into one</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ S4 · COMPRESS + DRAG/DROP (20.3–32.0) — enters on strong cue 20.19s ============ -->
+      <section id="s4-compress" class="clip scene" data-start="20.3" data-duration="11.7" data-track-index="1">
+        <div class="browser" id="s4-browser">
+          <div class="browser__chrome">
+            <div class="browser__lights"><i></i><i></i><i></i></div>
+            <div class="browser__tabs">
+              <div class="tab" id="s4-tab1"><i></i>UnQTools</div>
+              <div class="tab tab--active" id="s4-tab2"><i></i>Compress PDF — UnQTools</div>
+            </div>
+            <div class="browser__addr" id="s4-addr">
+              <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              <span><span class="host">https://unqtools.pages.dev</span><span class="path">/tools/compress-pdf</span></span>
+            </div>
+          </div>
+          <div class="browser__view" style="display:flex; flex-direction:column; gap:34px; justify-content:flex-start; padding-top:38px;">
+            <div class="tool-head" id="s4-head">
+              <div class="ic">🗜️</div>
+              <div><h3>Compress PDF</h3><p>Exact target size · 5 presets · batch + ZIP</p></div>
+            </div>
+
+            <div class="dropzone" id="s4-dz">
+              Drag &amp; drop your PDF here
+              <div class="dropzone hot" id="s4-dz-hot" style="position:absolute; inset:-3px; opacity:0; border-radius:28px;">Drop it — nothing leaves this tab</div>
+              <div class="file-chip" id="s4-chip" style="opacity:0;"><span class="pdf">PDF</span> Q3-report.pdf · 24.8 MB</div>
+            </div>
+
+            <div class="target-chips" id="s4-targets">
+              <span class="tchip">1 MB</span><span class="tchip">3 MB</span><span class="tchip sel" id="s4-tsel">6 MB</span><span class="tchip">10 MB</span><span class="tchip">Custom…</span>
+            </div>
+
+            <div class="gauge-wrap">
+              <div class="gauge">
+                <svg viewBox="0 0 120 120">
+                  <defs>
+                    <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#d97757"/><stop offset="100%" stop-color="#f2a35e"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="trk" cx="60" cy="60" r="50" pathLength="100"></circle>
+                  <circle class="arc" id="s4-arc" cx="60" cy="60" r="50" pathLength="100"></circle>
+                </svg>
+                <div class="pct"><b id="s4-pct">0%</b><span>in your browser</span></div>
+              </div>
+              <div class="gauge-side">
+                <div class="l1" id="s4-l1">Re-encoding images…<br/>100% in your browser</div>
+                <div class="l2" id="s4-l2"><span class="dot"></span> 0 B uploaded — verified live</div>
+              </div>
+            </div>
+
+            <div class="result-card" id="s4-result" style="opacity:0;">
+              <div>
+                <div class="big"><span class="was">24.8 MB</span> 6.2 MB</div>
+                <div class="dl-btn" id="s4-dl">⬇ Download compressed PDF</div>
+              </div>
+              <div class="save"><b>−75%</b><span>smaller</span></div>
+            </div>
+
+            <div class="net-mini" id="s4-net" style="opacity:0;">
+              <div class="t"><i id="s4-netdot"></i> Network · live</div>
+              <div class="v">0 B sent</div>
+              <div class="r">0 requests · nothing uploaded</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ S5 · ZERO TELEMETRY (32.0–39.4) ============ -->
+      <section id="s5-net" class="clip scene" data-start="32.0" data-duration="7.4" data-track-index="1">
+        <div class="kicker" id="s5-kicker"><span class="dot dot--red" id="s5-rec"></span> network inspector · recording</div>
+        <div class="devtools" id="s5-dt">
+          <div class="devtools__bar">
+            <span class="tabx">Elements</span><span class="tabx">Console</span><span class="tabx on">Network</span><span class="tabx">Sources</span>
+          </div>
+          <div class="devtools__body">
+            <div class="dt-cols"><span>Name</span><span>Status</span><span>Size</span></div>
+            <div class="dt-empty" id="s5-empty">Recording… 0 requests captured</div>
+            <div class="zero-b"><b id="s5-zero">0 B</b><span>transferred<br/>to any server</span></div>
+          </div>
+        </div>
+        <div class="pill-row">
+          <div class="pill no" id="s5-p1">No analytics</div>
+          <div class="pill no" id="s5-p2">No cookies</div>
+          <div class="pill no" id="s5-p3">No fingerprinting</div>
+        </div>
+        <div id="s5-caption">Your data <em>never leaves your device.</em></div>
+      </section>
+
+      <!-- ============ S6 · OFFLINE PWA (39.4–46.8) ============ -->
+      <section id="s6-offline" class="clip scene" data-start="39.4" data-duration="7.4" data-track-index="1">
+        <div class="eyebrow" id="s6-eyebrow">airplane mode · on</div>
+        <div class="toggle-card" id="s6-card">
+          <div class="wifi-strike" id="s6-wifi">
+            <svg viewBox="0 0 24 24"><path d="M2 8.8a16 16 0 0 1 20 0"/><path d="M5 12.4a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.4" r="1" fill="#a1a1aa" stroke="none"/></svg>
+            <div class="slash" id="s6-slash" style="transform:scaleX(0);"></div>
+          </div>
+          <div class="lbl">Wi-Fi</div>
+          <div class="toggle" id="s6-toggle"><div class="knob" id="s6-knob"></div></div>
+          <div class="lbl">✈️</div>
+        </div>
+        <div class="tile-grid" id="s6-tiles">
+          <div class="tile"><div class="e">🗜️</div><div class="n">Compress PDF</div><div class="s">pdf</div><div class="live"><i></i>runs offline</div></div>
+          <div class="tile"><div class="e">🔳</div><div class="n">QR Generator</div><div class="s">image</div><div class="live"><i></i>runs offline</div></div>
+          <div class="tile"><div class="e">🔐</div><div class="n">Password Generator</div><div class="s">network-security</div><div class="live"><i></i>runs offline</div></div>
+          <div class="tile"><div class="e">🧾</div><div class="n">JSON Formatter</div><div class="s">developer</div><div class="live"><i></i>runs offline</div></div>
+          <div class="tile"><div class="e">🖼️</div><div class="n">HEIC → JPEG</div><div class="s">image</div><div class="live"><i></i>runs offline</div></div>
+          <div class="tile"><div class="e">🎧</div><div class="n">BPM Detector</div><div class="s">audio-video</div><div class="live"><i></i>runs offline</div></div>
+        </div>
+        <div id="offline-stamp" style="opacity:0;">Still working.</div>
+        <div class="install-chip" id="s6-install" style="opacity:0;">⊕ Install <b>UnQTools</b> — works like an app</div>
+      </section>
+
+      <!-- ============ S7 · CATEGORY MONTAGE (46.8–53.6) ============ -->
+      <section id="s7-cats" class="clip scene" data-start="46.8" data-duration="6.8" data-track-index="1">
+        <div class="eyebrow" id="s7-eyebrow">13 categories · one toolbox</div>
+        <div class="cat-grid" id="s7-grid">
+          <div class="cat-chip wide"><span class="n">⌨️ Developer</span><span class="c">466</span></div>
+          <div class="cat-chip"><span class="n">📕 PDF</span><span class="c">305</span></div>
+          <div class="cat-chip"><span class="n">🖼️ Image</span><span class="c">178</span></div>
+          <div class="cat-chip"><span class="n">📈 SEO</span><span class="c">109</span></div>
+          <div class="cat-chip"><span class="n">📁 File</span><span class="c">100</span></div>
+          <div class="cat-chip"><span class="n">✨ AI</span><span class="c">100</span></div>
+          <div class="cat-chip"><span class="n">🛡️ Security</span><span class="c">96</span></div>
+          <div class="cat-chip"><span class="n">📝 Text</span><span class="c">83</span></div>
+          <div class="cat-chip"><span class="n">🧮 Calculators</span><span class="c">57</span></div>
+          <div class="cat-chip"><span class="n">💼 Business</span><span class="c">55</span></div>
+          <div class="cat-chip"><span class="n">🎬 Audio &amp; Video</span><span class="c">45</span></div>
+          <div class="cat-chip"><span class="n">🎓 Education</span><span class="c">45</span></div>
+          <div class="cat-chip"><span class="n">📱 Social</span><span class="c">40</span></div>
+        </div>
+      </section>
+
+      <!-- ============ S8 · OUTRO (53.6–60.0) ============ -->
+      <section id="s8-outro" class="clip scene" data-start="53.6" data-duration="6.4" data-track-index="1">
+        <div id="outro-url">unqtools<span class="tld">.pages.dev</span></div>
+        <div class="credit-wrap">
+          <div id="heart-glow"></div>
+          <div class="heart" id="heart" style="opacity:0;">❤️</div>
+          <div id="credit" style="opacity:0;">Built with ❤️ by Sandeep Gaddam</div>
+        </div>
+        <div class="outro-pill" id="outro-pill" style="opacity:0;"><b>100% free</b> · no signup · <b>1,679 tools</b></div>
+      </section>
+
+      <div id="fade-black" class="clip fade-black" data-start="0" data-duration="60" style="position:absolute;inset:0;"></div>
+
+      <!-- ============================================================
+           AUDIO · 3-track matrix
+           track 10  — BGM bed (fallback: bundled vol-10, 60.00s, 109.96 BPM)
+           track 20  — master voiceover (INGEST: assets/voiceover/voiceover.wav)
+           track 30+ — frame-accurate foley / UI SFX
+           Ducking: ingest-audio.sh sidechain-ducks BGM under the VO (-12dB)
+           ============================================================ -->
+      <audio id="bgm" class="clip" data-start="0" data-duration="60" data-track-index="10" data-volume="0.35" data-fade-in="0.4" data-fade-out="1.6" src="assets/music/bgm-reel.mp3"></audio>
+      <audio id="vo" class="clip" data-start="0" data-duration="60" data-track-index="20" data-volume="1" src="assets/voiceover/voiceover.wav"></audio>
+
+      <!-- foley -->
+      <audio id="sfx-01" class="clip" data-start="0.30" data-duration="3.06" data-track-index="30" data-volume="0.35" data-fade-out="0.4" src="assets/sfx/casino/card-shuffle.ogg"></audio> <!-- riser into drop -->
+      <audio id="sfx-02" class="clip" data-start="3.01" data-duration="0.51" data-track-index="31" data-volume="0.95" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio> <!-- 808-style drop impact, beat-locked 3.01 -->
+      <audio id="sfx-03" class="clip" data-start="3.01" data-duration="0.13" data-track-index="32" data-volume="0.70" src="assets/sfx/interface/bong_001.ogg"></audio>
+      <audio id="sfx-04" class="clip" data-start="4.10" data-duration="0.12" data-track-index="33" data-volume="0.60" src="assets/sfx/interface/drop_001.ogg"></audio> <!-- badge, beat-grid 4.10 -->
+      <audio id="sfx-05" class="clip" data-start="5.19" data-duration="0.02" data-track-index="34" data-volume="0.50" src="assets/sfx/interface/click_003.ogg"></audio> <!-- count-up start, beat-grid 5.19 -->
+      <audio id="sfx-06" class="clip" data-start="7.35" data-duration="0.26" data-track-index="35" data-volume="0.70" src="assets/sfx/casino/chips-collide-1.ogg"></audio> <!-- stats land, beat-grid 7.35 -->
+      <audio id="sfx-07" class="clip" data-start="8.72" data-duration="0.06" data-track-index="36" data-volume="0.40" src="assets/sfx/ui/rollover2.ogg"></audio> <!-- tagline -->
+      <audio id="sfx-08" class="clip" data-start="12.02" data-duration="0.60" data-track-index="37" data-volume="0.65" src="assets/sfx/casino/card-slide-1.ogg"></audio> <!-- browser swoosh in, beat-grid 12.02 -->
+
+      <!-- mechanical keyboard: one click per keystroke of "make my PDF smaller" -->
+      <audio id="sfx-09" class="clip" data-start="15.60" data-duration="0.2" data-track-index="38" data-volume="0.5" src="assets/sfx/keyboard/keypress-001.wav"></audio>
+      <audio id="sfx-10" class="clip" data-start="15.76" data-duration="0.2" data-track-index="39" data-volume="0.5" src="assets/sfx/keyboard/keypress-004.wav"></audio>
+      <audio id="sfx-11" class="clip" data-start="15.91" data-duration="0.2" data-track-index="40" data-volume="0.5" src="assets/sfx/keyboard/keypress-007.wav"></audio>
+      <audio id="sfx-12" class="clip" data-start="16.08" data-duration="0.2" data-track-index="41" data-volume="0.5" src="assets/sfx/keyboard/keypress-010.wav"></audio>
+      <audio id="sfx-13" class="clip" data-start="16.23" data-duration="0.2" data-track-index="42" data-volume="0.5" src="assets/sfx/keyboard/keypress-013.wav"></audio>
+      <audio id="sfx-14" class="clip" data-start="16.40" data-duration="0.2" data-track-index="43" data-volume="0.5" src="assets/sfx/keyboard/keypress-016.wav"></audio>
+      <audio id="sfx-15" class="clip" data-start="16.55" data-duration="0.2" data-track-index="44" data-volume="0.5" src="assets/sfx/keyboard/keypress-019.wav"></audio>
+      <audio id="sfx-16" class="clip" data-start="16.72" data-duration="0.2" data-track-index="45" data-volume="0.5" src="assets/sfx/keyboard/keypress-022.wav"></audio>
+      <audio id="sfx-17" class="clip" data-start="16.87" data-duration="0.2" data-track-index="46" data-volume="0.5" src="assets/sfx/keyboard/keypress-025.wav"></audio>
+      <audio id="sfx-18" class="clip" data-start="17.03" data-duration="0.2" data-track-index="47" data-volume="0.5" src="assets/sfx/keyboard/keypress-028.wav"></audio>
+      <audio id="sfx-19" class="clip" data-start="17.19" data-duration="0.2" data-track-index="48" data-volume="0.5" src="assets/sfx/keyboard/keypress-031.wav"></audio>
+      <audio id="sfx-20" class="clip" data-start="17.35" data-duration="0.2" data-track-index="49" data-volume="0.5" src="assets/sfx/keyboard/keypress-004.wav"></audio>
+      <audio id="sfx-21" class="clip" data-start="17.50" data-duration="0.2" data-track-index="50" data-volume="0.5" src="assets/sfx/keyboard/keypress-007.wav"></audio>
+      <audio id="sfx-22" class="clip" data-start="17.67" data-duration="0.2" data-track-index="51" data-volume="0.5" src="assets/sfx/keyboard/keypress-010.wav"></audio>
+      <audio id="sfx-23" class="clip" data-start="17.82" data-duration="0.2" data-track-index="52" data-volume="0.5" src="assets/sfx/keyboard/keypress-013.wav"></audio>
+      <audio id="sfx-24" class="clip" data-start="17.98" data-duration="0.2" data-track-index="53" data-volume="0.5" src="assets/sfx/keyboard/keypress-016.wav"></audio>
+      <audio id="sfx-25" class="clip" data-start="18.15" data-duration="0.2" data-track-index="54" data-volume="0.5" src="assets/sfx/keyboard/keypress-019.wav"></audio>
+      <audio id="sfx-26" class="clip" data-start="18.30" data-duration="0.2" data-track-index="55" data-volume="0.5" src="assets/sfx/keyboard/keypress-022.wav"></audio>
+      <audio id="sfx-27" class="clip" data-start="18.46" data-duration="0.2" data-track-index="56" data-volume="0.5" src="assets/sfx/keyboard/keypress-025.wav"></audio>
+
+      <audio id="sfx-28" class="clip" data-start="18.80" data-duration="0.05" data-track-index="57" data-volume="0.65" src="assets/sfx/interface/select_008.ogg"></audio> <!-- autocomplete dropdown spring -->
+      <audio id="sfx-29" class="clip" data-start="20.00" data-duration="0.06" data-track-index="58" data-volume="0.70" src="assets/sfx/ui/mouseclick1.ogg"></audio> <!-- Enter -->
+      <audio id="sfx-30" class="clip" data-start="20.19" data-duration="0.30" data-track-index="59" data-volume="0.60" src="assets/sfx/ui/switch11.ogg"></audio> <!-- tab transition swoosh, strong-cue 20.19 -->
+      <audio id="sfx-31" class="clip" data-start="22.20" data-duration="0.12" data-track-index="60" data-volume="0.85" src="assets/sfx/interface/drop_001.ogg"></audio> <!-- file drop: suction pop -->
+      <audio id="sfx-32" class="clip" data-start="22.90" data-duration="0.02" data-track-index="61" data-volume="0.60" src="assets/sfx/interface/click_002.ogg"></audio> <!-- target-size chip select -->
+      <audio id="sfx-33" class="clip" data-start="23.10" data-duration="0.02" data-track-index="62" data-volume="0.50" src="assets/sfx/interface/click_003.ogg"></audio> <!-- gauge start -->
+      <audio id="sfx-34" class="clip" data-start="25.60" data-duration="0.21" data-track-index="63" data-volume="0.75" src="assets/sfx/impact/impactGlass_light_001.ogg"></audio> <!-- completion: crystal chime -->
+      <audio id="sfx-35" class="clip" data-start="26.00" data-duration="0.21" data-track-index="64" data-volume="0.70" src="assets/sfx/impact/impactGlass_light_002.ogg"></audio> <!-- result card -->
+      <audio id="sfx-36" class="clip" data-start="27.50" data-duration="0.06" data-track-index="65" data-volume="0.40" src="assets/sfx/ui/rollover2.ogg"></audio> <!-- download hover -->
+      <audio id="sfx-37" class="clip" data-start="32.00" data-duration="0.19" data-track-index="66" data-volume="0.80" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio> <!-- hard cut to devtools -->
+      <audio id="sfx-38" class="clip" data-start="33.19" data-duration="0.20" data-track-index="67" data-volume="0.60" src="assets/sfx/interface/drop_002.ogg"></audio> <!-- pill 1, beat-grid -->
+      <audio id="sfx-39" class="clip" data-start="34.28" data-duration="0.20" data-track-index="68" data-volume="0.60" src="assets/sfx/interface/drop_002.ogg"></audio> <!-- pill 2, beat-grid -->
+      <audio id="sfx-40" class="clip" data-start="35.37" data-duration="0.20" data-track-index="69" data-volume="0.60" src="assets/sfx/interface/drop_002.ogg"></audio> <!-- pill 3, beat-grid -->
+      <audio id="sfx-41" class="clip" data-start="36.40" data-duration="0.13" data-track-index="70" data-volume="0.60" src="assets/sfx/interface/bong_001.ogg"></audio> <!-- caption -->
+      <audio id="sfx-42" class="clip" data-start="40.00" data-duration="0.61" data-track-index="71" data-volume="0.80" src="assets/sfx/interface/switch_002.ogg"></audio> <!-- airplane toggle -->
+      <audio id="sfx-43" class="clip" data-start="42.00" data-duration="0.02" data-track-index="72" data-volume="0.50" src="assets/sfx/interface/click_002.ogg"></audio> <!-- stamp -->
+      <audio id="sfx-44" class="clip" data-start="43.20" data-duration="0.20" data-track-index="73" data-volume="0.65" src="assets/sfx/interface/drop_002.ogg"></audio> <!-- install chip -->
+      <audio id="sfx-45" class="clip" data-start="47.40" data-duration="0.60" data-track-index="74" data-volume="0.60" src="assets/sfx/casino/card-slide-1.ogg"></audio> <!-- first category chip -->
+      <audio id="sfx-46" class="clip" data-start="48.21" data-duration="0.02" data-track-index="75" data-volume="0.35" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-47" class="clip" data-start="49.02" data-duration="0.02" data-track-index="76" data-volume="0.35" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-48" class="clip" data-start="49.83" data-duration="0.02" data-track-index="77" data-volume="0.35" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-49" class="clip" data-start="50.64" data-duration="0.26" data-track-index="78" data-volume="0.65" src="assets/sfx/casino/chips-collide-1.ogg"></audio> <!-- last chip lands -->
+      <audio id="sfx-50" class="clip" data-start="54.20" data-duration="0.19" data-track-index="79" data-volume="0.60" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio> <!-- URL reveal -->
+      <audio id="sfx-51" class="clip" data-start="55.80" data-duration="1.48" data-track-index="80" data-volume="0.95" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio> <!-- SUB-IMPACT BOOM on credit -->
+      <audio id="sfx-52" class="clip" data-start="55.80" data-duration="0.51" data-track-index="81" data-volume="0.80" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio> <!-- boom low layer -->
+      <audio id="sfx-53" class="clip" data-start="57.40" data-duration="0.12" data-track-index="82" data-volume="0.45" src="assets/sfx/interface/drop_001.ogg"></audio> <!-- outro pill -->
+    </div>
+
+    <script>
+      // ============================================================
+      // Root timeline — paused, seek-safe, deterministic (no Date/Math.random)
+      // Music: bgm-reel.mp3 = ende.app vol-10, 109.96 BPM.
+      // Beat grid: 0.27 + n*0.5456 → 3.01, 4.10, 5.19, 7.35, 12.02 …
+      // Strong cues (preset): 15.82, 18.01, 20.19, 20.74, 22.92
+      // ============================================================
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+
+      // deterministic per-character keystroke times for "make my PDF smaller"
+      const CHARS = [15.60,15.76,15.91,16.08,16.23,16.40,16.55,16.72,16.87,17.03,17.19,17.35,17.50,17.67,17.82,17.98,18.15,18.30,18.46];
+
+      // ---------- background drift (full 60s) ----------
+      tl.to("#orb-v", { x: 90, y: 70, duration: 60, ease: "none" }, 0);
+      tl.to("#orb-t", { x: -70, y: -50, duration: 60, ease: "none" }, 0);
+
+      // ---------- S1 · HOOK ----------
+      tl.fromTo("#s1-glyph", { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 0.1);
+      tl.fromTo("#s1-stop", { autoAlpha: 0, scale: 2.4 }, { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power4.out" }, 0.35);
+      tl.fromTo("#s1-line", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.15);
+      tl.to("#s1-glyph", { scale: 1.05, duration: 0.4, repeat: 3, yoyo: true, repeatDelay: 0.1, ease: "sine.inOut" }, 1.6); // red pulse tension
+      tl.to("#s1-hook > *", { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 2.9); // hard cut into the drop
+
+      // ---------- S2 · REVEAL ----------
+      // beat-locked: 3.01s (drop, beat grid)
+      tl.fromTo("#sw1", { autoAlpha: 0.9, scale: 0.2 }, { autoAlpha: 0, scale: 7, duration: 0.9, ease: "power2.out" }, 3.01);
+      tl.fromTo("#sw2", { autoAlpha: 0.7, scale: 0.2 }, { autoAlpha: 0, scale: 5.5, duration: 0.8, ease: "power2.out" }, 3.09);
+      tl.fromTo("#s2-mark", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 3.01); // beat-locked: 3.01s
+      tl.fromTo("#s2-badge", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out" }, 4.10); // beat-grid: 4.10s
+      tl.fromTo("#s2-count-lbl", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 5.05);
+      const cnt = { v: 0 };
+      const cntEl = document.querySelector("#s2-count");
+      tl.fromTo(cntEl, { autoAlpha: 0, scale: 0.85 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 5.19); // beat-grid: 5.19s
+      tl.to(cnt, { v: 1679, duration: 2.1, ease: "power2.out", snap: { v: 1 },
+        onUpdate: () => { cntEl.textContent = cnt.v.toLocaleString("en-US"); } }, 5.19);
+      // beat-grid: stats at 6.82, 7.08, 7.35
+      tl.fromTo("#s2-st1", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 6.82);
+      tl.fromTo("#s2-st2", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 7.08);
+      tl.fromTo("#s2-st3", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 7.35);
+      tl.fromTo("#s2-tagline", { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 8.72);
+      tl.to("#s2-reveal > *:not(.shockwave)", { autoAlpha: 0, duration: 0.45, ease: "power2.in" }, 11.4);
+
+      // ---------- S3 · SEARCH ----------
+      tl.fromTo("#s3-browser", { autoAlpha: 0, y: 90, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 12.02); // beat-grid: 12.02s
+      tl.fromTo("#s3-h1", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 12.7);
+      tl.fromTo("#s3-bar", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out" }, 13.4);
+      tl.to("#s3-caret", { autoAlpha: 0, duration: 0.28, repeat: 5, yoyo: true, repeatDelay: 0.12 }, 13.9); // caret blink before typing
+      tl.to("#s3-ph", { autoAlpha: 0, duration: 0.15 }, 15.6);
+      document.querySelectorAll("#s3-search .ch").forEach((el, i) => {
+        tl.set(el, { autoAlpha: 1 }, CHARS[i]); // mechanical keystroke visuals — SFX on same timestamps
+      });
+      tl.fromTo("#s3-dd", { autoAlpha: 0, y: -18, scaleY: 0.6, transformOrigin: "top center" }, { autoAlpha: 1, y: 0, scaleY: 1, duration: 0.5, ease: "back.out(2.2)" }, 18.80); // spring-physics dropdown
+      tl.fromTo("#s3-enter", { scale: 1 }, { scale: 0.84, duration: 0.09, yoyo: true, repeat: 1, ease: "power2.out" }, 20.0);
+      tl.to("#s3-search > *", { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 20.3);
+
+      // ---------- S4 · COMPRESS (enters on strong cue) ----------
+      // beat-locked: 20.19s strong cue → scene lands 20.3
+      tl.fromTo("#s4-browser", { autoAlpha: 0, x: 70 }, { autoAlpha: 1, x: 0, duration: 0.45, ease: "power3.out" }, 20.35);
+      tl.fromTo("#s4-tab2", { backgroundColor: "rgba(217,119,87,0.25)" }, { backgroundColor: "#262624", duration: 0.5, ease: "power2.out" }, 20.5); // active-tab transition flash
+      tl.fromTo("#s4-head", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 20.7);
+      tl.fromTo("#s4-dz", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 20.9);
+      tl.fromTo("#s4-chip",
+        { autoAlpha: 0, x: -560, y: -880, scale: 0.5, rotation: -16 },
+        { keyframes: [
+            { autoAlpha: 1, x: -170, y: -430, scale: 0.78, rotation: -9, duration: 0.5, ease: "power1.out" },
+            { x: 0, y: 0, scale: 1, rotation: 0, duration: 0.7, ease: "power2.in" } ],
+        }, 21.0); // drag-and-drop flight, lands 22.2 → suction pop SFX
+      tl.fromTo("#s4-dz-hot", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 21.6);
+      tl.fromTo("#s4-dz-hot", { autoAlpha: 1 }, { autoAlpha: 0.55, duration: 0.5, yoyo: true, repeat: 1, immediateRender: false }, 22.2); // landing flash
+      tl.fromTo("#s4-targets .tchip", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.1 }, 22.5);
+      tl.fromTo("#s4-tsel", { scale: 1 }, { scale: 1.12, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, 22.9);
+      tl.to("#s4-arc", { strokeDashoffset: 0, duration: 2.5, ease: "power1.inOut" }, 23.1); // circular processing gauge
+      const pct = { v: 0 };
+      const pctEl = document.querySelector("#s4-pct");
+      tl.to(pct, { v: 100, duration: 2.5, ease: "power1.inOut", snap: { v: 1 },
+        onUpdate: () => { pctEl.textContent = pct.v + "%"; } }, 23.1);
+      tl.fromTo("#s4-l2", { autoAlpha: 0, x: -14 }, { autoAlpha: 1, x: 0, duration: 0.4 }, 24.0);
+      tl.fromTo("#s4-result", { autoAlpha: 0, y: 44, scale: 0.95 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.5)" }, 26.0); // chime lands here
+      tl.fromTo("#s4-dl", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 26.8);
+      tl.fromTo("#s4-net", { autoAlpha: 0, x: 60 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" }, 27.2);
+      tl.to("#s4-netdot", { autoAlpha: 0.25, duration: 0.5, repeat: 7, yoyo: true }, 27.7); // steady "no outbound data" pulse
+      tl.to("#s4-compress > *", { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 31.5);
+
+      // ---------- S5 · ZERO TELEMETRY ----------
+      tl.fromTo("#s5-kicker", { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 32.02);
+      tl.to("#s5-rec", { autoAlpha: 0.2, duration: 0.4, repeat: 9, yoyo: true }, 32.4); // recording dot blink
+      tl.fromTo("#s5-dt", { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 32.1);
+      tl.fromTo("#s5-empty", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 32.9);
+      tl.fromTo("#s5-zero", { autoAlpha: 0, scale: 1.7 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "power4.out" }, 33.4);
+      // beat-grid: pills every other beat → 33.19 / 34.28 / 35.37
+      tl.fromTo("#s5-p1", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 33.19);
+      tl.fromTo("#s5-p2", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 34.28);
+      tl.fromTo("#s5-p3", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 35.37);
+      tl.fromTo("#s5-caption", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 36.4);
+      tl.to("#s5-net > *", { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 38.9);
+
+      // ---------- S6 · OFFLINE PWA ----------
+      tl.fromTo("#s6-eyebrow", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 39.55);
+      tl.fromTo("#s6-card", { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out" }, 39.7);
+      tl.to("#s6-knob", { x: 74, duration: 0.3, ease: "power2.out" }, 40.0); // toggle flip → switch SFX
+      tl.fromTo("#s6-toggle", { backgroundColor: "#2a2a36" }, { backgroundColor: "rgba(45,212,191,0.28)", duration: 0.3 }, 40.0);
+      tl.fromTo("#s6-slash", { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 40.35); // wifi struck out
+      tl.to("#s6-wifi svg", { autoAlpha: 0.35, duration: 0.3 }, 40.35);
+      tl.fromTo("#s6-tiles .tile", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.14, ease: "power3.out" }, 40.9);
+      tl.to("#s6-tiles .live i", { autoAlpha: 0.3, duration: 0.55, repeat: 5, yoyo: true }, 42.2); // "still alive" pulse
+      tl.fromTo("#offline-stamp", { autoAlpha: 0, scale: 1.5, rotation: -3 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.3, ease: "power4.out" }, 42.0);
+      tl.fromTo("#s6-install", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "back.out(1.6)" }, 43.2);
+      tl.to("#s6-offline > *", { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 46.3);
+
+      // ---------- S7 · CATEGORY MONTAGE ----------
+      tl.fromTo("#s7-eyebrow", { autoAlpha: 0, y: -16 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 47.0);
+      // sequential chips — quick arrivals (0.27s stagger), then the FULL SET holds 2.5s+ (readability floor)
+      tl.fromTo("#s7-grid .cat-chip", { autoAlpha: 0, y: 26, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, stagger: 0.27, ease: "power3.out" }, 47.4);
+      tl.fromTo("#s7-grid .cat-chip .c", { scale: 1 }, { scale: 1.18, duration: 0.14, yoyo: true, repeat: 1, stagger: 0.27, ease: "power2.out" }, 47.55);
+      tl.to("#s7-cats > *", { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 53.1);
+
+      // ---------- S8 · OUTRO ----------
+      tl.fromTo("#outro-url", { autoAlpha: 0, y: 34, scale: 0.94 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.55, ease: "power3.out" }, 54.2);
+      tl.fromTo("#outro-url", { filter: "drop-shadow(0 0 0px rgba(45,212,191,0))" }, { filter: "drop-shadow(0 0 42px rgba(45,212,191,0.85))", duration: 1.3, ease: "power2.out", immediateRender: false }, 54.5);
+      // sub-impact boom lands 55.80 with the heart
+      tl.fromTo("#heart", { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)" }, 55.8);
+      tl.fromTo("#credit", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 56.3);
+      // pulsing heartbeat glow — finite repeats, seek-safe (4 double-thumps)
+      tl.to("#heart", { scale: 1.18, duration: 0.16, ease: "power2.out", repeat: 5, yoyo: true, repeatDelay: 0.42, immediateRender: false }, 56.3);
+      tl.fromTo("#heart-glow", { autoAlpha: 0 }, { autoAlpha: 0.85, duration: 0.16, repeat: 5, yoyo: true, repeatDelay: 0.42, ease: "power2.out" }, 56.3);
+      tl.fromTo("#outro-pill", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 57.4);
+      tl.to("#fade-black", { opacity: 1, duration: 0.8, ease: "power2.inOut" }, 59.2);
+
+      tl.seek(0);
+    </script>
+  </body>
+</html>
