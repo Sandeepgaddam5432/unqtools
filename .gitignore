@@ -46,3 +46,5 @@ brag-output/**/node_modules/
 # brag pipeline: raw TTS takes + render previews (installed masters live in composition assets, also ignored)
 brag-output/tmp-vo/
 brag-output/previews/
+!brag-output/reel-60s/UnQTools_Viral_Reel_60s.mp4
+!brag-output/deepdive-180s/UnQTools_DeepDive_3min.mp4
