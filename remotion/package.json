@@ -6,8 +6,8 @@
     "render": "remotion render src/index.ts UnQToolsReel out/unqtools-reel.mp4"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.328",
-    "remotion": "4.0.328",
+    "@remotion/cli": "4.0.524",
+    "remotion": "4.0.524",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
