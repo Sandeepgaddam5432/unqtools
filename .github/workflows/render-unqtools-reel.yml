@@ -1,6 +1,12 @@
 name: Render UnQTools Reel
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - videos
+    paths:
+      - 'remotion/**'
+      - '.github/workflows/render-unqtools-reel.yml'
 permissions:
   contents: read
 jobs:
