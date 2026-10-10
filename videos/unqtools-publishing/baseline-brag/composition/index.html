@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>UnQTools — Baseline Brag (20s)</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Geist";
+        src: url("assets/fonts/Geist-Variable.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Geist Mono";
+        src: url("assets/fonts/GeistMono-Variable.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: block;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #1b1b19;
+        color: #faf9f5;
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: radial-gradient(1400px 1000px at 50% -10%, #30302e 0%, #262624 55%, #1b1b19 100%);
+      }
+      .clip { position: absolute; inset: 0; }
+      .mono { font-family: "Geist Mono", monospace; }
+      .muted { color: #b7b5a9; }
+      .center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      /* ambient glow (audio-reactive) */
+      #glow {
+        position: absolute; left: 50%; top: 42%;
+        width: 900px; height: 900px; margin: -450px 0 0 -450px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(217,119,87,0.20) 0%, rgba(217,119,87,0.07) 45%, rgba(217,119,87,0) 70%);
+        filter: blur(10px);
+      }
+      /* scene 1 */
+      #s1 { padding: 0 90px; }
+      #s1-lines { margin-top: 620px; width: 100%; }
+      #s1-lines .line {
+        font-family: "Geist Mono", monospace;
+        font-size: 58px; font-weight: 500; color: #b7b5a9;
+        margin: 34px 0; letter-spacing: -0.5px;
+      }
+      #s1-lines .line b { color: #faf9f5; font-weight: 700; }
+      #s1-slash {
+        position: absolute; left: -20%; top: 52%;
+        width: 140%; height: 10px; background: #d97757;
+        border-radius: 6px;
+        transform: rotate(-4deg);
+        box-shadow: 0 0 60px rgba(217,119,87,0.8);
+      }
+      /* scene 2 */
+      #s2-one { font-family: "Geist Mono", monospace; font-size: 44px; color: #d97757; position: absolute; top: 520px; }
+      #s2-logo { width: 220px; height: 220px; border-radius: 52px; box-shadow: 0 30px 80px rgba(0,0,0,0.55); position: absolute; top: 700px; }
+      #s2-word {
+        position: absolute; top: 980px;
+        font-size: 116px; font-weight: 800; letter-spacing: -3px;
+      }
+      #s2-word .accent { color: #d97757; }
+      #s2-tag {
+        position: absolute; top: 1130px;
+        font-size: 52px; font-weight: 700; letter-spacing: -1px;
+        background: linear-gradient(90deg, #faf9f5 0%, #a5b4fc 55%, #fda4af 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      /* tool cards (scene 3) */
+      .card {
+        position: absolute; left: 90px; right: 90px; top: 560px;
+        background: #30302e; border: 1px solid #3e3e38; border-radius: 36px;
+        padding: 54px 58px;
+        box-shadow: 0 40px 90px rgba(0,0,0,0.5);
+      }
+      .card .head { display: flex; align-items: center; gap: 22px; }
+      .card .tile {
+        width: 76px; height: 76px; border-radius: 20px;
+        background: rgba(217,119,87,0.16); border: 1px solid rgba(217,119,87,0.5);
+        color: #d97757; display: flex; align-items: center; justify-content: center;
+        font-size: 36px; font-weight: 800;
+      }
+      .card h2 { margin: 0; font-size: 52px; font-weight: 800; letter-spacing: -1px; }
+      .card .badge {
+        margin-left: auto; font-size: 26px; font-weight: 600; color: #34d399;
+        border: 1px solid rgba(52,211,153,0.45); border-radius: 999px; padding: 10px 22px;
+      }
+      .pane {
+        margin-top: 38px; background: #262624; border: 1px solid #3e3e38; border-radius: 24px;
+        padding: 34px 38px; font-family: "Geist Mono", monospace; font-size: 30px; line-height: 1.55; word-break: break-all;
+        color: #b7b5a9; min-height: 190px;
+      }
+      .pane .k { color: #a5b4fc; } .pane .s { color: #fda4af; } .pane .n { color: #d97757; }
+      .btnrow { margin-top: 34px; display: flex; gap: 22px; align-items: center; }
+      .btn {
+        background: #d97757; color: #ffffff; border-radius: 18px;
+        font-size: 34px; font-weight: 700; padding: 20px 44px;
+      }
+      .btn.ghost { background: transparent; color: #b7b5a9; border: 1px solid #3e3e38; }
+      .meter { margin-top: 34px; height: 16px; border-radius: 8px; background: #3e3e38; overflow: hidden; }
+      .meter i { display: block; height: 100%; width: 100%; background: #34d399; border-radius: 8px; }
+      .strong-tag { margin-top: 22px; color: #34d399; font-size: 30px; font-weight: 700; }
+      .urlchip {
+        margin-top: 38px; display: inline-block; font-family: "Geist Mono", monospace;
+        font-size: 30px; color: #faf9f5; background: #262624; border: 1px solid #3e3e38;
+        border-radius: 999px; padding: 16px 34px;
+      }
+      #c-qr-img { margin-top: 34px; width: 330px; height: 330px; background: #faf9f5; border-radius: 28px; padding: 18px; }
+      /* scene 4 */
+      #s4 h1 { font-size: 84px; font-weight: 800; letter-spacing: -2px; margin: 0; }
+      #s4 h1 .accent { color: #d97757; }
+      #s4-sub { margin-top: 30px; font-size: 40px; color: #b7b5a9; }
+      #s4-badges { margin-top: 90px; display: flex; flex-wrap: wrap; gap: 26px; justify-content: center; max-width: 900px; }
+      #s4-badges span {
+        font-size: 34px; font-weight: 600; color: #faf9f5;
+        border: 1px solid #3e3e38; background: #30302e; border-radius: 999px; padding: 20px 40px;
+      }
+      /* scene 5 */
+      #s5-logo { width: 150px; height: 150px; border-radius: 38px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+      #s5-url { margin-top: 44px; font-family: "Geist Mono", monospace; font-size: 46px; color: #d97757; }
+      #s5-line { margin-top: 26px; font-size: 42px; font-weight: 700; color: #faf9f5; }
+      #s5-line .muted { color: #b7b5a9; }
+      /* shared entrance helper: children hidden until animated */
+      .fade-init { opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="20">
+
+      <div id="glow"></div>
+
+      <!-- SCENE 1 · hook · 0-3s -->
+      <section id="s1" class="clip" data-start="0" data-duration="3" data-track-index="0">
+        <div id="s1-lines">
+          <div id="s1-l1" class="line fade-init"><b>compress a pdf.</b> → site one</div>
+          <div id="s1-l2" class="line fade-init"><b>format json.</b> → site two</div>
+          <div id="s1-l3" class="line fade-init"><b>shrink an image.</b> → site three</div>
+        </div>
+        <div id="s1-slash" class="fade-init"></div>
+      </section>
+
+      <!-- SCENE 2 · brand reveal · 3-7s -->
+      <section id="s2" class="clip center" data-start="3" data-duration="4" data-track-index="0">
+        <div id="s2-one" class="fade-init">or one tab.</div>
+        <img id="s2-logo" class="fade-init" src="assets/logo.svg" alt="UnQTools logo" />
+        <div id="s2-word" class="fade-init">UnQ<span class="accent">Tools</span></div>
+        <div id="s2-tag" class="fade-init">Private tools that respect you</div>
+      </section>
+
+      <!-- SCENE 3 · tools doing work · 7-15s -->
+      <section id="s3" class="clip" data-start="7" data-duration="8" data-track-index="0">
+        <div id="c-json" class="card fade-init">
+          <div class="head">
+            <div class="tile mono">{ }</div>
+            <h2>JSON Formatter</h2>
+            <div class="badge">Runs in your browser</div>
+          </div>
+          <div class="pane" id="c-json-in">{"name":"UnQTools","static":true,"features":["offline","private","pwa"]}</div>
+          <div class="btnrow"><div class="btn" id="c-json-btn">Format</div><div class="btn ghost">Minify</div></div>
+          <div class="pane" id="c-json-out" style="opacity:0">
+            <div>{</div>
+            <div>&nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"UnQTools"</span>,</div>
+            <div>&nbsp;&nbsp;<span class="k">"static"</span>: <span class="n">true</span>,</div>
+            <div>&nbsp;&nbsp;<span class="k">"features"</span>: [<span class="s">"offline"</span>, <span class="s">"private"</span>]</div>
+            <div>}</div>
+          </div>
+        </div>
+
+        <div id="c-pass" class="card fade-init" style="opacity:0">
+          <div class="head">
+            <div class="tile mono">*</div>
+            <h2>Password Generator</h2>
+            <div class="badge">100% private</div>
+          </div>
+          <div class="pane" id="c-pass-out" style="font-size:44px; color:#faf9f5; min-height:120px">Xq8#mP2$vL5!Rt47</div>
+          <div class="meter"><i id="c-pass-bar" style="width:0%"></i></div>
+          <div class="strong-tag fade-init" id="c-pass-tag">Strong · generated locally</div>
+        </div>
+
+        <div id="c-qr" class="card fade-init" style="opacity:0">
+          <div class="head">
+            <div class="tile mono" style="font-size:28px">QR</div>
+            <h2>QR Code Generator</h2>
+            <div class="badge">Works offline</div>
+          </div>
+          <div class="urlchip">unqtools.pages.dev</div>
+          <img id="c-qr-img" class="fade-init" src="assets/qr-unqtools.svg" alt="QR code for unqtools.pages.dev" />
+        </div>
+      </section>
+
+      <!-- SCENE 4 · privacy · 15-18s -->
+      <section id="s4" class="clip center" data-start="15" data-duration="3" data-track-index="0">
+        <h1 id="s4-h" class="fade-init">100% in <span class="accent">your browser</span></h1>
+        <div id="s4-sub" class="fade-init">every tool, every time</div>
+        <div id="s4-badges">
+          <span id="s4-b1" class="fade-init">No uploads</span>
+          <span id="s4-b2" class="fade-init">No accounts</span>
+          <span id="s4-b3" class="fade-init">No tracking</span>
+          <span id="s4-b4" class="fade-init">Works offline</span>
+        </div>
+      </section>
+
+      <!-- SCENE 5 · outro · 18-20s -->
+      <section id="s5" class="clip center" data-start="18" data-duration="2" data-track-index="0">
+        <img id="s5-logo" class="fade-init" src="assets/logo.svg" alt="UnQTools logo" />
+        <div id="s5-url" class="fade-init">unqtools.pages.dev</div>
+        <div id="s5-line" class="fade-init">1,679 tools. <span class="muted">Free. Private.</span></div>
+      </section>
+
+      <!-- AUDIO -->
+      <audio id="music" src="assets/music/track.mp3" data-start="0" data-duration="20" data-track-index="8" data-volume="0.85"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":0.6,"v":0.85},{"t":18.6,"v":0.85},{"t":20,"v":0}]}]}'></audio>
+      <audio id="sfx-slash" src="assets/sfx/click2.ogg" data-start="2.62" data-duration="0.06" data-track-index="9" data-volume="0.7"></audio>
+      <audio id="sfx-logo" src="assets/sfx/impactSoft_medium_001.ogg" data-start="4.10" data-duration="0.18" data-track-index="9" data-volume="0.9"></audio>
+      <audio id="sfx-format" src="assets/sfx/click_003.ogg" data-start="8.30" data-duration="0.01" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-gen" src="assets/sfx/rollover2.ogg" data-start="10.35" data-duration="0.06" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-qr" src="assets/sfx/click_005.ogg" data-start="12.55" data-duration="0.01" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-badge" src="assets/sfx/click_002.ogg" data-start="15.9" data-duration="0.01" data-track-index="9" data-volume="0.5"></audio>
+      <audio id="sfx-outro" src="assets/sfx/impactSoft_medium_004.ogg" data-start="18.1" data-duration="0.15" data-track-index="9" data-volume="0.8"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const P3 = "power3.out";
+
+      /* ---- scene 1: hook ---- */
+      tl.fromTo("#s1-l1", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: P3 }, 0.15);
+      tl.fromTo("#s1-l2", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: P3 }, 1.0);
+      tl.fromTo("#s1-l3", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: P3 }, 1.85);
+      tl.fromTo("#s1-slash", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.35, ease: "power4.inOut", transformOrigin: "left center" }, 2.62);
+      tl.to(["#s1-l1", "#s1-l2", "#s1-l3"], { opacity: 0, y: -30, duration: 0.25, ease: "power2.in" }, 2.7);
+
+      /* ---- scene 2: reveal ---- */
+      tl.fromTo("#s2-one", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: P3 }, 3.05);
+      tl.to("#s2-one", { opacity: 0, duration: 0.3 }, 3.9);
+      // beat-locked: 4.10s (strong cue 4.098 from vol-10 preset)
+      tl.fromTo("#s2-logo", { opacity: 0, scale: 0.6, y: -60 }, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "back.out(1.6)" }, 4.10);
+      tl.fromTo("#s2-word", { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 4.45);
+      tl.fromTo("#s2-tag", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 4.85);
+
+      /* ---- scene 3: json ---- */
+      tl.fromTo("#c-json", { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: P3 }, 7.05);
+      tl.fromTo("#c-json-btn", { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" }, 8.3);
+      tl.fromTo("#c-json-out", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 8.5);
+
+      /* ---- scene 3: password ---- */
+      tl.to("#c-json", { opacity: 0, y: -60, duration: 0.35, ease: "power2.in" }, 9.45);
+      tl.fromTo("#c-pass", { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: P3 }, 9.75);
+      tl.fromTo("#c-pass-bar", { width: "0%" }, { width: "100%", duration: 0.7, ease: "power2.out" }, 10.45);
+      tl.fromTo("#c-pass-tag", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: P3 }, 11.1);
+
+      /* ---- scene 3: qr ---- */
+      tl.to("#c-pass", { opacity: 0, y: -60, duration: 0.35, ease: "power2.in" }, 12.15);
+      // beat-locked: 12.55s (near strong cue 11.46 offset for card arrival)
+      tl.fromTo("#c-qr", { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: P3 }, 12.45);
+      tl.fromTo("#c-qr-img", { opacity: 0, scale: 0.7, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.8)" }, 12.85);
+
+      /* ---- scene 4: privacy ---- */
+      tl.fromTo("#s4-h", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 15.1);
+      tl.fromTo("#s4-sub", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 15.45);
+      tl.fromTo("#s4-b1", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 15.85);
+      tl.fromTo("#s4-b2", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 16.4);
+      tl.fromTo("#s4-b3", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 16.95);
+      tl.fromTo("#s4-b4", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 17.5);
+
+      /* ---- scene 5: outro ---- */
+      tl.fromTo("#s5-logo", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.7)" }, 18.1);
+      tl.fromTo("#s5-url", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: P3 }, 18.35);
+      tl.fromTo("#s5-line", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: P3 }, 18.6);
+
+      /* ---- audio-reactive glow (RMS from assets/audio-data.json, decimated) ---- */
+      tl.to("#glow", { opacity: 0.901, scale: 1.029, duration: 0.1, ease: "none" }, 0);
+tl.to("#glow", { opacity: 0.811, scale: 1.011, duration: 0.1, ease: "none" }, 0.1);
+tl.to("#glow", { opacity: 0.834, scale: 1.009, duration: 0.1, ease: "none" }, 0.2);
+tl.to("#glow", { opacity: 0.653, scale: 0.978, duration: 0.1, ease: "none" }, 0.3);
+tl.to("#glow", { opacity: 0.563, scale: 0.960, duration: 0.1, ease: "none" }, 0.4);
+tl.to("#glow", { opacity: 0.555, scale: 0.962, duration: 0.1, ease: "none" }, 0.5);
+tl.to("#glow", { opacity: 0.812, scale: 1.021, duration: 0.1, ease: "none" }, 0.6);
+tl.to("#glow", { opacity: 0.768, scale: 1.006, duration: 0.1, ease: "none" }, 0.7);
+tl.to("#glow", { opacity: 0.764, scale: 0.999, duration: 0.1, ease: "none" }, 0.8);
+tl.to("#glow", { opacity: 0.573, scale: 0.961, duration: 0.1, ease: "none" }, 0.9);
+tl.to("#glow", { opacity: 0.807, scale: 0.992, duration: 0.1, ease: "none" }, 1);
+tl.to("#glow", { opacity: 0.729, scale: 0.993, duration: 0.1, ease: "none" }, 1.1);
+tl.to("#glow", { opacity: 0.565, scale: 0.968, duration: 0.1, ease: "none" }, 1.2);
+tl.to("#glow", { opacity: 0.595, scale: 0.963, duration: 0.1, ease: "none" }, 1.3);
+tl.to("#glow", { opacity: 0.739, scale: 0.971, duration: 0.1, ease: "none" }, 1.4);
+tl.to("#glow", { opacity: 0.690, scale: 0.971, duration: 0.1, ease: "none" }, 1.5);
+tl.to("#glow", { opacity: 0.567, scale: 0.972, duration: 0.1, ease: "none" }, 1.6);
+tl.to("#glow", { opacity: 0.783, scale: 0.983, duration: 0.1, ease: "none" }, 1.7);
+tl.to("#glow", { opacity: 0.627, scale: 0.969, duration: 0.1, ease: "none" }, 1.8);
+tl.to("#glow", { opacity: 0.818, scale: 0.996, duration: 0.1, ease: "none" }, 1.9);
+tl.to("#glow", { opacity: 0.791, scale: 0.996, duration: 0.1, ease: "none" }, 2);
+tl.to("#glow", { opacity: 0.771, scale: 0.995, duration: 0.1, ease: "none" }, 2.1);
+tl.to("#glow", { opacity: 0.791, scale: 1.011, duration: 0.1, ease: "none" }, 2.2);
+tl.to("#glow", { opacity: 0.762, scale: 0.981, duration: 0.1, ease: "none" }, 2.3);
+tl.to("#glow", { opacity: 0.750, scale: 0.978, duration: 0.1, ease: "none" }, 2.4);
+tl.to("#glow", { opacity: 0.623, scale: 0.960, duration: 0.1, ease: "none" }, 2.5);
+tl.to("#glow", { opacity: 0.567, scale: 0.960, duration: 0.1, ease: "none" }, 2.6);
+tl.to("#glow", { opacity: 0.599, scale: 0.985, duration: 0.1, ease: "none" }, 2.7);
+tl.to("#glow", { opacity: 0.806, scale: 0.989, duration: 0.1, ease: "none" }, 2.8);
+tl.to("#glow", { opacity: 0.767, scale: 0.984, duration: 0.1, ease: "none" }, 2.9);
+tl.to("#glow", { opacity: 0.709, scale: 0.967, duration: 0.1, ease: "none" }, 3);
+tl.to("#glow", { opacity: 0.570, scale: 0.965, duration: 0.1, ease: "none" }, 3.1);
+tl.to("#glow", { opacity: 0.783, scale: 0.984, duration: 0.1, ease: "none" }, 3.2);
+tl.to("#glow", { opacity: 0.622, scale: 0.985, duration: 0.1, ease: "none" }, 3.3);
+tl.to("#glow", { opacity: 0.670, scale: 0.974, duration: 0.1, ease: "none" }, 3.4);
+tl.to("#glow", { opacity: 0.565, scale: 0.964, duration: 0.1, ease: "none" }, 3.5);
+tl.to("#glow", { opacity: 0.801, scale: 0.989, duration: 0.1, ease: "none" }, 3.6);
+tl.to("#glow", { opacity: 0.667, scale: 0.978, duration: 0.1, ease: "none" }, 3.7);
+tl.to("#glow", { opacity: 0.793, scale: 1.002, duration: 0.1, ease: "none" }, 3.8);
+tl.to("#glow", { opacity: 0.788, scale: 0.974, duration: 0.1, ease: "none" }, 3.9);
+tl.to("#glow", { opacity: 0.677, scale: 0.965, duration: 0.1, ease: "none" }, 4);
+tl.to("#glow", { opacity: 0.837, scale: 1.001, duration: 0.1, ease: "none" }, 4.1);
+tl.to("#glow", { opacity: 0.823, scale: 0.989, duration: 0.1, ease: "none" }, 4.2);
+tl.to("#glow", { opacity: 0.745, scale: 0.981, duration: 0.1, ease: "none" }, 4.3);
+tl.to("#glow", { opacity: 0.745, scale: 0.981, duration: 0.1, ease: "none" }, 4.4);
+tl.to("#glow", { opacity: 0.714, scale: 0.986, duration: 0.1, ease: "none" }, 4.5);
+tl.to("#glow", { opacity: 0.730, scale: 0.984, duration: 0.1, ease: "none" }, 4.6);
+tl.to("#glow", { opacity: 0.595, scale: 0.966, duration: 0.1, ease: "none" }, 4.7);
+tl.to("#glow", { opacity: 0.562, scale: 0.960, duration: 0.1, ease: "none" }, 4.8);
+tl.to("#glow", { opacity: 0.757, scale: 0.994, duration: 0.1, ease: "none" }, 4.9);
+tl.to("#glow", { opacity: 0.815, scale: 1.011, duration: 0.1, ease: "none" }, 5);
+tl.to("#glow", { opacity: 0.755, scale: 1.000, duration: 0.1, ease: "none" }, 5.1);
+tl.to("#glow", { opacity: 0.663, scale: 0.965, duration: 0.1, ease: "none" }, 5.2);
+tl.to("#glow", { opacity: 0.601, scale: 0.973, duration: 0.1, ease: "none" }, 5.3);
+tl.to("#glow", { opacity: 0.785, scale: 0.989, duration: 0.1, ease: "none" }, 5.4);
+tl.to("#glow", { opacity: 0.606, scale: 0.973, duration: 0.1, ease: "none" }, 5.5);
+tl.to("#glow", { opacity: 0.778, scale: 0.999, duration: 0.1, ease: "none" }, 5.6);
+tl.to("#glow", { opacity: 0.622, scale: 0.973, duration: 0.1, ease: "none" }, 5.7);
+tl.to("#glow", { opacity: 0.724, scale: 0.980, duration: 0.1, ease: "none" }, 5.8);
+tl.to("#glow", { opacity: 0.592, scale: 0.966, duration: 0.1, ease: "none" }, 5.9);
+tl.to("#glow", { opacity: 0.853, scale: 1.012, duration: 0.1, ease: "none" }, 6);
+tl.to("#glow", { opacity: 0.761, scale: 0.979, duration: 0.1, ease: "none" }, 6.1);
+tl.to("#glow", { opacity: 0.563, scale: 0.962, duration: 0.1, ease: "none" }, 6.2);
+tl.to("#glow", { opacity: 0.793, scale: 0.994, duration: 0.1, ease: "none" }, 6.3);
+tl.to("#glow", { opacity: 0.774, scale: 0.991, duration: 0.1, ease: "none" }, 6.4);
+tl.to("#glow", { opacity: 0.764, scale: 0.991, duration: 0.1, ease: "none" }, 6.5);
+tl.to("#glow", { opacity: 0.801, scale: 0.986, duration: 0.1, ease: "none" }, 6.6);
+tl.to("#glow", { opacity: 0.773, scale: 0.979, duration: 0.1, ease: "none" }, 6.7);
+tl.to("#glow", { opacity: 0.679, scale: 0.960, duration: 0.1, ease: "none" }, 6.8);
+tl.to("#glow", { opacity: 0.574, scale: 0.960, duration: 0.1, ease: "none" }, 6.9);
+tl.to("#glow", { opacity: 0.559, scale: 0.960, duration: 0.1, ease: "none" }, 7);
+tl.to("#glow", { opacity: 0.923, scale: 1.033, duration: 0.1, ease: "none" }, 7.1);
+tl.to("#glow", { opacity: 0.802, scale: 0.983, duration: 0.1, ease: "none" }, 7.2);
+tl.to("#glow", { opacity: 0.792, scale: 0.981, duration: 0.1, ease: "none" }, 7.3);
+tl.to("#glow", { opacity: 0.602, scale: 0.961, duration: 0.1, ease: "none" }, 7.4);
+tl.to("#glow", { opacity: 0.785, scale: 0.999, duration: 0.1, ease: "none" }, 7.5);
+tl.to("#glow", { opacity: 0.770, scale: 0.988, duration: 0.1, ease: "none" }, 7.6);
+tl.to("#glow", { opacity: 0.588, scale: 0.967, duration: 0.1, ease: "none" }, 7.7);
+tl.to("#glow", { opacity: 0.831, scale: 0.992, duration: 0.1, ease: "none" }, 7.8);
+tl.to("#glow", { opacity: 0.830, scale: 0.979, duration: 0.1, ease: "none" }, 7.9);
+tl.to("#glow", { opacity: 0.772, scale: 0.988, duration: 0.1, ease: "none" }, 8);
+tl.to("#glow", { opacity: 0.631, scale: 0.967, duration: 0.1, ease: "none" }, 8.1);
+tl.to("#glow", { opacity: 0.862, scale: 1.016, duration: 0.1, ease: "none" }, 8.2);
+tl.to("#glow", { opacity: 0.803, scale: 0.995, duration: 0.1, ease: "none" }, 8.3);
+tl.to("#glow", { opacity: 0.616, scale: 0.962, duration: 0.1, ease: "none" }, 8.4);
+tl.to("#glow", { opacity: 0.830, scale: 0.988, duration: 0.1, ease: "none" }, 8.5);
+tl.to("#glow", { opacity: 0.787, scale: 0.983, duration: 0.1, ease: "none" }, 8.6);
+tl.to("#glow", { opacity: 0.692, scale: 0.975, duration: 0.1, ease: "none" }, 8.7);
+tl.to("#glow", { opacity: 0.875, scale: 1.016, duration: 0.1, ease: "none" }, 8.8);
+tl.to("#glow", { opacity: 0.852, scale: 1.012, duration: 0.1, ease: "none" }, 8.9);
+tl.to("#glow", { opacity: 0.771, scale: 0.998, duration: 0.1, ease: "none" }, 9);
+tl.to("#glow", { opacity: 0.583, scale: 0.961, duration: 0.1, ease: "none" }, 9.1);
+tl.to("#glow", { opacity: 0.570, scale: 0.960, duration: 0.1, ease: "none" }, 9.2);
+tl.to("#glow", { opacity: 0.831, scale: 1.020, duration: 0.1, ease: "none" }, 9.3);
+tl.to("#glow", { opacity: 0.796, scale: 1.008, duration: 0.1, ease: "none" }, 9.4);
+tl.to("#glow", { opacity: 0.800, scale: 1.003, duration: 0.1, ease: "none" }, 9.5);
+tl.to("#glow", { opacity: 0.595, scale: 0.961, duration: 0.1, ease: "none" }, 9.6);
+tl.to("#glow", { opacity: 0.803, scale: 0.991, duration: 0.1, ease: "none" }, 9.7);
+tl.to("#glow", { opacity: 0.823, scale: 1.004, duration: 0.1, ease: "none" }, 9.8);
+tl.to("#glow", { opacity: 0.610, scale: 0.963, duration: 0.1, ease: "none" }, 9.9);
+tl.to("#glow", { opacity: 0.672, scale: 0.970, duration: 0.1, ease: "none" }, 10);
+tl.to("#glow", { opacity: 0.800, scale: 0.975, duration: 0.1, ease: "none" }, 10.1);
+tl.to("#glow", { opacity: 0.758, scale: 0.970, duration: 0.1, ease: "none" }, 10.2);
+tl.to("#glow", { opacity: 0.621, scale: 0.961, duration: 0.1, ease: "none" }, 10.3);
+tl.to("#glow", { opacity: 0.814, scale: 0.997, duration: 0.1, ease: "none" }, 10.4);
+tl.to("#glow", { opacity: 0.762, scale: 0.981, duration: 0.1, ease: "none" }, 10.5);
+tl.to("#glow", { opacity: 0.656, scale: 0.967, duration: 0.1, ease: "none" }, 10.6);
+tl.to("#glow", { opacity: 0.805, scale: 0.999, duration: 0.1, ease: "none" }, 10.7);
+tl.to("#glow", { opacity: 0.778, scale: 0.996, duration: 0.1, ease: "none" }, 10.8);
+tl.to("#glow", { opacity: 0.856, scale: 1.003, duration: 0.1, ease: "none" }, 10.9);
+tl.to("#glow", { opacity: 0.831, scale: 0.988, duration: 0.1, ease: "none" }, 11);
+tl.to("#glow", { opacity: 0.794, scale: 0.984, duration: 0.1, ease: "none" }, 11.1);
+tl.to("#glow", { opacity: 0.669, scale: 0.961, duration: 0.1, ease: "none" }, 11.2);
+tl.to("#glow", { opacity: 0.570, scale: 0.960, duration: 0.1, ease: "none" }, 11.3);
+tl.to("#glow", { opacity: 0.559, scale: 0.960, duration: 0.1, ease: "none" }, 11.4);
+tl.to("#glow", { opacity: 0.858, scale: 0.990, duration: 0.1, ease: "none" }, 11.5);
+tl.to("#glow", { opacity: 0.815, scale: 0.982, duration: 0.1, ease: "none" }, 11.6);
+tl.to("#glow", { opacity: 0.699, scale: 0.971, duration: 0.1, ease: "none" }, 11.7);
+tl.to("#glow", { opacity: 0.584, scale: 0.960, duration: 0.1, ease: "none" }, 11.8);
+tl.to("#glow", { opacity: 0.789, scale: 0.976, duration: 0.1, ease: "none" }, 11.9);
+tl.to("#glow", { opacity: 0.854, scale: 1.004, duration: 0.1, ease: "none" }, 12);
+tl.to("#glow", { opacity: 0.576, scale: 0.963, duration: 0.1, ease: "none" }, 12.1);
+tl.to("#glow", { opacity: 0.576, scale: 0.962, duration: 0.1, ease: "none" }, 12.2);
+tl.to("#glow", { opacity: 0.827, scale: 0.997, duration: 0.1, ease: "none" }, 12.3);
+tl.to("#glow", { opacity: 0.798, scale: 0.989, duration: 0.1, ease: "none" }, 12.4);
+tl.to("#glow", { opacity: 0.678, scale: 0.964, duration: 0.1, ease: "none" }, 12.5);
+tl.to("#glow", { opacity: 0.852, scale: 1.004, duration: 0.1, ease: "none" }, 12.6);
+tl.to("#glow", { opacity: 0.793, scale: 0.994, duration: 0.1, ease: "none" }, 12.7);
+tl.to("#glow", { opacity: 0.771, scale: 0.987, duration: 0.1, ease: "none" }, 12.8);
+tl.to("#glow", { opacity: 0.837, scale: 0.990, duration: 0.1, ease: "none" }, 12.9);
+tl.to("#glow", { opacity: 0.804, scale: 0.985, duration: 0.1, ease: "none" }, 13);
+tl.to("#glow", { opacity: 0.852, scale: 1.019, duration: 0.1, ease: "none" }, 13.1);
+tl.to("#glow", { opacity: 0.843, scale: 0.998, duration: 0.1, ease: "none" }, 13.2);
+tl.to("#glow", { opacity: 0.792, scale: 0.996, duration: 0.1, ease: "none" }, 13.3);
+tl.to("#glow", { opacity: 0.628, scale: 0.968, duration: 0.1, ease: "none" }, 13.4);
+tl.to("#glow", { opacity: 0.569, scale: 0.960, duration: 0.1, ease: "none" }, 13.5);
+tl.to("#glow", { opacity: 0.640, scale: 0.970, duration: 0.1, ease: "none" }, 13.6);
+tl.to("#glow", { opacity: 0.848, scale: 1.008, duration: 0.1, ease: "none" }, 13.7);
+tl.to("#glow", { opacity: 0.804, scale: 1.002, duration: 0.1, ease: "none" }, 13.8);
+tl.to("#glow", { opacity: 0.712, scale: 0.983, duration: 0.1, ease: "none" }, 13.9);
+tl.to("#glow", { opacity: 0.580, scale: 0.961, duration: 0.1, ease: "none" }, 14);
+tl.to("#glow", { opacity: 0.820, scale: 1.015, duration: 0.1, ease: "none" }, 14.1);
+tl.to("#glow", { opacity: 0.736, scale: 0.989, duration: 0.1, ease: "none" }, 14.2);
+tl.to("#glow", { opacity: 0.612, scale: 0.972, duration: 0.1, ease: "none" }, 14.3);
+tl.to("#glow", { opacity: 0.582, scale: 0.963, duration: 0.1, ease: "none" }, 14.4);
+tl.to("#glow", { opacity: 0.808, scale: 0.983, duration: 0.1, ease: "none" }, 14.5);
+tl.to("#glow", { opacity: 0.620, scale: 0.971, duration: 0.1, ease: "none" }, 14.6);
+tl.to("#glow", { opacity: 0.695, scale: 0.982, duration: 0.1, ease: "none" }, 14.7);
+tl.to("#glow", { opacity: 0.827, scale: 0.985, duration: 0.1, ease: "none" }, 14.8);
+tl.to("#glow", { opacity: 0.676, scale: 0.964, duration: 0.1, ease: "none" }, 14.9);
+tl.to("#glow", { opacity: 0.814, scale: 0.995, duration: 0.1, ease: "none" }, 15);
+tl.to("#glow", { opacity: 0.798, scale: 0.996, duration: 0.1, ease: "none" }, 15.1);
+tl.to("#glow", { opacity: 0.809, scale: 0.994, duration: 0.1, ease: "none" }, 15.2);
+tl.to("#glow", { opacity: 0.808, scale: 0.996, duration: 0.1, ease: "none" }, 15.3);
+tl.to("#glow", { opacity: 0.814, scale: 0.981, duration: 0.1, ease: "none" }, 15.4);
+tl.to("#glow", { opacity: 0.622, scale: 0.967, duration: 0.1, ease: "none" }, 15.5);
+tl.to("#glow", { opacity: 0.583, scale: 0.960, duration: 0.1, ease: "none" }, 15.6);
+tl.to("#glow", { opacity: 0.565, scale: 0.960, duration: 0.1, ease: "none" }, 15.7);
+tl.to("#glow", { opacity: 0.822, scale: 1.005, duration: 0.1, ease: "none" }, 15.8);
+tl.to("#glow", { opacity: 0.821, scale: 0.982, duration: 0.1, ease: "none" }, 15.9);
+tl.to("#glow", { opacity: 0.793, scale: 0.981, duration: 0.1, ease: "none" }, 16);
+tl.to("#glow", { opacity: 0.666, scale: 0.966, duration: 0.1, ease: "none" }, 16.1);
+tl.to("#glow", { opacity: 0.586, scale: 0.965, duration: 0.1, ease: "none" }, 16.2);
+tl.to("#glow", { opacity: 0.789, scale: 0.975, duration: 0.1, ease: "none" }, 16.3);
+tl.to("#glow", { opacity: 0.632, scale: 0.983, duration: 0.1, ease: "none" }, 16.4);
+tl.to("#glow", { opacity: 0.712, scale: 0.974, duration: 0.1, ease: "none" }, 16.5);
+tl.to("#glow", { opacity: 0.613, scale: 0.969, duration: 0.1, ease: "none" }, 16.6);
+tl.to("#glow", { opacity: 0.839, scale: 0.996, duration: 0.1, ease: "none" }, 16.7);
+tl.to("#glow", { opacity: 0.686, scale: 0.975, duration: 0.1, ease: "none" }, 16.8);
+tl.to("#glow", { opacity: 0.843, scale: 0.996, duration: 0.1, ease: "none" }, 16.9);
+tl.to("#glow", { opacity: 0.849, scale: 0.993, duration: 0.1, ease: "none" }, 17);
+tl.to("#glow", { opacity: 0.667, scale: 0.968, duration: 0.1, ease: "none" }, 17.1);
+tl.to("#glow", { opacity: 0.837, scale: 1.008, duration: 0.1, ease: "none" }, 17.2);
+tl.to("#glow", { opacity: 0.815, scale: 0.998, duration: 0.1, ease: "none" }, 17.3);
+tl.to("#glow", { opacity: 0.804, scale: 0.997, duration: 0.1, ease: "none" }, 17.4);
+tl.to("#glow", { opacity: 0.838, scale: 1.007, duration: 0.1, ease: "none" }, 17.5);
+tl.to("#glow", { opacity: 0.810, scale: 0.987, duration: 0.1, ease: "none" }, 17.6);
+tl.to("#glow", { opacity: 0.773, scale: 0.982, duration: 0.1, ease: "none" }, 17.7);
+tl.to("#glow", { opacity: 0.558, scale: 0.960, duration: 0.1, ease: "none" }, 17.8);
+tl.to("#glow", { opacity: 0.554, scale: 0.960, duration: 0.1, ease: "none" }, 17.9);
+tl.to("#glow", { opacity: 0.929, scale: 1.001, duration: 0.1, ease: "none" }, 18);
+tl.to("#glow", { opacity: 0.789, scale: 0.990, duration: 0.1, ease: "none" }, 18.1);
+tl.to("#glow", { opacity: 0.767, scale: 0.985, duration: 0.1, ease: "none" }, 18.2);
+tl.to("#glow", { opacity: 0.561, scale: 0.961, duration: 0.1, ease: "none" }, 18.3);
+tl.to("#glow", { opacity: 0.730, scale: 0.984, duration: 0.1, ease: "none" }, 18.4);
+tl.to("#glow", { opacity: 0.868, scale: 1.005, duration: 0.1, ease: "none" }, 18.5);
+tl.to("#glow", { opacity: 0.672, scale: 0.986, duration: 0.1, ease: "none" }, 18.6);
+tl.to("#glow", { opacity: 0.701, scale: 0.980, duration: 0.1, ease: "none" }, 18.7);
+tl.to("#glow", { opacity: 0.639, scale: 0.968, duration: 0.1, ease: "none" }, 18.8);
+tl.to("#glow", { opacity: 0.782, scale: 0.971, duration: 0.1, ease: "none" }, 18.9);
+tl.to("#glow", { opacity: 0.582, scale: 0.962, duration: 0.1, ease: "none" }, 19);
+tl.to("#glow", { opacity: 0.869, scale: 0.988, duration: 0.1, ease: "none" }, 19.1);
+tl.to("#glow", { opacity: 0.766, scale: 0.979, duration: 0.1, ease: "none" }, 19.2);
+tl.to("#glow", { opacity: 0.564, scale: 0.961, duration: 0.1, ease: "none" }, 19.3);
+tl.to("#glow", { opacity: 0.815, scale: 0.999, duration: 0.1, ease: "none" }, 19.4);
+tl.to("#glow", { opacity: 0.795, scale: 0.995, duration: 0.1, ease: "none" }, 19.5);
+tl.to("#glow", { opacity: 0.785, scale: 0.993, duration: 0.1, ease: "none" }, 19.6);
+tl.to("#glow", { opacity: 0.817, scale: 0.995, duration: 0.1, ease: "none" }, 19.7);
+tl.to("#glow", { opacity: 0.800, scale: 0.980, duration: 0.1, ease: "none" }, 19.8);
+tl.to("#glow", { opacity: 0.662, scale: 0.969, duration: 0.1, ease: "none" }, 19.9);
+tl.to("#glow", { opacity: 0.554, scale: 0.960, duration: 0.1, ease: "none" }, 20);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

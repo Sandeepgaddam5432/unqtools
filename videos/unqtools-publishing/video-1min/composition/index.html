@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>UnQTools — 60s Launch Reel</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; src: url("assets/fonts/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+      @font-face { font-family: "Geist Mono"; src: url("assets/fonts/GeistMono-Variable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #1b1b19; color: #faf9f5; font-family: "Geist", system-ui, sans-serif; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden;
+        background: radial-gradient(1400px 1000px at 50% -10%, #30302e 0%, #262624 55%, #1b1b19 100%); }
+      .clip { position: absolute; inset: 0; }
+      .mono { font-family: "Geist Mono", monospace; }
+      .muted { color: #b7b5a9; }
+      .center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .fade-init { opacity: 0; }
+      #glow { position: absolute; left: 50%; top: 42%; width: 900px; height: 900px; margin: -450px 0 0 -450px;
+        border-radius: 50%; background: radial-gradient(circle, rgba(217,119,87,0.20) 0%, rgba(217,119,87,0.07) 45%, rgba(217,119,87,0) 70%); filter: blur(10px); }
+
+      /* s1 hook */
+      #h-tab { font-family: "Geist Mono", monospace; font-size: 120px; font-weight: 700; color: #b7b5a9; }
+      #h-tab b { color: #faf9f5; }
+      #h-enough { position: absolute; top: 1010px; font-family: "Geist Mono", monospace; font-size: 84px; font-weight: 700; color: #d97757; }
+      #h-slash { position: absolute; left: -20%; top: 50%; width: 140%; height: 10px; background: #d97757; border-radius: 6px; transform: rotate(-4deg); box-shadow: 0 0 60px rgba(217,119,87,0.8); }
+
+      /* s2 reveal */
+      #s2-logo { width: 210px; height: 210px; border-radius: 50px; box-shadow: 0 30px 80px rgba(0,0,0,0.55); }
+      #s2-word { margin-top: 40px; font-size: 108px; font-weight: 800; letter-spacing: -3px; }
+      #s2-word .accent { color: #d97757; }
+      #s2-tag { margin-top: 18px; font-size: 48px; font-weight: 700;
+        background: linear-gradient(90deg, #faf9f5 0%, #a5b4fc 55%, #fda4af 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      #s2-chips { margin-top: 70px; display: flex; gap: 26px; }
+      #s2-chips span { font-family: "Geist Mono", monospace; font-size: 34px; font-weight: 600; color: #faf9f5;
+        border: 1px solid #3e3e38; background: #30302e; border-radius: 999px; padding: 18px 36px; }
+      #s2-chips .n { color: #d97757; }
+
+      /* cards */
+      .card { position: absolute; left: 90px; right: 90px; top: 470px; background: #30302e; border: 1px solid #3e3e38;
+        border-radius: 36px; padding: 50px 56px; box-shadow: 0 40px 90px rgba(0,0,0,0.5); }
+      .crumb { font-family: "Geist Mono", monospace; font-size: 26px; color: #b7b5a9; margin-bottom: 30px; }
+      .card .head { display: flex; align-items: center; gap: 22px; }
+      .card .tile { width: 72px; height: 72px; border-radius: 20px; background: rgba(217,119,87,0.16);
+        border: 1px solid rgba(217,119,87,0.5); color: #d97757; display: flex; align-items: center; justify-content: center;
+        font-size: 32px; font-weight: 800; font-family: "Geist Mono", monospace; }
+      .card h2 { margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -1px; }
+      .card .badge { margin-left: auto; font-size: 25px; font-weight: 600; color: #34d399;
+        border: 1px solid rgba(52,211,153,0.45); border-radius: 999px; padding: 10px 20px; white-space: nowrap; }
+      .pane { margin-top: 32px; background: #262624; border: 1px solid #3e3e38; border-radius: 24px; padding: 30px 34px;
+        font-family: "Geist Mono", monospace; font-size: 28px; line-height: 1.5; color: #b7b5a9; min-height: 120px; word-break: break-all; }
+      .pane .k { color: #a5b4fc; } .pane .s { color: #fda4af; } .pane .n { color: #d97757; }
+      .btnrow { margin-top: 30px; display: flex; gap: 22px; align-items: center; }
+      .btn { background: #d97757; color: #ffffff; border-radius: 18px; font-size: 32px; font-weight: 700; padding: 18px 42px; }
+      .btn.ghost { background: transparent; color: #b7b5a9; border: 1px solid #3e3e38; }
+      .toast { position: absolute; right: 60px; bottom: 330px; background: #30302e; border: 1px solid #3e3e38; border-radius: 18px;
+        padding: 20px 34px; font-size: 30px; font-weight: 600; color: #faf9f5; box-shadow: 0 20px 50px rgba(0,0,0,0.5); display: flex; gap: 16px; align-items: center; }
+      .toast i { width: 14px; height: 14px; border-radius: 50%; background: #34d399; }
+      .meter { margin-top: 30px; height: 14px; border-radius: 8px; background: #3e3e38; overflow: hidden; }
+      .meter i { display: block; height: 100%; width: 100%; background: #34d399; }
+      .chips { margin-top: 30px; display: flex; gap: 18px; flex-wrap: wrap; }
+      .chips span { font-size: 28px; font-weight: 600; color: #b7b5a9; border: 1px solid #3e3e38; border-radius: 999px; padding: 12px 28px; }
+      .chips span.on { color: #faf9f5; border-color: rgba(217,119,87,0.6); background: rgba(217,119,87,0.14); }
+      .filechip { margin-top: 32px; display: flex; align-items: center; gap: 20px; background: #262624; border: 1px solid #3e3e38;
+        border-radius: 20px; padding: 24px 30px; font-family: "Geist Mono", monospace; font-size: 30px; }
+      .filechip .ic { color: #d97757; font-weight: 800; }
+      .filechip .sz { margin-left: auto; color: #b7b5a9; }
+      .presets { margin-top: 28px; display: flex; gap: 16px; }
+      .presets span { font-size: 26px; font-weight: 600; color: #b7b5a9; border: 1px solid #3e3e38; border-radius: 14px; padding: 12px 24px; }
+      .presets span.on { color: #ffffff; background: #d97757; border-color: #d97757; }
+      .result { margin-top: 30px; display: flex; align-items: baseline; gap: 24px; }
+      .result .big { font-family: "Geist Mono", monospace; font-size: 64px; font-weight: 700; color: #34d399; }
+      .result .delta { font-family: "Geist Mono", monospace; font-size: 40px; font-weight: 700; color: #d97757; }
+      .result .note { font-size: 28px; color: #b7b5a9; }
+
+      /* s6 privacy slams + marquee */
+      #s6 { padding: 0 90px; }
+      .slam { font-size: 92px; font-weight: 800; letter-spacing: -2px; margin: 26px 0; }
+      .slam .accent { color: #d97757; }
+      #s6-wrap { margin-top: 560px; }
+      #marquee { position: absolute; top: 1250px; left: 0; width: 100%; overflow: hidden; }
+      #m-inner { display: flex; gap: 22px; width: 2600px; }
+      #m-inner span { font-family: "Geist Mono", monospace; font-size: 30px; color: #b7b5a9; border: 1px solid #3e3e38;
+        background: #30302e; border-radius: 999px; padding: 16px 30px; white-space: nowrap; }
+      #m-inner b { color: #d97757; }
+      #s6-ready { position: absolute; top: 1420px; left: 0; right: 0; text-align: center;
+        font-family: "Geist Mono", monospace; font-size: 56px; font-weight: 700; color: #faf9f5; }
+      #s6-ready .accent { color: #d97757; }
+
+      /* s7 cta */
+      #s7-logo { width: 170px; height: 170px; border-radius: 42px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+      #s7-word { margin-top: 30px; font-size: 84px; font-weight: 800; letter-spacing: -2px; }
+      #s7-word .accent { color: #d97757; }
+      #s7-urlbox { margin-top: 50px; font-family: "Geist Mono", monospace; font-size: 52px; color: #d97757; }
+      #s7-url { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; }
+      #s7-url { position: relative; } #s7-caret { position: absolute; right: -10px; top: 6px; width: 4px; height: 46px; background: #d97757; }
+      #s7-line { margin-top: 34px; font-size: 46px; font-weight: 700; }
+      #s7-sub { margin-top: 18px; font-family: "Geist Mono", monospace; font-size: 30px; color: #b7b5a9; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="60">
+      <div id="glow"></div>
+
+      <!-- S1 hook 0-3 -->
+      <section id="s1" class="clip center" data-start="0" data-duration="3" data-track-index="0">
+        <div id="h-tab" class="fade-init"><b>tab</b> 01</div>
+        <div id="h-enough" class="fade-init">enough.</div>
+        <div id="h-slash" class="fade-init"></div>
+      </section>
+
+      <!-- S2 reveal 3-10 -->
+      <section id="s2" class="clip center" data-start="3" data-duration="7" data-track-index="0">
+        <img id="s2-logo" class="fade-init" src="assets/logo.svg" alt="UnQTools logo" />
+        <div id="s2-word" class="fade-init">UnQ<span class="accent">Tools</span></div>
+        <div id="s2-tag" class="fade-init">Private tools that respect you</div>
+        <div id="s2-chips">
+          <span id="s2-c1" class="fade-init"><span class="n">1,679</span> tools</span>
+          <span id="s2-c2" class="fade-init"><span class="n">13</span> categories</span>
+          <span id="s2-c3" class="fade-init"><span class="n">100%</span> private</span>
+        </div>
+      </section>
+
+      <!-- S3 json 10-20 -->
+      <section id="s3" class="clip" data-start="10" data-duration="10" data-track-index="0">
+        <div id="c-json" class="card fade-init">
+          <div class="crumb">Home / Tools / Developer / JSON Formatter</div>
+          <div class="head">
+            <div class="tile">{ }</div>
+            <h2>JSON Formatter</h2>
+            <div class="badge">Runs in your browser</div>
+          </div>
+          <div class="pane" id="c-json-in">{"name":"UnQTools","static":true,"features":["offline","private","pwa"]}</div>
+          <div class="btnrow"><div class="btn" id="c-json-btn">Format</div><div class="btn ghost">Minify</div><div class="btn ghost">Validate</div></div>
+          <div class="pane" id="c-json-out" style="opacity:0">
+            <div>{</div>
+            <div>&nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"UnQTools"</span>,</div>
+            <div>&nbsp;&nbsp;<span class="k">"static"</span>: <span class="n">true</span>,</div>
+            <div>&nbsp;&nbsp;<span class="k">"features"</span>: [<span class="s">"offline"</span>, <span class="s">"private"</span>]</div>
+            <div>}</div>
+          </div>
+        </div>
+        <div id="c-json-toast" class="toast fade-init"><i></i>Sample loaded</div>
+      </section>
+
+      <!-- S4 password 20-29 -->
+      <section id="s4" class="clip" data-start="20" data-duration="9" data-track-index="0">
+        <div id="c-pass" class="card fade-init">
+          <div class="head">
+            <div class="tile">*</div>
+            <h2>Password Generator</h2>
+            <div class="badge">100% private</div>
+          </div>
+          <div class="chips">
+            <span id="p-m1" class="fade-init on">Random</span>
+            <span id="p-m2" class="fade-init">EFF passphrase</span>
+            <span id="p-m3" class="fade-init">Pronounceable</span>
+          </div>
+          <div class="pane" id="c-pass-out" style="font-size:42px; color:#faf9f5">ember-falcon-quartz-tulip-delta-94</div>
+          <div class="meter"><i id="c-pass-bar" style="width:0%"></i></div>
+          <div class="btnrow"><div class="btn" id="p-gen">Generate</div><div id="p-tag" class="fade-init" style="color:#34d399; font-size:30px; font-weight:700">Strong · generated locally</div></div>
+        </div>
+      </section>
+
+      <!-- S5 compress pdf 29-38 -->
+      <section id="s5" class="clip" data-start="29" data-duration="9" data-track-index="0">
+        <div id="c-pdf" class="card fade-init">
+          <div class="head">
+            <div class="tile">PDF</div>
+            <h2>Compress PDF</h2>
+            <div class="badge">No uploads</div>
+          </div>
+          <div class="filechip"><span class="ic">▸</span>quarterly-report.pdf<span class="sz">4.8 MB</span></div>
+          <div class="presets">
+            <span id="q-1" class="fade-init">Low</span>
+            <span id="q-2" class="fade-init">Medium</span>
+            <span id="q-3" class="fade-init on">High</span>
+            <span id="q-4" class="fade-init">Very high</span>
+            <span id="q-5" class="fade-init">Extreme</span>
+          </div>
+          <div class="meter"><i id="c-pdf-bar" style="width:0%; background:#d97757"></i></div>
+          <div class="result" id="c-pdf-res" style="opacity:0">
+            <span class="big">1.2 MB</span><span class="delta">−75%</span>
+            <span class="note">still on your device</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- S6 privacy + breadth 38-49 -->
+      <section id="s6" class="clip" data-start="38" data-duration="11" data-track-index="0">
+        <div id="s6-wrap">
+          <div id="p-s1" class="slam fade-init">No <span class="accent">uploads.</span></div>
+          <div id="p-s2" class="slam fade-init">No <span class="accent">accounts.</span></div>
+          <div id="p-s3" class="slam fade-init">No <span class="accent">tracking.</span></div>
+        </div>
+        <div id="marquee" class="fade-init">
+          <div id="m-inner">
+            <span><b>466</b> developer</span><span><b>305</b> pdf</span><span><b>178</b> image</span>
+            <span><b>109</b> seo</span><span><b>100</b> file</span><span><b>100</b> ai</span>
+            <span><b>96</b> security</span><span><b>83</b> text</span><span><b>57</b> calculators</span>
+            <span><b>55</b> business</span><span><b>45</b> audio-video</span><span><b>45</b> education</span>
+            <span><b>40</b> social</span>
+          </div>
+        </div>
+        <div id="s6-ready" class="fade-init"><span class="accent">1,100+</span> ready now</div>
+      </section>
+
+      <!-- S7 cta 49-60 -->
+      <section id="s7" class="clip center" data-start="49" data-duration="11" data-track-index="0">
+        <img id="s7-logo" class="fade-init" src="assets/logo.svg" alt="UnQTools logo" />
+        <div id="s7-word" class="fade-init">UnQ<span class="accent">Tools</span></div>
+        <div id="s7-urlbox" class="fade-init"><span id="s7-url">unqtools.pages.dev<span id="s7-caret"></span></span></div>
+        <div id="s7-line" class="fade-init">Free. Private. In your browser.</div>
+        <div id="s7-sub" class="fade-init">1,679 tools · 13 categories · no account</div>
+      </section>
+
+      <!-- AUDIO -->
+      <audio id="music" src="assets/music/track.mp3" data-start="0" data-duration="60" data-track-index="8" data-volume="0.85"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":0.5,"v":0.85},{"t":58.5,"v":0.85},{"t":60,"v":0}]}]}'></audio>
+      <audio id="sfx-tick1" src="assets/sfx/click_002.ogg" data-start="0.27" data-duration="0.01" data-track-index="9" data-volume="0.5"></audio>
+      <audio id="sfx-tick2" src="assets/sfx/click_002.ogg" data-start="1.37" data-duration="0.01" data-track-index="9" data-volume="0.5"></audio>
+      <audio id="sfx-slash" src="assets/sfx/click2.ogg" data-start="2.46" data-duration="0.06" data-track-index="9" data-volume="0.7"></audio>
+      <audio id="sfx-logo" src="assets/sfx/impactSoft_medium_001.ogg" data-start="3.55" data-duration="0.18" data-track-index="9" data-volume="0.9"></audio>
+      <audio id="sfx-toast" src="assets/sfx/click_005.ogg" data-start="12.56" data-duration="0.01" data-track-index="9" data-volume="0.5"></audio>
+      <audio id="sfx-format" src="assets/sfx/click_003.ogg" data-start="14.73" data-duration="0.01" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-gen" src="assets/sfx/rollover2.ogg" data-start="24.01" data-duration="0.06" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-zip" src="assets/sfx/impactSoft_medium_003.ogg" data-start="33.3" data-duration="0.14" data-track-index="9" data-volume="0.7"></audio>
+      <audio id="sfx-slam1" src="assets/sfx/click_002.ogg" data-start="38.74" data-duration="0.01" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-slam2" src="assets/sfx/click_002.ogg" data-start="40.65" data-duration="0.01" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-slam3" src="assets/sfx/click_002.ogg" data-start="42.0" data-duration="0.01" data-track-index="9" data-volume="0.6"></audio>
+      <audio id="sfx-cta" src="assets/sfx/impactSoft_medium_001.ogg" data-start="49.64" data-duration="0.18" data-track-index="9" data-volume="0.9"></audio>
+      <audio id="sfx-outro" src="assets/sfx/impactSoft_medium_004.ogg" data-start="55.11" data-duration="0.15" data-track-index="9" data-volume="0.8"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const P3 = "power3.out";
+
+      /* S1 hook — beat-grid: 0.27 / 1.37 / 2.46 */
+      tl.fromTo("#h-tab", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power4.out" }, 0.27);
+      tl.to("#h-tab", { scale: 1.1, opacity: 0.4, duration: 0.2, ease: "power2.in" }, 1.17);
+      tl.to("#h-tab", { opacity: 1, scale: 1, duration: 0.01 }, 1.36);
+      tl.set("#h-tab", { innerHTML: "<b>tab</b> 07" }, 1.37);
+      tl.fromTo("#h-tab", { scale: 1.25 }, { scale: 1, duration: 0.22, ease: "power4.out" }, 1.37);
+      tl.to("#h-tab", { scale: 1.1, opacity: 0.4, duration: 0.2, ease: "power2.in" }, 2.26);
+      tl.set("#h-tab", { innerHTML: "<b>tab</b> 12" }, 2.45);
+      tl.fromTo("#h-tab", { opacity: 1, scale: 1.25 }, { scale: 1, duration: 0.22, ease: "power4.out" }, 2.46);
+      tl.fromTo("#h-slash", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.3, ease: "power4.inOut", transformOrigin: "left center" }, 2.5);
+      tl.to(["#h-tab", "#h-slash"], { opacity: 0, duration: 0.12 }, 2.62);
+      tl.fromTo("#h-enough", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: P3 }, 2.74);
+
+      /* S2 reveal — beat-locked: 3.55s */
+      tl.fromTo("#s2-logo", { opacity: 0, scale: 0.6, y: -60 }, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "back.out(1.6)" }, 3.55);
+      tl.fromTo("#s2-word", { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 3.95);
+      tl.fromTo("#s2-tag", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 4.4);
+      tl.fromTo("#s2-c1", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 6.01);
+      tl.fromTo("#s2-c2", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 6.82);
+      tl.fromTo("#s2-c3", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 7.92);
+
+      /* S3 json */
+      tl.fromTo("#c-json", { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: P3 }, 10.38);
+      tl.fromTo("#c-json-toast", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.35, ease: P3 }, 12.56);
+      tl.to("#c-json-toast", { opacity: 0, duration: 0.3 }, 14.2);
+      tl.fromTo("#c-json-btn", { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" }, 14.73);
+      tl.fromTo("#c-json-out", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: P3 }, 14.95);
+      tl.to("#c-json", { opacity: 0, y: -60, duration: 0.35, ease: "power2.in" }, 19.55);
+
+      /* S4 password — beat-locked: 24.01s */
+      tl.fromTo("#c-pass", { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: P3 }, 20.19);
+      tl.fromTo("#p-m1", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.25, ease: P3 }, 21.28);
+      tl.fromTo("#p-m2", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.25, ease: P3 }, 21.83);
+      tl.fromTo("#p-m3", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.25, ease: P3 }, 22.37);
+      tl.fromTo("#p-gen", { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" }, 24.01);
+      tl.fromTo("#c-pass-bar", { width: "0%" }, { width: "100%", duration: 0.8, ease: "power2.out" }, 24.2);
+      tl.fromTo("#p-tag", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: P3 }, 25.1);
+      tl.to("#c-pass", { opacity: 0, y: -60, duration: 0.35, ease: "power2.in" }, 28.55);
+
+      /* S5 compress */
+      tl.fromTo("#c-pdf", { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: P3 }, 29.47);
+      tl.fromTo("#q-1", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.22, ease: P3 }, 31.1);
+      tl.fromTo("#q-2", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.22, ease: P3 }, 31.65);
+      tl.fromTo("#q-3", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.22, ease: P3 }, 32.19);
+      tl.fromTo("#q-4", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.22, ease: P3 }, 32.74);
+      tl.fromTo("#q-5", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.22, ease: P3 }, 33.29);
+      tl.fromTo("#c-pdf-bar", { width: "0%" }, { width: "100%", duration: 2.0, ease: "power1.inOut" }, 33.4);
+      tl.fromTo("#c-pdf-res", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: P3 }, 35.9);
+
+      /* S6 privacy slams — beats 38.74 / 40.65 / 42.0 */
+      tl.fromTo("#p-s1", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.35, ease: "power4.out" }, 38.74);
+      tl.fromTo("#p-s2", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.35, ease: "power4.out" }, 40.65);
+      tl.fromTo("#p-s3", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.35, ease: "power4.out" }, 42.0);
+      tl.fromTo("#marquee", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 44.0);
+      tl.fromTo("#m-inner", { x: 1080 }, { x: -1700, duration: 4.6, ease: "none" }, 44.0);
+      tl.fromTo("#s6-ready", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, 47.46);
+
+      /* S7 cta — beat-locked: 49.64s */
+      tl.fromTo("#s7-logo", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.7)" }, 49.64);
+      tl.fromTo("#s7-word", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.45, ease: P3 }, 50.0);
+      tl.fromTo("#s7-urlbox", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 51.0);
+      tl.fromTo("#s7-url", { width: 0 }, { width: "100%", duration: 1.8, ease: "steps(20)" }, 51.1);
+      tl.to("#s7-caret", { opacity: 0, duration: 0.3, repeat: 5, yoyo: true }, 53.0);
+      tl.fromTo("#s7-line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: P3 }, 55.11);
+      tl.fromTo("#s7-sub", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.4, ease: P3 }, 55.6);
+      tl.to("#root", { opacity: 1, duration: 0.01 }, 59.9);
+
+      tl.to("#glow", { opacity: 0.901, scale: 1.030, duration: 0.2, ease: "none" }, 0.00);
+tl.to("#glow", { opacity: 0.834, scale: 1.009, duration: 0.2, ease: "none" }, 0.20);
+tl.to("#glow", { opacity: 0.563, scale: 0.960, duration: 0.2, ease: "none" }, 0.40);
+tl.to("#glow", { opacity: 0.812, scale: 1.021, duration: 0.2, ease: "none" }, 0.60);
+tl.to("#glow", { opacity: 0.764, scale: 0.999, duration: 0.2, ease: "none" }, 0.80);
+tl.to("#glow", { opacity: 0.807, scale: 0.992, duration: 0.2, ease: "none" }, 1.00);
+tl.to("#glow", { opacity: 0.565, scale: 0.968, duration: 0.2, ease: "none" }, 1.20);
+tl.to("#glow", { opacity: 0.740, scale: 0.971, duration: 0.2, ease: "none" }, 1.40);
+tl.to("#glow", { opacity: 0.567, scale: 0.972, duration: 0.2, ease: "none" }, 1.60);
+tl.to("#glow", { opacity: 0.627, scale: 0.969, duration: 0.2, ease: "none" }, 1.80);
+tl.to("#glow", { opacity: 0.791, scale: 0.997, duration: 0.2, ease: "none" }, 2.00);
+tl.to("#glow", { opacity: 0.791, scale: 1.011, duration: 0.2, ease: "none" }, 2.20);
+tl.to("#glow", { opacity: 0.750, scale: 0.978, duration: 0.2, ease: "none" }, 2.40);
+tl.to("#glow", { opacity: 0.567, scale: 0.960, duration: 0.2, ease: "none" }, 2.60);
+tl.to("#glow", { opacity: 0.806, scale: 0.990, duration: 0.2, ease: "none" }, 2.80);
+tl.to("#glow", { opacity: 0.709, scale: 0.967, duration: 0.2, ease: "none" }, 3.00);
+tl.to("#glow", { opacity: 0.783, scale: 0.984, duration: 0.2, ease: "none" }, 3.20);
+tl.to("#glow", { opacity: 0.670, scale: 0.974, duration: 0.2, ease: "none" }, 3.40);
+tl.to("#glow", { opacity: 0.801, scale: 0.989, duration: 0.2, ease: "none" }, 3.60);
+tl.to("#glow", { opacity: 0.793, scale: 1.002, duration: 0.2, ease: "none" }, 3.80);
+tl.to("#glow", { opacity: 0.677, scale: 0.965, duration: 0.2, ease: "none" }, 4.00);
+tl.to("#glow", { opacity: 0.823, scale: 0.989, duration: 0.2, ease: "none" }, 4.20);
+tl.to("#glow", { opacity: 0.745, scale: 0.981, duration: 0.2, ease: "none" }, 4.40);
+tl.to("#glow", { opacity: 0.730, scale: 0.984, duration: 0.2, ease: "none" }, 4.60);
+tl.to("#glow", { opacity: 0.562, scale: 0.960, duration: 0.2, ease: "none" }, 4.80);
+tl.to("#glow", { opacity: 0.815, scale: 1.011, duration: 0.2, ease: "none" }, 5.00);
+tl.to("#glow", { opacity: 0.663, scale: 0.966, duration: 0.2, ease: "none" }, 5.20);
+tl.to("#glow", { opacity: 0.785, scale: 0.989, duration: 0.2, ease: "none" }, 5.40);
+tl.to("#glow", { opacity: 0.778, scale: 0.999, duration: 0.2, ease: "none" }, 5.60);
+tl.to("#glow", { opacity: 0.724, scale: 0.980, duration: 0.2, ease: "none" }, 5.80);
+tl.to("#glow", { opacity: 0.853, scale: 1.012, duration: 0.2, ease: "none" }, 6.00);
+tl.to("#glow", { opacity: 0.563, scale: 0.962, duration: 0.2, ease: "none" }, 6.20);
+tl.to("#glow", { opacity: 0.774, scale: 0.991, duration: 0.2, ease: "none" }, 6.40);
+tl.to("#glow", { opacity: 0.801, scale: 0.986, duration: 0.2, ease: "none" }, 6.60);
+tl.to("#glow", { opacity: 0.679, scale: 0.960, duration: 0.2, ease: "none" }, 6.80);
+tl.to("#glow", { opacity: 0.559, scale: 0.960, duration: 0.2, ease: "none" }, 7.00);
+tl.to("#glow", { opacity: 0.802, scale: 0.983, duration: 0.2, ease: "none" }, 7.20);
+tl.to("#glow", { opacity: 0.602, scale: 0.961, duration: 0.2, ease: "none" }, 7.40);
+tl.to("#glow", { opacity: 0.770, scale: 0.988, duration: 0.2, ease: "none" }, 7.60);
+tl.to("#glow", { opacity: 0.831, scale: 0.992, duration: 0.2, ease: "none" }, 7.80);
+tl.to("#glow", { opacity: 0.772, scale: 0.988, duration: 0.2, ease: "none" }, 8.00);
+tl.to("#glow", { opacity: 0.862, scale: 1.016, duration: 0.2, ease: "none" }, 8.20);
+tl.to("#glow", { opacity: 0.616, scale: 0.962, duration: 0.2, ease: "none" }, 8.40);
+tl.to("#glow", { opacity: 0.787, scale: 0.983, duration: 0.2, ease: "none" }, 8.60);
+tl.to("#glow", { opacity: 0.875, scale: 1.016, duration: 0.2, ease: "none" }, 8.80);
+tl.to("#glow", { opacity: 0.770, scale: 0.998, duration: 0.2, ease: "none" }, 9.00);
+tl.to("#glow", { opacity: 0.570, scale: 0.960, duration: 0.2, ease: "none" }, 9.20);
+tl.to("#glow", { opacity: 0.796, scale: 1.008, duration: 0.2, ease: "none" }, 9.40);
+tl.to("#glow", { opacity: 0.594, scale: 0.961, duration: 0.2, ease: "none" }, 9.60);
+tl.to("#glow", { opacity: 0.823, scale: 1.004, duration: 0.2, ease: "none" }, 9.80);
+tl.to("#glow", { opacity: 0.672, scale: 0.970, duration: 0.2, ease: "none" }, 10.00);
+tl.to("#glow", { opacity: 0.759, scale: 0.970, duration: 0.2, ease: "none" }, 10.20);
+tl.to("#glow", { opacity: 0.814, scale: 0.997, duration: 0.2, ease: "none" }, 10.40);
+tl.to("#glow", { opacity: 0.656, scale: 0.968, duration: 0.2, ease: "none" }, 10.60);
+tl.to("#glow", { opacity: 0.778, scale: 0.996, duration: 0.2, ease: "none" }, 10.80);
+tl.to("#glow", { opacity: 0.831, scale: 0.988, duration: 0.2, ease: "none" }, 11.00);
+tl.to("#glow", { opacity: 0.669, scale: 0.961, duration: 0.2, ease: "none" }, 11.20);
+tl.to("#glow", { opacity: 0.559, scale: 0.960, duration: 0.2, ease: "none" }, 11.40);
+tl.to("#glow", { opacity: 0.815, scale: 0.982, duration: 0.2, ease: "none" }, 11.60);
+tl.to("#glow", { opacity: 0.584, scale: 0.960, duration: 0.2, ease: "none" }, 11.80);
+tl.to("#glow", { opacity: 0.854, scale: 1.004, duration: 0.2, ease: "none" }, 12.00);
+tl.to("#glow", { opacity: 0.576, scale: 0.962, duration: 0.2, ease: "none" }, 12.20);
+tl.to("#glow", { opacity: 0.798, scale: 0.989, duration: 0.2, ease: "none" }, 12.40);
+tl.to("#glow", { opacity: 0.852, scale: 1.004, duration: 0.2, ease: "none" }, 12.60);
+tl.to("#glow", { opacity: 0.771, scale: 0.987, duration: 0.2, ease: "none" }, 12.80);
+tl.to("#glow", { opacity: 0.804, scale: 0.985, duration: 0.2, ease: "none" }, 13.00);
+tl.to("#glow", { opacity: 0.843, scale: 0.998, duration: 0.2, ease: "none" }, 13.20);
+tl.to("#glow", { opacity: 0.628, scale: 0.968, duration: 0.2, ease: "none" }, 13.40);
+tl.to("#glow", { opacity: 0.640, scale: 0.970, duration: 0.2, ease: "none" }, 13.60);
+tl.to("#glow", { opacity: 0.804, scale: 1.002, duration: 0.2, ease: "none" }, 13.80);
+tl.to("#glow", { opacity: 0.580, scale: 0.961, duration: 0.2, ease: "none" }, 14.00);
+tl.to("#glow", { opacity: 0.736, scale: 0.989, duration: 0.2, ease: "none" }, 14.20);
+tl.to("#glow", { opacity: 0.581, scale: 0.963, duration: 0.2, ease: "none" }, 14.40);
+tl.to("#glow", { opacity: 0.620, scale: 0.971, duration: 0.2, ease: "none" }, 14.60);
+tl.to("#glow", { opacity: 0.827, scale: 0.985, duration: 0.2, ease: "none" }, 14.80);
+tl.to("#glow", { opacity: 0.814, scale: 0.995, duration: 0.2, ease: "none" }, 15.00);
+tl.to("#glow", { opacity: 0.809, scale: 0.994, duration: 0.2, ease: "none" }, 15.20);
+tl.to("#glow", { opacity: 0.814, scale: 0.981, duration: 0.2, ease: "none" }, 15.40);
+tl.to("#glow", { opacity: 0.583, scale: 0.960, duration: 0.2, ease: "none" }, 15.60);
+tl.to("#glow", { opacity: 0.822, scale: 1.005, duration: 0.2, ease: "none" }, 15.80);
+tl.to("#glow", { opacity: 0.793, scale: 0.981, duration: 0.2, ease: "none" }, 16.00);
+tl.to("#glow", { opacity: 0.586, scale: 0.965, duration: 0.2, ease: "none" }, 16.20);
+tl.to("#glow", { opacity: 0.632, scale: 0.983, duration: 0.2, ease: "none" }, 16.40);
+tl.to("#glow", { opacity: 0.613, scale: 0.969, duration: 0.2, ease: "none" }, 16.60);
+tl.to("#glow", { opacity: 0.686, scale: 0.975, duration: 0.2, ease: "none" }, 16.80);
+tl.to("#glow", { opacity: 0.849, scale: 0.993, duration: 0.2, ease: "none" }, 17.00);
+tl.to("#glow", { opacity: 0.837, scale: 1.008, duration: 0.2, ease: "none" }, 17.20);
+tl.to("#glow", { opacity: 0.804, scale: 0.997, duration: 0.2, ease: "none" }, 17.40);
+tl.to("#glow", { opacity: 0.810, scale: 0.987, duration: 0.2, ease: "none" }, 17.60);
+tl.to("#glow", { opacity: 0.558, scale: 0.960, duration: 0.2, ease: "none" }, 17.80);
+tl.to("#glow", { opacity: 0.929, scale: 1.001, duration: 0.2, ease: "none" }, 18.00);
+tl.to("#glow", { opacity: 0.767, scale: 0.985, duration: 0.2, ease: "none" }, 18.20);
+tl.to("#glow", { opacity: 0.730, scale: 0.985, duration: 0.2, ease: "none" }, 18.40);
+tl.to("#glow", { opacity: 0.672, scale: 0.986, duration: 0.2, ease: "none" }, 18.60);
+tl.to("#glow", { opacity: 0.639, scale: 0.968, duration: 0.2, ease: "none" }, 18.80);
+tl.to("#glow", { opacity: 0.581, scale: 0.962, duration: 0.2, ease: "none" }, 19.00);
+tl.to("#glow", { opacity: 0.766, scale: 0.979, duration: 0.2, ease: "none" }, 19.20);
+tl.to("#glow", { opacity: 0.815, scale: 0.999, duration: 0.2, ease: "none" }, 19.40);
+tl.to("#glow", { opacity: 0.785, scale: 0.993, duration: 0.2, ease: "none" }, 19.60);
+tl.to("#glow", { opacity: 0.800, scale: 0.980, duration: 0.2, ease: "none" }, 19.80);
+tl.to("#glow", { opacity: 0.554, scale: 0.960, duration: 0.2, ease: "none" }, 20.00);
+tl.to("#glow", { opacity: 0.868, scale: 1.001, duration: 0.2, ease: "none" }, 20.20);
+tl.to("#glow", { opacity: 0.785, scale: 0.979, duration: 0.2, ease: "none" }, 20.40);
+tl.to("#glow", { opacity: 0.824, scale: 0.989, duration: 0.2, ease: "none" }, 20.60);
+tl.to("#glow", { opacity: 0.640, scale: 0.982, duration: 0.2, ease: "none" }, 20.80);
+tl.to("#glow", { opacity: 0.768, scale: 0.979, duration: 0.2, ease: "none" }, 21.00);
+tl.to("#glow", { opacity: 0.612, scale: 0.962, duration: 0.2, ease: "none" }, 21.20);
+tl.to("#glow", { opacity: 0.837, scale: 1.002, duration: 0.2, ease: "none" }, 21.40);
+tl.to("#glow", { opacity: 0.768, scale: 0.980, duration: 0.2, ease: "none" }, 21.60);
+tl.to("#glow", { opacity: 0.895, scale: 0.990, duration: 0.2, ease: "none" }, 21.80);
+tl.to("#glow", { opacity: 0.756, scale: 0.984, duration: 0.2, ease: "none" }, 22.00);
+tl.to("#glow", { opacity: 0.557, scale: 0.960, duration: 0.2, ease: "none" }, 22.20);
+tl.to("#glow", { opacity: 0.868, scale: 1.027, duration: 0.2, ease: "none" }, 22.40);
+tl.to("#glow", { opacity: 0.802, scale: 1.001, duration: 0.2, ease: "none" }, 22.60);
+tl.to("#glow", { opacity: 0.782, scale: 0.985, duration: 0.2, ease: "none" }, 22.80);
+tl.to("#glow", { opacity: 0.618, scale: 0.979, duration: 0.2, ease: "none" }, 23.00);
+tl.to("#glow", { opacity: 0.774, scale: 0.976, duration: 0.2, ease: "none" }, 23.20);
+tl.to("#glow", { opacity: 0.559, scale: 0.961, duration: 0.2, ease: "none" }, 23.40);
+tl.to("#glow", { opacity: 0.703, scale: 0.973, duration: 0.2, ease: "none" }, 23.60);
+tl.to("#glow", { opacity: 0.784, scale: 0.991, duration: 0.2, ease: "none" }, 23.80);
+tl.to("#glow", { opacity: 0.920, scale: 0.998, duration: 0.2, ease: "none" }, 24.00);
+tl.to("#glow", { opacity: 0.681, scale: 0.972, duration: 0.2, ease: "none" }, 24.20);
+tl.to("#glow", { opacity: 0.552, scale: 0.960, duration: 0.2, ease: "none" }, 24.40);
+tl.to("#glow", { opacity: 0.813, scale: 1.000, duration: 0.2, ease: "none" }, 24.60);
+tl.to("#glow", { opacity: 0.750, scale: 0.976, duration: 0.2, ease: "none" }, 24.80);
+tl.to("#glow", { opacity: 0.783, scale: 0.985, duration: 0.2, ease: "none" }, 25.00);
+tl.to("#glow", { opacity: 0.605, scale: 0.976, duration: 0.2, ease: "none" }, 25.20);
+tl.to("#glow", { opacity: 0.801, scale: 0.982, duration: 0.2, ease: "none" }, 25.40);
+tl.to("#glow", { opacity: 0.641, scale: 0.966, duration: 0.2, ease: "none" }, 25.60);
+tl.to("#glow", { opacity: 0.722, scale: 0.982, duration: 0.2, ease: "none" }, 25.80);
+tl.to("#glow", { opacity: 0.810, scale: 0.993, duration: 0.2, ease: "none" }, 26.00);
+tl.to("#glow", { opacity: 0.945, scale: 1.010, duration: 0.2, ease: "none" }, 26.20);
+tl.to("#glow", { opacity: 0.829, scale: 1.001, duration: 0.2, ease: "none" }, 26.40);
+tl.to("#glow", { opacity: 0.616, scale: 0.960, duration: 0.2, ease: "none" }, 26.60);
+tl.to("#glow", { opacity: 0.840, scale: 1.013, duration: 0.2, ease: "none" }, 26.80);
+tl.to("#glow", { opacity: 0.672, scale: 0.975, duration: 0.2, ease: "none" }, 27.00);
+tl.to("#glow", { opacity: 0.827, scale: 1.009, duration: 0.2, ease: "none" }, 27.20);
+tl.to("#glow", { opacity: 0.667, scale: 0.976, duration: 0.2, ease: "none" }, 27.40);
+tl.to("#glow", { opacity: 0.764, scale: 0.974, duration: 0.2, ease: "none" }, 27.60);
+tl.to("#glow", { opacity: 0.864, scale: 0.978, duration: 0.2, ease: "none" }, 27.80);
+tl.to("#glow", { opacity: 0.634, scale: 0.961, duration: 0.2, ease: "none" }, 28.00);
+tl.to("#glow", { opacity: 0.813, scale: 0.991, duration: 0.2, ease: "none" }, 28.20);
+tl.to("#glow", { opacity: 0.811, scale: 1.003, duration: 0.2, ease: "none" }, 28.40);
+tl.to("#glow", { opacity: 0.770, scale: 0.980, duration: 0.2, ease: "none" }, 28.60);
+tl.to("#glow", { opacity: 0.591, scale: 0.960, duration: 0.2, ease: "none" }, 28.80);
+tl.to("#glow", { opacity: 0.817, scale: 0.991, duration: 0.2, ease: "none" }, 29.00);
+tl.to("#glow", { opacity: 0.757, scale: 0.974, duration: 0.2, ease: "none" }, 29.20);
+tl.to("#glow", { opacity: 0.819, scale: 0.987, duration: 0.2, ease: "none" }, 29.40);
+tl.to("#glow", { opacity: 0.723, scale: 0.976, duration: 0.2, ease: "none" }, 29.60);
+tl.to("#glow", { opacity: 0.805, scale: 0.989, duration: 0.2, ease: "none" }, 29.80);
+tl.to("#glow", { opacity: 0.922, scale: 0.991, duration: 0.2, ease: "none" }, 30.00);
+tl.to("#glow", { opacity: 0.676, scale: 0.962, duration: 0.2, ease: "none" }, 30.20);
+tl.to("#glow", { opacity: 0.828, scale: 0.997, duration: 0.2, ease: "none" }, 30.40);
+tl.to("#glow", { opacity: 0.917, scale: 1.002, duration: 0.2, ease: "none" }, 30.60);
+tl.to("#glow", { opacity: 0.791, scale: 0.998, duration: 0.2, ease: "none" }, 30.80);
+tl.to("#glow", { opacity: 0.582, scale: 0.960, duration: 0.2, ease: "none" }, 31.00);
+tl.to("#glow", { opacity: 0.851, scale: 1.012, duration: 0.2, ease: "none" }, 31.20);
+tl.to("#glow", { opacity: 0.626, scale: 0.964, duration: 0.2, ease: "none" }, 31.40);
+tl.to("#glow", { opacity: 0.791, scale: 0.989, duration: 0.2, ease: "none" }, 31.60);
+tl.to("#glow", { opacity: 0.677, scale: 0.980, duration: 0.2, ease: "none" }, 31.80);
+tl.to("#glow", { opacity: 0.777, scale: 0.968, duration: 0.2, ease: "none" }, 32.00);
+tl.to("#glow", { opacity: 0.824, scale: 0.998, duration: 0.2, ease: "none" }, 32.20);
+tl.to("#glow", { opacity: 0.582, scale: 0.961, duration: 0.2, ease: "none" }, 32.40);
+tl.to("#glow", { opacity: 0.800, scale: 0.992, duration: 0.2, ease: "none" }, 32.60);
+tl.to("#glow", { opacity: 0.804, scale: 0.995, duration: 0.2, ease: "none" }, 32.80);
+tl.to("#glow", { opacity: 0.652, scale: 0.961, duration: 0.2, ease: "none" }, 33.00);
+tl.to("#glow", { opacity: 0.589, scale: 0.960, duration: 0.2, ease: "none" }, 33.20);
+tl.to("#glow", { opacity: 0.821, scale: 0.986, duration: 0.2, ease: "none" }, 33.40);
+tl.to("#glow", { opacity: 0.634, scale: 0.961, duration: 0.2, ease: "none" }, 33.60);
+tl.to("#glow", { opacity: 0.768, scale: 0.985, duration: 0.2, ease: "none" }, 33.80);
+tl.to("#glow", { opacity: 0.619, scale: 0.960, duration: 0.2, ease: "none" }, 34.00);
+tl.to("#glow", { opacity: 0.641, scale: 0.960, duration: 0.2, ease: "none" }, 34.20);
+tl.to("#glow", { opacity: 0.680, scale: 0.960, duration: 0.2, ease: "none" }, 34.40);
+tl.to("#glow", { opacity: 0.621, scale: 0.962, duration: 0.2, ease: "none" }, 34.60);
+tl.to("#glow", { opacity: 0.612, scale: 0.961, duration: 0.2, ease: "none" }, 34.80);
+tl.to("#glow", { opacity: 0.837, scale: 1.012, duration: 0.2, ease: "none" }, 35.00);
+tl.to("#glow", { opacity: 0.717, scale: 0.977, duration: 0.2, ease: "none" }, 35.20);
+tl.to("#glow", { opacity: 0.615, scale: 0.961, duration: 0.2, ease: "none" }, 35.40);
+tl.to("#glow", { opacity: 0.836, scale: 0.999, duration: 0.2, ease: "none" }, 35.60);
+tl.to("#glow", { opacity: 0.572, scale: 0.960, duration: 0.2, ease: "none" }, 35.80);
+tl.to("#glow", { opacity: 0.960, scale: 1.025, duration: 0.2, ease: "none" }, 36.00);
+tl.to("#glow", { opacity: 0.610, scale: 0.968, duration: 0.2, ease: "none" }, 36.20);
+tl.to("#glow", { opacity: 0.776, scale: 0.974, duration: 0.2, ease: "none" }, 36.40);
+tl.to("#glow", { opacity: 0.849, scale: 1.009, duration: 0.2, ease: "none" }, 36.60);
+tl.to("#glow", { opacity: 0.758, scale: 0.984, duration: 0.2, ease: "none" }, 36.80);
+tl.to("#glow", { opacity: 0.818, scale: 0.995, duration: 0.2, ease: "none" }, 37.00);
+tl.to("#glow", { opacity: 0.820, scale: 0.991, duration: 0.2, ease: "none" }, 37.20);
+tl.to("#glow", { opacity: 0.656, scale: 0.960, duration: 0.2, ease: "none" }, 37.40);
+tl.to("#glow", { opacity: 0.647, scale: 0.973, duration: 0.2, ease: "none" }, 37.60);
+tl.to("#glow", { opacity: 0.838, scale: 0.983, duration: 0.2, ease: "none" }, 37.80);
+tl.to("#glow", { opacity: 0.563, scale: 0.962, duration: 0.2, ease: "none" }, 38.00);
+tl.to("#glow", { opacity: 0.794, scale: 1.007, duration: 0.2, ease: "none" }, 38.20);
+tl.to("#glow", { opacity: 0.623, scale: 0.962, duration: 0.2, ease: "none" }, 38.40);
+tl.to("#glow", { opacity: 0.777, scale: 0.991, duration: 0.2, ease: "none" }, 38.60);
+tl.to("#glow", { opacity: 0.877, scale: 1.012, duration: 0.2, ease: "none" }, 38.80);
+tl.to("#glow", { opacity: 0.858, scale: 1.002, duration: 0.2, ease: "none" }, 39.00);
+tl.to("#glow", { opacity: 0.825, scale: 0.998, duration: 0.2, ease: "none" }, 39.20);
+tl.to("#glow", { opacity: 0.751, scale: 0.994, duration: 0.2, ease: "none" }, 39.40);
+tl.to("#glow", { opacity: 0.657, scale: 0.963, duration: 0.2, ease: "none" }, 39.60);
+tl.to("#glow", { opacity: 0.874, scale: 0.990, duration: 0.2, ease: "none" }, 39.80);
+tl.to("#glow", { opacity: 0.824, scale: 1.000, duration: 0.2, ease: "none" }, 40.00);
+tl.to("#glow", { opacity: 0.663, scale: 0.981, duration: 0.2, ease: "none" }, 40.20);
+tl.to("#glow", { opacity: 0.804, scale: 1.004, duration: 0.2, ease: "none" }, 40.40);
+tl.to("#glow", { opacity: 0.596, scale: 0.968, duration: 0.2, ease: "none" }, 40.60);
+tl.to("#glow", { opacity: 0.685, scale: 0.967, duration: 0.2, ease: "none" }, 40.80);
+tl.to("#glow", { opacity: 0.829, scale: 0.976, duration: 0.2, ease: "none" }, 41.00);
+tl.to("#glow", { opacity: 0.826, scale: 0.998, duration: 0.2, ease: "none" }, 41.20);
+tl.to("#glow", { opacity: 0.826, scale: 0.997, duration: 0.2, ease: "none" }, 41.40);
+tl.to("#glow", { opacity: 0.843, scale: 0.989, duration: 0.2, ease: "none" }, 41.60);
+tl.to("#glow", { opacity: 0.658, scale: 0.960, duration: 0.2, ease: "none" }, 41.80);
+tl.to("#glow", { opacity: 0.975, scale: 1.015, duration: 0.2, ease: "none" }, 42.00);
+tl.to("#glow", { opacity: 0.840, scale: 0.986, duration: 0.2, ease: "none" }, 42.20);
+tl.to("#glow", { opacity: 0.795, scale: 0.994, duration: 0.2, ease: "none" }, 42.40);
+tl.to("#glow", { opacity: 0.738, scale: 0.995, duration: 0.2, ease: "none" }, 42.60);
+tl.to("#glow", { opacity: 0.779, scale: 0.975, duration: 0.2, ease: "none" }, 42.80);
+tl.to("#glow", { opacity: 0.680, scale: 0.970, duration: 0.2, ease: "none" }, 43.00);
+tl.to("#glow", { opacity: 0.811, scale: 1.001, duration: 0.2, ease: "none" }, 43.20);
+tl.to("#glow", { opacity: 0.843, scale: 0.994, duration: 0.2, ease: "none" }, 43.40);
+tl.to("#glow", { opacity: 0.809, scale: 0.992, duration: 0.2, ease: "none" }, 43.60);
+tl.to("#glow", { opacity: 0.771, scale: 0.998, duration: 0.2, ease: "none" }, 43.80);
+tl.to("#glow", { opacity: 0.663, scale: 0.960, duration: 0.2, ease: "none" }, 44.00);
+tl.to("#glow", { opacity: 0.667, scale: 0.960, duration: 0.2, ease: "none" }, 44.20);
+tl.to("#glow", { opacity: 0.678, scale: 0.960, duration: 0.2, ease: "none" }, 44.40);
+tl.to("#glow", { opacity: 0.665, scale: 0.960, duration: 0.2, ease: "none" }, 44.60);
+tl.to("#glow", { opacity: 0.674, scale: 0.960, duration: 0.2, ease: "none" }, 44.80);
+tl.to("#glow", { opacity: 0.653, scale: 0.960, duration: 0.2, ease: "none" }, 45.00);
+tl.to("#glow", { opacity: 0.667, scale: 0.960, duration: 0.2, ease: "none" }, 45.20);
+tl.to("#glow", { opacity: 0.649, scale: 0.960, duration: 0.2, ease: "none" }, 45.40);
+tl.to("#glow", { opacity: 0.674, scale: 0.960, duration: 0.2, ease: "none" }, 45.60);
+tl.to("#glow", { opacity: 0.884, scale: 0.993, duration: 0.2, ease: "none" }, 45.80);
+tl.to("#glow", { opacity: 0.865, scale: 0.991, duration: 0.2, ease: "none" }, 46.00);
+tl.to("#glow", { opacity: 0.632, scale: 0.960, duration: 0.2, ease: "none" }, 46.20);
+tl.to("#glow", { opacity: 0.918, scale: 1.019, duration: 0.2, ease: "none" }, 46.40);
+tl.to("#glow", { opacity: 0.772, scale: 0.983, duration: 0.2, ease: "none" }, 46.60);
+tl.to("#glow", { opacity: 0.835, scale: 1.004, duration: 0.2, ease: "none" }, 46.80);
+tl.to("#glow", { opacity: 0.623, scale: 0.975, duration: 0.2, ease: "none" }, 47.00);
+tl.to("#glow", { opacity: 0.843, scale: 0.999, duration: 0.2, ease: "none" }, 47.20);
+tl.to("#glow", { opacity: 0.613, scale: 0.962, duration: 0.2, ease: "none" }, 47.40);
+tl.to("#glow", { opacity: 0.835, scale: 0.999, duration: 0.2, ease: "none" }, 47.60);
+tl.to("#glow", { opacity: 0.826, scale: 0.981, duration: 0.2, ease: "none" }, 47.80);
+tl.to("#glow", { opacity: 0.960, scale: 1.017, duration: 0.2, ease: "none" }, 48.00);
+tl.to("#glow", { opacity: 0.829, scale: 0.995, duration: 0.2, ease: "none" }, 48.20);
+tl.to("#glow", { opacity: 0.676, scale: 0.960, duration: 0.2, ease: "none" }, 48.40);
+tl.to("#glow", { opacity: 0.852, scale: 1.029, duration: 0.2, ease: "none" }, 48.60);
+tl.to("#glow", { opacity: 0.812, scale: 0.990, duration: 0.2, ease: "none" }, 48.80);
+tl.to("#glow", { opacity: 0.868, scale: 1.020, duration: 0.2, ease: "none" }, 49.00);
+tl.to("#glow", { opacity: 0.651, scale: 0.980, duration: 0.2, ease: "none" }, 49.20);
+tl.to("#glow", { opacity: 0.802, scale: 0.965, duration: 0.2, ease: "none" }, 49.40);
+tl.to("#glow", { opacity: 0.685, scale: 0.973, duration: 0.2, ease: "none" }, 49.60);
+tl.to("#glow", { opacity: 0.666, scale: 0.966, duration: 0.2, ease: "none" }, 49.80);
+tl.to("#glow", { opacity: 0.821, scale: 0.991, duration: 0.2, ease: "none" }, 50.00);
+tl.to("#glow", { opacity: 0.884, scale: 1.014, duration: 0.2, ease: "none" }, 50.20);
+tl.to("#glow", { opacity: 0.581, scale: 0.962, duration: 0.2, ease: "none" }, 50.40);
+tl.to("#glow", { opacity: 0.593, scale: 0.960, duration: 0.2, ease: "none" }, 50.60);
+tl.to("#glow", { opacity: 0.817, scale: 0.998, duration: 0.2, ease: "none" }, 50.80);
+tl.to("#glow", { opacity: 0.700, scale: 0.968, duration: 0.2, ease: "none" }, 51.00);
+tl.to("#glow", { opacity: 0.825, scale: 0.977, duration: 0.2, ease: "none" }, 51.20);
+tl.to("#glow", { opacity: 0.716, scale: 0.985, duration: 0.2, ease: "none" }, 51.40);
+tl.to("#glow", { opacity: 0.812, scale: 0.994, duration: 0.2, ease: "none" }, 51.60);
+tl.to("#glow", { opacity: 0.864, scale: 0.991, duration: 0.2, ease: "none" }, 51.80);
+tl.to("#glow", { opacity: 0.688, scale: 0.970, duration: 0.2, ease: "none" }, 52.00);
+tl.to("#glow", { opacity: 0.799, scale: 0.984, duration: 0.2, ease: "none" }, 52.20);
+tl.to("#glow", { opacity: 0.843, scale: 1.012, duration: 0.2, ease: "none" }, 52.40);
+tl.to("#glow", { opacity: 0.839, scale: 1.004, duration: 0.2, ease: "none" }, 52.60);
+tl.to("#glow", { opacity: 0.583, scale: 0.960, duration: 0.2, ease: "none" }, 52.80);
+tl.to("#glow", { opacity: 0.769, scale: 0.997, duration: 0.2, ease: "none" }, 53.00);
+tl.to("#glow", { opacity: 0.617, scale: 0.969, duration: 0.2, ease: "none" }, 53.20);
+tl.to("#glow", { opacity: 0.795, scale: 0.988, duration: 0.2, ease: "none" }, 53.40);
+tl.to("#glow", { opacity: 0.763, scale: 0.988, duration: 0.2, ease: "none" }, 53.60);
+tl.to("#glow", { opacity: 0.772, scale: 0.963, duration: 0.2, ease: "none" }, 53.80);
+tl.to("#glow", { opacity: 0.825, scale: 0.985, duration: 0.2, ease: "none" }, 54.00);
+tl.to("#glow", { opacity: 0.562, scale: 0.961, duration: 0.2, ease: "none" }, 54.20);
+tl.to("#glow", { opacity: 0.829, scale: 1.001, duration: 0.2, ease: "none" }, 54.40);
+tl.to("#glow", { opacity: 0.780, scale: 0.978, duration: 0.2, ease: "none" }, 54.60);
+tl.to("#glow", { opacity: 0.729, scale: 0.976, duration: 0.2, ease: "none" }, 54.80);
+tl.to("#glow", { opacity: 0.555, scale: 0.960, duration: 0.2, ease: "none" }, 55.00);
+tl.to("#glow", { opacity: 0.795, scale: 0.980, duration: 0.2, ease: "none" }, 55.20);
+tl.to("#glow", { opacity: 0.581, scale: 0.963, duration: 0.2, ease: "none" }, 55.40);
+tl.to("#glow", { opacity: 0.779, scale: 0.968, duration: 0.2, ease: "none" }, 55.60);
+tl.to("#glow", { opacity: 0.617, scale: 0.965, duration: 0.2, ease: "none" }, 55.80);
+tl.to("#glow", { opacity: 0.818, scale: 0.988, duration: 0.2, ease: "none" }, 56.00);
+tl.to("#glow", { opacity: 0.788, scale: 0.993, duration: 0.2, ease: "none" }, 56.20);
+tl.to("#glow", { opacity: 0.595, scale: 0.961, duration: 0.2, ease: "none" }, 56.40);
+tl.to("#glow", { opacity: 0.763, scale: 0.988, duration: 0.2, ease: "none" }, 56.60);
+tl.to("#glow", { opacity: 0.863, scale: 0.999, duration: 0.2, ease: "none" }, 56.80);
+tl.to("#glow", { opacity: 0.776, scale: 0.988, duration: 0.2, ease: "none" }, 57.00);
+tl.to("#glow", { opacity: 0.557, scale: 0.960, duration: 0.2, ease: "none" }, 57.20);
+tl.to("#glow", { opacity: 0.858, scale: 1.002, duration: 0.2, ease: "none" }, 57.40);
+tl.to("#glow", { opacity: 0.566, scale: 0.961, duration: 0.2, ease: "none" }, 57.60);
+tl.to("#glow", { opacity: 0.748, scale: 0.985, duration: 0.2, ease: "none" }, 57.80);
+tl.to("#glow", { opacity: 0.592, scale: 0.964, duration: 0.2, ease: "none" }, 58.00);
+tl.to("#glow", { opacity: 0.779, scale: 0.966, duration: 0.2, ease: "none" }, 58.20);
+tl.to("#glow", { opacity: 0.768, scale: 0.967, duration: 0.2, ease: "none" }, 58.40);
+tl.to("#glow", { opacity: 0.619, scale: 0.961, duration: 0.2, ease: "none" }, 58.60);
+tl.to("#glow", { opacity: 0.794, scale: 0.986, duration: 0.2, ease: "none" }, 58.80);
+tl.to("#glow", { opacity: 0.799, scale: 0.978, duration: 0.2, ease: "none" }, 59.00);
+tl.to("#glow", { opacity: 0.560, scale: 0.960, duration: 0.2, ease: "none" }, 59.20);
+tl.to("#glow", { opacity: 0.551, scale: 0.960, duration: 0.2, ease: "none" }, 59.40);
+tl.to("#glow", { opacity: 0.551, scale: 0.960, duration: 0.2, ease: "none" }, 59.60);
+tl.to("#glow", { opacity: 0.550, scale: 0.960, duration: 0.2, ease: "none" }, 59.80);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
