@@ -1,0 +1,11 @@
+{
+  "name": "unqtools-deepdive-180s",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.143 preview",
+    "check": "npx --yes hyperframes@0.8.143 check",
+    "render": "npx --yes hyperframes@0.8.143 render --quality high --output ../UnQTools_DeepDive_3min.mp4",
+    "render:draft": "npx --yes hyperframes@0.8.143 render --quality draft --output ../UnQTools_DeepDive_3min.mp4"
+  }
+}

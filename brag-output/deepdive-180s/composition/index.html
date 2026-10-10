@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>UnQTools — Deep Dive (180s · 1080x1920)</title>
+    <link rel="stylesheet" href="assets/vendor/fonts.css" />
+    <link rel="stylesheet" href="assets/vendor/fonts.css" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="180"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- ============ persistent background ============ -->
+      <div id="bg" class="clip bg-base" data-start="0" data-duration="180" data-track-index="0">
+        <div class="bg-grid"></div>
+        <div class="orb orb--violet" id="orb-v"></div>
+        <div class="orb orb--teal" id="orb-t"></div>
+        <div class="rim"></div>
+        <div class="vignette"></div>
+      </div>
+
+      <!-- ================= ACT 1 · THE LEAK (0–34.6) ================= -->
+      <section id="a1a" class="clip rack-scene" data-start="0" data-duration="10.2" data-track-index="1">
+        <div class="rack" id="a1-rack">
+          <div class="rack__label" id="a1-rack-lbl">free tool site · uploads</div>
+          <div class="rack__slots">
+            <div class="rack__slot"><i></i><span>POST /upload · contract.pdf</span></div>
+            <div class="rack__slot"><i></i><span>POST /upload · photos.zip</span></div>
+            <div class="rack__slot"><i></i><span>POST /upload · tax-2025.pdf</span></div>
+            <div class="rack__slot"><i></i><span>POST /upload · bank-statement.csv</span></div>
+          </div>
+        </div>
+        <div class="file-ghost" id="fg1" style="margin-left:-430px;"><img class="emo" src="assets/vendor/tw/1f4c4.svg" alt=""> contract.pdf <span class="tick" id="fg1t">uploaded ✓</span></div>
+        <div class="file-ghost" id="fg2" style="margin-left:120px; bottom:300px;"><img class="emo" src="assets/vendor/tw/1f5bc.svg" alt=""> photos.zip <span class="tick" id="fg2t">uploaded ✓</span></div>
+        <div class="file-ghost" id="fg3" style="margin-left:-380px; bottom:260px;"><img class="emo" src="assets/vendor/tw/1f9fe.svg" alt=""> tax-2025.pdf <span class="tick" id="fg3t">uploaded ✓</span></div>
+        <div class="file-ghost" id="fg4" style="margin-left:150px;"><img class="emo" src="assets/vendor/tw/1f4ca.svg" alt=""> bank-statement.csv <span class="tick" id="fg4t">uploaded ✓</span></div>
+      </section>
+
+      <section id="a1b" class="clip scene" data-start="9.8" data-duration="6.8" data-track-index="1">
+        <div class="act1-title" id="a1-t1">YOUR FILES.</div>
+        <div class="act1-title" id="a1-t2" style="top:56%;">THEIR SERVERS.</div>
+      </section>
+
+      <section id="a1c" class="clip scene" data-start="16.2" data-duration="7.0" data-track-index="1">
+        <div class="act1-title" id="a1-free" style="top:38%; font-size:96px;">The tool is free.</div>
+        <div class="act1-sub" id="a1-product" style="top:52%;">The data is the product.</div>
+        <div class="retention">
+          <div class="slot" id="ret1">30 days?</div>
+          <div class="slot" id="ret2">90 days?</div>
+          <div class="slot" id="ret3">forever?</div>
+        </div>
+      </section>
+
+      <section id="a1d" class="clip scene" data-start="22.8" data-duration="11.8" data-track-index="1">
+        <div class="head-m" id="a1-q" style="position:absolute; top:24%; left:70px; right:70px;">But what if the tool never needed your file to <span class="grad-violet">leave your device?</span></div>
+        <div class="device-safe" id="a1-dev">
+          <div class="safe-file"><span class="e"><img class="emo" src="assets/vendor/tw/1f4c4.svg" alt=""></span> contract.pdf<br/><span style="font-family:var(--mono); font-size:23px; color:var(--ok);">stays home ✓</span></div>
+        </div>
+      </section>
+
+      <!-- ================= ACT 2 · THE REVEAL (34.2–73.6) ================= -->
+      <section id="a2a" class="clip scene" data-start="34.2" data-duration="9.6" data-track-index="1" style="gap:42px;">
+        <div class="wordmark" id="a2-mark">UnQ<span class="grad-text">Tools</span></div>
+        <div class="uq-badge" id="a2-badge">
+          <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.7L20 10l-5.4 2.4L12 21l-2.6-8.6L4 10l6.1-1.3z"/></svg>
+          1,679 free browser tools — no signup, no tracking
+        </div>
+        <div class="verbatim-card" id="a2-verbatim">
+          <p>“1,679 <b>fast, free, offline-capable</b> browser tools — converters, calculators, generators, formatters, PDF utilities, SEO tools. Everything runs <span class="hl">100% in your browser</span>. <b>No uploads, no accounts, no tracking.</b>”</p>
+        </div>
+      </section>
+
+      <section id="a2b" class="clip scene" data-start="43.4" data-duration="9.0" data-track-index="1" style="gap:40px;">
+        <div class="eyebrow" id="a2b-eyebrow">the numbers, live from the homepage</div>
+        <div class="stat-row" style="gap:22px;">
+          <div class="stat-chip" id="a2-s1"><div class="v" id="a2-s1v">0</div><div class="k">Tools</div></div>
+          <div class="stat-chip" id="a2-s2"><div class="v" id="a2-s2v">0</div><div class="k">Categories</div></div>
+        </div>
+        <div class="stat-row" style="gap:22px;">
+          <div class="stat-chip" id="a2-s3"><div class="v" id="a2-s3v">0</div><div class="k">Tests</div></div>
+          <div class="stat-chip" id="a2-s4"><div class="v" id="a2-s4v">0</div><div class="k">Privacy</div></div>
+        </div>
+      </section>
+
+      <section id="a2c" class="clip scene" data-start="52.0" data-duration="7.0" data-track-index="1" style="gap:36px;">
+        <div class="constellation" id="a2c-grid">
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/2328.svg" alt=""> Developer <span class="c">466</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f4d5.svg" alt=""> PDF <span class="c">305</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f5bc.svg" alt=""> Image <span class="c">178</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f4c8.svg" alt=""> SEO <span class="c">109</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f4c1.svg" alt=""> File <span class="c">100</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/2728.svg" alt=""> AI <span class="c">100</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f6e1.svg" alt=""> Security <span class="c">96</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f4dd.svg" alt=""> Text <span class="c">83</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f9ee.svg" alt=""> Calculators <span class="c">57</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f4bc.svg" alt=""> Business <span class="c">55</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f3ac.svg" alt=""> A/V <span class="c">45</span></div>
+          <div class="const-tile"><img class="emo" src="assets/vendor/tw/1f393.svg" alt=""> Education <span class="c">45</span></div>
+        </div>
+        <div class="ready-counter" id="a2c-ready"><b id="a2c-num">0</b><span>ready right now<br/>(+ social · 40 more tools)</span></div>
+      </section>
+
+      <section id="a2d" class="clip scene" data-start="58.6" data-duration="4.6" data-track-index="1" style="gap:44px;">
+        <div class="typelist" id="a2d-types">
+          <div class="typecard"><div class="e"><img class="emo" src="assets/vendor/tw/1f501.svg" alt=""></div><div class="n">Converters</div></div>
+          <div class="typecard"><div class="e"><img class="emo" src="assets/vendor/tw/1f9ee.svg" alt=""></div><div class="n">Calculators</div></div>
+          <div class="typecard"><div class="e"><img class="emo" src="assets/vendor/tw/26a1.svg" alt=""></div><div class="n">Generators</div></div>
+          <div class="typecard"><div class="e"><img class="emo" src="assets/vendor/tw/1f4d0.svg" alt=""></div><div class="n">Formatters</div></div>
+        </div>
+        <div class="tenx-stamp" id="a2d-10x">each ~10× better</div>
+      </section>
+
+      <section id="a2e" class="clip scene" data-start="62.8" data-duration="7.0" data-track-index="1" style="gap:48px;">
+        <div class="head-l" id="a2e-h1">Private tools that <span class="grad-text">respect you</span></div>
+        <div class="trust-row" id="a2e-trust">
+          <div class="trust-pill" id="tp1"><i></i> 100% Client-Side</div>
+          <div class="trust-pill" id="tp2"><i></i> Works Offline</div>
+          <div class="trust-pill" id="tp3"><i></i> No Sign-up</div>
+          <div class="trust-pill" id="tp4"><i></i> No Tracking</div>
+        </div>
+      </section>
+
+      <section id="a2f" class="clip scene" data-start="69.4" data-duration="4.2" data-track-index="1">
+        <div class="browser" id="a2f-browser" style="width:900px;">
+          <div class="browser__chrome">
+            <div class="browser__lights"><i></i><i></i><i></i></div>
+            <div class="browser__addr">
+              <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              <span><span class="host">https://unqtools.pages.dev</span></span>
+            </div>
+          </div>
+          <div class="browser__view" style="min-height:560px; display:flex; flex-direction:column; gap:26px; justify-content:center;">
+            <div class="searchbar focused" id="a2f-bar">
+              <svg class="mag" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <div class="field"><span class="ch">m</span><span class="ch">a</span><span class="ch">k</span><span class="ch">e</span><span class="ch">&nbsp;</span><span class="ch">m</span><span class="ch">y</span><span class="ch">&nbsp;</span><span class="ch">P</span><span class="ch">D</span><span class="ch">F</span><span class="ch">&nbsp;</span><span class="ch">s</span><span class="ch">m</span><span class="ch">a</span><span class="ch">l</span><span class="ch">l</span><span class="ch">e</span><span class="ch">r</span><span class="caret" id="a2f-caret"></span></div>
+              <div class="go">Search</div>
+            </div>
+            <div class="dropdown" id="a2f-dd" style="opacity:0;">
+              <div class="dd-row hit">
+                <div class="ic"><img class="emo" src="assets/vendor/tw/1f5dc.svg" alt=""></div>
+                <div><div class="nm">Compress PDF</div><div class="ds">make my PDF smaller — exact target size</div></div>
+                <div class="enter">↵</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ACT 3 · THE ARCHITECTURE (73.2–119.6) ================= -->
+      <section id="a3a" class="clip scene" data-start="73.2" data-duration="13.8" data-track-index="1" style="gap:34px;">
+        <div class="act-slate" id="a3-slate"><div class="n">act iii · under the hood</div><div class="t grad-violet">ARCHITECTURE</div></div>
+        <div class="arch-stack">
+          <div class="arch-layer" id="al1"><span class="num">01</span><div><h4>100% STATIC</h4><p>no backend · no file database · no servers</p></div></div>
+          <div class="arch-layer" id="al2"><span class="num">02</span><div><h4>CLIENT ENGINES</h4><p>pdf-lib · canvas · Web Audio · zxing · bcryptjs</p></div></div>
+          <div class="arch-layer device" id="al3"><span class="num">03</span><div><h4>YOUR DEVICE</h4><p>CPU · storage · nothing else in the loop</p></div></div>
+        </div>
+        <div class="dep-chips" id="a3-deps">
+          <span class="dep-chip">requiresNetwork: false</span>
+          <span class="dep-chip">“100% client-side”</span>
+          <span class="dep-chip">per-tool manifest</span>
+        </div>
+      </section>
+
+      <section id="a3b" class="clip scene" data-start="86.6" data-duration="6.6" data-track-index="1" style="gap:40px;">
+        <div class="kicker" id="a3b-kicker"><span class="dot dot--red" id="a3b-rec"></span> devtools · network · live</div>
+        <div class="devtools" id="a3b-dt">
+          <div class="devtools__bar"><span class="tabx">Elements</span><span class="tabx">Console</span><span class="tabx on">Network</span><span class="tabx">Sources</span></div>
+          <div class="devtools__body">
+            <div class="dt-cols"><span>Name</span><span>Status</span><span>Size</span></div>
+            <div class="dt-empty" id="a3b-empty">Recording… 0 requests captured</div>
+            <div class="zero-b"><b>0 B</b><span>transferred<br/>to any server</span></div>
+          </div>
+        </div>
+        <div class="pill-row">
+          <div class="pill" id="a3b-p1">requests: 0</div>
+          <div class="pill" id="a3b-p2">cookies: 0</div>
+          <div class="pill" id="a3b-p3">trackers: 0</div>
+        </div>
+      </section>
+
+      <section id="a3c" class="clip scene" data-start="92.8" data-duration="9.0" data-track-index="1" style="gap:40px;">
+        <div class="eyebrow" id="a3c-eyebrow">offline by design</div>
+        <div class="sw-card" id="a3c-card">
+          <div class="fname">public/sw.js — service worker</div>
+          <div class="precache">
+            <div class="pc-row"><span class="box" id="pc1">✓</span> precache '/'</div>
+            <div class="pc-row"><span class="box" id="pc2">✓</span> precache '/manifest.json'</div>
+            <div class="pc-row"><span class="box" id="pc3">✓</span> precache '/logo.svg'</div>
+          </div>
+          <div class="cache-loop" id="a3c-loop">strategy: <b>cache-first</b> · navigate offline → <b>caches.match(OFFLINE_URL)</b> · runtime-cache every same-origin GET</div>
+        </div>
+      </section>
+
+      <section id="a3d" class="clip scene" data-start="101.4" data-duration="5.0" data-track-index="1" style="gap:48px;">
+        <div class="toggle-card" id="a3d-card">
+          <div class="wifi-strike" id="a3d-wifi">
+            <svg viewBox="0 0 24 24"><path d="M2 8.8a16 16 0 0 1 20 0"/><path d="M5 12.4a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.4" r="1" fill="#a1a1aa" stroke="none"/></svg>
+            <div class="slash" id="a3d-slash" style="transform:scaleX(0);"></div>
+          </div>
+          <div class="lbl">Wi-Fi</div>
+          <div class="toggle" id="a3d-toggle"><div class="knob" id="a3d-knob"></div></div>
+          <div class="lbl"><img class="emo" src="assets/vendor/tw/2708.svg" alt=""></div>
+        </div>
+        <div id="a3d-pill" class="kicker" style="opacity:0;"><span class="dot"></span> OFFLINE — still 100% functional</div>
+      </section>
+
+      <section id="a3e" class="clip scene" data-start="106.0" data-duration="6.4" data-track-index="1" style="gap:44px;">
+        <div class="head-m" id="a3e-h">Zero telemetry.<br/><span style="font-size:40px; color:var(--muted); font-weight:600;">not a setting — the architecture.</span></div>
+        <div class="pill-row">
+          <div class="pill no" id="a3e-p1">No analytics</div>
+          <div class="pill no" id="a3e-p2">No cookies</div>
+          <div class="pill no" id="a3e-p3">No fingerprinting</div>
+        </div>
+        <div class="code-chip" id="a3e-code" style="opacity:0;"><span class="k">// every tool manifest</span> requiresNetwork: false</div>
+      </section>
+
+      <section id="a3f" class="clip scene" data-start="112.0" data-duration="7.6" data-track-index="1" style="gap:44px; flex-direction:row; flex-wrap:wrap; justify-content:center;">
+        <div class="promise-card" id="a3f-card" style="width:600px;">
+          <p>“What you do with the tools stays <em>between you and your browser.</em>”</p>
+        </div>
+        <div class="phone" id="a3f-phone">
+          <div class="notch"></div>
+          <div class="p-ui"><div class="p-row"></div><div class="p-row"></div><div class="p-row"></div><div class="p-row"></div><div class="p-row"></div></div>
+          <div class="p-badge">installed ✓ · standalone</div>
+        </div>
+      </section>
+
+      <!-- ================= ACT 4 · THE FLAGSHIP FLOW (119.2–154.4) ================= -->
+      <section id="a4a" class="clip scene" data-start="119.2" data-duration="17.8" data-track-index="1" style="gap:30px; padding-top:120px; justify-content:flex-start;">
+        <div class="tool-head" id="a4-head">
+          <div class="ic"><img class="emo" src="assets/vendor/tw/1f5dc.svg" alt=""></div>
+          <div><h3>Compress PDF</h3><p>Exact target size · 5 presets · batch + ZIP</p></div>
+        </div>
+        <div class="dropzone" id="a4-dz">
+          Drag &amp; drop your PDF here
+          <div class="dropzone hot" id="a4-dz-hot" style="position:absolute; inset:-3px; opacity:0; border-radius:28px;">Drop it — nothing leaves this tab</div>
+          <div class="file-chip" id="a4-chip" style="opacity:0;"><span class="pdf">PDF</span> Q3-report.pdf · 24.8 MB</div>
+        </div>
+        <div class="target-chips" id="a4-targets">
+          <span class="tchip">1 MB</span><span class="tchip">3 MB</span><span class="tchip sel" id="a4-tsel">6 MB</span><span class="tchip">10 MB</span><span class="tchip">Custom…</span>
+        </div>
+        <div class="gauge-wrap">
+          <div class="gauge">
+            <svg viewBox="0 0 120 120">
+              <defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#d97757"/><stop offset="100%" stop-color="#f2a35e"/></linearGradient></defs>
+              <circle class="trk" cx="60" cy="60" r="50" pathLength="100"></circle>
+              <circle class="arc" id="a4-arc" cx="60" cy="60" r="50" pathLength="100"></circle>
+            </svg>
+            <div class="pct"><b id="a4-pct">0%</b><span>in your browser</span></div>
+          </div>
+          <div class="gauge-side">
+            <div class="l1" id="a4-l1">Re-encoding images…<br/>100% in your browser</div>
+            <div class="l2" id="a4-l2"><span class="dot"></span> 0 B uploaded — verified live</div>
+            <div class="code-chip" id="a4-cpu" style="opacity:0; font-size:22px; padding:12px 20px;"><span class="k">engine:</span> your CPU</div>
+          </div>
+        </div>
+        <div class="thumbs" id="a4-thumbs" style="opacity:0;">
+          <div><div class="thumb fat"><div class="ln" style="top:16px;"></div><div class="ln" style="top:34px;"></div><div class="img" style="left:14px; right:14px; top:54px; height:80px;"></div><div class="ln" style="top:146px;"></div><div class="ln" style="top:162px;"></div></div><div class="thumb-lbl">before<br/><b>24.8 MB</b></div></div>
+          <div class="arrow-fat" id="a4-arrow">→</div>
+          <div><div class="thumb slim"><div class="ln" style="top:16px;"></div><div class="ln" style="top:34px;"></div><div class="img" style="left:14px; right:14px; top:54px; height:80px;"></div><div class="ln" style="top:146px;"></div><div class="ln" style="top:162px;"></div></div><div class="thumb-lbl">after<br/><b style="color:var(--ok);">6.2 MB</b></div></div>
+        </div>
+        <div class="result-card" id="a4-result" style="opacity:0;">
+          <div><div class="big"><span class="was">24.8 MB</span> 6.2 MB</div><div class="dl-btn" id="a4-dl"><img class="emo" src="assets/vendor/tw/2b07.svg" alt=""> Download compressed PDF</div></div>
+          <div class="save"><b>−75%</b><span>smaller</span></div>
+        </div>
+        <div class="net-mini" id="a4-net" style="opacity:0;">
+          <div class="t"><i id="a4-netdot"></i> Network · live</div>
+          <div class="v">0 B sent</div>
+          <div class="r">0 requests · nothing uploaded</div>
+        </div>
+      </section>
+
+      <section id="a4b" class="clip scene" data-start="136.6" data-duration="7.0" data-track-index="1" style="gap:44px;">
+        <div class="beat-board">
+          <div class="claim" id="a4b-claim"><b>60 PDF tools</b> now beat<br/>iLovePDF · SmallPDF · Sejda</div>
+          <div class="rival-row">
+            <div class="rival won" id="rv1"><span class="x">✓</span> vs iLovePDF</div>
+            <div class="rival won" id="rv2"><span class="x">✓</span> vs SmallPDF</div>
+            <div class="rival won" id="rv3"><span class="x">✓</span> vs Sejda</div>
+          </div>
+          <div class="feat-ticks" id="a4b-feats">
+            <span class="feat-tick">watermark</span><span class="feat-tick">page numbers</span><span class="feat-tick">merge</span><span class="feat-tick">split</span><span class="feat-tick">PII redaction</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="a4c" class="clip scene" data-start="143.2" data-duration="6.4" data-track-index="1" style="gap:30px;">
+        <div class="eyebrow" id="a4c-eyebrow">one tool · seven operations</div>
+        <div class="pm-tabs" id="a4c-tabs">
+          <div class="pm-tab"><span class="g"><img class="emo" src="assets/vendor/tw/1f9fd.svg" alt=""></span> Delete <span class="hint">pages by number or range</span></div>
+          <div class="pm-tab"><span class="g"><img class="emo" src="assets/vendor/tw/2702.svg" alt=""></span> Extract <span class="hint">selected pages → new PDF</span></div>
+          <div class="pm-tab"><span class="g"><img class="emo" src="assets/vendor/tw/1f9ec.svg" alt=""></span> Duplicate <span class="hint">clone pages 1–100×</span></div>
+          <div class="pm-tab"><span class="g"><img class="emo" src="assets/vendor/tw/1f4c4.svg" alt=""></span> Insert <span class="hint">pages from a second PDF</span></div>
+          <div class="pm-tab"><span class="g"><img class="emo" src="assets/vendor/tw/1f500.svg" alt=""></span> Reorder <span class="hint">custom sequence · reverse</span></div>
+          <div class="pm-tab"><span class="g"><img class="emo" src="assets/vendor/tw/1f504.svg" alt=""></span> Rotate <span class="hint">all / odd / even · 90/180/270°</span></div>
+          <div class="pm-tab"><span class="g">↩️</span> Reverse <span class="hint">last page becomes first</span></div>
+        </div>
+      </section>
+
+      <section id="a4d" class="clip scene" data-start="149.2" data-duration="5.2" data-track-index="1">
+        <div class="merge-anim" id="a4d-anim">
+          <div class="mini" style="left:60px; top:40px;"></div><div class="mini" style="left:150px; top:80px;"></div><div class="mini" style="left:240px; top:30px;"></div>
+          <div class="mini" style="left:330px; top:90px;"></div><div class="mini" style="left:420px; top:40px;"></div><div class="mini" style="left:510px; top:100px;"></div>
+          <div class="mini" style="left:600px; top:35px;"></div><div class="mini" style="left:690px; top:85px;"></div><div class="mini" style="left:780px; top:45px;"></div>
+          <div class="mini" style="left:105px; top:180px;"></div><div class="mini" style="left:195px; top:230px;"></div><div class="mini" style="left:285px; top:175px;"></div>
+          <div class="mini" style="left:375px; top:235px;"></div><div class="mini" style="left:465px; top:180px;"></div><div class="mini" style="left:555px; top:240px;"></div>
+          <div class="mini" style="left:645px; top:170px;"></div><div class="mini" style="left:735px; top:230px;"></div><div class="mini" style="left:825px; top:185px;"></div>
+          <div class="mini" style="left:60px; top:320px;"></div><div class="mini" style="left:150px; top:360px;"></div><div class="mini" style="left:240px; top:310px;"></div>
+          <div class="mini" style="left:330px; top:365px;"></div><div class="mini" style="left:600px; top:315px;"></div><div class="mini" style="left:690px; top:360px;"></div>
+          <div class="mini" style="left:780px; top:325px;"></div><div class="mini" style="left:825px; top:365px;"></div>
+          <div class="mega" id="a4d-mega">PDF Page Manager<small>26 tools → 1 mega-tool · old URLs 301-redirect</small></div>
+        </div>
+      </section>
+
+      <!-- ================= ACT 5 · THE RECEIPTS (154.0–174.6) ================= -->
+      <section id="a5a" class="clip scene" data-start="154.0" data-duration="6.0" data-track-index="1" style="gap:40px;">
+        <div class="act-slate" id="a5-slate"><div class="n">act v · proof</div><div class="t">THE RECEIPTS</div></div>
+        <div class="receipt-counter" id="a5-c1"><b id="a5-c1v">0</b><span>automated tests</span></div>
+      </section>
+
+      <section id="a5b" class="clip scene" data-start="159.6" data-duration="5.6" data-track-index="1" style="gap:40px;">
+        <div class="receipt-counter" id="a5-c2"><b id="a5-c2v" style="color:var(--teal);">0</b><span>PDF engine tests · passing on every release</span></div>
+      </section>
+
+      <section id="a5c" class="clip scene" data-start="164.8" data-duration="4.4" data-track-index="1" style="gap:48px;">
+        <div class="vstamp" id="a5-v">v18.7</div>
+        <div class="wave-rail" id="a5-waves" style="width:900px;">
+          <div class="w" id="w1"><i></i><span>wave 1</span></div><div class="bar"></div>
+          <div class="w" id="w2"><i></i><span>wave 2</span></div><div class="bar"></div>
+          <div class="w" id="w3"><i></i><span>wave 3</span></div><div class="bar"></div>
+          <div class="w" id="w4"><i></i><span>wave 4</span></div><div class="bar"></div>
+          <div class="w" id="w5"><i></i><span>wave 5</span></div><div class="bar"></div>
+          <div class="w" id="w6"><i></i><span>wave 6</span></div>
+        </div>
+        <div class="feat-ticks" id="a5-feats" style="opacity:0;">
+          <span class="feat-tick">PII redaction</span><span class="feat-tick">repair</span><span class="feat-tick">text-to-speech</span><span class="feat-tick">EPUB export</span>
+        </div>
+      </section>
+
+      <section id="a5d" class="clip scene" data-start="168.8" data-duration="5.8" data-track-index="1" style="gap:44px;">
+        <div class="ready-counter" id="a5-ready"><b id="a5-readyv">0</b><span>tools ready right now</span></div>
+        <div class="triad" id="a5-triad">
+          <div class="t">fast</div><div class="t">free</div><div class="t">offline-capable</div>
+        </div>
+      </section>
+
+      <!-- ================= ACT 6 · OUTRO (172.4–180) ================= -->
+      <section id="a6" class="clip scene" data-start="172.4" data-duration="7.6" data-track-index="1" style="gap:56px; background: radial-gradient(ellipse at 50% 46%, rgba(139,92,246,.16), transparent 58%);">
+        <div id="outro-url">unqtools<span class="tld">.pages.dev</span></div>
+        <div class="credit-wrap">
+          <div id="heart-glow"></div>
+          <div class="heart" id="heart" style="opacity:0;"><img class="emo" src="assets/vendor/tw/2764.svg" alt=""></div>
+          <div id="credit" style="opacity:0;">Built with <img class="emo" src="assets/vendor/tw/2764.svg" alt=""> by Sandeep Gaddam</div>
+        </div>
+        <div class="outro-pill" id="outro-pill" style="opacity:0;"><b>1,679 tools</b> · 100% private · <b>free</b></div>
+      </section>
+
+      <div id="fade-black" class="clip fade-black" data-start="0" data-duration="180" style="position:absolute;inset:0;"></div>
+
+      <!-- ============================================================
+           AUDIO · 3-track matrix (180s)
+           track 10  — BGM: fallback bundled vol-1 (163.96s, 120.19 BPM),
+                       fades out 159–164 → ambient tail rides VO + foley.
+                       INGEST a 3:00 synthwave score via scripts/ingest-audio.sh
+                       to cover the full runtime with the director's arc:
+                       riser → drop @0:03 → driving pulse → ambient reverb tail.
+           track 20  — master VO (INGEST: assets/voiceover/voiceover.wav)
+           track 30+ — frame-accurate foley
+           ============================================================ -->
+      <audio id="bgm" class="clip" data-start="0" data-duration="164" data-track-index="10" data-volume="0.34" data-fade-in="0.5" data-fade-out="5" src="assets/music/bgm-deepdive.mp3"></audio>
+      <audio id="vo" class="clip" data-start="0" data-duration="180" data-track-index="20" data-volume="1" src="assets/voiceover/voiceover.wav"></audio>
+
+      <!-- ACT 1 -->
+      <audio id="sfx-01" class="clip" data-start="0.30" data-duration="3.06" data-track-index="30" data-volume="0.30" data-fade-out="0.5" src="assets/sfx/casino/card-shuffle.ogg"></audio>
+      <audio id="sfx-02" class="clip" data-start="1.00" data-duration="0.12" data-track-index="31" data-volume="0.50" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-03" class="clip" data-start="2.50" data-duration="0.12" data-track-index="32" data-volume="0.50" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-04" class="clip" data-start="4.00" data-duration="0.12" data-track-index="33" data-volume="0.50" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-05" class="clip" data-start="5.50" data-duration="0.12" data-track-index="34" data-volume="0.50" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-06" class="clip" data-start="10.00" data-duration="0.19" data-track-index="35" data-volume="0.80" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio> <!-- YOUR FILES. -->
+      <audio id="sfx-07" class="clip" data-start="12.50" data-duration="0.55" data-track-index="36" data-volume="0.75" src="assets/sfx/impact/impactPlate_light_000.ogg"></audio> <!-- THEIR SERVERS. -->
+      <audio id="sfx-08" class="clip" data-start="16.02" data-duration="0.13" data-track-index="37" data-volume="0.70" src="assets/sfx/interface/bong_001.ogg"></audio> <!-- beat-locked: 16.02s strong cue -->
+      <audio id="sfx-09" class="clip" data-start="17.52" data-duration="0.51" data-track-index="38" data-volume="0.85" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio> <!-- beat-locked: 17.52s strong cue -->
+      <audio id="sfx-10" class="clip" data-start="20.02" data-duration="3.06" data-track-index="39" data-volume="0.30" data-fade-out="0.6" src="assets/sfx/casino/card-shuffle.ogg"></audio> <!-- beat-locked: 20.02s retention spin -->
+      <audio id="sfx-11" class="clip" data-start="23.00" data-duration="0.05" data-track-index="40" data-volume="0.50" src="assets/sfx/interface/select_008.ogg"></audio>
+      <audio id="sfx-12" class="clip" data-start="28.50" data-duration="0.21" data-track-index="41" data-volume="0.60" src="assets/sfx/impact/impactGlass_light_001.ogg"></audio> <!-- device-safe shimmer -->
+      <audio id="sfx-13" class="clip" data-start="33.80" data-duration="0.60" data-track-index="42" data-volume="0.60" src="assets/sfx/casino/card-slide-1.ogg"></audio> <!-- act swoosh -->
+
+      <!-- ACT 2 -->
+      <audio id="sfx-14" class="clip" data-start="34.40" data-duration="0.19" data-track-index="43" data-volume="0.75" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio> <!-- beat-grid: 34.47s logo -->
+      <audio id="sfx-15" class="clip" data-start="36.00" data-duration="0.12" data-track-index="44" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-16" class="clip" data-start="37.60" data-duration="0.20" data-track-index="45" data-volume="0.55" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-17" class="clip" data-start="43.80" data-duration="0.02" data-track-index="46" data-volume="0.45" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-18" class="clip" data-start="44.20" data-duration="0.30" data-track-index="47" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-19" class="clip" data-start="46.20" data-duration="0.30" data-track-index="48" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-20" class="clip" data-start="48.20" data-duration="0.30" data-track-index="49" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-21" class="clip" data-start="50.20" data-duration="0.30" data-track-index="50" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-22" class="clip" data-start="51.60" data-duration="0.26" data-track-index="51" data-volume="0.65" src="assets/sfx/casino/chips-collide-1.ogg"></audio>
+      <audio id="sfx-23" class="clip" data-start="52.20" data-duration="0.60" data-track-index="52" data-volume="0.55" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+      <audio id="sfx-24" class="clip" data-start="55.00" data-duration="0.02" data-track-index="53" data-volume="0.45" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-25" class="clip" data-start="58.80" data-duration="0.60" data-track-index="54" data-volume="0.50" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+      <audio id="sfx-26" class="clip" data-start="60.80" data-duration="0.55" data-track-index="55" data-volume="0.70" src="assets/sfx/impact/impactPlate_light_000.ogg"></audio> <!-- 10x stamp -->
+      <audio id="sfx-27" class="clip" data-start="63.00" data-duration="0.19" data-track-index="56" data-volume="0.70" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio> <!-- H1 -->
+      <audio id="sfx-28" class="clip" data-start="64.00" data-duration="0.20" data-track-index="57" data-volume="0.50" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-29" class="clip" data-start="65.20" data-duration="0.20" data-track-index="58" data-volume="0.50" src="assets/sfx/interface/drop_002.ogg"></audio>
+
+      <!-- ACT 2 search demo: 19 keystrokes "make my PDF smaller" (fast, under VO) -->
+      <audio id="sfx-30" class="clip" data-start="69.80" data-duration="0.2" data-track-index="59" data-volume="0.45" src="assets/sfx/keyboard/keypress-001.wav"></audio>
+      <audio id="sfx-31" class="clip" data-start="69.93" data-duration="0.2" data-track-index="60" data-volume="0.45" src="assets/sfx/keyboard/keypress-007.wav"></audio>
+      <audio id="sfx-32" class="clip" data-start="70.06" data-duration="0.2" data-track-index="61" data-volume="0.45" src="assets/sfx/keyboard/keypress-013.wav"></audio>
+      <audio id="sfx-33" class="clip" data-start="70.19" data-duration="0.2" data-track-index="62" data-volume="0.45" src="assets/sfx/keyboard/keypress-019.wav"></audio>
+      <audio id="sfx-34" class="clip" data-start="70.32" data-duration="0.2" data-track-index="63" data-volume="0.45" src="assets/sfx/keyboard/keypress-025.wav"></audio>
+      <audio id="sfx-35" class="clip" data-start="70.45" data-duration="0.2" data-track-index="64" data-volume="0.45" src="assets/sfx/keyboard/keypress-031.wav"></audio>
+      <audio id="sfx-36" class="clip" data-start="70.58" data-duration="0.2" data-track-index="65" data-volume="0.45" src="assets/sfx/keyboard/keypress-004.wav"></audio>
+      <audio id="sfx-37" class="clip" data-start="70.71" data-duration="0.2" data-track-index="66" data-volume="0.45" src="assets/sfx/keyboard/keypress-010.wav"></audio>
+      <audio id="sfx-38" class="clip" data-start="70.84" data-duration="0.2" data-track-index="67" data-volume="0.45" src="assets/sfx/keyboard/keypress-016.wav"></audio>
+      <audio id="sfx-39" class="clip" data-start="70.97" data-duration="0.2" data-track-index="68" data-volume="0.45" src="assets/sfx/keyboard/keypress-022.wav"></audio>
+      <audio id="sfx-40" class="clip" data-start="71.10" data-duration="0.2" data-track-index="69" data-volume="0.45" src="assets/sfx/keyboard/keypress-028.wav"></audio>
+      <audio id="sfx-41" class="clip" data-start="71.23" data-duration="0.2" data-track-index="70" data-volume="0.45" src="assets/sfx/keyboard/keypress-007.wav"></audio>
+      <audio id="sfx-42" class="clip" data-start="71.36" data-duration="0.2" data-track-index="71" data-volume="0.45" src="assets/sfx/keyboard/keypress-013.wav"></audio>
+      <audio id="sfx-43" class="clip" data-start="71.49" data-duration="0.2" data-track-index="72" data-volume="0.45" src="assets/sfx/keyboard/keypress-019.wav"></audio>
+      <audio id="sfx-44" class="clip" data-start="71.62" data-duration="0.2" data-track-index="73" data-volume="0.45" src="assets/sfx/keyboard/keypress-025.wav"></audio>
+      <audio id="sfx-45" class="clip" data-start="71.75" data-duration="0.2" data-track-index="74" data-volume="0.45" src="assets/sfx/keyboard/keypress-031.wav"></audio>
+      <audio id="sfx-46" class="clip" data-start="71.88" data-duration="0.2" data-track-index="75" data-volume="0.45" src="assets/sfx/keyboard/keypress-004.wav"></audio>
+      <audio id="sfx-47" class="clip" data-start="72.01" data-duration="0.2" data-track-index="76" data-volume="0.45" src="assets/sfx/keyboard/keypress-010.wav"></audio>
+      <audio id="sfx-48" class="clip" data-start="72.14" data-duration="0.2" data-track-index="77" data-volume="0.45" src="assets/sfx/keyboard/keypress-016.wav"></audio>
+      <audio id="sfx-49" class="clip" data-start="72.40" data-duration="0.05" data-track-index="78" data-volume="0.60" src="assets/sfx/interface/select_008.ogg"></audio>
+      <audio id="sfx-50" class="clip" data-start="72.80" data-duration="0.06" data-track-index="79" data-volume="0.65" src="assets/sfx/ui/mouseclick1.ogg"></audio>
+
+      <!-- ACT 3 -->
+      <audio id="sfx-51" class="clip" data-start="73.40" data-duration="0.19" data-track-index="80" data-volume="0.75" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-52" class="clip" data-start="73.90" data-duration="0.12" data-track-index="81" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-53" class="clip" data-start="80.70" data-duration="0.12" data-track-index="82" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-54" class="clip" data-start="82.50" data-duration="0.06" data-track-index="83" data-volume="0.40" src="assets/sfx/ui/rollover2.ogg"></audio>
+      <audio id="sfx-55" class="clip" data-start="84.50" data-duration="0.12" data-track-index="84" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-56" class="clip" data-start="87.00" data-duration="0.19" data-track-index="85" data-volume="0.70" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-57" class="clip" data-start="88.00" data-duration="0.02" data-track-index="86" data-volume="0.35" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-58" class="clip" data-start="89.00" data-duration="0.02" data-track-index="87" data-volume="0.35" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-59" class="clip" data-start="90.00" data-duration="0.02" data-track-index="88" data-volume="0.35" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-60" class="clip" data-start="93.20" data-duration="0.60" data-track-index="89" data-volume="0.55" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+      <audio id="sfx-61" class="clip" data-start="94.00" data-duration="0.12" data-track-index="90" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-62" class="clip" data-start="94.90" data-duration="0.12" data-track-index="91" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-63" class="clip" data-start="95.80" data-duration="0.12" data-track-index="92" data-volume="0.55" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-64" class="clip" data-start="97.20" data-duration="0.06" data-track-index="93" data-volume="0.40" src="assets/sfx/ui/rollover2.ogg"></audio>
+      <audio id="sfx-65" class="clip" data-start="101.60" data-duration="0.61" data-track-index="94" data-volume="0.80" src="assets/sfx/interface/switch_002.ogg"></audio>
+      <audio id="sfx-66" class="clip" data-start="103.00" data-duration="0.02" data-track-index="95" data-volume="0.50" src="assets/sfx/interface/click_002.ogg"></audio>
+      <audio id="sfx-67" class="clip" data-start="106.30" data-duration="0.20" data-track-index="96" data-volume="0.55" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-68" class="clip" data-start="107.30" data-duration="0.20" data-track-index="97" data-volume="0.55" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-69" class="clip" data-start="108.30" data-duration="0.20" data-track-index="98" data-volume="0.55" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-70" class="clip" data-start="109.50" data-duration="0.03" data-track-index="99" data-volume="0.40" src="assets/sfx/interface/glitch_002.ogg"></audio>
+      <audio id="sfx-71" class="clip" data-start="112.20" data-duration="0.19" data-track-index="100" data-volume="0.70" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-72" class="clip" data-start="114.00" data-duration="0.12" data-track-index="101" data-volume="0.50" src="assets/sfx/interface/drop_001.ogg"></audio>
+
+      <!-- ACT 4 -->
+      <audio id="sfx-73" class="clip" data-start="119.40" data-duration="0.60" data-track-index="102" data-volume="0.55" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+      <audio id="sfx-74" class="clip" data-start="120.80" data-duration="0.12" data-track-index="103" data-volume="0.85" src="assets/sfx/interface/drop_001.ogg"></audio> <!-- suction pop -->
+      <audio id="sfx-75" class="clip" data-start="121.80" data-duration="0.02" data-track-index="104" data-volume="0.55" src="assets/sfx/interface/click_002.ogg"></audio>
+      <audio id="sfx-76" class="clip" data-start="122.50" data-duration="0.02" data-track-index="105" data-volume="0.45" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-77" class="clip" data-start="126.50" data-duration="0.21" data-track-index="106" data-volume="0.70" src="assets/sfx/impact/impactGlass_light_001.ogg"></audio> <!-- chime -->
+      <audio id="sfx-78" class="clip" data-start="128.20" data-duration="0.21" data-track-index="107" data-volume="0.65" src="assets/sfx/impact/impactGlass_light_002.ogg"></audio>
+      <audio id="sfx-79" class="clip" data-start="129.20" data-duration="0.06" data-track-index="108" data-volume="0.40" src="assets/sfx/ui/rollover2.ogg"></audio>
+      <audio id="sfx-80" class="clip" data-start="131.60" data-duration="0.02" data-track-index="109" data-volume="0.45" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-81" class="clip" data-start="137.10" data-duration="0.55" data-track-index="110" data-volume="0.75" src="assets/sfx/impact/impactPlate_light_000.ogg"></audio>
+      <audio id="sfx-82" class="clip" data-start="139.00" data-duration="0.02" data-track-index="111" data-volume="0.55" src="assets/sfx/interface/click_002.ogg"></audio>
+      <audio id="sfx-83" class="clip" data-start="140.00" data-duration="0.02" data-track-index="112" data-volume="0.55" src="assets/sfx/interface/click_002.ogg"></audio>
+      <audio id="sfx-84" class="clip" data-start="141.00" data-duration="0.02" data-track-index="113" data-volume="0.55" src="assets/sfx/interface/click_002.ogg"></audio>
+      <audio id="sfx-85" class="clip" data-start="141.60" data-duration="0.12" data-track-index="114" data-volume="0.50" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-86" class="clip" data-start="143.80" data-duration="0.19" data-track-index="115" data-volume="0.65" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-87" class="clip" data-start="144.35" data-duration="0.02" data-track-index="116" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-88" class="clip" data-start="144.90" data-duration="0.02" data-track-index="117" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-89" class="clip" data-start="145.45" data-duration="0.02" data-track-index="118" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-90" class="clip" data-start="146.00" data-duration="0.02" data-track-index="119" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-91" class="clip" data-start="146.55" data-duration="0.02" data-track-index="120" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-92" class="clip" data-start="147.10" data-duration="0.02" data-track-index="121" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-93" class="clip" data-start="147.65" data-duration="0.02" data-track-index="122" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-94" class="clip" data-start="149.60" data-duration="3.06" data-track-index="123" data-volume="0.45" data-fade-out="0.5" src="assets/sfx/casino/card-shuffle.ogg"></audio> <!-- 26→1 converge -->
+      <audio id="sfx-95" class="clip" data-start="151.00" data-duration="0.51" data-track-index="124" data-volume="0.85" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio>
+
+      <!-- ACT 5 -->
+      <audio id="sfx-96" class="clip" data-start="154.70" data-duration="0.19" data-track-index="125" data-volume="0.75" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-97" class="clip" data-start="155.30" data-duration="0.30" data-track-index="126" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-98" class="clip" data-start="159.00" data-duration="0.26" data-track-index="127" data-volume="0.55" src="assets/sfx/casino/chips-collide-1.ogg"></audio>
+      <audio id="sfx-99" class="clip" data-start="160.40" data-duration="0.30" data-track-index="128" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-100" class="clip" data-start="164.40" data-duration="0.26" data-track-index="129" data-volume="0.55" src="assets/sfx/casino/chips-collide-1.ogg"></audio>
+      <audio id="sfx-101" class="clip" data-start="165.20" data-duration="0.55" data-track-index="130" data-volume="0.75" src="assets/sfx/impact/impactPlate_light_000.ogg"></audio> <!-- v18.7 stamp -->
+      <audio id="sfx-102" class="clip" data-start="166.00" data-duration="0.02" data-track-index="131" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-103" class="clip" data-start="166.60" data-duration="0.02" data-track-index="132" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-104" class="clip" data-start="167.20" data-duration="0.02" data-track-index="133" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-105" class="clip" data-start="167.80" data-duration="0.02" data-track-index="134" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-106" class="clip" data-start="168.40" data-duration="0.02" data-track-index="135" data-volume="0.30" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-107" class="clip" data-start="169.00" data-duration="0.20" data-track-index="136" data-volume="0.50" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-108" class="clip" data-start="170.40" data-duration="0.30" data-track-index="137" data-volume="0.40" src="assets/sfx/casino/chips-stack-1.ogg"></audio>
+      <audio id="sfx-109" class="clip" data-start="172.00" data-duration="0.26" data-track-index="138" data-volume="0.60" src="assets/sfx/casino/chips-collide-1.ogg"></audio>
+
+      <!-- ACT 6 · OUTRO -->
+      <audio id="sfx-110" class="clip" data-start="174.20" data-duration="0.19" data-track-index="139" data-volume="0.60" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-111" class="clip" data-start="177.60" data-duration="1.48" data-track-index="140" data-volume="0.95" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio> <!-- SUB-IMPACT BOOM on credit -->
+      <audio id="sfx-112" class="clip" data-start="177.60" data-duration="0.51" data-track-index="141" data-volume="0.80" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio>
+      <audio id="sfx-113" class="clip" data-start="178.60" data-duration="0.12" data-track-index="142" data-volume="0.40" src="assets/sfx/interface/drop_001.ogg"></audio>
+    </div>
+
+    <script>
+      // ============================================================
+      // Root timeline — paused, seek-safe, deterministic.
+      // Music fallback: ende.app vol-1, 120.19 BPM.
+      // Beat grid: 3.02 + n*0.4992 → 16.02, 17.52, 20.02, 34.47 …
+      // Strong-cue presets (first 25s): 16.02 / 17.02 / 17.52 / 18.02 / 18.52 / 20.02 / 23.02
+      // After external BGM ingest → `npx hyperframes beats .` and re-snap markers.
+      // ============================================================
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+
+      const CHARS = [69.80,69.93,70.06,70.19,70.32,70.45,70.58,70.71,70.84,70.97,71.10,71.23,71.36,71.49,71.62,71.75,71.88,72.01,72.14];
+      const fmt = (n) => n.toLocaleString("en-US");
+
+      // ---------- background drift ----------
+      tl.to("#orb-v", { x: 110, y: 90, duration: 180, ease: "none" }, 0);
+      tl.to("#orb-t", { x: -90, y: -70, duration: 180, ease: "none" }, 0);
+
+      // ---------- ACT 1 · THE LEAK ----------
+      tl.fromTo("#a1-rack", { autoAlpha: 0, y: -60 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.2);
+      [["#fg1", "#fg1t", 1.0], ["#fg2", "#fg2t", 2.5], ["#fg3", "#fg3t", 4.0], ["#fg4", "#fg4t", 5.5]].forEach(([f, t, at]) => {
+        tl.fromTo(f, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.4 }, at);
+        tl.to(f, { y: -620, duration: 2.2, ease: "power1.in" }, at + 0.5);          // floats up into the rack
+        tl.fromTo(t, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, at + 1.7);   // eerie "uploaded ✓"
+        tl.to(f, { autoAlpha: 0, scale: 0.6, duration: 0.5, ease: "power2.in" }, at + 2.3); // consumed
+      });
+      tl.to("#a1-rack .rack__slot i", { autoAlpha: 0.25, duration: 0.5, repeat: 9, yoyo: true, stagger: 0.12 }, 1.5);
+      tl.fromTo("#a1-t1", { autoAlpha: 0, scale: 2.2 }, { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power4.out" }, 10.0);
+      tl.to("#a1-t1", { autoAlpha: 0, duration: 0.2 }, 12.4);
+      tl.fromTo("#a1-t2", { autoAlpha: 0, scale: 2.2 }, { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power4.out" }, 12.5);
+      tl.to("#a1b > *", { autoAlpha: 0, duration: 0.3 }, 16.0);
+      tl.fromTo("#a1-free", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 16.02); // beat-locked: 16.02s
+      tl.fromTo("#a1-product", { autoAlpha: 0, scale: 1.4 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "power4.out" }, 17.52); // beat-locked: 17.52s
+      tl.fromTo("#ret1", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 20.02); // beat-locked: 20.02s
+      tl.fromTo("#ret2", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 20.52);
+      tl.fromTo("#ret3", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 21.02);
+      tl.to("#a1c > *", { autoAlpha: 0, duration: 0.3 }, 22.9);
+      tl.fromTo("#a1-q", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, 23.0);
+      tl.fromTo("#a1-dev", { autoAlpha: 0, scale: 0.85 }, { autoAlpha: 1, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 28.5);
+      tl.to("#a1-dev", { boxShadow: "0 0 180px rgba(45,212,191,.35)", duration: 1.4, repeat: 3, yoyo: true, ease: "sine.inOut" }, 29.4); // calm breathe
+      tl.to("#a1d > *", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 33.8);
+
+      // ---------- ACT 2 · THE REVEAL ----------
+      tl.fromTo("#a2-mark", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 34.4); // beat-grid: 34.47s
+      tl.fromTo("#a2-badge", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 36.0);
+      tl.fromTo("#a2-verbatim", { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.55, ease: "power3.out" }, 37.6);
+      tl.to("#a2a > *", { autoAlpha: 0, duration: 0.4 }, 43.2);
+      tl.fromTo("#a2b-eyebrow", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 43.5);
+      const s1 = { v: 0 }, s2 = { v: 0 }, s3 = { v: 0 }, s4 = { v: 0 };
+      const e1 = document.querySelector("#a2-s1v"), e2 = document.querySelector("#a2-s2v"),
+            e3 = document.querySelector("#a2-s3v"), e4 = document.querySelector("#a2-s4v");
+      tl.fromTo("#a2-s1", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 43.8);
+      tl.fromTo("#a2-s2", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 45.8);
+      tl.fromTo("#a2-s3", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 47.8);
+      tl.fromTo("#a2-s4", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 49.8);
+      tl.to(s1, { v: 1679, duration: 1.8, ease: "power2.out", snap: { v: 1 }, onUpdate: () => { e1.textContent = fmt(s1.v); } }, 44.2);
+      tl.to(s2, { v: 13, duration: 1.2, ease: "power2.out", snap: { v: 1 }, onUpdate: () => { e2.textContent = fmt(s2.v); } }, 46.2);
+      tl.to(s3, { v: 41.3, duration: 1.8, ease: "power2.out", snap: { v: 0.1 }, onUpdate: () => { e3.textContent = s3.v.toFixed(1) + "K"; } }, 48.2);
+      tl.to(s4, { v: 100, duration: 1.4, ease: "power2.out", snap: { v: 1 }, onUpdate: () => { e4.textContent = s4.v + "%"; } }, 50.2);
+      tl.to("#a2b > *", { autoAlpha: 0, duration: 0.35 }, 51.9);
+      tl.fromTo("#a2c-grid .const-tile", { autoAlpha: 0, y: 24, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, stagger: 0.16, ease: "power3.out" }, 52.2);
+      const rd = { v: 0 }; const rdEl = document.querySelector("#a2c-num");
+      tl.fromTo("#a2c-ready", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 54.8);
+      tl.to(rd, { v: 1133, duration: 2.2, ease: "power2.out", snap: { v: 1 }, onUpdate: () => { rdEl.textContent = fmt(rd.v); } }, 55.0);
+      tl.to("#a2c > *", { autoAlpha: 0, duration: 0.35 }, 58.5);
+      tl.fromTo("#a2d-types .typecard", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.14 }, 58.8);
+      tl.fromTo("#a2d-10x", { autoAlpha: 0, scale: 1.8, rotation: -10 }, { autoAlpha: 1, scale: 1, rotation: -4, duration: 0.35, ease: "power4.out" }, 60.8);
+      tl.to("#a2d > *", { autoAlpha: 0, duration: 0.3 }, 62.6);
+      tl.fromTo("#a2e-h1", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 63.0);
+      tl.fromTo("#tp1", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 64.0);
+      tl.fromTo("#tp2", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 64.6);
+      tl.fromTo("#tp3", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 65.2);
+      tl.fromTo("#tp4", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 65.8);
+      tl.to("#a2e > *", { autoAlpha: 0, duration: 0.3 }, 69.1);
+      tl.fromTo("#a2f-browser", { autoAlpha: 0, y: 70, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" }, 69.5);
+      tl.to("#a2f-caret", { autoAlpha: 0, duration: 0.24, repeat: 7, yoyo: true, repeatDelay: 0.1 }, 69.7);
+      document.querySelectorAll("#a2f-bar .ch").forEach((el, i) => { tl.set(el, { autoAlpha: 1 }, CHARS[i]); });
+      tl.fromTo("#a2f-dd", { autoAlpha: 0, y: -16, scaleY: 0.6, transformOrigin: "top center" }, { autoAlpha: 1, y: 0, scaleY: 1, duration: 0.45, ease: "back.out(2.2)" }, 72.4);
+      tl.to("#a2f > *", { autoAlpha: 0, duration: 0.3 }, 73.1);
+
+      // ---------- ACT 3 · ARCHITECTURE ----------
+      tl.fromTo("#a3-slate", { autoAlpha: 0, scale: 1.15 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 73.4);
+      tl.to("#a3-slate", { autoAlpha: 0, y: -40, duration: 0.4 }, 75.6);
+      tl.fromTo("#al1", { autoAlpha: 0, x: -90 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" }, 76.2);
+      tl.fromTo("#al2", { autoAlpha: 0, x: -90 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" }, 80.7);
+      tl.fromTo("#al3", { autoAlpha: 0, x: -90 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" }, 84.5);
+      tl.fromTo("#a3-deps .dep-chip", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.18 }, 82.5);
+      tl.to("#a3a > *", { autoAlpha: 0, duration: 0.35 }, 86.4);
+      tl.fromTo("#a3b-kicker", { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 86.9);
+      tl.to("#a3b-rec", { autoAlpha: 0.2, duration: 0.4, repeat: 11, yoyo: true }, 87.2);
+      tl.fromTo("#a3b-dt", { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 87.0);
+      tl.fromTo("#a3b-empty", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 87.7);
+      tl.fromTo("#a3b-p1", { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 88.0);
+      tl.fromTo("#a3b-p2", { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 89.0);
+      tl.fromTo("#a3b-p3", { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 90.0);
+      tl.to("#a3b > *", { autoAlpha: 0, duration: 0.35 }, 92.6);
+      tl.fromTo("#a3c-eyebrow", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 93.0);
+      tl.fromTo("#a3c-card", { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 93.2);
+      tl.fromTo("#pc1", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, 94.0);
+      tl.fromTo("#pc2", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, 94.9);
+      tl.fromTo("#pc3", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, 95.8);
+      tl.fromTo("#a3c-loop", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, 97.2);
+      tl.to("#a3c > *", { autoAlpha: 0, duration: 0.35 }, 101.2);
+      tl.fromTo("#a3d-card", { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 101.3);
+      tl.to("#a3d-knob", { x: 74, duration: 0.3, ease: "power2.out" }, 101.6);
+      tl.fromTo("#a3d-toggle", { backgroundColor: "#2a2a36" }, { backgroundColor: "rgba(45,212,191,0.28)", duration: 0.3 }, 101.6);
+      tl.fromTo("#a3d-slash", { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 101.95);
+      tl.fromTo("#a3d-pill", { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 103.0);
+      tl.to("#a3d > *", { autoAlpha: 0, duration: 0.35 }, 105.8);
+      tl.fromTo("#a3e-h", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 106.1);
+      tl.fromTo("#a3e-p1", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 106.3);
+      tl.fromTo("#a3e-p2", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 107.3);
+      tl.fromTo("#a3e-p3", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 108.3);
+      tl.fromTo("#a3e-code", { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, duration: 0.35 }, 109.5);
+      tl.fromTo("#a3e-code", { x: 0 }, { x: 3, duration: 0.05, repeat: 5, yoyo: true, immediateRender: false }, 109.9); // micro glitch
+      tl.to("#a3e > *", { autoAlpha: 0, duration: 0.35 }, 111.8);
+      tl.fromTo("#a3f-card", { autoAlpha: 0, x: -70 }, { autoAlpha: 1, x: 0, duration: 0.55, ease: "power3.out" }, 112.2);
+      tl.fromTo("#a3f-phone", { autoAlpha: 0, x: 70, rotation: 4 }, { autoAlpha: 1, x: 0, rotation: 0, duration: 0.55, ease: "power3.out" }, 114.0);
+      tl.to("#a3f > *", { autoAlpha: 0, duration: 0.4 }, 118.9);
+
+      // ---------- ACT 4 · FLAGSHIP FLOW ----------
+      tl.fromTo("#a4-head", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 119.4);
+      tl.fromTo("#a4-dz", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 119.7);
+      tl.fromTo("#a4-chip",
+        { autoAlpha: 0, x: -560, y: -700, scale: 0.5, rotation: -16 },
+        { keyframes: [
+            { autoAlpha: 1, x: -170, y: -360, scale: 0.78, rotation: -9, duration: 0.5, ease: "power1.out" },
+            { x: 0, y: 0, scale: 1, rotation: 0, duration: 0.7, ease: "power2.in" } ],
+        }, 119.6); // lands 120.8 → pop
+      tl.fromTo("#a4-dz-hot", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 120.3);
+      tl.to("#a4-dz-hot", { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 120.55); // exits before chip lands @120.8
+      tl.fromTo("#a4-targets .tchip", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.09 }, 121.2);
+      tl.fromTo("#a4-tsel", { scale: 1 }, { scale: 1.12, duration: 0.12, yoyo: true, repeat: 1 }, 121.8);
+      tl.to("#a4-arc", { strokeDashoffset: 0, duration: 4.0, ease: "power1.inOut" }, 122.5);
+      const p2 = { v: 0 }; const p2El = document.querySelector("#a4-pct");
+      tl.to(p2, { v: 100, duration: 4.0, ease: "power1.inOut", snap: { v: 1 }, onUpdate: () => { p2El.textContent = p2.v + "%"; } }, 122.5);
+      tl.fromTo("#a4-l2", { autoAlpha: 0, x: -14 }, { autoAlpha: 1, x: 0, duration: 0.4 }, 124.0);
+      tl.fromTo("#a4-cpu", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 131.6);
+      tl.fromTo("#a4-thumbs", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.5 }, 127.6);
+      tl.fromTo("#a4-arrow", { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, duration: 0.35 }, 128.0);
+      tl.fromTo("#a4-result", { autoAlpha: 0, y: 40, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.4)" }, 128.2);
+      tl.fromTo("#a4-net", { autoAlpha: 0, x: 60 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 129.2);
+      tl.to("#a4-netdot", { autoAlpha: 0.25, duration: 0.5, repeat: 11, yoyo: true }, 129.8);
+      tl.to("#a4a > *", { autoAlpha: 0, duration: 0.4 }, 136.4);
+      tl.fromTo("#a4b-claim", { autoAlpha: 0, scale: 1.25 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power4.out" }, 137.1);
+      tl.fromTo("#rv1", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 139.0);
+      tl.fromTo("#rv2", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 140.0);
+      tl.fromTo("#rv3", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 141.0);
+      tl.fromTo("#a4b-feats .feat-tick", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.16 }, 141.6);
+      tl.to("#a4b > *", { autoAlpha: 0, duration: 0.35 }, 143.2);
+      tl.fromTo("#a4c-eyebrow", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 143.7);
+      tl.fromTo("#a4c-tabs .pm-tab", { autoAlpha: 0, x: -60 }, { autoAlpha: 1, x: 0, duration: 0.32, stagger: 0.55, ease: "power3.out" }, 144.0);
+      tl.to("#a4c > *", { autoAlpha: 0, duration: 0.35 }, 149.0);
+      tl.fromTo("#a4d-anim .mini", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.25, stagger: 0.03 }, 149.4);
+      tl.to("#a4d-anim .mini", {
+        x: (i, el) => 443 - el.offsetLeft,   // transform-only converge to center (seek-safe)
+        y: (i, el) => 183 - el.offsetTop,
+        scale: 0.3, autoAlpha: 0.2, duration: 1.1, ease: "power2.in", stagger: 0.02 }, 150.0); // 26 converge
+      tl.fromTo("#a4d-mega", { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, 151.0); // mega lands → boom
+      tl.to("#a4d > *", { autoAlpha: 0, duration: 0.4 }, 153.8);
+
+      // ---------- ACT 5 · RECEIPTS ----------
+      tl.fromTo("#a5-slate", { autoAlpha: 0, scale: 1.15 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power3.out" }, 154.7);
+      tl.to("#a5-slate", { autoAlpha: 0, y: -36, duration: 0.35 }, 156.4);
+      const t1 = { v: 0 }; const t1El = document.querySelector("#a5-c1v");
+      tl.fromTo("#a5-c1", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 155.1);
+      tl.to(t1, { v: 41300, duration: 3.6, ease: "power2.out", snap: { v: 100 }, onUpdate: () => { t1El.textContent = fmt(t1.v); } }, 155.3);
+      tl.to("#a5-c1", { autoAlpha: 0, duration: 0.3 }, 159.4);
+      const t2 = { v: 0 }; const t2El = document.querySelector("#a5-c2v");
+      tl.fromTo("#a5-c2", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 160.2);
+      tl.to(t2, { v: 7000, duration: 3.6, ease: "power2.out", snap: { v: 100 }, onUpdate: () => { t2El.textContent = fmt(t2.v); } }, 160.4);
+      tl.to("#a5-c2", { autoAlpha: 0, duration: 0.3 }, 164.6);
+      tl.fromTo("#a5-v", { autoAlpha: 0, scale: 1.6, rotation: -6 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.35, ease: "power4.out" }, 165.2);
+      // wave-rail lighting — seek-safe property tweens (no classList callbacks)
+      ["#w1", "#w2", "#w3", "#w4", "#w5", "#w6"].forEach((w, i) => {
+        const at = 166.0 + i * 0.6; // steady cadence under D29
+        tl.to(w + " i", { backgroundColor: "#8b5cf6", borderColor: "#a78bfa", boxShadow: "0 0 20px rgba(139,92,246,.8)", duration: 0.25, ease: "power2.out" }, at);
+        tl.to(w + " span", { color: "#ddd6fe", duration: 0.25 }, at);
+      });
+      tl.fromTo("#a5-feats", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 169.4);
+      tl.to("#a5c > *", { autoAlpha: 0, duration: 0.35 }, 171.4);
+      const t3 = { v: 0 }; const t3El = document.querySelector("#a5-readyv");
+      tl.fromTo("#a5-ready", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 170.2);
+      tl.to(t3, { v: 1133, duration: 2.6, ease: "power2.out", snap: { v: 1 }, onUpdate: () => { t3El.textContent = fmt(t3.v); } }, 170.4);
+      tl.fromTo("#a5-triad .t", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.18 }, 171.8);
+      tl.to("#a5d > *", { autoAlpha: 0, duration: 0.5 }, 174.0);
+
+      // ---------- ACT 6 · OUTRO ----------
+      tl.fromTo("#outro-url", { autoAlpha: 0, y: 34, scale: 0.94 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 174.2);
+      tl.fromTo("#outro-url", { filter: "drop-shadow(0 0 0px rgba(45,212,191,0))" }, { filter: "drop-shadow(0 0 42px rgba(45,212,191,0.85))", duration: 1.4, immediateRender: false }, 174.6);
+      tl.fromTo("#heart", { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)" }, 177.6); // SUB-IMPACT BOOM
+      tl.fromTo("#credit", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 177.8);
+      // heartbeat glow — finite, seek-safe (3 double-thumps, ends 179.9)
+      tl.to("#heart", { scale: 1.18, duration: 0.16, ease: "power2.out", repeat: 3, yoyo: true, repeatDelay: 0.28, immediateRender: false }, 178.1);
+      tl.fromTo("#heart-glow", { autoAlpha: 0 }, { autoAlpha: 0.85, duration: 0.16, repeat: 3, yoyo: true, repeatDelay: 0.28 }, 178.1);
+      tl.fromTo("#outro-pill", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 178.6);
+      tl.to("#fade-black", { opacity: 1, duration: 1.0, ease: "power2.inOut" }, 179.0);
+
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+name: Vendor Brag source into videos branch
+
+on:
+  push:
+    branches:
+      - videos
+    paths:
+      - '.github/workflows/vendor-brag.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  vendor-brag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout videos branch
+        uses: actions/checkout@v4
+        with:
+          ref: videos
+          submodules: false
+          fetch-depth: 1
+
+      - name: Replace Brag submodule with actual source files
+        run: |
+          set -euo pipefail
+          # Remove the old gitlink from the index first; otherwise git may keep brag as a submodule.
+          git rm --cached -f brag || true
+          rm -rf brag
+          git clone --depth 1 https://github.com/latent-spaces/brag.git /tmp/brag-source
+          mkdir -p brag
+          cp -a /tmp/brag-source/. brag/
+          rm -rf brag/.git
+          rm -f .gitmodules
+          # Verify this is a normal directory with files before committing.
+          test -f brag/package.json || test -f brag/README.md || test -f brag/README
+          find brag -maxdepth 1 -type f | head -20
+
+      - name: Commit vendored source
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Vendor Brag source into brag directory'
+          git push origin HEAD:videos
