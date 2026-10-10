@@ -26,8 +26,8 @@
   --uq-primary-2: #f2a35e;
   --uq-border: rgba(195, 192, 182, 0.16);
 
-  --font: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
+  --font: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif, 'Noto Color Emoji';
+  --mono: "Geist Mono", ui-monospace, "SF Mono", monospace, 'Noto Color Emoji';
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -418,3 +418,6 @@ html, body {
 }
 .outro-pill b { color: var(--ink); }
 .fade-black { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+
+/* twemoji inline svg icons (deterministic across render hosts) */
+.emo{width:1em;height:1em;vertical-align:-0.12em;display:inline-block;object-fit:contain}

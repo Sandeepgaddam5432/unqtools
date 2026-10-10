@@ -26,8 +26,8 @@
   --uq-primary-2: #f2a35e;
   --uq-border: rgba(195, 192, 182, 0.16);
 
-  --font: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
+  --font: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif, 'Noto Color Emoji';
+  --mono: "Geist Mono", ui-monospace, "SF Mono", monospace, 'Noto Color Emoji';
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -595,3 +595,6 @@ html, body {
 .act-slate { display: flex; flex-direction: column; align-items: center; gap: 18px; }
 .act-slate .n { font-family: var(--mono); font-size: 26px; letter-spacing: 0.5em; color: var(--teal); text-transform: uppercase; }
 .act-slate .t { font-size: 96px; font-weight: 900; letter-spacing: -0.03em; text-align: center; }
+
+/* twemoji inline svg icons (deterministic across render hosts) */
+.emo{width:1em;height:1em;vertical-align:-0.12em;display:inline-block;object-fit:contain}
