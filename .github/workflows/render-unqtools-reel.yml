@@ -1,0 +1,31 @@
+name: Render UnQTools Reel
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout videos branch
+        uses: actions/checkout@v4
+        with:
+          ref: videos
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Remotion dependencies
+        working-directory: remotion
+        run: npm install
+      - name: Render 60-second MP4
+        working-directory: remotion
+        run: npm run render
+      - name: Upload rendered MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: unqtools-reel-mp4
+          path: remotion/out/unqtools-reel.mp4
+          if-no-files-found: error
+          retention-days: 14
